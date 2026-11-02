@@ -1,6 +1,6 @@
 # Handoff — The 3D Printing Compendium
 
-Status: **content complete, validated, ready to publish.** Not yet deployed — see "Next steps".
+Status: **content complete, validated, merged to `master` and deployed** at https://pkasprowicz.github.io/bambu-x2d-bible/.
 
 ## What exists
 
@@ -39,7 +39,7 @@ Totals at last check: **62 pages, ~276k words, 662 SVG figures**, `check_site.py
 
 ## Known gaps / risks
 
-1. **Not deployed yet.** GitHub Pages must be switched to *Settings → Pages → Source: GitHub Actions*. `has_pages` was `false` when checked.
+1. **Deployed.** Merged to `master`; the Pages workflow succeeded and the site is live at https://pkasprowicz.github.io/bambu-x2d-bible/ (Pages source is GitHub Actions).
 2. **Not exhaustively browser-tested.** Only the 12 pages above were opened; interactive widgets were loaded but not clicked through (calculator math, picker scoring, animations, quiz scoring should get a manual pass).
 3. **OpenSCAD models and code samples unverified** — `openscad` is not installed here; the `.scad` files and the OpenSCAD/CadQuery/build123d snippets in the pages were reviewed, not compiled.
 4. **X2D facts** come from Bambu's public wiki/store pages (fetched during research). Anything not supported was labelled "typical" or "check the wiki". Unboxing/transport-lock details and per-material drying tables for the AMS 2 Pro were not in the research and defer to the manual. Re-verify against the wiki when firmware/hardware changes. No prices are included by design.
@@ -51,11 +51,10 @@ Totals at last check: **62 pages, ~276k words, 662 SVG figures**, `check_site.py
 
 ## Next steps
 
-1. Merge to `master` (or open a PR), enable Pages with the GitHub Actions source.
-2. Manual QA pass through the interactive tools and exercise/quiz progress persistence; check mobile layout.
-3. Compile all `.scad` files with OpenSCAD and fix any errors.
-4. Verify external links and re-check X2D facts against wiki.bambulab.com.
-5. Optionally consolidate page-local CSS into `style.css`.
+1. Manual QA of the live site: interactive tools, exercise/quiz progress persistence, mobile layout.
+2. Compile all `.scad` files with OpenSCAD and fix any errors.
+3. Verify external links and re-check X2D facts against wiki.bambulab.com.
+4. Optionally consolidate page-local CSS into `style.css`.
 
 ## Git identity
 
