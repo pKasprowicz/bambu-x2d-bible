@@ -1,0 +1,24 @@
+name: CI
+
+# Validation only; nothing here deploys. Merging to master deploys via pages.yml.
+on:
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Build search index
+        run: python scripts/build_search_index.py
+      - name: Search index is committed and current
+        run: git diff --exit-code assets/search-index.json
+      - name: Check site (links, anchors, SVG, structure, version)
+        run: python scripts/check_site.py

@@ -171,3 +171,10 @@ inputs use `<div class="field"><label>Name <output id="x-out"></output></label><
 * Do not copy copyrighted text; write original explanations. Link out to official docs where useful (Bambu Lab wiki: https://wiki.bambulab.com).
 * Do not mention internal tooling. Do not write placeholder text ("TODO", "Lorem ipsum", "coming soon").
 * Run `python scripts/check_site.py` before finishing; fix every error in the pages you own.
+
+## Workflow and versions
+
+* `master` is the live site. Work on a short branch (`feature/…`, `fix/…`, `content/…`, `docs/…`), open a pull request into `master`, squash-merge when CI is green.
+* Add a line under `## [Unreleased]` in `CHANGELOG.md` for every change a reader would notice.
+* Releases are numbered `MAJOR.MINOR.PATCH` (see [docs/github-flow-and-versioning.md](docs/github-flow-and-versioning.md)). `VERSION`, the `version` in `assets/js/nav.js` and the newest `CHANGELOG.md` heading must agree; `check_site.py` enforces it.
+* Tagging `vX.Y.Z` on `master` publishes a GitHub Release with an offline zip.

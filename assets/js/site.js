@@ -90,7 +90,8 @@
     content.appendChild(pager);
   }
   var footer = el("footer", { class: "site-footer" },
-    "The 3D Printing Compendium · built for GitHub Pages · Settings shown are starting points — always validate on your own printer & filament.<br>Product facts for the Bambu Lab X2D and AMS 2 Pro come from Bambu Lab's public documentation and may change with firmware updates.");
+    "The 3D Printing Compendium · built for GitHub Pages · Settings shown are starting points — always validate on your own printer & filament.<br>Product facts for the Bambu Lab X2D and AMS 2 Pro come from Bambu Lab's public documentation and may change with firmware updates." +
+    (NAV.version ? '<br><small>Version ' + NAV.version + (NAV.repo ? ' · <a href="' + NAV.repo + '/blob/master/CHANGELOG.md" rel="noopener">changelog</a> · <a href="' + NAV.repo + '/releases" rel="noopener">releases</a>' : '') + '</small>' : ''));
   body.appendChild(footer);
   var toTop = el("button", { class: "icon-btn to-top", "aria-label": "Back to top" }, "↑");
   toTop.addEventListener("click", function () { window.scrollTo({ top: 0 }); });

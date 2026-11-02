@@ -2,7 +2,7 @@
 
 > From first print to expert — a free, illustrated, interactive guide to 3D printing, with a dedicated **Bambu Lab X2D + AMS 2 Pro** section.
 
-**Live site:** `https://pkasprowicz.github.io/bambu-x2d-bible/` (after enabling GitHub Pages — see below)
+**Live site:** <https://pkasprowicz.github.io/bambu-x2d-bible/> · **Downloads and changelog:** [Releases](https://github.com/pKasprowicz/bambu-x2d-bible/releases) · [`CHANGELOG.md`](CHANGELOG.md)
 
 ## What's inside
 
@@ -44,6 +44,8 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the page skeleton, components and q
 python scripts/build_search_index.py   # regenerate assets/search-index.json
 python scripts/check_site.py           # validate links, anchors, SVG, structure
 ```
+
+Branching, pull requests and version numbers are described in [`docs/github-flow-and-versioning.md`](docs/github-flow-and-versioning.md).
 
 New pages must be added to `assets/js/nav.js` (the single source of truth for navigation, search and the pager).
 

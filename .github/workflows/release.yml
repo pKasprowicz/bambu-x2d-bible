@@ -1,0 +1,43 @@
+name: Release
+
+# Push a tag such as v1.1.0 on master to publish a GitHub Release with an offline zip.
+on:
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Tag must match VERSION
+        run: |
+          test "${GITHUB_REF_NAME}" = "v$(cat VERSION | tr -d '[:space:]')" \
+            || { echo "Tag ${GITHUB_REF_NAME} does not match VERSION $(cat VERSION)"; exit 1; }
+      - name: Build search index and validate
+        run: |
+          python scripts/build_search_index.py
+          python scripts/check_site.py
+      - name: Extract release notes from CHANGELOG
+        run: |
+          v="${GITHUB_REF_NAME#v}"
+          awk -v h="## [$v]" 'index($0, h) == 1 {f=1; next} /^## \[/ {f=0} f' CHANGELOG.md > notes.md
+          test -s notes.md || { echo "No CHANGELOG section for $v"; exit 1; }
+      - name: Zip the site for offline reading
+        run: |
+          name="compendium-${GITHUB_REF_NAME}"
+          mkdir -p "dist/$name"
+          rsync -a --exclude .git --exclude .github --exclude dist --exclude notes.md ./ "dist/$name/"
+          (cd dist && zip -qr "../$name.zip" "$name")
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" "compendium-${GITHUB_REF_NAME}.zip" \
+            --title "The 3D Printing Compendium ${GITHUB_REF_NAME}" --notes-file notes.md
