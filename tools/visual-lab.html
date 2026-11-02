@@ -31,7 +31,7 @@
     .vl-btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: .4em; }
     .vl-btns button { font: inherit; font-size: 13px; cursor: pointer; border-radius: 999px; padding: 4px 12px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); }
     .vl-btns button:hover, .vl-btns button:focus-visible { border-color: var(--brand); }
-    .vl-btns button[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: #fff; }
+    .vl-btns button[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
     .vl-read { background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 9px 12px; font-size: 13.5px; line-height: 1.5; }
     .vl-read b { font-family: var(--mono); font-weight: 700; }
     .vl-read .vl-v { margin-top: 4px; font-weight: 700; }
@@ -974,7 +974,7 @@ document.addEventListener("c3d:ready", function () {
 
   /* ---------- (l) Flush and prime tower ---------- */
   (function () {
-    var PAL = ["#e5484d", "#f76b15", "#ffc53d", "#30a46c", "#3e63dd", "#8e4ec6", "#12a594", "#889096"], st = null;
+    var PAL = ["#c67067", "#ac6c27", "#ae8e44", "#57814e", "#6994cb", "#9a7bb8", "#529d99", "#889096"], st = null;
     function frac(x) { return x - Math.floor(x); }
     controls("l", [
       { k: "N", l: "Colors in the model", t: "range", min: 2, max: 8, step: 1, v: 4 },
