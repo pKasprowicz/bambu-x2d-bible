@@ -46,7 +46,7 @@
   content.id = "content";
   var progress = el("div", { class: "progress-bar" });
 
-  var logo = '<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="21" width="26" height="6" rx="2" fill="#e8590c"/><rect x="6" y="14" width="20" height="5" rx="2" fill="#f0a43a"/><rect x="9" y="8" width="14" height="4" rx="2" fill="#ffc46b"/><path d="M16 2v4" stroke="#2f7bd8" stroke-width="3" stroke-linecap="round"/></svg>';
+  var logo = '<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="21" width="26" height="6" rx="2" fill="#b25d2f"/><rect x="6" y="14" width="20" height="5" rx="2" fill="#d99c68"/><rect x="9" y="8" width="14" height="4" rx="2" fill="#eccb9e"/><path d="M16 2v4" stroke="#6994cb" stroke-width="3" stroke-linecap="round"/></svg>';
   var header = el("header", { class: "site-header" },
     '<button class="icon-btn menu-btn" aria-label="Menu">☰</button>' +
     '<a class="brand" href="' + base + 'index.html">' + logo + '<span>' + NAV.short + '<small>from first print to expert</small></span></a>' +

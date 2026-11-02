@@ -5,7 +5,13 @@ All notable changes to the Compendium. Format: [Keep a Changelog](https://keepac
 ## [Unreleased]
 
 ### Changed
+- Quieter colour palette: about 40% less colour intensity in light and dark themes, with a darker "ink" variant for coloured text on tinted backgrounds (text on tints now meets 4.5:1). Hues stay as easy to tell apart as before. Brand orange is now a muted terracotta.
+- Small grey text is slightly darker in light mode.
 - The version is now shown in the header of every page (desktop) and in the home page hero, not only in the footer.
+
+### Fixed
+- SVG labels without a colour class were near-invisible in dark mode; they now follow the theme.
+- Buttons and chips that use the brand colour switch their text colour so they stay readable in dark mode.
 
 ## [1.0.0] - 2026-11-02
 

@@ -37,7 +37,7 @@
       <path class="d-ink arrow" d="M262 124 H304"/>
       <text class="t-xs c-green t-b" x="266" y="112">XY: strong</text>
       <path class="d-ink arrow" d="M150 68 V36" style="stroke:var(--red)"/><path class="d-ink arrow" d="M150 180 V212" style="stroke:var(--red)"/>
-      <text class="t-xs t-b" x="160" y="52" style="fill:var(--red)">Z: weak</text>
+      <text class="t-xs t-b" x="160" y="52" style="fill:var(--red-ink)">Z: weak</text>
       <text class="t-xs" x="40" y="240">Each band is one 0.2 mm layer; the bond between bands is the weak link.</text>
       <text class="t-sm t-b" x="380" y="24">Z strength as % of XY (indicative)</text>
       <path class="d-thin" d="M400 40 V250 M540 40 V250 M680 40 V250"/>
@@ -65,7 +65,7 @@
       <rect class="d-surface2" x="30" y="30" width="24" height="200"/>
       <rect class="d-plastic" x="54" y="60" width="20" height="140"/><rect class="d-plastic" x="74" y="180" width="230" height="20"/>
       <polygon class="d-plastic" points="74,180 74,110 140,180"/>
-      <path class="d-ink arrow" d="M280 120 V176" style="stroke:var(--red);stroke-width:3"/><text class="t-sm t-b" x="248" y="112" style="fill:var(--red)">Load F</text>
+      <path class="d-ink arrow" d="M280 120 V176" style="stroke:var(--red);stroke-width:3"/><text class="t-sm t-b" x="248" y="112" style="fill:var(--red-ink)">Load F</text>
       <path class="d-dash" d="M280 176 H150 Q74 176 66 130 V70" style="stroke:var(--orange);stroke-width:2"/>
       <text class="t-xs" x="100" y="224">tension in the top fibre, compression in the bottom</text>
       <text class="t-xs" x="320" y="176">arm: bending</text>
@@ -87,12 +87,12 @@
 
   <figure class="fig">
     <svg class="diagram" viewBox="0 0 720 270" role="img" aria-label="An L bracket printed standing with layers across the root and printed flat with the profile in the layer plane, with relative strength">
-      <text class="t-sm t-b" x="30" y="24" style="fill:var(--red)">A · Standing upright</text>
+      <text class="t-sm t-b" x="30" y="24" style="fill:var(--red-ink)">A · Standing upright</text>
       <polygon class="d-plastic" points="30,40 54,40 54,118 140,118 140,140 30,140"/>
       <path class="d-thin" d="M30 48 H54 M30 56 H54 M30 64 H54 M30 72 H54 M30 80 H54 M30 88 H54 M30 96 H54 M30 104 H54 M30 112 H54 M30 124 H140 M30 132 H140"/>
       <path class="d-ink" d="M54 108 l6 -4 l6 6" style="stroke:var(--red)"/>
       <text class="t-xs" x="30" y="164">Root is pulled across layers</text><text class="t-xs" x="30" y="180">Strength ≈ 40–70 % of XY</text><text class="t-xs c-green" x="30" y="196">no supports, best top surface</text>
-      <text class="t-sm t-b" x="270" y="24" style="fill:var(--green)">B · Flat on its back</text>
+      <text class="t-sm t-b" x="270" y="24" style="fill:var(--green-ink)">B · Flat on its back</text>
       <polygon class="d-plastic" points="270,40 294,40 294,118 380,118 380,140 270,140"/>
       <polygon class="d-dash" points="274,44 290,44 290,122 376,122 376,136 274,136" style="fill:none"/>
       <text class="t-xs" x="270" y="164">Layers stack out of the page; lines follow</text><text class="t-xs" x="270" y="180">the profile: the load follows the line</text><text class="t-xs c-green" x="270" y="196">Strength ≈ 100 % of XY</text>
@@ -200,8 +200,8 @@
       <path class="d-ink arrow" d="M50 230 H330"/><path class="d-ink arrow" d="M50 230 V30"/>
       <text class="t-xs" x="50" y="252">time (log scale) →</text><text class="t-xs" x="56" y="28">strain ↑</text>
       <path class="d-ink" d="M50 205 Q100 190 320 182" style="stroke:var(--green);fill:none"/><text class="t-xs c-green" x="240" y="174">low load: stable</text>
-      <path class="d-ink" d="M50 190 Q100 150 320 108" style="stroke:var(--orange);fill:none"/><text class="t-xs" x="220" y="124" style="fill:var(--orange)">medium: keeps creeping</text>
-      <path class="d-ink" d="M50 170 Q90 120 150 80 L200 40" style="stroke:var(--red);fill:none"/><text class="t-xs" x="206" y="46" style="fill:var(--red)">high: creep rupture</text>
+      <path class="d-ink" d="M50 190 Q100 150 320 108" style="stroke:var(--orange);fill:none"/><text class="t-xs" x="220" y="124" style="fill:var(--orange-ink)">medium: keeps creeping</text>
+      <path class="d-ink" d="M50 170 Q90 120 150 80 L200 40" style="stroke:var(--red);fill:none"/><text class="t-xs" x="206" y="46" style="fill:var(--red-ink)">high: creep rupture</text>
       <text class="t-sm t-b" x="390" y="24">Practical max service temperature (indicative, °C)</text>
       <path class="d-thin" d="M470 36 V240"/>
       <text class="t-xs" x="396" y="64">PLA</text><rect class="f-blue" x="470" y="50" width="75" height="20" rx="3"/><text class="t-xs" x="552" y="64">50</text>
@@ -502,7 +502,7 @@
       <path class="d-ink arrow" d="M60 230 H410"/><path class="d-ink arrow" d="M60 230 V24"/>
       <text class="t-xs" x="170" y="252">quantity (parts) →</text><text class="t-xs" x="66" y="22">total cost ↑</text>
       <path class="d-ink" d="M60 230 L400 60" style="stroke:var(--blue);stroke-width:3;fill:none"/><text class="t-xs c-blue t-b" x="260" y="170">printing: no tooling, constant per-part cost</text>
-      <path class="d-ink" d="M60 100 L400 82" style="stroke:var(--orange);stroke-width:3;fill:none"/><text class="t-xs t-b" x="170" y="72" style="fill:var(--orange)">injection moulding: tooling, low per-part</text>
+      <path class="d-ink" d="M60 100 L400 82" style="stroke:var(--orange);stroke-width:3;fill:none"/><text class="t-xs t-b" x="170" y="72" style="fill:var(--orange-ink)">injection moulding: tooling, low per-part</text>
       <circle class="f-green" cx="349" cy="88" r="7"/><text class="t-xs" x="308" y="116">break-even</text>
       <rect class="d-surface" x="440" y="30" width="270" height="200" rx="10"/>
       <text class="t-sm t-b" x="456" y="56">Printing wins when…</text>
