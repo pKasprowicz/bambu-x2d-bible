@@ -4,6 +4,9 @@ All notable changes to the Compendium. Format: [Keep a Changelog](https://keepac
 
 ## [Unreleased]
 
+### Changed
+- The version is now shown in the header of every page (desktop) and in the home page hero, not only in the footer.
+
 ## [1.0.0] - 2026-11-02
 
 First numbered edition.
