@@ -4,6 +4,8 @@ All notable changes to the Compendium. Format: [Keep a Changelog](https://keepac
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-11-02
+
 ### Changed
 - Quieter colour palette: about 40% less colour intensity in light and dark themes, with a darker "ink" variant for coloured text on tinted backgrounds (text on tints now meets 4.5:1). Hues stay as easy to tell apart as before. Brand orange is now a muted terracotta.
 - Small grey text is slightly darker in light mode.
@@ -31,5 +33,6 @@ First numbered edition.
 ### Verified
 - All OpenSCAD models compile; X2D headline specifications match Bambu Lab's published spec sheet (2026-11-02).
 
-[Unreleased]: https://github.com/pKasprowicz/bambu-x2d-bible/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/pKasprowicz/bambu-x2d-bible/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/pKasprowicz/bambu-x2d-bible/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/pKasprowicz/bambu-x2d-bible/releases/tag/v1.0.0
