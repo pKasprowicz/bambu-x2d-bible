@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choosing a printer · 3D Printing Compendium</title>
+<meta name="description" content="How to choose a 3D printer: needs analysis, printer categories, specs that matter versus marketing, total cost of ownership, used machines, multi-material systems and a ranked accessories list.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/nav.js" defer></script>
+<script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="foundations/buying-guide.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 1 · Foundations</div>
+    <h1>Choosing a printer</h1>
+    <p class="lead">The best printer is the one that fits your parts, your space, your patience and your budget. This guide turns that into a method: define the need, pick a machine category, look past the marketing numbers, then count the real cost over a year.</p>
+    <div class="meta">
+      <span class="badge beginner">Beginner</span>
+      <span class="badge time">⏱ 30 min read</span>
+    </div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">Goal of this page</span>
+    You will be able to write down what you need from a printer, map it to a machine type, compare candidates on the specs that actually matter, and estimate the first-year cost honestly. Brand names appear only as examples; specifications and prices change quickly, so check current sources before buying.
+  </div>
+
+  <h2 id="needs">🎯 Start with the need, not the machine</h2>
+  <p>Most regrets come from buying for a hypothetical use. Before you read a single spec sheet, answer six questions honestly. Write the answers down; they will filter the market far more effectively than any review.</p>
+
+  <div class="grid cols-3">
+    <div class="card accent-blue"><h3>1 · What will you print?</h3><p>Display models and figurines, functional brackets and enclosures, tools and jigs, cosplay, miniatures, prototypes? Each leans toward a different process and size.</p></div>
+    <div class="card accent-green"><h3>2 · How big are the parts?</h3><p>Measure your biggest wish-list part. Most useful parts fit in a 250 mm cube; helmets, furniture parts and large props do not, but they can be split and glued.</p></div>
+    <div class="card accent-orange"><h3>3 · Which materials?</h3><p>PLA and PETG are easy on any machine. ABS, ASA, nylon and carbon-fibre blends need a heated, enclosed chamber and a hardened nozzle. Flexible TPU wants a good direct-drive extruder.</p></div>
+    <div class="card accent-purple"><h3>4 · How many colours?</h3><p>Single-colour with painting, a few colours via a multi-material system, or many colours with little waste? Colour changes cost time and filament.</p></div>
+    <div class="card accent-teal"><h3>5 · How much tinkering?</h3><p>Do you want to press print and get a result, or do you enjoy tuning, repairing and upgrading? Honest answers prevent frustration either way.</p></div>
+    <div class="card accent-red"><h3>6 · Where will it live?</h3><p>Noise, fumes, space, power and neighbours matter. See <a href="safety-and-workspace.html">Safety &amp; workspace</a> before you commit to a spot.</p></div>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 900 520" role="img" aria-label="Decision tree for choosing a printer type. First question: do you need fine detail on small parts? Yes leads to resin. No leads to: do you need engineering materials like ABS, nylon or carbon fibre? Yes leads to enclosed CoreXY. No leads to: do you want multiple colours? Yes leads to multi-material enclosed. No leads to: do you have a tight budget and enjoy tinkering? Yes leads to entry bedslinger. No leads to enclosed CoreXY. A side branch: parts larger than 300 mm lead to large format; production of many copies leads to IDEX or toolchanger.">
+      <rect class="d-surface2" x="20" y="20" width="220" height="60" rx="8"/><text class="t-sm t-b t-c" x="130" y="46" style="text-anchor:middle">Start here</text><text class="t-xs t-c" x="130" y="64" style="text-anchor:middle">Describe your typical part</text>
+      <path class="d-ink arrow" d="M240 50 H290"/>
+      <path class="d-surface2" d="M290 50 L390 15 L490 50 L390 85 Z"/><text class="t-xs t-c" x="390" y="46" style="text-anchor:middle">Tiny, very fine</text><text class="t-xs t-c" x="390" y="60" style="text-anchor:middle">detail (minis)?</text>
+      <path class="d-ink arrow" d="M490 50 H560"/><text class="t-xs" x="520" y="42">yes</text>
+      <rect class="f-purple" x="560" y="22" width="320" height="56" rx="8" style="fill-opacity:.25"/><text class="t-sm t-b" x="574" y="46">Resin (MSLA)</text><text class="t-xs" x="574" y="64">Needs washing, curing, gloves, ventilation</text>
+      <path class="d-ink arrow" d="M390 85 V130"/><text class="t-xs" x="398" y="112">no</text>
+      <path class="d-surface2" d="M390 130 L500 170 L390 210 L280 170 Z"/><text class="t-xs t-c" x="390" y="166" style="text-anchor:middle">Parts over ~300 mm</text><text class="t-xs t-c" x="390" y="182" style="text-anchor:middle">or big batches?</text>
+      <path class="d-ink arrow" d="M500 170 H560"/><text class="t-xs" x="520" y="162">yes</text>
+      <rect class="f-orange" x="560" y="130" width="320" height="80" rx="8" style="fill-opacity:.25"/><text class="t-sm t-b" x="574" y="154">Large format or IDEX / toolchanger</text><text class="t-xs" x="574" y="172">Big build volume, or parallel copies</text><text class="t-xs" x="574" y="188">on independent heads. Higher cost, more space.</text>
+      <path class="d-ink arrow" d="M390 210 V250"/><text class="t-xs" x="398" y="234">no</text>
+      <path class="d-surface2" d="M390 250 L510 290 L390 330 L270 290 Z"/><text class="t-xs t-c" x="390" y="286" style="text-anchor:middle">Need ABS, ASA, nylon,</text><text class="t-xs t-c" x="390" y="302" style="text-anchor:middle">carbon-fibre blends?</text>
+      <path class="d-ink arrow" d="M510 290 H560"/><text class="t-xs" x="522" y="282">yes</text>
+      <rect class="f-red" x="560" y="258" width="320" height="64" rx="8" style="fill-opacity:.25"/><text class="t-sm t-b" x="574" y="282">Enclosed, heated-chamber CoreXY</text><text class="t-xs" x="574" y="300">Hardened nozzle, filtration, good bed</text>
+      <path class="d-ink arrow" d="M390 330 V370"/><text class="t-xs" x="398" y="354">no</text>
+      <path class="d-surface2" d="M390 370 L500 410 L390 450 L280 410 Z"/><text class="t-xs t-c" x="390" y="406" style="text-anchor:middle">Several colours</text><text class="t-xs t-c" x="390" y="422" style="text-anchor:middle">in one print?</text>
+      <path class="d-ink arrow" d="M500 410 H560"/><text class="t-xs" x="520" y="402">yes</text>
+      <rect class="f-teal" x="560" y="378" width="320" height="64" rx="8" style="fill-opacity:.25"/><text class="t-sm t-b" x="574" y="402">Multi-material enclosed printer</text><text class="t-xs" x="574" y="420">Automatic spool switching or dual nozzle</text>
+      <path class="d-ink arrow" d="M390 450 V478"/><text class="t-xs" x="398" y="468">no</text>
+      <rect class="f-green" x="200" y="478" width="380" height="34" rx="8" style="fill-opacity:.25"/><text class="t-sm t-b t-c" x="390" y="500" style="text-anchor:middle">Entry bedslinger or enclosed CoreXY</text>
+      <text class="t-xs" x="600" y="500">Budget decides; see below</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> A simplified decision tree. It points to a category, not a model. Treat the answer as a shortlist starting point and read the sections below to refine it.</figcaption>
+  </figure>
+
+  <h2 id="categories">🗂 The main printer categories</h2>
+  <p>Almost every consumer printer falls into one of six families. Here is what each is good at, and what it costs you in other ways. Price bands are rough and change with the market.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 900 360" role="img" aria-label="Six small schematic icons of printer types: open bedslinger with moving bed, enclosed CoreXY box, multi-material with spool hub, large format gantry, resin printer with vat and screen, IDEX with two independent print heads.">
+      <g transform="translate(0,0)">
+        <text class="t-sm t-b" x="20" y="24">Entry bedslinger</text>
+        <rect class="d-metal" x="40" y="50" width="12" height="130"/><rect class="d-metal" x="150" y="50" width="12" height="130"/>
+        <rect class="d-metal" x="40" y="50" width="122" height="10"/>
+        <rect class="d-hot" x="85" y="70" width="30" height="28"/><path class="d-ink" d="M100 98 v14" style="fill:none"/>
+        <rect class="d-surface2" x="30" y="150" width="140" height="10"/><path class="d-ink arrow arrow-start" d="M20 176 H180" style="fill:none"/>
+        <text class="t-xs" x="20" y="200">Bed moves in Y.</text><text class="t-xs" x="20" y="214">Open or semi-open.</text><text class="t-xs" x="20" y="228">Lowest cost.</text>
+      </g>
+      <g transform="translate(300,0)">
+        <text class="t-sm t-b" x="20" y="24">Enclosed CoreXY</text>
+        <rect class="d-ink" x="30" y="40" width="140" height="150" rx="4" style="fill:var(--blue);fill-opacity:.08"/>
+        <rect class="d-metal" x="50" y="56" width="100" height="8"/>
+        <rect class="d-hot" x="90" y="64" width="20" height="22"/>
+        <rect class="d-surface2" x="50" y="160" width="100" height="8"/>
+        <text class="t-xs" x="20" y="212">Bed moves in Z only.</text><text class="t-xs" x="20" y="226">Fast, stable, closed.</text><text class="t-xs" x="20" y="240">Mid-range price.</text>
+      </g>
+      <g transform="translate(600,0)">
+        <text class="t-sm t-b" x="20" y="24">Multi-material</text>
+        <rect class="d-ink" x="30" y="60" width="140" height="130" rx="4" style="fill:var(--teal);fill-opacity:.08"/>
+        <rect class="f-red" x="40" y="30" width="22" height="26" rx="3"/><rect class="f-blue" x="66" y="30" width="22" height="26" rx="3"/><rect class="f-green" x="92" y="30" width="22" height="26" rx="3"/><rect class="f-yellow" x="118" y="30" width="22" height="26" rx="3"/>
+        <path class="d-ink" d="M51 56 v20 M77 56 v20 M103 56 v20 M129 56 v20" style="fill:none"/>
+        <rect class="d-hot" x="86" y="100" width="24" height="26"/>
+        <text class="t-xs" x="20" y="212">Spool hub feeds</text><text class="t-xs" x="20" y="226">one or two nozzles.</text><text class="t-xs" x="20" y="240">Colour and supports.</text>
+      </g>
+      <g transform="translate(0,190)">
+        <text class="t-sm t-b" x="20" y="24">Large format</text>
+        <rect class="d-ink" x="30" y="40" width="170" height="100" rx="4" style="fill:var(--orange);fill-opacity:.08"/>
+        <rect class="d-surface2" x="40" y="120" width="150" height="8"/>
+        <rect class="d-metal" x="40" y="50" width="150" height="6"/><rect class="d-hot" x="100" y="56" width="22" height="22"/>
+        <path class="d-ink arrow arrow-start" d="M30 148 H200" style="fill:none"/>
+        <text class="t-xs" x="20" y="166">300+ mm per side.</text>
+      </g>
+      <g transform="translate(300,190)">
+        <text class="t-sm t-b" x="20" y="24">Resin (MSLA)</text>
+        <path class="d-ink" d="M40 80 H160 L150 130 H50 Z" style="fill:var(--purple);fill-opacity:.25"/>
+        <rect class="d-surface2" x="45" y="130" width="110" height="8"/><rect class="d-metal" x="60" y="52" width="80" height="8"/><path class="d-ink" d="M100 60 v30" style="fill:none"/><rect class="d-plastic" x="88" y="90" width="24" height="26"/>
+        <text class="t-xs" x="20" y="166">UV screen under vat.</text>
+      </g>
+      <g transform="translate(600,190)">
+        <text class="t-sm t-b" x="20" y="24">IDEX / toolchanger</text>
+        <rect class="d-ink" x="30" y="40" width="170" height="100" rx="4" style="fill:var(--pink);fill-opacity:.08"/>
+        <rect class="d-metal" x="40" y="50" width="150" height="6"/>
+        <rect class="d-hot" x="56" y="56" width="22" height="22"/><rect class="d-cool" x="150" y="56" width="22" height="22"/>
+        <rect class="d-surface2" x="40" y="120" width="150" height="8"/>
+        <text class="t-xs" x="20" y="166">Two heads: copies or two materials.</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 2.</b> The six families in outline. Real machines differ in detail, but this structure explains most of the trade-offs in speed, noise, material choice and price.</figcaption>
+  </figure>
+
+  <div class="table-wrap">
+  <table class="data compact">
+    <thead><tr><th>Category</th><th>Strengths</th><th>Trade-offs</th><th>Typical price band*</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Entry bedslinger</strong></td><td>Cheapest; huge community; easy to repair and upgrade</td><td>Slower for good quality; usually open; more tuning</td><td><span class="chip green">$</span> low</td></tr>
+      <tr><td><strong>Enclosed CoreXY</strong></td><td>Fast, quiet-ish, engineering materials, strong defaults</td><td>Heavier, costlier; some designs are tied to one ecosystem</td><td><span class="chip yellow">$$</span> mid</td></tr>
+      <tr><td><strong>Multi-material</strong></td><td>Multi-colour, soluble or breakaway supports, auto spool change</td><td>Waste (purge), more complexity, more consumables</td><td><span class="chip yellow">$$</span> mid</td></tr>
+      <tr><td><strong>Large format</strong></td><td>Big parts in one piece; fewer joins</td><td>Slow, space-hungry, warps more, higher power draw</td><td><span class="chip orange">$$$</span> high</td></tr>
+      <tr><td><strong>Resin (MSLA)</strong></td><td>Fine detail, smooth surfaces, small parts</td><td>Messy, toxic liquid, post-processing, small volume</td><td><span class="chip green">$</span>–<span class="chip yellow">$$</span></td></tr>
+      <tr><td><strong>IDEX / toolchanger</strong></td><td>Mirror/duplicate mode, many materials, high throughput</td><td>Calibration of offsets, price, learning curve</td><td><span class="chip orange">$$$</span> high</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p><small>*Bands are relative and market-dependent. Compare current prices yourself; budget kits and premium machines overlap.</small></p>
+
+  <h3>Reading the categories in practice</h3>
+  <p><strong>Entry bedslingers</strong> are where the hobby grew up. The bed slides back and forth under the nozzle, which is simple and cheap but limits acceleration because the mass of the bed (and the print on it) must change direction. They teach you a lot because they reward understanding: levelling, tuning, retraction and cooling all matter. If you enjoy the machine as a project, this is a fine place to start. If you only want parts, the time you spend tuning may feel like a tax.</p>
+  <p><strong>Enclosed CoreXY machines</strong> keep the bed moving only up and down while a light toolhead moves in X and Y. That allows high acceleration with good quality, and the enclosure stabilises temperature, reduces draughts and contains fumes and noise. For most people who want to print functional parts reliably, this is the sweet spot. See the <a href="printer-anatomy.html#kinematics">kinematics section</a> for how the belts work.</p>
+  <p><strong>Multi-material machines</strong> add automatic filament switching, a second nozzle or both. They unlock multi-colour models, dissolvable supports and mixed material parts, at the cost of purge waste and more things that can jam. We look at them in their own section below.</p>
+  <p><strong>Large-format printers</strong> are for objects that do not split well: helmets, enclosures, furniture. Remember that doubling a part's length multiplies its print time by far more than two, and that big flat parts in warp-prone materials fight you.</p>
+  <p><strong>Resin printers</strong> deliver detail that filament cannot match: miniatures, jewellery masters, dental-style models, fine mechanical parts. The price is a chemical workflow. Read <a href="printing-processes.html">Printing processes</a> and the <a href="safety-and-workspace.html#resin">resin safety section</a> first.</p>
+  <p><strong>IDEX and toolchanger systems</strong> have two or more independent heads. IDEX (independent dual extruders) can print two copies at once in mirror or duplicate mode, which doubles throughput for identical parts, or use two materials. Toolchangers switch between many heads for multi-colour printing with very little waste. They are powerful but more expensive and need careful offset calibration.</p>
+
+  <h2 id="specs">📏 Specs that matter, and specs that mostly do not</h2>
+  <p>Spec sheets are written to sell. A few numbers carry real information; many are noise. Use the table as a filter.</p>
+
+  <div class="grid cols-2">
+    <div class="pros-cons">
+      <div class="pros"><h4>Specs worth comparing</h4>
+        <ul>
+          <li><strong>Build volume</strong> that matches your biggest regular part, with a little margin.</li>
+          <li><strong>Maximum nozzle and bed temperatures</strong>: determine which materials are possible.</li>
+          <li><strong>Enclosure and chamber heating</strong>: decide whether ABS, ASA and nylon are realistic.</li>
+          <li><strong>Extruder type</strong>: direct drive handles flexible filament far better.</li>
+          <li><strong>Nozzle material and swap-ability</strong>: hardened nozzles for abrasive filament.</li>
+          <li><strong>Bed surface and levelling</strong>: automatic levelling saves time.</li>
+          <li><strong>Sensors</strong>: runout, tangle, power-loss recovery, first-layer inspection.</li>
+          <li><strong>Noise level</strong> at typical speeds.</li>
+          <li><strong>Spare-parts availability</strong> and price.</li>
+        </ul>
+      </div>
+      <div class="cons"><h4>Specs that mislead</h4>
+        <ul>
+          <li><strong>Peak speed (mm/s)</strong>: rarely sustained; quality and acceleration decide real time.</li>
+          <li><strong>Peak acceleration</strong>: often only for infill or special modes.</li>
+          <li><strong>Layer resolution of 0.05 mm</strong>: not the same as visible quality.</li>
+          <li><strong>Heat-up time to 100 °C</strong>: a marketing number; chamber soak matters more.</li>
+          <li><strong>Peak flow rate</strong>: measured with a special nozzle and temperature.</li>
+          <li><strong>Count of features</strong>: more sensors do not mean fewer failures.</li>
+          <li><strong>Screen size</strong> and apps: nice, not decisive.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout trick"><span class="callout-title">Judge by the finished part</span>
+      Ask for or find <em>print time and a photo</em> of the same model on the machines you consider, printed with default settings. A 40-minute spec-sheet claim that becomes 2 hours for a decent part tells you more than the headline speed. Independent reviewers who time standard test models are the best source.
+    </div>
+  </div>
+
+  <h3>Speed claims versus real throughput</h3>
+  <p>A printer rated at 500 mm/s does not finish parts five times faster than one rated at 100 mm/s. Time is lost in acceleration and deceleration around corners, in heating, in levelling and calibration, in colour changes and purging, and in the slower speeds needed for outer walls and overhangs. Throughput also depends on the <em>slicer profile</em>; a conservative profile will not reveal the machine's potential.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 330" role="img" aria-label="Stacked bar chart of where time goes during a print for three example machine classes: slow bedslinger, fast CoreXY and multi-colour machine. Segments: pre-print preparation, moving and acceleration limits, printing at set speed, and colour changes and purging.">
+      <text class="t-b" x="20" y="26">Where print time goes (illustrative, same 1 h of motion)</text>
+      <text class="t-sm" x="20" y="76">Slow bedslinger</text>
+      <rect class="f-gray" x="190" y="58" width="50" height="28"/><rect class="f-orange" x="240" y="58" width="90" height="28"/><rect class="f-blue" x="330" y="58" width="400" height="28"/>
+      <text class="t-sm" x="20" y="136">Fast CoreXY</text>
+      <rect class="f-gray" x="190" y="118" width="40" height="28"/><rect class="f-orange" x="230" y="118" width="90" height="28"/><rect class="f-blue" x="320" y="118" width="160" height="28"/>
+      <text class="t-sm" x="20" y="196">Same CoreXY, 4 colours</text>
+      <rect class="f-gray" x="190" y="178" width="40" height="28"/><rect class="f-orange" x="230" y="178" width="90" height="28"/><rect class="f-blue" x="320" y="178" width="160" height="28"/><rect class="f-purple" x="480" y="178" width="210" height="28"/>
+      <rect class="f-gray" x="190" y="250" width="14" height="14"/><text class="t-xs" x="210" y="262">Heating, levelling, calibration</text>
+      <rect class="f-orange" x="400" y="250" width="14" height="14"/><text class="t-xs" x="420" y="262">Corners, acceleration, retractions</text>
+      <rect class="f-blue" x="190" y="276" width="14" height="14"/><text class="t-xs" x="210" y="288">Cruising at print speed</text>
+      <rect class="f-purple" x="400" y="276" width="14" height="14"/><text class="t-xs" x="420" y="288">Colour changes and purging</text>
+      <text class="t-xs" x="20" y="320">Schematic only: bar lengths show relative proportions and are not measurements of any machine.</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> A faster machine shortens the blue segment, but fixed overheads and colour changes remain. Multi-colour printing can erase the speed advantage entirely.</figcaption>
+  </figure>
+
+  <h2 id="ecosystem">🌐 Ecosystem, support and openness</h2>
+  <p>A printer is a long relationship with a company or a community. These questions often matter more than a tenth of a millimetre of accuracy.</p>
+  <ul>
+    <li><strong>Closed ecosystems</strong> integrate the printer, slicer, filament tags and cloud app. They tend to give excellent out-of-the-box results and little to tweak. You depend on the maker for updates, parts and policy changes.</li>
+    <li><strong>Open ecosystems</strong> use standard firmware (Marlin, Klipper, RepRapFirmware), standard parts and any slicer. You can repair and modify nearly everything, but you assemble the experience yourself.</li>
+    <li><strong>Hybrids</strong> offer some openness (local network mode, G-code export, third-party slicer profiles) around a polished core. Check what is truly possible before you buy.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 300" role="img" aria-label="Spectrum from closed to open ecosystem. Left, closed and integrated: easy start, limited tuning. Middle, hybrid. Right, open: full control, more effort. Marker triangles show example trade-offs of ease of use, repairability and customisation.">
+      <defs><linearGradient id="eco" x1="0" x2="1"><stop offset="0" stop-color="#4d8fe0"/><stop offset="1" stop-color="#58b368"/></linearGradient></defs>
+      <rect x="60" y="60" width="740" height="26" rx="13" style="fill:url(#eco);fill-opacity:.55"/>
+      <text class="t-sm t-b" x="60" y="50">Closed / integrated</text><text class="t-sm t-b" x="800" y="50" style="text-anchor:end">Open / DIY</text><text class="t-sm t-b t-c" x="430" y="50" style="text-anchor:middle">Hybrid</text>
+      <text class="t-sm" x="60" y="120">Ease of start</text><rect class="f-blue" x="190" y="106" width="560" height="14" style="fill-opacity:.2"/><rect class="f-blue" x="190" y="106" width="500" height="14"/>
+      <text class="t-xs" x="760" y="118">high at left</text>
+      <text class="t-sm" x="60" y="160">Repairability</text><rect class="f-green" x="190" y="146" width="560" height="14" style="fill-opacity:.2"/><rect class="f-green" x="190" y="146" width="460" height="14" transform="translate(100 0)" style="fill-opacity:1"/>
+      <text class="t-xs" x="760" y="158">high at right</text>
+      <text class="t-sm" x="60" y="200">Customisation</text><rect class="f-orange" x="190" y="186" width="560" height="14" style="fill-opacity:.2"/><rect class="f-orange" x="410" y="186" width="340" height="14"/>
+      <text class="t-xs" x="760" y="198">high at right</text>
+      <text class="t-sm" x="60" y="240">Dependence on maker</text><rect class="f-red" x="190" y="226" width="560" height="14" style="fill-opacity:.2"/><rect class="f-red" x="190" y="226" width="440" height="14"/>
+      <text class="t-xs" x="760" y="238">high at left</text>
+      <text class="t-xs" x="60" y="280">Illustrative tendencies, not guarantees: individual machines break the pattern.</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> No position on the spectrum is best. Choose the one that matches how much you want to fix and learn versus how much you want to simply print.</figcaption>
+  </figure>
+
+  <h3>Support, warranty and community</h3>
+  <p>Look at the length and terms of the warranty, whether the company sells spare parts (hotends, belts, boards) at reasonable prices, how fast support answers, and whether software updates continue for several years. A large active community (forums, wikis, video tutorials) is a free support desk and a sign that models and profiles will keep appearing. Be sceptical of pre-order promises of features that do not yet exist.</p>
+
+  <h3>Maintenance and consumables</h3>
+  <p>Every printer needs regular care: cleaning the nozzle and bed, lubricating rails or rods, checking belts, replacing wear parts like nozzles, PTFE tubes, build plates and fans. Ask what maintenance the machine expects and whether the manufacturer publishes a schedule. Consumables extend beyond filament: spare nozzles, build plates, glue stick or cleaning solvent, filament dryers, purge waste on multi-colour machines, and replacement filters for enclosed printers.</p>
+
+  <h2 id="tco">💰 Total cost of ownership</h2>
+  <p>The sticker price is the start of the spending. Over a year, filament, spare parts, a dryer, tools and your electricity add up, and so does the value of your time. The table gives a rough structure; fill in your own numbers.</p>
+
+  <div class="table-wrap">
+  <table class="data compact">
+    <thead><tr><th>Cost item</th><th>Entry bedslinger</th><th>Enclosed CoreXY</th><th>Multi-material</th><th>Resin</th></tr></thead>
+    <tbody>
+      <tr><td>Purchase</td><td>Low</td><td>Mid</td><td>Mid to high</td><td>Low to mid</td></tr>
+      <tr><td>Filament or resin per year</td><td>Moderate</td><td>Moderate</td><td>Higher (purge waste)</td><td>Moderate, resin costs more per kg</td></tr>
+      <tr><td>Wear parts (nozzles, plates, FEP, screens)</td><td>Low</td><td>Low to moderate</td><td>Moderate</td><td>Moderate (vats, films)</td></tr>
+      <tr><td>Upgrades and tuning parts</td><td>Often significant</td><td>Small</td><td>Small</td><td>Small</td></tr>
+      <tr><td>Chemicals and consumables</td><td>None</td><td>Filters</td><td>Filters</td><td>IPA, gloves, wipes, filters</td></tr>
+      <tr><td>Extra equipment</td><td>Tools, dryer</td><td>Tools, dryer</td><td>Tools, dryer</td><td>Wash and cure station</td></tr>
+      <tr><td>Electricity</td><td>Low</td><td>Low to moderate (heated chamber)</td><td>Moderate</td><td>Low</td></tr>
+      <tr><td>Your time on tuning</td><td><span class="chip orange">more</span></td><td><span class="chip green">less</span></td><td><span class="chip yellow">some</span></td><td><span class="chip orange">more</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 400" role="img" aria-label="Stacked bar chart of an illustrative first-year budget in relative units for four printer types: entry bedslinger, enclosed CoreXY, multi-material and resin. Each bar is split into printer, filament or resin, accessories and tools, and upgrades or repairs.">
+      <text class="t-b" x="20" y="26">First-year budget, illustrative relative units</text>
+      <path class="d-ink" d="M200 50 V300 H820" style="fill:none"/>
+      <path class="d-grid" d="M200 100 H820 M200 150 H820 M200 200 H820 M200 250 H820"/>
+      <g>
+        <rect class="f-blue" x="230" y="190" width="100" height="110"/><rect class="f-green" x="230" y="140" width="100" height="50"/><rect class="f-orange" x="230" y="104" width="100" height="36"/><rect class="f-red" x="230" y="84" width="100" height="20"/>
+        <text class="t-sm t-c" x="280" y="322" style="text-anchor:middle">Entry</text><text class="t-sm t-c" x="280" y="338" style="text-anchor:middle">bedslinger</text>
+        <rect class="f-blue" x="380" y="120" width="100" height="180"/><rect class="f-green" x="380" y="70" width="100" height="50"/><rect class="f-orange" x="380" y="40" width="100" height="30"/><rect class="f-red" x="380" y="34" width="100" height="6"/>
+        <text class="t-sm t-c" x="430" y="322" style="text-anchor:middle">Enclosed</text><text class="t-sm t-c" x="430" y="338" style="text-anchor:middle">CoreXY</text>
+      </g>
+      <g>
+        <rect class="f-blue" x="530" y="90" width="100" height="210"/><rect class="f-green" x="530" y="40" width="100" height="50"/>
+        <text class="t-sm t-c" x="580" y="322" style="text-anchor:middle">Multi-material</text><text class="t-sm t-c" x="580" y="338" style="text-anchor:middle">system</text>
+        <rect class="f-blue" x="680" y="200" width="100" height="100"/><rect class="f-green" x="680" y="150" width="100" height="50"/><rect class="f-orange" x="680" y="90" width="100" height="60"/><rect class="f-red" x="680" y="80" width="100" height="10"/>
+        <text class="t-sm t-c" x="730" y="322" style="text-anchor:middle">Resin +</text><text class="t-sm t-c" x="730" y="338" style="text-anchor:middle">wash/cure</text>
+      </g>
+      <text class="t-xs" x="20" y="64">Relative units</text>
+      <rect class="f-blue" x="200" y="368" width="12" height="12"/><text class="t-xs" x="218" y="378">Printer</text>
+      <rect class="f-green" x="290" y="368" width="12" height="12"/><text class="t-xs" x="308" y="378">Filament / resin</text>
+      <rect class="f-orange" x="420" y="368" width="12" height="12"/><text class="t-xs" x="438" y="378">Tools, dryer, accessories</text>
+      <rect class="f-red" x="610" y="368" width="12" height="12"/><text class="t-xs" x="628" y="378">Repairs, upgrades</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> Illustrative only: the multi-material bar omits the accessories segments to keep the figure simple, and real amounts depend on how much you print. The pattern to notice is that consumables and extras are often 30–50% of first-year spend.</figcaption>
+  </figure>
+
+  <div class="callout tip"><span class="callout-title">Budget rule of thumb</span>
+    Reserve about 15–25% of the printer price for the first-month essentials: a few spools of filament, a spare nozzle or build plate, a deburring set, calipers and storage for dry filament. Buying a printer with no money left for consumables is a common trap.
+  </div>
+
+  <h2 id="used">♻️ Used printers, kits and refurbished machines</h2>
+  <div class="grid cols-3">
+    <div class="card accent-green"><h3>Used printers</h3><p>Can be a bargain. Ask for print samples, the number of hours or kilograms printed, any replaced parts, and test it under power. Check the hotend, the bed flatness, loose belts and cable wear. Avoid sellers who will not let you see it print.</p></div>
+    <div class="card accent-blue"><h3>Kits</h3><p>Partial assembly saves money and teaches you how the machine works. Expect hours of building and some tuning afterwards. Not ideal if you need parts quickly or dislike fiddling.</p></div>
+    <div class="card accent-orange"><h3>Refurbished</h3><p>Often come with a limited warranty from the manufacturer or reseller. Compare against new during sales; the saving may be small once warranty is considered.</p></div>
+  </div>
+
+  <h2 id="matrix">📊 Comparison matrix of printer types</h2>
+  <p>A summary across the main criteria. Scores are broad generalisations for the <em>type</em>, not for any particular product; individual machines can differ a lot.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 380" role="img" aria-label="Heat-map style matrix rating six printer types on ease of use, speed, material range, detail, build volume and low price. Darker green means better.">
+      <g class="t-sm">
+        <text class="t-b" x="20" y="34">Type</text>
+        <text class="t-b t-c" x="270" y="34" style="text-anchor:middle">Ease</text>
+        <text class="t-b t-c" x="350" y="34" style="text-anchor:middle">Speed</text>
+        <text class="t-b t-c" x="430" y="34" style="text-anchor:middle">Materials</text>
+        <text class="t-b t-c" x="510" y="34" style="text-anchor:middle">Detail</text>
+        <text class="t-b t-c" x="590" y="34" style="text-anchor:middle">Volume</text>
+        <text class="t-b t-c" x="670" y="34" style="text-anchor:middle">Low price</text>
+        <text class="t-b t-c" x="760" y="34" style="text-anchor:middle">Low mess</text>
+      </g>
+      <g class="t-sm">
+        <text x="20" y="72">Entry bedslinger</text>
+        <rect x="235" y="48" width="70" height="36" style="fill:var(--green);fill-opacity:.4;stroke:var(--ink)"/><rect x="315" y="48" width="70" height="36" style="fill:var(--yellow);fill-opacity:.4;stroke:var(--ink)"/><rect x="395" y="48" width="70" height="36" style="fill:var(--yellow);fill-opacity:.4;stroke:var(--ink)"/><rect x="475" y="48" width="70" height="36" style="fill:var(--yellow);fill-opacity:.4;stroke:var(--ink)"/><rect x="555" y="48" width="70" height="36" style="fill:var(--yellow);fill-opacity:.4;stroke:var(--ink)"/><rect x="635" y="48" width="70" height="36" style="fill:var(--green);fill-opacity:.8;stroke:var(--ink)"/><rect x="725" y="48" width="70" height="36" style="fill:var(--green);fill-opacity:.8;stroke:var(--ink)"/>
+        <text x="20" y="122">Enclosed CoreXY</text>
+        <rect x="235" y="98" width="70" height="36" style="fill:var(--green);fill-opacity:.8;stroke:var(--ink)"/><rect x="315" y="98" width="70" height="36" style="fill:var(--green);fill-opacity:.8;stroke:var(--ink)"/><rect x="395" y="98" width="70" height="36" style="fill:var(--green);fill-opacity:.8;stroke:var(--ink)"/><rect x="475" y="98" width="70" height="36" style="fill:var(--green);fill-opacity:.4;stroke:var(--ink)"/><rect x="555" y="98" width="70" height="36" style="fill:var(--yellow);fill-opacity:.4;stroke:var(--ink)"/><rect x="635" y="98" width="70" height="36" style="fill:var(--yellow);fill-opacity:.4;stroke:var(--ink)"/><rect x="725" y="98" width="70" height="36" style="fill:var(--green);fill-opacity:.8;stroke:var(--ink)"/>
+        <text x="20" y="172">Multi-material</text>
+        <rect x="235" y="148" width="70" height="36" style="fill:var(--green);fill-opacity:.4;stroke:var(--ink)"/><rect x="315" y="148" width="70" height="36" style="fill:var(--yellow);fill-opacity:.4;stroke:var(--ink)"/><rect x="395" y="148" width="70" height="36" style="fill:var(--green);fill-opacity:.8;stroke:var(--ink)"/><rect x="475" y="148" width="70" height="36" style="fill:var(--green);fill-opacity:.4;stroke:var(--ink)"/><rect x="555" y="148" width="70" height="36" style="fill:var(--yellow);fill-opacity:.4;stroke:var(--ink)"/><rect x="635" y="148" width="70" height="36" style="fill:var(--orange);fill-opacity:.4;stroke:var(--ink)"/><rect x="725" y="148" width="70" height="36" style="fill:var(--green);fill-opacity:.4;stroke:var(--ink)"/>
+        <text x="20" y="222">Large format</text>
+        <rect x="235" y="198" width="70" height="36" style="fill:var(--yellow);fill-opacity:.4;stroke:var(--ink)"/><rect x="315" y="198" width="70" height="36" style="fill:var(--orange);fill-opacity:.4;stroke:var(--ink)"/><rect x="395" y="198" width="70" height="36" style="fill:var(--green);fill-opacity:.4;stroke:var(--ink)"/><rect x="475" y="198" width="70" height="36" style="fill:var(--yellow);fill-opacity:.4;stroke:var(--ink)"/><rect x="555" y="198" width="70" height="36" style="fill:var(--green);fill-opacity:.8;stroke:var(--ink)"/><rect x="635" y="198" width="70" height="36" style="fill:var(--red);fill-opacity:.4;stroke:var(--ink)"/><rect x="725" y="198" width="70" height="36" style="fill:var(--green);fill-opacity:.4;stroke:var(--ink)"/>
+        <text x="20" y="272">Resin (MSLA)</text>
+        <rect x="235" y="248" width="70" height="36" style="fill:var(--orange);fill-opacity:.4;stroke:var(--ink)"/><rect x="315" y="248" width="70" height="36" style="fill:var(--yellow);fill-opacity:.4;stroke:var(--ink)"/><rect x="395" y="248" width="70" height="36" style="fill:var(--orange);fill-opacity:.4;stroke:var(--ink)"/><rect x="475" y="248" width="70" height="36" style="fill:var(--green);fill-opacity:.8;stroke:var(--ink)"/><rect x="555" y="248" width="70" height="36" style="fill:var(--red);fill-opacity:.4;stroke:var(--ink)"/><rect x="635" y="248" width="70" height="36" style="fill:var(--green);fill-opacity:.4;stroke:var(--ink)"/><rect x="725" y="248" width="70" height="36" style="fill:var(--red);fill-opacity:.4;stroke:var(--ink)"/>
+        <text x="20" y="322">IDEX / toolchanger</text>
+        <rect x="235" y="298" width="70" height="36" style="fill:var(--orange);fill-opacity:.4;stroke:var(--ink)"/><rect x="315" y="298" width="70" height="36" style="fill:var(--green);fill-opacity:.4;stroke:var(--ink)"/><rect x="395" y="298" width="70" height="36" style="fill:var(--green);fill-opacity:.8;stroke:var(--ink)"/><rect x="475" y="298" width="70" height="36" style="fill:var(--green);fill-opacity:.4;stroke:var(--ink)"/><rect x="555" y="298" width="70" height="36" style="fill:var(--green);fill-opacity:.4;stroke:var(--ink)"/><rect x="635" y="298" width="70" height="36" style="fill:var(--red);fill-opacity:.4;stroke:var(--ink)"/><rect x="725" y="298" width="70" height="36" style="fill:var(--green);fill-opacity:.4;stroke:var(--ink)"/>
+      </g>
+      <rect x="235" y="352" width="14" height="14" style="fill:var(--green);fill-opacity:.8;stroke:var(--ink)"/><text class="t-xs" x="255" y="363">strong</text>
+      <rect x="320" y="352" width="14" height="14" style="fill:var(--green);fill-opacity:.4;stroke:var(--ink)"/><text class="t-xs" x="340" y="363">good</text>
+      <rect x="395" y="352" width="14" height="14" style="fill:var(--yellow);fill-opacity:.4;stroke:var(--ink)"/><text class="t-xs" x="415" y="363">average</text>
+      <rect x="490" y="352" width="14" height="14" style="fill:var(--orange);fill-opacity:.4;stroke:var(--ink)"/><text class="t-xs" x="510" y="363">weak</text>
+      <rect x="565" y="352" width="14" height="14" style="fill:var(--red);fill-opacity:.4;stroke:var(--ink)"/><text class="t-xs" x="585" y="363">poor</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> Typical strengths by type. Colour is the only cue here, so read the legend: green is strong, red is poor. For an exact comparison, look at specific models and independent reviews.</figcaption>
+  </figure>
+
+  <h2 id="multimaterial">🎨 Dual-nozzle and multi-material machines</h2>
+  <p>Multi-material printing comes in three broad flavours, and understanding them helps you ignore the marketing language.</p>
+  <ul>
+    <li><strong>Single nozzle plus a filament switcher</strong> (the common AMS-style hub). One nozzle prints every colour in turn; the old filament is retracted and a new one loaded, with the leftover melt purged. Simple and affordable, but purging wastes filament and time.</li>
+    <li><strong>Dual nozzle</strong> printers carry two nozzles on one head or on separate carriages. Each can be loaded with a different material, so switching means selecting the other nozzle rather than purging. This reduces waste and makes soluble or breakaway supports practical. The price is mechanical complexity, nozzle alignment and keeping the idle nozzle from oozing.</li>
+    <li><strong>Toolchangers</strong> pick up whole toolheads. Each head keeps its own filament and temperature, so colour changes cost seconds and almost no waste. They are flexible but expensive, and calibration is demanding.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 320" role="img" aria-label="Three schematics: a single nozzle fed by a four-way filament hub, a dual-nozzle head with two filament paths, and a toolchanger with several parked heads.">
+      <g>
+        <text class="t-sm t-b" x="20" y="24">Single nozzle + hub</text>
+        <rect class="f-red" x="30" y="40" width="20" height="24" rx="3"/><rect class="f-blue" x="56" y="40" width="20" height="24" rx="3"/><rect class="f-green" x="82" y="40" width="20" height="24" rx="3"/><rect class="f-yellow" x="108" y="40" width="20" height="24" rx="3"/>
+        <path class="d-ink" d="M40 64 V90 H98 M66 64 V90 M92 64 V90 M118 64 V90" style="fill:none"/>
+        <path class="d-ink" d="M98 90 V150" style="fill:none;stroke-width:3"/>
+        <rect class="d-hot" x="84" y="150" width="28" height="30"/>
+        <path class="d-plastic" d="M96 180 l4 10 l4 -10 Z"/>
+        <text class="t-xs" x="20" y="224">One path to one nozzle.</text><text class="t-xs" x="20" y="240">Switch = retract, load, purge.</text><text class="t-xs" x="20" y="256">Waste scales with changes.</text>
+      </g>
+      <g transform="translate(300,0)">
+        <text class="t-sm t-b" x="20" y="24">Dual nozzle</text>
+        <rect class="f-orange" x="30" y="40" width="20" height="24" rx="3"/><rect class="f-purple" x="140" y="40" width="20" height="24" rx="3"/>
+        <path class="d-ink" d="M40 64 V150 M150 64 V150" style="fill:none;stroke-width:3"/>
+        <rect class="d-hot" x="26" y="150" width="28" height="30"/><rect class="d-cool" x="136" y="150" width="28" height="30"/>
+        <rect class="d-metal" x="20" y="130" width="150" height="12" style="fill-opacity:.4"/>
+        <path class="d-ink arrow" d="M96 205 H20" style="fill:none"/>
+        <text class="t-xs" x="20" y="224">Two paths: pick a nozzle,</text><text class="t-xs" x="20" y="240">no purge for the swap.</text><text class="t-xs" x="20" y="256">Needs offset calibration.</text>
+      </g>
+      <g transform="translate(600,0)">
+        <text class="t-sm t-b" x="20" y="24">Toolchanger</text>
+        <rect class="d-metal" x="20" y="60" width="220" height="10"/>
+        <rect class="d-hot" x="40" y="100" width="28" height="34"/><rect class="d-cool" x="86" y="100" width="28" height="34"/><rect class="d-plastic" x="132" y="100" width="28" height="34"/><rect class="d-surface2" x="178" y="100" width="28" height="34"/>
+        <path class="d-ink" d="M54 70 V100 M100 70 V100" style="fill:none;stroke-dasharray:4 3"/>
+        <rect class="d-metal" x="86" y="70" width="28" height="10"/>
+        <text class="t-xs" x="20" y="164">Heads parked in a dock.</text><text class="t-xs" x="20" y="180">Carriage picks the next one.</text><text class="t-xs" x="20" y="224">Many materials, minimal waste,</text><text class="t-xs" x="20" y="240">more cost and calibration.</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 7.</b> Three ways to print with more than one material. Choose by how many colours you print, how much waste you can accept and how much calibration you tolerate.</figcaption>
+  </figure>
+
+  <div class="callout x2d"><span class="callout-title">Example: Bambu Lab X2D</span>
+    The Bambu Lab X2D is one example of a dual-nozzle enclosed CoreXY machine combined with an automatic filament system, and shows how these ideas fit together in a single product. This site has a dedicated section on it; start with the <a href="../x2d/overview.html">X2D overview</a>. The same buying questions above (what you print, which materials, how many colours, how much waste you accept) apply to it exactly as to any other printer.
+  </div>
+
+  <h2 id="accessories">🛒 Accessories shopping list, ranked by value</h2>
+  <p>After the printer, spend on the accessories that save the most time or prevent the most failures.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 380" role="img" aria-label="Ranked bar chart of accessories by value: filament dryer, spare nozzles and build plate, digital calipers, flush cutters and deburring tools, enclosure or filtration, spool storage, vibration feet, smart plug, camera.">
+      <text class="t-b" x="20" y="26">Accessories by value per money spent</text>
+      <g>
+        <text class="t-sm" x="300" y="60" style="text-anchor:end">1 · Filament dryer</text><rect class="f-green" x="310" y="44" width="420" height="22"/>
+        <text class="t-sm" x="300" y="92" style="text-anchor:end">2 · Spare nozzles, spare plate</text><rect class="f-green" x="310" y="76" width="380" height="22"/>
+        <text class="t-sm" x="300" y="124" style="text-anchor:end">3 · Calipers</text><rect class="f-green" x="310" y="108" width="340" height="22"/>
+        <text class="t-sm" x="300" y="156" style="text-anchor:end">4 · Cutters, deburring set</text><rect class="f-green" x="310" y="140" width="320" height="22"/>
+        <text class="t-sm" x="300" y="188" style="text-anchor:end">5 · Sealed spool storage</text><rect class="f-yellow" x="310" y="172" width="280" height="22"/>
+        <text class="t-sm" x="300" y="220" style="text-anchor:end">6 · Filament variety (PETG, TPU)</text><rect class="f-yellow" x="310" y="204" width="240" height="22"/>
+        <text class="t-sm" x="300" y="252" style="text-anchor:end">7 · Camera or monitoring</text><rect class="f-orange" x="310" y="236" width="200" height="22"/>
+        <text class="t-sm" x="300" y="284" style="text-anchor:end">8 · Filtration or enclosure</text><rect class="f-orange" x="310" y="268" width="170" height="22"/>
+        <text class="t-sm" x="300" y="316" style="text-anchor:end">9 · Vibration feet</text><rect class="f-red" x="310" y="300" width="130" height="22"/>
+      </g>
+      <text class="t-xs" x="20" y="360">Ranking is a judgement, not data. Needs differ: filtration moves up for ABS, ASA or resin.</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> Dryer and spares first, nice-to-haves later. The two cheapest items on the list (spare nozzle, cutters) prevent most Saturday-evening setbacks.</figcaption>
+  </figure>
+
+  <h2 id="upgrade">🔧 Upgrade path and resale</h2>
+  <p>Think about where you will be in a year. Printers with standard parts and open firmware can be improved step by step, such as a better hotend, a larger build plate or an input-shaper board. Closed machines usually improve through firmware and official add-ons. If your needs might outgrow the machine (larger parts, new materials), ask whether the platform can grow with you, or whether you would sell it and move on. Popular machines hold resale value better, which lowers the true cost of trying something new.</p>
+
+  <h2 id="buyers">👤 Three example buyers</h2>
+  <p>Abstract advice is easier to apply with concrete cases. These are invented but typical.</p>
+  <div class="grid cols-3">
+    <div class="card accent-blue"><h3>The curious beginner</h3><p>Wants to print toys, cable clips and the occasional replacement part, has a small desk, and does not want to read forum threads. Best fit: an enclosed or well-supported entry machine with automatic levelling and strong default profiles. Spend the savings on a dryer and a few spools. Avoid kits and large formats.</p></div>
+    <div class="card accent-green"><h3>The maker and tinkerer</h3><p>Enjoys modifying things, wants to learn firmware and mechanics, and has a tolerance for downtime. Best fit: an open, well-documented bedslinger or CoreXY kit with a large community. Budget time and spare parts. A second, reliable machine later is a common path.</p></div>
+    <div class="card accent-orange"><h3>The small-batch seller</h3><p>Prints many copies of a few designs and values uptime. Best fit: a fast enclosed machine with good sensors, possibly dual-head or IDEX for duplicate mode, and two of them rather than one big one so a failure does not stop production. Check licence terms of the models you sell and local consumer-product rules.</p></div>
+  </div>
+
+  <h2 id="reviews">🔍 How to read reviews and sales pages</h2>
+  <ol class="steps">
+    <li><strong>Look for time-stamped reviews.</strong> Firmware changes quickly; a review a year old may describe a different product.</li>
+    <li><strong>Prefer long-term reports</strong> to unboxing videos. Failure modes show up after hundreds of hours: loose belts, clogged hotends, worn plates.</li>
+    <li><strong>Check who paid for the unit.</strong> Sponsored or supplied review units are not automatically wrong, but treat uncritical praise with caution and look for a negative section.</li>
+    <li><strong>Read the complaints on forums</strong> for the specific model. Repeated reports of the same problem matter; one-off complaints do not.</li>
+    <li><strong>Compare like with like.</strong> A reviewer's default profile on one machine and a tuned profile on another is not a fair comparison.</li>
+    <li><strong>Watch for vague quality claims.</strong> Phrases such as "industrial grade" or "hyper speed" mean little without numbers and test conditions.</li>
+  </ol>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 300" role="img" aria-label="Funnel diagram from the whole market down to a shortlist: all printers, filtered by build volume and materials, then by budget including consumables, then by ecosystem and support, ending with two or three candidates and a final check of real print times and warranty.">
+      <path class="d-surface2" d="M40 30 H820 L720 90 H140 Z"/><text class="t-sm t-b t-c" x="430" y="66" style="text-anchor:middle">Whole market: hundreds of models</text>
+      <path class="d-surface2" d="M140 100 H720 L650 160 H210 Z"/><text class="t-sm t-b t-c" x="430" y="136" style="text-anchor:middle">Filter 1 · volume, materials, category</text>
+      <path class="d-surface2" d="M210 170 H650 L590 230 H270 Z"/><text class="t-sm t-b t-c" x="430" y="206" style="text-anchor:middle">Filter 2 · total first-year budget</text>
+      <path class="f-green" d="M270 240 H590 L540 290 H320 Z" style="fill-opacity:.3"/><text class="t-sm t-b t-c" x="430" y="270" style="text-anchor:middle">Filter 3 · ecosystem, support → 2–3</text>
+      <text class="t-xs" x="740" y="130">Be strict here:</text><text class="t-xs" x="740" y="146">drop what does not fit</text>
+      <text class="t-xs" x="640" y="270">Then compare real print</text><text class="t-xs" x="640" y="286">times, warranty, spares</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> Narrow the field in stages. Hard filters first (volume and materials), money second, softer factors last.</figcaption>
+  </figure>
+
+  <h2 id="mistakes">⚠️ Common buying mistakes</h2>
+  <ul>
+    <li><strong>Buying for the biggest imaginable part.</strong> Large build volume costs space, time and money. Splitting a part usually works.</li>
+    <li><strong>Chasing speed.</strong> A faster printer that needs constant tuning prints slower in practice than a slower reliable one.</li>
+    <li><strong>Forgetting the room.</strong> Noise, smell and floor vibration decide whether you keep using the machine. See <a href="safety-and-workspace.html">Safety &amp; workspace</a>.</li>
+    <li><strong>Ignoring materials.</strong> If you need ABS, ASA or nylon, a machine without an enclosure and a suitable nozzle will frustrate you.</li>
+    <li><strong>Counting only the printer.</strong> Filament, dryers and tools are part of the purchase.</li>
+    <li><strong>Buying on launch hype.</strong> New models can have early firmware bugs; waiting a few months often costs nothing and avoids the worst.</li>
+    <li><strong>Overbuying multi-material.</strong> If you print one colour most of the time, a simple machine plus painting may serve better than a complex colour system.</li>
+  </ul>
+
+  <h2 id="questions">❓ Questions to ask before paying</h2>
+  <details class="accordion"><summary>New machine</summary>
+    <ul>
+      <li>What is the warranty length and what does it exclude (wear parts, damage from third-party filament)?</li>
+      <li>Where do I buy spare nozzles, hotends, belts and build plates, and what do they cost?</li>
+      <li>Can I use third-party filament and slicers? Does the printer work without a cloud account?</li>
+      <li>How long will the manufacturer provide firmware updates?</li>
+    </ul>
+  </details>
+  <details class="accordion"><summary>Used machine</summary>
+    <ul>
+      <li>Why are you selling, and how many hours or kilograms has it printed?</li>
+      <li>Which parts have you replaced or modified? Can I see it print a first layer?</li>
+      <li>Are there signs of heat damage around the hotend connector or bed cables?</li>
+      <li>Do you have the original profile, firmware version and receipt?</li>
+    </ul>
+  </details>
+  <details class="accordion"><summary>Multi-material or large machine</summary>
+    <ul>
+      <li>How much filament is wasted for a typical multi-colour print?</li>
+      <li>What happens when a spool runs out or tangles during a long print?</li>
+      <li>How much floor space and power does it need, including the filament system?</li>
+    </ul>
+  </details>
+
+  <h2 id="checklist">📝 Before you buy: the checklist</h2>
+  <ul class="checklist">
+    <li>I wrote down the largest part I want to make and the materials I need.</li>
+    <li>I picked a category from the decision tree and a shortlist of 2–3 machines.</li>
+    <li>I compared real print times and sample photos, not just spec-sheet speeds.</li>
+    <li>I checked warranty length, spare parts, software support and community size.</li>
+    <li>I budgeted 15–25% extra for consumables and tools.</li>
+    <li>I have a stable bench, an outlet and a ventilated spot (see <a href="safety-and-workspace.html">Safety &amp; workspace</a>).</li>
+    <li>I know what maintenance the machine needs and who can help me when it breaks.</li>
+  </ul>
+
+  <h2 id="takeaways">✅ Key takeaways</h2>
+  <div class="callout fact"><span class="callout-title">Remember these</span>
+    <ul>
+      <li>Define your parts, materials and colours first; the category follows.</li>
+      <li>For most people who want reliable functional prints, an enclosed CoreXY machine is the sweet spot; bedslingers suit tinkerers and tight budgets; resin suits small, fine parts.</li>
+      <li>Ignore peak speed numbers; compare real print times on the same model.</li>
+      <li>Ecosystem, support and spare parts matter as much as hardware.</li>
+      <li>Budget for the whole first year, not only the printer.</li>
+      <li>Multi-material comes in hub, dual-nozzle and toolchanger forms, with different waste and complexity trade-offs.</li>
+    </ul>
+  </div>
+
+  <p>Next, learn how the machine works in <a href="printer-anatomy.html">Printer anatomy</a>, compare <a href="printing-processes.html">printing processes</a>, or jump straight to your <a href="first-print.html">first print</a>.</p>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Supports, bridges &amp; overhangs · 3D Printing Compendium</title>
+  <meta name="description" content="How overhangs and bridges work in FDM printing, when you need supports, which support type to choose, interface and Z-gap settings, removal tricks, and how to design parts that need none.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="techniques/supports-bridges-overhangs.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 4 · Techniques</div>
+    <h1>Supports, bridges &amp; overhangs</h1>
+    <p class="lead">A printer cannot print in thin air. Learn exactly how far plastic can reach beyond the layer below, how to bridge gaps, when to add supports, which kind to choose, and how to design parts so you hardly need them.</p>
+    <div class="meta"><span class="badge beginner">Beginner → Intermediate</span><span class="badge time">⏱ 35 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <p>The geometry behind the 45° rule, how bridging really works and how to tune it, the support styles in modern slicers (normal, tree, snug, interface layers, soluble), Z-gap and interface settings, removal tools, paint-on supports, design tricks that eliminate supports, and how much supports cost in time and material.</p></div>
+
+  <h2 id="why">Why supports exist</h2>
+  <p>FDM printing builds objects one layer at a time. Each new line of molten plastic needs something underneath it to land on. When there is solid material or cooled plastic below, everything works. When there is empty space below, the soft plastic droops, strings or falls. Three situations create empty space:</p>
+  <ul>
+    <li><strong>Overhangs:</strong> surfaces that lean outward as you go up. A small lean is fine; a large lean is not.</li>
+    <li><strong>Bridges:</strong> horizontal spans between two supported points, such as the top of a doorway.</li>
+    <li><strong>Islands:</strong> parts of a layer with nothing at all below, such as the top of a floating bar. These always need support.</li>
+  </ul>
+  <p><strong>Supports</strong> are temporary scaffolds printed underneath these features and removed afterwards. They cost time, plastic and surface quality, so the best strategy is the layered one: <em>first design and orient to avoid them, then tune the printer so it handles small overhangs and bridges without them, and only then add supports where needed.</em></p>
+
+  <h2 id="overhang">Overhang physics</h2>
+  <h3>🔰 Angle versus layer offset</h3>
+  <p>Imagine a wall that leans outward. Each layer sits a little farther out than the one below. The amount of shift per layer depends on the lean angle and the layer height. Overhang angle in slicers is usually measured <strong>from vertical</strong>: 0° is a straight wall, 45° leans halfway, and 90° is a flat horizontal ceiling.</p>
+  <p>The horizontal shift per layer is <strong>offset = layer height × tan(θ)</strong>. For 0.2 mm layers: at 30° the shift is 0.12 mm, at 45° it is 0.20 mm, at 60° it is 0.35 mm, and at 70° it is 0.55 mm. A line is about 0.4–0.45 mm wide, so the part of each new line that is actually supported by the layer below is <strong>(width − offset) / width</strong>. Once the offset exceeds the line width, nothing supports the new line from below at all.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 260" role="img" aria-label="Four stacks of four layers each leaning outward at 30, 45, 60 and 70 degrees from vertical, showing decreasing overlap between layers">
+      <!-- panel 1: 30 deg dx=8 -->
+      <text class="t t-c t-b" x="105" y="22">30° from vertical</text>
+      <rect class="d-metal" x="20" y="170" width="70" height="14"/>
+      <rect class="d-plastic" x="30" y="156" width="32" height="14"/>
+      <rect class="d-plastic" x="38" y="142" width="32" height="14"/>
+      <rect class="d-plastic" x="46" y="128" width="32" height="14"/>
+      <rect class="d-plastic" x="54" y="114" width="32" height="14"/>
+      <path class="d-dash" d="M30 170 L58 114"/>
+      <text class="t-sm t-c" x="105" y="206">≈ 75 % supported</text>
+      <text class="t-sm t-c c-green" x="105" y="224">Prints cleanly</text>
+      <!-- panel 2: 45 deg dx=14 -->
+      <text class="t t-c t-b" x="295" y="22">45° from vertical</text>
+      <rect class="d-metal" x="210" y="170" width="70" height="14"/>
+      <rect class="d-plastic" x="220" y="156" width="32" height="14"/>
+      <rect class="d-plastic" x="234" y="142" width="32" height="14"/>
+      <rect class="d-plastic" x="248" y="128" width="32" height="14"/>
+      <rect class="d-plastic" x="262" y="114" width="32" height="14"/>
+      <path class="d-dash" d="M220 170 L262 114"/>
+      <text class="t-sm t-c" x="295" y="206">≈ 55 % supported</text>
+      <text class="t-sm t-c c-green" x="295" y="224">Classic safe limit</text>
+      <!-- panel 3: 60 deg dx=24 -->
+      <text class="t t-c t-b" x="485" y="22">60° from vertical</text>
+      <rect class="d-metal" x="400" y="170" width="60" height="14"/>
+      <rect class="d-plastic" x="410" y="156" width="32" height="14"/>
+      <rect class="d-plastic" x="434" y="142" width="32" height="14"/>
+      <rect class="d-plastic" x="458" y="128" width="32" height="14"/>
+      <rect class="d-plastic" x="482" y="114" width="32" height="14"/>
+      <path class="d-dash" d="M410 170 L482 114"/>
+      <text class="t-sm t-c" x="485" y="206">≈ 25 % supported</text>
+      <text class="t-sm t-c c-orange" x="485" y="224">Droopy, needs cooling</text>
+      <!-- panel 4: 70 deg dx=39 -->
+      <text class="t t-c t-b" x="675" y="22">70° from vertical</text>
+      <rect class="d-metal" x="590" y="170" width="60" height="14"/>
+      <rect class="d-plastic" x="600" y="156" width="32" height="14"/>
+      <rect class="d-plastic" x="639" y="142" width="32" height="14"/>
+      <rect class="d-plastic" x="678" y="128" width="32" height="14"/>
+      <rect class="d-plastic" x="717" y="114" width="32" height="14"/>
+      <path class="d-dash" d="M600 170 L717 114"/>
+      <text class="t-sm t-c" x="675" y="206">0 % supported</text>
+      <text class="t-sm t-c c-red" x="675" y="224">Needs support</text>
+      <text class="t-sm t-c" x="390" y="252">Drawn with 0.2 mm layers (14 px) and 0.45 mm lines (32 px). Dashed line = outer edge of the leaning wall.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> As the lean angle grows, each new line overlaps less with the layer below. Beyond about 60° the new line is mostly hanging in air and relies on the plastic freezing quickly before it can sag.</figcaption>
+  </figure>
+
+  <div class="callout fact"><span class="callout-title">Why it sags</span>
+    <p>Fresh extrudate is a soft viscous strand at 200+ °C. Gravity pulls it down while the cooling fan and surrounding air freeze it. If the strand reaches the temperature where it stops flowing before it has sagged far, the overhang survives. That is why <strong>strong part cooling, slower speed and a cooler nozzle</strong> improve overhangs, and why thin layers (small offset per layer) overhang better than thick ones for the same angle.</p></div>
+
+  <h3>The 45° rule and beyond</h3>
+  <p>The old rule says "anything up to 45° prints without support". It is a reasonable rule of thumb for a lightly tuned printer, but there is no sharp cut-off. Surface quality gets progressively worse as angle increases.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 190" role="img" aria-label="Scale from 0 to 90 degrees from vertical with colored zones: excellent up to 30, good to 45, acceptable with tuning to 60, support needed beyond 60">
+      <rect class="s-green" x="40" y="50" width="173" height="40" opacity="0.8"/>
+      <rect class="s-yellow" x="213" y="50" width="86" height="40" opacity="0.85"/>
+      <rect class="s-orange" x="299" y="50" width="130" height="40" opacity="0.85"/>
+      <rect class="s-red" x="429" y="50" width="311" height="40" opacity="0.8"/>
+      <path class="d-ink" d="M40 90 V104 M213 90 V104 M299 90 V104 M429 90 V104 M740 90 V104"/>
+      <text class="t t-c" x="40" y="124">0°</text>
+      <text class="t t-c" x="213" y="124">30°</text>
+      <text class="t t-c" x="299" y="124">45°</text>
+      <text class="t t-c" x="429" y="124">60°</text>
+      <text class="t t-c" x="740" y="124">90°</text>
+      <text class="t-sm t-c" x="126" y="75">Excellent</text>
+      <text class="t-sm t-c" x="256" y="75">Good</text>
+      <text class="t-sm t-c" x="364" y="75">Tunable</text>
+      <text class="t-sm t-c" x="584" y="75">Support or bridge</text>
+      <text class="t-sm t-m" x="40" y="30">Straight wall</text>
+      <text class="t-sm t-m t-r" x="740" y="30">Flat ceiling</text>
+      <text class="t-sm t-c" x="390" y="160">Typical 0.4 mm nozzle, 0.2 mm layers, PLA with good cooling. Angles are measured from vertical.</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> A practical overhang scale. With a well-tuned printer, "Tunable" angles up to about 55–60° can be clean; flat ceilings are bridges, a different problem.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact"><thead><tr><th>Angle from vertical</th><th>What happens</th><th>What to do</th></tr></thead><tbody>
+    <tr><td>0–30°</td><td>Almost indistinguishable from a vertical wall</td><td>Nothing</td></tr>
+    <tr><td>30–45°</td><td>Slightly rougher underside; visible stair-stepping</td><td>Standard settings are fine; thinner layers look nicer</td></tr>
+    <tr><td>45–60°</td><td>Droop, curling edges, fuzzy underside</td><td>Max part-fan, slower overhang walls, test with an overhang ladder</td></tr>
+    <tr><td>60–80°</td><td>Strands hang; surface looks like noodles</td><td>Supports, or redesign as chamfer/bridge</td></tr>
+    <tr><td>80–90° (flat ceiling)</td><td>Bridge behavior</td><td>Bridge tuning (below) or supports</td></tr>
+  </tbody></table></div>
+
+  <h3>🔧 Making overhangs better without supports</h3>
+  <ul>
+    <li><strong>Cool hard.</strong> For PLA use 100 % fan after the first layers. For PETG and ABS you must balance layer adhesion and sag: use 40–70 % fan only on overhang and bridge regions if your slicer allows.</li>
+    <li><strong>Slow down for overhang walls.</strong> Many slicers can detect steep perimeters and cut speed to 10–40 mm/s there, and Bambu Studio and OrcaSlicer expose this as "slow down for overhang".</li>
+    <li><strong>Use thinner layers.</strong> The horizontal offset per layer is proportional to height, so 0.12 mm layers hold a steeper angle than 0.28 mm layers.</li>
+    <li><strong>Reduce nozzle temperature</strong> by 5–10 °C for the overhang test. A cooler strand freezes sooner.</li>
+    <li><strong>Print the outer wall last?</strong> Wall order matters: printing inner walls first lets the outer wall lean on a cooled backing. "Inner/outer/inner" or "inner then outer" is a common choice for overhang quality.</li>
+    <li><strong>Reduce flow slightly on overhangs.</strong> Less plastic means less to sag. Some slicers have an overhang flow ratio.</li>
+    <li><strong>Add an extra air-cooling duct.</strong> Printers with strong dual fans or a dedicated auxiliary fan have a big advantage; see <a href="speed-cooling-quality.html#cooling">speed, cooling &amp; quality</a>.</li>
+  </ul>
+
+  <h2 id="bridges">Bridging</h2>
+  <p>A <strong>bridge</strong> is a line of plastic that spans empty space between two supported points. Instead of being laid on something, it is stretched through the air like a rope. Good bridging relies on three ideas: keep the strand <strong>under tension</strong>, <strong>cool it instantly</strong> and give it <strong>solid anchors</strong> on both ends.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 300" role="img" aria-label="Side view of a good bridge between two pillars and a sagging bridge, plus a top view of bridge lines crossing the shortest span">
+      <text class="t t-c t-b" x="130" y="22">Good bridge</text>
+      <rect class="d-plastic" x="20" y="90" width="50" height="130"/>
+      <rect class="d-plastic" x="190" y="90" width="50" height="130"/>
+      <rect class="d-plastic" x="70" y="90" width="120" height="8"/>
+      <rect class="d-metal2" x="10" y="220" width="240" height="12"/>
+      <path class="d-mute arrow" d="M130 50 V84"/>
+      <text class="t-sm t-c" x="130" y="44">taut strand</text>
+      <text class="t-sm t-c" x="130" y="258">Short span, cool, slow, tight anchors</text>
+      <text class="t t-c t-b" x="400" y="22">Sagging bridge</text>
+      <rect class="d-plastic" x="290" y="90" width="50" height="130"/>
+      <rect class="d-plastic" x="460" y="90" width="50" height="130"/>
+      <path class="d-plastic" d="M340 90 Q400 150 460 90 V98 Q400 158 340 98 Z"/>
+      <rect class="d-metal2" x="280" y="220" width="240" height="12"/>
+      <path class="d-mute arrow" d="M400 188 V164"/>
+      <text class="t-sm t-c" x="400" y="204">sag</text>
+      <text class="t-sm t-c" x="400" y="258">Too long, too hot, too little fan</text>
+      <text class="t t-c t-b" x="650" y="22">Top view</text>
+      <rect class="d-plastic" x="560" y="40" width="40" height="150"/>
+      <rect class="d-plastic" x="700" y="40" width="40" height="150"/>
+      <path class="k-orange" d="M600 60 H700 M600 72 H700 M600 84 H700 M600 96 H700 M600 108 H700 M600 120 H700 M600 132 H700 M600 144 H700 M600 156 H700 M600 168 H700"/>
+      <path class="d-mute arrow-start arrow" d="M600 205 H700"/>
+      <text class="t-sm t-c" x="650" y="225">span</text>
+      <text class="t-sm t-c" x="650" y="258">Strands run anchor to anchor</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> A good bridge is a row of taut strands pulled straight between anchors. The slicer picks the direction that gives the shortest span and puts a separate bridge layer on top before the normal infill resumes.</figcaption>
+  </figure>
+
+  <h3>How bridging is set up in the slicer</h3>
+  <ol class="steps">
+    <li><strong>Detect</strong>The slicer finds areas of a layer that have no material directly below ("bridge" regions) and flags them.</li>
+    <li><strong>Choose direction</strong>Lines are aligned along the shortest path between anchors. You can often set a bridge angle manually.</li>
+    <li><strong>Print one or two bridge layers</strong>The first layer spans the gap with widely spaced, slightly thick lines at lower flow; the second bridges across the first at 90° to close the surface (some slicers add a "thick bridge" option).</li>
+    <li><strong>Apply special settings</strong>Speed, flow and fan for these lines are overridden by the bridge settings.</li>
+  </ol>
+
+  <div class="table-wrap"><table class="data"><thead><tr><th>Setting</th><th>Typical start</th><th>Effect</th></tr></thead><tbody>
+    <tr><td>Bridge speed</td><td>20–50 mm/s (some printers go faster)</td><td>Slower gives the plastic time to cool while stretched; too slow can sag. Find the middle with a bridge test.</td></tr>
+    <tr><td>Bridge flow ratio</td><td>0.8–1.0 (PLA) / 0.9–1.0 (PETG)</td><td>Thinner strands freeze faster and sag less. Too low causes gaps.</td></tr>
+    <tr><td>Bridge fan</td><td>100 % for PLA; 50–80 % PETG; 20–40 % ABS</td><td>Strong cooling is the strongest tool; material dependent.</td></tr>
+    <tr><td>Nozzle temperature for bridges</td><td>Same or 5 °C lower</td><td>Cooler = stiffer strand.</td></tr>
+    <tr><td>Bridge density / line spacing</td><td>Default or 100 %; thick bridges for larger spans</td><td>Closer strands make a more continuous surface.</td></tr>
+    <tr><td>Anchor length</td><td>At least 2–3 line widths on each side</td><td>Strands that are not anchored pull free.</td></tr>
+    <tr><td>Maximum bridge span</td><td>≈ 30–50 mm for PLA with good cooling; much less for ABS, PETG</td><td>Beyond that, add a support pillar.</td></tr>
+  </tbody></table></div>
+
+  <div class="callout tip"><span class="callout-title">Test, do not guess</span>
+    <p>Every filament bridges differently. Print a bridge test (see <a href="#tests">the test models</a>) with spans of 10, 20, 30, 40 and 50 mm, note the longest that stays flat, and save it with your filament profile. It takes 10 minutes and tells you which of your designs need supports before you slice them.</p></div>
+  <div class="callout warn"><span class="callout-title">Common mistake</span>
+    <p>Setting a very low bridge speed because "slow is better". Slow bridges give gravity more time to pull the strand down. Medium speed with maximum cooling usually beats very slow speed.</p></div>
+
+  <h3>🚀 Bridge geometry tricks</h3>
+  <ul>
+    <li><strong>Orient bridges across the short direction.</strong> A 20 × 60 mm rectangular opening should be bridged along its 20 mm dimension.</li>
+    <li><strong>Break up a large ceiling</strong> with a rib or a central pillar and bridge in two shorter spans.</li>
+    <li><strong>Make an arched or pitched ceiling</strong> (a 45° roof) for large cavities: the overhang then becomes a series of 45° layers, no bridge needed.</li>
+    <li><strong>Add a sacrificial layer</strong> to cover a hole ("sacrificial bridge"), described in <a href="#sacrificial">sacrificial layers for holes</a>.</li>
+    <li><strong>Avoid bridging directly over infill</strong> in sparse regions: sparse infill creates unsupported gaps, so keep top-skin or enough infill density under flat ceilings.</li>
+  </ul>
+
+  <h2 id="types">Support types</h2>
+  <p>Modern slicers offer several support styles. They differ in <em>how much plastic they use</em>, <em>how well they hold</em> and <em>how much they scar the part</em>.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 330" role="img" aria-label="Three cross-sections of a mushroom-shaped part with wide cap: normal grid support filling the space below the cap, tree support with thin branches, and snug support hugging the cap closely">
+      <defs>
+        <pattern id="sp-hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path class="d-mute" d="M0 0 V8"/></pattern>
+      </defs>
+      <!-- Normal -->
+      <text class="t t-c t-b" x="125" y="22">Normal (grid) support</text>
+      <polygon class="d-plastic" points="40,70 210,70 210,110 145,130 105,130 40,110"/>
+      <rect class="d-plastic" x="105" y="130" width="40" height="100"/>
+      <polygon class="f-blue" points="40,110 105,130 105,230 40,230"/>
+      <polygon fill="url(#sp-hatch)" points="40,110 105,130 105,230 40,230"/>
+      <polygon class="f-blue" points="210,110 145,130 145,230 210,230"/>
+      <polygon fill="url(#sp-hatch)" points="210,110 145,130 145,230 210,230"/>
+      <rect class="d-metal2" x="20" y="230" width="210" height="12"/>
+      <text class="t-sm t-c" x="125" y="268">Solid pillars with a grid or lines</text>
+      <text class="t-sm t-c" x="125" y="285">Most plastic · strongest hold</text>
+      <text class="t-sm t-c" x="125" y="302">Good for flat, large overhangs</text>
+      <!-- Tree -->
+      <text class="t t-c t-b" x="380" y="22">Tree / organic support</text>
+      <polygon class="d-plastic" points="290,70 460,70 460,110 395,130 355,130 290,110"/>
+      <rect class="d-plastic" x="355" y="130" width="40" height="100"/>
+      <path class="k-green" d="M320 230 V176 M320 176 L300 113 M320 176 L325 121 M320 176 L348 128"/>
+      <path class="k-green" d="M430 230 V176 M430 176 L450 113 M430 176 L425 121 M430 176 L402 128"/>
+      <circle class="s-green" cx="300" cy="113" r="3"/><circle class="s-green" cx="325" cy="121" r="3"/><circle class="s-green" cx="348" cy="128" r="3"/>
+      <circle class="s-green" cx="450" cy="113" r="3"/><circle class="s-green" cx="425" cy="121" r="3"/><circle class="s-green" cx="402" cy="128" r="3"/>
+      <rect class="d-metal2" x="270" y="230" width="210" height="12"/>
+      <text class="t-sm t-c" x="375" y="268">Trunks and branches touch only where needed</text>
+      <text class="t-sm t-c" x="375" y="285">Least plastic · fewer scars</text>
+      <text class="t-sm t-c" x="375" y="302">Good for organic and curved shapes</text>
+      <!-- Snug -->
+      <text class="t t-c t-b" x="630" y="22">Snug / tight support</text>
+      <polygon class="d-plastic" points="540,70 710,70 710,110 645,130 605,130 540,110"/>
+      <rect class="d-plastic" x="605" y="130" width="40" height="100"/>
+      <polygon class="f-purple" points="540,114 605,134 605,230 590,230 590,142 540,128"/>
+      <polygon class="f-purple" points="710,114 645,134 645,230 660,230 660,142 710,128"/>
+      <path class="d-dash" d="M565 138 V230 M685 138 V230"/>
+      <rect class="d-metal2" x="520" y="230" width="210" height="12"/>
+      <text class="t-sm t-c" x="625" y="268">Thin walls hugging the underside</text>
+      <text class="t-sm t-c" x="625" y="285">Medium plastic · small XY gap</text>
+      <text class="t-sm t-c" x="625" y="302">Good under small, awkward overhangs</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> The same part with three support styles. Normal supports fill the whole space, tree supports grow branches from a few trunks, and snug supports only trace the underside.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data"><thead><tr><th>Style</th><th>Plastic use</th><th>Removal</th><th>Surface quality</th><th>Best for</th></tr></thead><tbody>
+    <tr><td><strong>Normal (grid / lines / zig-zag)</strong></td><td><span class="rate"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span> high</td><td>Medium; can break off in lumps</td><td>Good on flat overhangs when interface layers are used</td><td>Big flat ceilings, mechanical parts, wide bridges</td></tr>
+    <tr><td><strong>Tree / organic</strong></td><td><span class="rate g"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span> low</td><td>Easy; branches snap away</td><td>Fewer contact points, but tips can leave dots</td><td>Miniatures, figurines, organic shapes, sloped underside</td></tr>
+    <tr><td><strong>Snug</strong></td><td><span class="rate"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span> medium</td><td>Medium</td><td>Tight to the model; good detail</td><td>Details close to the part where other supports would collide</td></tr>
+    <tr><td><strong>Support on build plate only</strong></td><td>Variable</td><td>Easy</td><td>Best: nothing touches the part from below except overhangs that can see the plate</td><td>Parts where the underside can be avoided or oriented</td></tr>
+    <tr><td><strong>Soluble / dual-material</strong></td><td>Variable (support filament costs more)</td><td>Dissolve or peel clean</td><td>Excellent, complex internal cavities</td><td>Complex parts where removal is impossible by hand</td></tr>
+  </tbody></table></div>
+
+  <h3>🔰 Support on build plate vs everywhere</h3>
+  <p>Almost every slicer offers a choice: <strong>"build plate only"</strong> (supports start on the plate only; overhangs that sit on the part itself are ignored) versus <strong>"everywhere"</strong> (supports can start on top of the model's own surfaces). Choose build-plate-only when you can orient the part to avoid internal overhangs, because supports that touch the part's top surfaces leave marks that are harder to clean.</p>
+
+  <h3>🔧 Support settings that matter</h3>
+  <div class="table-wrap"><table class="data compact"><thead><tr><th>Setting</th><th>Typical start</th><th>What it does</th></tr></thead><tbody>
+    <tr><td>Threshold angle</td><td>30–45° (slicer-specific; measured from horizontal in some, vertical in others)</td><td>Overhangs steeper than this get support. Check which convention your slicer uses.</td></tr>
+    <tr><td>Support density / spacing</td><td>10–20 % (spacing ≈ 2–4 mm)</td><td>Sparser is easier to remove but less supportive. Keep dense under large flat overhangs.</td></tr>
+    <tr><td>Support pattern</td><td>Lines, grid, zig-zag, gyroid (stronger, harder to remove)</td><td>Lines and zig-zag break off easily; grid is sturdier.</td></tr>
+    <tr><td>XY distance (support-to-wall)</td><td>0.3–0.6 mm (≈ nozzle width)</td><td>Gap between support and vertical walls so they do not fuse.</td></tr>
+    <tr><td>Z distance (top gap)</td><td>0.1–0.25 mm (≈ half–one layer)</td><td>Gap between the top of the support and the underside of the part. Smaller = better surface but harder removal.</td></tr>
+    <tr><td>Interface layers (top)</td><td>2–4 layers</td><td>A dense "ceiling" for the part to sit on.</td></tr>
+    <tr><td>Interface spacing / density</td><td>0–0.2 mm (nearly solid)</td><td>Closer lines give a smoother underside.</td></tr>
+    <tr><td>Base interface (bottom)</td><td>Optional 1–2 layers</td><td>A solid layer where the support meets the plate or model top: easier to lift off.</td></tr>
+    <tr><td>Support speed / flow</td><td>Normal or a bit faster; lower flow ok</td><td>Support internals can be printed faster; interfaces should be slower.</td></tr>
+    <tr><td>Minimum support area</td><td>≈ 1–2 mm²</td><td>Skips tiny islands that bridging can handle.</td></tr>
+    <tr><td>Support brim / raft</td><td>Brim 3–5 mm for tall, thin supports</td><td>Keeps tall pillars from toppling during printing.</td></tr>
+  </tbody></table></div>
+
+  <h2 id="interface">Z-gap and interface layers</h2>
+  <p>A support has to do two contradictory things: be stiff enough to hold up wet plastic, but weak enough at the contact point to break away without damaging the part. Slicers solve this with a <strong>layered support design</strong>: a sparse body for efficiency, dense interface layers for smooth contact, and a small air <strong>gap</strong> in the Z direction.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 320" role="img" aria-label="Layer stack: model overhang on top, a small Z-gap, dense interface layers, sparse support body, and the build plate, with annotations for each">
+      <rect class="d-plastic" x="40" y="30" width="330" height="50"/>
+      <text class="t t-c" x="205" y="60">Model (overhang underside)</text>
+      <path class="d-dash" d="M40 80 H370 M40 96 H370"/>
+      <rect class="f-blue" x="40" y="96" width="330" height="9"/>
+      <rect class="f-blue" x="40" y="105" width="330" height="9"/>
+      <rect class="f-blue" x="40" y="114" width="330" height="9"/>
+      <g>
+        <rect class="f-teal" x="46" y="123" width="12" height="107"/><rect class="f-teal" x="92" y="123" width="12" height="107"/>
+        <rect class="f-teal" x="138" y="123" width="12" height="107"/><rect class="f-teal" x="184" y="123" width="12" height="107"/>
+        <rect class="f-teal" x="230" y="123" width="12" height="107"/><rect class="f-teal" x="276" y="123" width="12" height="107"/>
+        <rect class="f-teal" x="322" y="123" width="12" height="107"/><rect class="f-teal" x="358" y="123" width="12" height="107"/>
+      </g>
+      <rect class="d-metal2" x="30" y="230" width="350" height="14"/>
+      <path class="d-mute arrow" d="M420 88 L376 88"/>
+      <text class="t" x="426" y="86">Z-gap (air), 0.1–0.25 mm</text>
+      <text class="t-sm" x="426" y="102">Prevents fusing; exaggerated here</text>
+      <path class="d-mute arrow" d="M420 114 L376 114"/>
+      <text class="t" x="426" y="124">Interface layers (2–4)</text>
+      <text class="t-sm" x="426" y="140">Dense, smooth ceiling for the part</text>
+      <path class="d-mute arrow" d="M420 175 L376 175"/>
+      <text class="t" x="426" y="178">Sparse support body</text>
+      <text class="t-sm" x="426" y="194">10–20 % density, fast, cheap</text>
+      <path class="d-mute arrow" d="M420 237 L386 237"/>
+      <text class="t" x="426" y="240">Build plate</text>
+      <text class="t-sm t-c" x="390" y="290">Closer Z-gap and denser interface = smoother underside but harder removal.</text>
+      <text class="t-sm t-c" x="390" y="308">Looser gap and sparser interface = rougher underside but easy removal.</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> A support stack in cross-section. The body does the structural work, the interface layers give the part something nearly solid to rest on, and the gap lets the two separate.</figcaption>
+  </figure>
+
+  <div class="callout tip"><span class="callout-title">Tuning recipe</span>
+    <p>Start with a Z-gap equal to one layer height for PLA (0.2 mm on 0.2 mm layers). If supports are hard to remove, increase to 1.25× layer height; if the underside is droopy or messy, reduce to 0.75×. Make one change at a time and test on a small overhang piece; the setting is highly material-dependent.</p></div>
+  <div class="callout fact"><span class="callout-title">Why interface layers help</span>
+    <p>Sparse support lines leave gaps of several millimeters. Over such a gap, the first layer of the part acts as a bridge, so its underside looks like a bridge with sagging lines. Interface layers fill the gap with closely spaced lines that turn the support into a nearly continuous surface, so the part's first overhang layer prints almost as if on a flat bed.</p></div>
+  <div class="callout trick"><span class="callout-title">Pro trick: different filament for interface</span>
+    <p>If your printer has more than one material available (e.g. an AMS or a second nozzle), print the interface layers in a filament that does not bond to the part: PETG supports under PLA, or PLA under PETG. The weak bond between unlike polymers lets supports peel off with a clean surface. On dual-nozzle machines such as the <a href="../x2d/dual-nozzle-printing.html">Bambu X2D</a> the second nozzle can print support material without the purging cost of swapping filament in a single nozzle.</p></div>
+
+  <h2 id="removal">Removing supports</h2>
+  <div class="grid cols-3">
+    <div class="card accent-blue"><span class="ico">🔧</span><h3>Needle-nose pliers</h3><p>The workhorse. Grab the support wall, twist and pull; it should separate at the interface. Pull parallel to the surface, not away from it.</p></div>
+    <div class="card accent-green"><span class="ico">✂️</span><h3>Flush cutters</h3><p>Snip supports near the surface before peeling. Cut a little away from the model rather than flush to avoid gouges.</p></div>
+    <div class="card accent-orange"><span class="ico">🔪</span><h3>Hobby knife &amp; picks</h3><p>For small details. Cut away from your body and fingers; use a cutting mat and wear cut-resistant gloves.</p></div>
+    <div class="card accent-purple"><span class="ico">🧰</span><h3>Dental picks &amp; micro files</h3><p>Reach tight cavities and clean scars. Small needle files and sandpaper wrapped on a stick tidy contact points.</p></div>
+    <div class="card accent-teal"><span class="ico">🔥</span><h3>Heat gun or soldering iron</h3><p>A brief warm-up softens PLA scars and lets you smooth them; use sparingly and keep the nozzle moving.</p></div>
+    <div class="card accent-red"><span class="ico">🥽</span><h3>Eye protection</h3><p>Supports can snap and fly. Wear safety glasses, especially when cutting rigid materials like PETG, nylon or carbon-filled filaments.</p></div>
+  </div>
+  <h3>Removal tricks</h3>
+  <ul>
+    <li><strong>Start from a corner.</strong> Break the support free at an edge, then work along the interface instead of pulling from the center.</li>
+    <li><strong>Heat for stubborn PLA.</strong> A hair dryer or warm water at 45–50 °C softens the support's bond so it peels more easily.</li>
+    <li><strong>Cool for PETG and TPU supports.</strong> Cold plastic is more brittle; a few minutes in the freezer can make supports crack away.</li>
+    <li><strong>Design a "pull tab".</strong> Add a small loop or protrusion to the support (custom support blocks in the slicer) so pliers have something to grab.</li>
+    <li><strong>Remove supports before sanding,</strong> and sand with a wrapped file from coarse to fine. Post-processing is detailed on <a href="post-processing.html">the post-processing page</a>.</li>
+    <li><strong>Do not twist hard on thin parts.</strong> A small tab, pin or thin wall can snap. Support them with your other hand or cut the support in sections.</li>
+  </ul>
+
+  <h2 id="paint">Paint-on supports and blockers</h2>
+  <p>Automatic supports are sometimes wrong: they might add pillars in a spot that does not need them (a small hole that would bridge fine) or miss a tricky overhang. Modern slicers let you <strong>paint support enforcers</strong> (force supports here) and <strong>blockers</strong> (never generate supports here) directly on the model, or place geometric modifier volumes.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 290" role="img" aria-label="Before and after painting supports: automatic supports fill a small hole and miss an overhanging tab; after painting a red enforcer under the tab and a blue blocker in the hole the result is correct">
+      <defs>
+        <pattern id="pt-hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path class="d-mute" d="M0 0 V8"/></pattern>
+      </defs>
+      <text class="t t-c t-b" x="195" y="22">Automatic supports</text>
+      <rect class="d-plastic" x="40" y="60" width="240" height="150"/>
+      <rect class="d-plastic" x="280" y="60" width="90" height="26"/>
+      <circle class="s-none d-ink" cx="130" cy="135" r="26"/>
+      <circle fill="url(#pt-hatch)" cx="130" cy="135" r="24"/>
+      <rect class="d-metal2" x="20" y="210" width="370" height="12"/>
+      <text class="t-sm" x="60" y="252">Wasteful supports in hole</text>
+      <text class="t-sm" x="60" y="268">Tab left unsupported →</text>
+      <text class="t-sm c-red" x="290" y="116">no support</text>
+      <text class="t t-c t-b" x="585" y="22">After painting</text>
+      <rect class="d-plastic" x="430" y="60" width="240" height="150"/>
+      <rect class="d-plastic" x="670" y="60" width="90" height="26"/>
+      <circle class="s-none d-ink" cx="520" cy="135" r="26"/>
+      <circle class="f-blue" cx="520" cy="135" r="22" opacity="0.5"/>
+      <text class="t-sm t-c c-blue" x="520" y="139">blocker</text>
+      <polygon class="f-red" points="670,86 760,86 760,210 670,210" opacity="0.5"/>
+      <polygon fill="url(#pt-hatch)" points="670,86 760,86 760,210 670,210"/>
+      <text class="t-sm t-c c-red" x="715" y="152">enforcer</text>
+      <rect class="d-metal2" x="410" y="210" width="370" height="12"/>
+      <text class="t-sm" x="430" y="252">Blue = never support · Red = always support</text>
+      <text class="t-sm" x="430" y="268">Only the needed supports remain.</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> Painting lets you correct the slicer: block supports where bridging or a small hole will do, and enforce them where a thin overhang would otherwise droop.</figcaption>
+  </figure>
+  <ul>
+    <li>Use <strong>blockers</strong> in holes smaller than ~10 mm, for decorative threads, in text, and inside bores you cannot reach.</li>
+    <li>Use <strong>enforcers</strong> beneath small tabs, lips and tips where the detection threshold or minimum area skipped them.</li>
+    <li>Use <strong>custom support geometry</strong> (a modifier shape marked "support") to add a precise column or gusset.</li>
+    <li>Painting tools differ between slicers; see <a href="../software/slicer-settings.html">slicer settings explained</a> and the <a href="../software/slicers.html">slicer comparison</a>.</li>
+  </ul>
+
+  <h2 id="soluble">Multi-material and soluble supports</h2>
+  <p>If you can print more than one material, a support filament different from the model's gives a far cleaner result than same-material supports. Three common strategies:</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 300" role="img" aria-label="Three multi-material support strategies: same material, different interface material, and fully soluble support, each shown on a shelf-shaped part">
+      <text class="t t-c t-b" x="130" y="22">1 · Same material</text>
+      <rect class="d-plastic" x="40" y="60" width="40" height="150"/>
+      <rect class="d-plastic" x="40" y="60" width="180" height="30"/>
+      <rect class="f-orange" x="80" y="90" width="140" height="120"/>
+      <path class="d-dash" d="M80 90 H220"/>
+      <rect class="d-metal2" x="20" y="210" width="220" height="12"/>
+      <text class="t-sm t-c" x="130" y="246">Support fuses to the model;</text>
+      <text class="t-sm t-c" x="130" y="262">scars after removal.</text>
+      <text class="t t-c t-b" x="390" y="22">2 · Different interface</text>
+      <rect class="d-plastic" x="300" y="60" width="40" height="150"/>
+      <rect class="d-plastic" x="300" y="60" width="180" height="30"/>
+      <rect class="f-orange" x="340" y="104" width="140" height="106"/>
+      <rect class="f-blue" x="340" y="90" width="140" height="14"/>
+      <rect class="d-metal2" x="280" y="210" width="220" height="12"/>
+      <text class="t-sm t-c" x="390" y="246">Interface in a different polymer</text>
+      <text class="t-sm t-c" x="390" y="262">peels away cleanly.</text>
+      <text class="t t-c t-b" x="650" y="22">3 · Soluble support</text>
+      <rect class="d-plastic" x="560" y="60" width="40" height="150"/>
+      <rect class="d-plastic" x="560" y="60" width="180" height="30"/>
+      <rect class="f-purple" x="600" y="90" width="140" height="120"/>
+      <rect class="d-metal2" x="540" y="210" width="220" height="12"/>
+      <text class="t-sm t-c" x="650" y="246">Dissolves in water (PVA/BVOH) or</text>
+      <text class="t-sm t-c" x="650" y="262">solvent; perfect internal cavities.</text>
+      <text class="t-sm t-c" x="390" y="290">Orange = model, blue = interface filament, purple = soluble support.</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> From cheapest to cleanest: same-material supports, a different interface filament, and fully soluble supports.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data"><thead><tr><th>Support material</th><th>Pairs with</th><th>Removal</th><th>Notes</th></tr></thead><tbody>
+    <tr><td><strong>PVA</strong></td><td>PLA, PETG (with care)</td><td>Dissolves in water (hours)</td><td>Absorbs moisture and clogs when wet; store dry; best with dedicated nozzle path. Expensive; short shelf life.</td></tr>
+    <tr><td><strong>BVOH</strong></td><td>PLA, PETG, PA, ABS (varies)</td><td>Dissolves in water (faster than PVA)</td><td>Very moisture sensitive; needs a dry box. Works with higher temps than PVA.</td></tr>
+    <tr><td><strong>HIPS</strong></td><td>ABS, ASA</td><td>Dissolves in limonene</td><td>Needs a high chamber/bed temperature compatible with ABS. Use ventilation; limonene is flammable.</td></tr>
+    <tr><td><strong>Support-interface filament (e.g. branded support-for-PLA, support-for-PETG)</strong></td><td>Matching model material only</td><td>Snaps or peels off</td><td>Meant to be used only for interface layers; consult the manufacturer's compatibility chart.</td></tr>
+    <tr><td><strong>PETG supports for PLA / PLA supports for PETG</strong></td><td>Cross-material</td><td>Peels clean</td><td>The two bond poorly; good DIY option. Test on a small overhang first.</td></tr>
+  </tbody></table></div>
+  <p>Read more about each filament in <a href="../materials/flexibles-and-specialty.html">flexibles &amp; specialty filaments</a> and keep them dry following <a href="../materials/drying-and-storage.html">drying &amp; storage</a>. Material swaps cost purge waste; the <a href="multi-color-and-multi-material.html#waste">multi-color page</a> explains how to keep it down.</p>
+  <div class="callout x2d"><span class="callout-title">Bambu X2D</span>
+    <p>On the X2D the main nozzle can print the model while the auxiliary nozzle prints support material (for example a different polymer for interface layers), so the printer switches nozzles rather than purging one nozzle between materials. The auxiliary nozzle has lower speed and acceleration limits, which suits support printing well. Check <a href="../x2d/filament-compatibility.html">filament compatibility</a> and <a href="../x2d/dual-nozzle-printing.html">dual-nozzle printing</a> for approved pairings.</p></div>
+
+  <h2 id="design">Designing to avoid supports</h2>
+  <p>Designers who print their own parts have the best tool of all: change the geometry. A few habits eliminate most supports before slicing. More on these ideas is in <a href="../design/principles.html">design principles (DfAM)</a>.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 290" role="img" aria-label="Four panels: a filleted bottom edge versus a chamfered bottom edge, and a flat cavity ceiling versus a pitched cavity ceiling">
+      <!-- 1 fillet -->
+      <text class="t t-c t-b" x="105" y="22">Bottom fillet</text>
+      <path class="d-plastic" d="M40 90 H170 V180 Q170 210 140 210 H70 Q40 210 40 180 Z"/>
+      <rect class="d-metal2" x="20" y="210" width="170" height="12"/>
+      <path class="k-red" d="M40 170 Q40 210 70 210 M170 170 Q170 210 140 210"/>
+      <text class="t-sm t-c c-red" x="105" y="250">Edge flares toward 90°</text>
+      <text class="t-sm t-c" x="105" y="267">Rough, weak bottom edge</text>
+      <!-- 2 chamfer -->
+      <text class="t t-c t-b" x="295" y="22">Bottom chamfer</text>
+      <path class="d-plastic" d="M230 90 H360 V180 L330 210 H260 L230 180 Z"/>
+      <rect class="d-metal2" x="210" y="210" width="170" height="12"/>
+      <path class="k-green" d="M230 180 L260 210 M360 180 L330 210"/>
+      <text class="t-sm t-c c-green" x="295" y="250">45° slopes print cleanly</text>
+      <text class="t-sm t-c" x="295" y="267">Also stops elephant foot</text>
+      <!-- 3 flat ceiling -->
+      <text class="t t-c t-b" x="485" y="22">Flat ceiling</text>
+      <rect class="d-plastic" x="420" y="90" width="130" height="120"/>
+      <rect class="d-surface" x="450" y="150" width="70" height="60"/>
+      <path class="k-red" d="M450 150 H520"/>
+      <rect class="d-metal2" x="400" y="210" width="170" height="12"/>
+      <text class="t-sm t-c c-red" x="485" y="250">Bridge: sags over wide spans</text>
+      <text class="t-sm t-c" x="485" y="267">Fine below ~20–30 mm</text>
+      <!-- 4 pitched -->
+      <text class="t t-c t-b" x="675" y="22">Pitched ceiling</text>
+      <rect class="d-plastic" x="610" y="90" width="130" height="120"/>
+      <polygon class="d-surface" points="640,210 640,165 675,130 710,165 710,210"/>
+      <path class="k-green" d="M640 165 L675 130 L710 165"/>
+      <rect class="d-metal2" x="590" y="210" width="170" height="12"/>
+      <text class="t-sm t-c c-green" x="675" y="250">45° roof: no bridge, no support</text>
+      <text class="t-sm t-c" x="675" y="267">Works for any cavity</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> Two geometry swaps that remove supports. Replace bottom fillets with 45° chamfers, and replace flat cavity ceilings with a 45° gable or a rounded-arch (teardrop) shape.</figcaption>
+  </figure>
+
+  <h3>Holes: circle, teardrop, diamond</h3>
+  <p>A horizontal round hole has an unsupported ceiling: the top of the circle starts as a flat bridge and curves into steep overhang. Two classic fixes change the hole shape so the top is a 45° point. The cost is a slightly non-circular hole: use it for clearance holes (bolts, rods), not for precision bearings or press fits unless you ream afterwards.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 260" role="img" aria-label="Three horizontal hole shapes in blocks: circle with red problem area at the top, teardrop with 45 degree peak, and diamond with 45 degree top and bottom">
+      <rect class="d-plastic" x="20" y="30" width="220" height="150"/>
+      <circle class="d-surface" cx="130" cy="110" r="34"/>
+      <path class="k-red" d="M106 86 A34 34 0 0 1 154 86"/>
+      <text class="t t-c t-b" x="130" y="22">Circle</text>
+      <text class="t-sm t-c c-red" x="130" y="204">Top 90° ceiling droops</text>
+      <text class="t-sm t-c" x="130" y="222">Needs support or bridging</text>
+
+      <rect class="d-plastic" x="270" y="30" width="220" height="150"/>
+      <path class="d-surface" d="M359 119 L380 98 L401 119 A30 30 0 1 1 359 119 Z"/>
+      <path class="k-green" d="M359 119 L380 98 L401 119"/>
+      <text class="t t-c t-b" x="380" y="22">Teardrop</text>
+      <text class="t-sm t-c c-green" x="380" y="204">Peak at 45° to vertical</text>
+      <text class="t-sm t-c" x="380" y="222">Round at the bottom, no support</text>
+
+      <rect class="d-plastic" x="520" y="30" width="220" height="150"/>
+      <polygon class="d-surface" points="630,70 670,110 630,150 590,110"/>
+      <path class="k-green" d="M590 110 L630 70 L670 110"/>
+      <text class="t t-c t-b" x="630" y="22">Diamond</text>
+      <text class="t-sm t-c c-green" x="630" y="204">Both sides at 45°</text>
+      <text class="t-sm t-c" x="630" y="222">Easy to model; fits square nuts</text>
+      <text class="t-sm t-c" x="390" y="250">Cut the teardrop apex flat (a 0.3–0.5 mm bridge) to keep the top from forming a sharp ridge.</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> Horizontal hole shapes. The teardrop keeps the round bottom needed for a bolt or rod but adds a 45° peak on top.</figcaption>
+  </figure>
+
+  <h3>More design tricks</h3>
+  <ul>
+    <li><strong>Chamfer, do not fillet,</strong> on downward-facing edges. Keep fillets on upward-facing edges where they cost nothing.</li>
+    <li><strong>Split the model.</strong> Cut a complex part into pieces that each have a flat face on the plate and glue or screw them together. Planes through the part with alignment pins keep everything in line. See <a href="../design/design-patterns.html">design patterns</a>.</li>
+    <li><strong>Add a self-supporting gusset.</strong> A 45° brace under a shelf is often stronger and cheaper than removable supports.</li>
+    <li><strong>Make ledges stepped.</strong> A 90° overhang can become a staircase of 0.5–1 mm steps (each a short 45°-ish overhang or a tiny bridge) when you cannot chamfer it.</li>
+    <li><strong>Use a larger first-layer footprint.</strong> A wide, flat bottom face removes the need for supports under many features.</li>
+    <li><strong>Avoid text on the underside.</strong> Put embossed or engraved text on a vertical or upward-facing surface; text on the bottom is a support nightmare.</li>
+    <li><strong>Mind thin horizontal pins and tabs.</strong> Make them diamonds, or add 45° braces.</li>
+  </ul>
+
+  <h2 id="orientation">Support-friendly orientation</h2>
+  <p>Orientation is the strongest lever: rotate the part until it has few overhangs, a large flat bottom, and layer lines that run in a strong direction. Strength implications are covered in <a href="../design/strength-and-orientation.html">strength &amp; orientation</a>, but here are the support-related rules.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 290" role="img" aria-label="An L-shaped bracket printed lying flat with no supports, upside down with supports under the foot, and upside down with a 45 degree gusset that needs no supports">
+      <defs>
+        <pattern id="or-hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path class="d-mute" d="M0 0 V8"/></pattern>
+      </defs>
+      <text class="t t-c t-b" x="125" y="22">A · Foot on the bed</text>
+      <polygon class="d-plastic" points="60,200 170,200 170,180 80,180 80,70 60,70"/>
+      <rect class="d-metal2" x="30" y="200" width="190" height="12"/>
+      <text class="t-sm t-c c-green" x="125" y="236">No supports</text>
+      <text class="t-sm t-c" x="125" y="253">Layers cut across the arm:</text>
+      <text class="t-sm t-c" x="125" y="268">weakest when the arm is bent</text>
+      <text class="t t-c t-b" x="390" y="22">B · Upside down</text>
+      <polygon class="d-plastic" points="300,200 320,200 320,100 400,100 400,70 300,70"/>
+      <polygon class="f-blue" points="320,100 400,100 400,200 320,200"/>
+      <polygon fill="url(#or-hatch)" points="320,100 400,100 400,200 320,200"/>
+      <rect class="d-metal2" x="270" y="200" width="190" height="12"/>
+      <text class="t-sm t-c c-red" x="365" y="236">Supports under the foot</text>
+      <text class="t-sm t-c" x="365" y="253">Layers run along the arm:</text>
+      <text class="t-sm t-c" x="365" y="268">stronger, but scarred underside</text>
+      <text class="t t-c t-b" x="650" y="22">C · Upside down + gusset</text>
+      <polygon class="d-plastic" points="560,200 580,200 580,160 620,120 660,120 660,70 560,70"/>
+      <rect class="d-metal2" x="530" y="200" width="190" height="12"/>
+      <path class="k-green" d="M580 160 L620 120"/>
+      <text class="t-sm t-c c-green" x="625" y="236">No supports needed</text>
+      <text class="t-sm t-c" x="625" y="253">45° gusset: strong layers,</text>
+      <text class="t-sm t-c" x="625" y="268">clean surface, little plastic</text>
+    </svg>
+    <figcaption><b>Figure 10.</b> The same bracket in three set-ups. Orientation and a small geometry change can trade supports, strength and surface finish against each other.</figcaption>
+  </figure>
+
+  <ol class="steps">
+    <li><strong>Put the biggest flat face on the plate.</strong>This gives the best adhesion and removes the need to support the largest area.</li>
+    <li><strong>Rotate so that the most visible face is vertical or upward.</strong>Down-facing surfaces and support contacts are the roughest; pick the hidden face as the "bottom".</li>
+    <li><strong>Check the stress direction.</strong>Layers separate easiest under tension across them. Orient so loads run <em>along</em> layers, not across.</li>
+    <li><strong>Rank candidates by support volume.</strong>Most slicers show the support in a preview. Rotate and compare; a 10-minute check often saves hours.</li>
+    <li><strong>Consider a slight tilt.</strong>A 5–15° tilt can turn a bad 90° overhang into 75–85° or let a bridge become a stepped overhang. Tilts trade support for stair-stepping on curved surfaces.</li>
+  </ol>
+
+  <h2 id="sacrificial">Sacrificial layers for holes</h2>
+  <p>A counterbore or large internal cavity above a bolt hole needs a flat ceiling with a small hole in it. The bridge lines cannot span across a hole, so they droop and string around its edge. The <strong>sacrificial layer</strong> (also called a "bridge cover") trick adds a single thin disc at the transition, so the slicer bridges a complete surface; the narrow hole begins one layer above and you punch out the disc afterward.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 280" role="img" aria-label="Three cross-sections of a stepped hole: without sacrificial layer the bridge droops, with a one-layer disc the bridge is clean, and after printing the disc is punched out">
+      <text class="t t-c t-b" x="130" y="22">1 · Problem</text>
+      <rect class="d-plastic" x="30" y="50" width="200" height="150"/>
+      <rect class="d-surface" x="70" y="120" width="120" height="80"/>
+      <rect class="d-surface" x="115" y="50" width="30" height="70"/>
+      <path class="k-red" d="M70 120 H115 M145 120 H190"/>
+      <path class="k-red" d="M80 120 Q92 132 108 124 M182 120 Q170 132 152 124" opacity="0.8"/>
+      <rect class="d-metal2" x="20" y="200" width="220" height="12"/>
+      <text class="t-sm t-c" x="130" y="236">Bridge broken by hole:</text>
+      <text class="t-sm t-c c-red" x="130" y="253">strings and droops</text>
+      <text class="t t-c t-b" x="390" y="22">2 · Add sacrificial layer</text>
+      <rect class="d-plastic" x="290" y="50" width="200" height="150"/>
+      <rect class="d-surface" x="330" y="120" width="120" height="80"/>
+      <rect class="d-surface" x="375" y="50" width="30" height="66"/>
+      <rect class="f-purple" x="330" y="116" width="120" height="4"/>
+      <text class="t-sm" x="505" y="122">0.2 mm disc</text>
+      <rect class="d-metal2" x="280" y="200" width="220" height="12"/>
+      <text class="t-sm t-c" x="390" y="236">Complete layer to bridge,</text>
+      <text class="t-sm t-c c-green" x="390" y="253">hole starts a layer higher</text>
+      <text class="t t-c t-b" x="650" y="22">3 · Punch out</text>
+      <rect class="d-plastic" x="550" y="50" width="200" height="150"/>
+      <rect class="d-surface" x="590" y="120" width="120" height="80"/>
+      <rect class="d-surface" x="635" y="50" width="30" height="70"/>
+      <path class="d-mute arrow" d="M690 90 L664 118"/>
+      <text class="t-sm" x="660" y="84">poke out disc</text>
+      <rect class="d-metal2" x="540" y="200" width="220" height="12"/>
+      <text class="t-sm t-c" x="650" y="236">Knife or drill removes the</text>
+      <text class="t-sm t-c c-green" x="650" y="253">disc; clean ceiling</text>
+    </svg>
+    <figcaption><b>Figure 11.</b> A one-layer disc turns an impossible bridge into a normal one. Model it in CAD, or add a thin modifier layer in the slicer.</figcaption>
+  </figure>
+  <p>The trick works for screw heads, nut pockets, magnet pockets, text cavities and internal plumbing. For hex-shaped nut traps used with a pause in the print, see <a href="../design/joints-and-fasteners.html">joints &amp; fasteners</a>.</p>
+
+  <h2 id="quality">Supports versus surface quality</h2>
+  <p>Where a support touches the part, the underside is rougher than a face printed on air or bridging done right. Typical outcomes:</p>
+  <ul>
+    <li><strong>Large flat ceilings</strong> with interface layers: rough but flat; sanding or filler primer fixes it.</li>
+    <li><strong>Tree supports:</strong> clean areas separated by dots where branches touched; small marks that are easy to sand.</li>
+    <li><strong>Support removal scars</strong> are worst on dark, glossy filaments, and silk or metallic finishes show every blemish.</li>
+    <li><strong>Overhang "stripes":</strong> without supports, steep overhangs droop in ridges. Slow, cool printing and thin layers make them pretty.</li>
+  </ul>
+  <p>Plan which surfaces matter. Orient so that cosmetic faces are not support contact, and accept roughness on the hidden underside.</p>
+
+  <h2 id="cost">What do supports cost?</h2>
+  <p>Supports are never free. They add print time (extra lines, travel moves and layers of interface), material (often 10–40 % of the part's weight, sometimes more than the part), and post-processing time. A rough illustration for a 100 mm tall figurine:</p>
+  <div class="bars"><div class="bars-title">Typical overhead when supports are needed (percent of base print)</div>
+    <div class="bar blue"><span>Print time</span><i style="--v:55%"></i><em>+10–40 %</em></div>
+    <div class="bar green"><span>Filament use</span><i style="--v:70%"></i><em>+10–60 %</em></div>
+    <div class="bar orange"><span>Waste plastic</span><i style="--v:70%"></i><em>= extra filament</em></div>
+    <div class="bar red"><span>Cleanup time</span><i style="--v:45%"></i><em>5–30 min</em></div>
+  </div>
+  <p class="t-sm">Illustrative ranges; real values depend on the part. Check your slicer's preview and time/weight estimate with and without supports.</p>
+  <div class="bars"><div class="bars-title">Support styles by plastic used (relative, normal = 100)</div>
+    <div class="bar"><span>Normal grid</span><i style="--v:100%"></i><em>100</em></div>
+    <div class="bar purple"><span>Snug</span><i style="--v:70%"></i><em>≈ 70</em></div>
+    <div class="bar green"><span>Tree</span><i style="--v:40%"></i><em>≈ 40</em></div>
+    <div class="bar teal"><span>Build plate only</span><i style="--v:30%"></i><em>≈ 30 (depends on part)</em></div>
+  </div>
+  <p class="t-sm">Illustrative; tree supports can use far less than grid for sloped shapes, but are often slower to slice and may print slower.</p>
+  <p>Cost thinking changes designs: a part that has supports that cost 40 % more plastic and 30 min of cleanup might be redesigned, or split, to cut that to nothing. The <a href="../tools/calculators.html">calculators</a> help estimate time and material cost; <a href="../reference/economics-and-ethics.html">economics</a> discusses broader costs.</p>
+
+  <h2 id="tests">Test models</h2>
+  <p>Two tiny prints tell you more about your printer's overhang and bridge ability than any specification: an <strong>overhang ladder</strong> and a <strong>bridge test</strong>. Print them in the filament and profile you actually use, keep the results next to the printer, and note the limits in your <a href="calibration.html#log">calibration log</a>. Parametric versions are listed under <a href="../exercises/models.html">downloadable test models</a>.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 340" role="img" aria-label="Top: an overhang ladder of leaning columns at 20 to 70 degrees; bottom: a bridge test with pillars spaced 10 to 50 millimeters apart and the longer spans sagging">
+      <text class="t t-b" x="20" y="22">Overhang ladder (angles from vertical)</text>
+      <rect class="d-metal2" x="20" y="132" width="730" height="10"/>
+      <polygon class="d-plastic" points="30,132 60,132 78,82 48,82"/>
+      <polygon class="d-plastic" points="110,132 140,132 169,82 139,82"/>
+      <polygon class="d-plastic" points="200,132 230,132 272,82 242,82"/>
+      <polygon class="d-plastic" points="310,132 340,132 400,82 370,82"/>
+      <polygon class="d-plastic" points="440,132 470,132 557,82 527,82"/>
+      <polygon class="d-plastic" points="590,132 620,132 757,82 727,82"/>
+      <text class="t-sm t-c" x="45" y="160">20°</text>
+      <text class="t-sm t-c" x="125" y="160">30°</text>
+      <text class="t-sm t-c" x="215" y="160">40°</text>
+      <text class="t-sm t-c" x="325" y="160">50°</text>
+      <text class="t-sm t-c" x="455" y="160">60°</text>
+      <text class="t-sm t-c" x="605" y="160">70°</text>
+      <text class="t-sm t-m" x="20" y="182">Note the angle where the underside turns rough: that is your clean limit.</text>
+
+      <text class="t t-b" x="20" y="222">Bridge test (span in mm)</text>
+      <rect class="d-metal2" x="20" y="320" width="730" height="10"/>
+      <rect class="d-plastic" x="30" y="250" width="16" height="70"/>
+      <rect class="d-plastic" x="86" y="250" width="16" height="70"/>
+      <rect class="d-plastic" x="182" y="250" width="16" height="70"/>
+      <rect class="d-plastic" x="318" y="250" width="16" height="70"/>
+      <rect class="d-plastic" x="494" y="250" width="16" height="70"/>
+      <rect class="d-plastic" x="710" y="250" width="16" height="70"/>
+      <rect class="d-plastic" x="46" y="250" width="40" height="6"/>
+      <rect class="d-plastic" x="102" y="250" width="80" height="6"/>
+      <path class="d-plastic" d="M198 250 H318 V256 Q258 262 198 256 Z"/>
+      <path class="d-plastic" d="M334 250 H494 V256 Q414 276 334 256 Z"/>
+      <path class="d-plastic" d="M510 250 H710 V256 Q610 290 510 256 Z"/>
+      <text class="t-sm t-c" x="66" y="242">10</text>
+      <text class="t-sm t-c" x="142" y="242">20</text>
+      <text class="t-sm t-c" x="258" y="242">30</text>
+      <text class="t-sm t-c" x="414" y="242">40</text>
+      <text class="t-sm t-c" x="610" y="242">50</text>
+    </svg>
+    <figcaption><b>Figure 12.</b> Overhang ladder and bridge test (not to scale). The first column that looks bad and the longest bridge that stays flat are your printer's practical limits for that filament.</figcaption>
+  </figure>
+
+  <h2 id="checklist">Decision checklist before adding supports</h2>
+  <ul class="checklist">
+    <li>Can I rotate the part so the largest flat face is down and overhangs are minimized?</li>
+    <li>Can I replace fillets/flat ceilings/round horizontal holes with chamfers/gables/teardrops?</li>
+    <li>Can I split the model into pieces that print flat?</li>
+    <li>Do my bridge and overhang limits (from test prints) cover the remaining features?</li>
+    <li>Do I need supports "on build plate only" or "everywhere"?</li>
+    <li>Have I blocked supports in places that cannot be reached and enforced them where tips droop?</li>
+    <li>Are Z-gap, interface layers and density tuned for the material and the surface quality I need?</li>
+    <li>Have I planned how to remove them, and with which tools?</li>
+  </ul>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul>
+    <li>Overhang quality depends on the offset per layer: <em>layer height × tan(angle from vertical)</em>. Thinner layers and more cooling extend what you can print unsupported.</li>
+    <li>Bridges are strands under tension: short spans, strong cooling, medium speed, solid anchors. Test your limits with a bridge test.</li>
+    <li>Normal supports are stiff, tree supports are thrifty, snug supports are tidy. Interface layers and a proper Z-gap decide surface quality and removability.</li>
+    <li>Paint enforcers and blockers fix what the automatic algorithm gets wrong.</li>
+    <li>The best support is the one you design away: chamfers, teardrops, gables, splits and orientation.</li>
+    <li>Soluble or different-polymer interfaces produce the cleanest results when your printer can switch materials efficiently.</li>
+  </ul>
+  <p>Practice: try the support-related items in the <a href="../exercises/level-2-intermediate.html">Level 2 exercises</a>. Next, tune the machine itself in <a href="speed-cooling-quality.html">speed, cooling &amp; quality</a>, and see defect pictures in the <a href="troubleshooting.html">troubleshooting gallery</a>.</p>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Page not found · 3D Printing Compendium</title>
+  <style>
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; font: 16px/1.6 system-ui, sans-serif; background: #f8fafc; color: #0f172a; text-align: center; padding: 24px; }
+    @media (prefers-color-scheme: dark) { body { background: #0b1220; color: #e2e8f0; } }
+    h1 { font-size: 3.2rem; margin: 0; }
+    a { color: #ea580c; font-weight: 700; }
+    svg { width: 220px; max-width: 70%; }
+  </style>
+</head>
+<body>
+  <main>
+    <svg viewBox="0 0 220 120" role="img" aria-label="A print that has detached from the bed — spaghetti">
+      <rect x="10" y="104" width="200" height="8" rx="3" fill="#94a3b8"/>
+      <path d="M40 100 C 60 40, 90 120, 110 50 S 160 110, 180 30" fill="none" stroke="#f97316" stroke-width="6" stroke-linecap="round"/>
+      <path d="M60 100 C 80 70, 100 100, 130 80" fill="none" stroke="#f97316" stroke-width="5" stroke-linecap="round" opacity=".7"/>
+      <rect x="95" y="4" width="30" height="20" rx="5" fill="#475569"/>
+    </svg>
+    <h1>404</h1>
+    <p>This page turned into spaghetti — a failed print, no file here.</p>
+    <p><a id="home" href="./">Back to the 3D Printing Compendium</a></p>
+  </main>
+  <script>
+    (function () {
+      // Works on project pages (/repo/...) as well as on custom domains.
+      var parts = location.pathname.split("/").filter(Boolean);
+      var base = location.hostname.endsWith("github.io") && parts.length ? "/" + parts[0] + "/" : "/";
+      document.getElementById("home").href = base;
+      var link = document.createElement("link"); link.rel = "icon"; link.href = base + "assets/img/favicon.svg"; document.head.appendChild(link);
+    })();
+  </script>
+</body>
+</html>

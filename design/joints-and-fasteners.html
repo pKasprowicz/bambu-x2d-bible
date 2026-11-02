@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Joints &amp; fasteners · 3D Printing Compendium</title>
+  <meta name="description" content="How to join 3D printed parts: snap-fits with beam strain math, living hinges, press fits, dovetails, nut traps, heat-set inserts M2–M8, screw bosses, magnets, hinges, print-in-place joints, glue channels, splitting large parts, bearings and gears.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+  <style>
+    .jf-eq { font-family: var(--mono, ui-monospace, Consolas, monospace); background: var(--surface-2, rgba(127,127,127,.12)); padding: 2px 8px; border-radius: 6px; }
+    .jf-table td:first-child { white-space: nowrap; font-weight: 600; }
+    .tol-note { color: var(--muted); font-size: 13px; }
+  </style>
+</head>
+<body data-page="design/joints-and-fasteners.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 5 · Design for printing</div>
+    <h1>Joints &amp; fasteners</h1>
+    <p class="lead">Snap-fits that survive more than one use, nut traps that actually hold a nut, heat-set inserts, magnets, hinges, gears and every other way to hold printed parts together, with the dimensions that work on a 0.4 mm nozzle.</p>
+    <div class="meta"><span class="badge intermediate">Intermediate</span><span class="badge time">⏱ 50 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <p>How to choose between a snap-fit, a screw, an insert, a magnet and glue; how to size a cantilever snap-fit with simple beam math and a strain limit for your material; the pocket dimensions for M2–M8 nuts, heads and heat-set inserts; and the details that make hinges, bearings, gears and split parts go together. Clearances come from <a href="tolerances-and-fits.html">Tolerances &amp; fits</a>; strength reasoning from <a href="strength-and-orientation.html">Strength &amp; orientation</a>.</p></div>
+
+  <h2 id="overview">🔰 Choosing a joint</h2>
+  <p>Every joint is a trade between <b>strength</b>, <b>reusability</b>, <b>assembly effort</b> and <b>extra hardware</b>. Printing gives you geometry for free, so the cheapest joint is often one that needs no hardware at all (a snap-fit, a dovetail). The strongest and most reusable is usually a screw into a metal insert. Pick by asking three questions: <em>how many times will it be opened</em>, <em>how big is the load</em>, and <em>in which direction does the load act relative to the layers</em>.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 300" role="img" aria-label="Comparison matrix of joint types by reusability, strength, ease of printing and extra hardware">
+      <rect class="d-surface" x="8" y="8" width="704" height="284" rx="10"/>
+      <text class="t-sm t-b" x="24" y="34">Joint</text><text class="t-sm t-b" x="210" y="34">Reusable</text><text class="t-sm t-b" x="310" y="34">Strength</text><text class="t-sm t-b" x="410" y="34">Easy to print</text><text class="t-sm t-b" x="520" y="34">Hardware</text><text class="t-sm t-b" x="610" y="34">Best for</text>
+      <path class="d-thin" d="M16 44 H704"/>
+      <text class="t-sm" x="24" y="68">Snap-fit</text><text class="t-sm c-green" x="210" y="68">●●●○</text><text class="t-sm c-yellow" x="310" y="68">●●○○</text><text class="t-sm c-green" x="410" y="68">●●●○</text><text class="t-sm" x="520" y="68">none</text><text class="t-xs" x="610" y="68">lids, clips</text>
+      <text class="t-sm" x="24" y="100">Press / friction fit</text><text class="t-sm c-yellow" x="210" y="100">●●○○</text><text class="t-sm c-yellow" x="310" y="100">●●○○</text><text class="t-sm c-yellow" x="410" y="100">●●○○</text><text class="t-sm" x="520" y="100">pin / dowel</text><text class="t-xs" x="610" y="100">alignment</text>
+      <text class="t-sm" x="24" y="132">Dovetail / slide</text><text class="t-sm c-green" x="210" y="132">●●●●</text><text class="t-sm c-yellow" x="310" y="132">●●○○</text><text class="t-sm c-green" x="410" y="132">●●●○</text><text class="t-sm" x="520" y="132">none</text><text class="t-xs" x="610" y="132">drawers, rails</text>
+      <text class="t-sm" x="24" y="164">Screw + heat-set insert</text><text class="t-sm c-green" x="210" y="164">●●●●</text><text class="t-sm c-green" x="310" y="164">●●●●</text><text class="t-sm c-green" x="410" y="164">●●●○</text><text class="t-sm" x="520" y="164">insert + screw</text><text class="t-xs" x="610" y="164">service panels</text>
+      <text class="t-sm" x="24" y="196">Bolt + nut trap</text><text class="t-sm c-green" x="210" y="196">●●●●</text><text class="t-sm c-green" x="310" y="196">●●●○</text><text class="t-sm c-green" x="410" y="196">●●●○</text><text class="t-sm" x="520" y="196">bolt + nut</text><text class="t-xs" x="610" y="196">structural</text>
+      <text class="t-sm" x="24" y="228">Magnet</text><text class="t-sm c-green" x="210" y="228">●●●●</text><text class="t-sm c-red" x="310" y="228">●○○○</text><text class="t-sm c-yellow" x="410" y="228">●●○○</text><text class="t-sm" x="520" y="228">magnets</text><text class="t-xs" x="610" y="228">doors, mounts</text>
+      <text class="t-sm" x="24" y="260">Glue / solvent weld</text><text class="t-sm c-red" x="210" y="260">○○○○</text><text class="t-sm c-green" x="310" y="260">●●●○</text><text class="t-sm c-green" x="410" y="260">●●●●</text><text class="t-sm" x="520" y="260">adhesive</text><text class="t-xs" x="610" y="260">split models</text>
+      <text class="t-xs t-m" x="24" y="282">●●●● = best. Ratings are relative for a typical FDM part in PETG; they are guidance, not test data.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> A quick map of joint choices. Start from the top (no hardware) and move down only when the load or the number of cycles demands it.</figcaption>
+  </figure>
+
+  <div class="callout tip"><span class="callout-title">Rule of thumb</span>
+    <p>If it will be opened more than about five times, do not let plastic carry the thread or the latch alone. Use metal: an insert, a nut or a steel pin. If it will be opened once, print the latch and glue the rest.</p></div>
+
+  <h2 id="snap-fits">🔧 Snap-fits</h2>
+  <p>A snap-fit stores elastic energy in a flexing arm, lets a hook ride over an undercut and then relaxes behind it. Done well, it replaces screws. Done badly, it breaks the first time you use it, because plastic that is bent <em>beyond its elastic strain limit</em> cracks, and printed parts have lower limits than the datasheet suggests (layer lines act as built-in notches). Three families matter: <b>cantilever</b>, <b>annular</b> and <b>torsional</b>.</p>
+
+  <h3>Cantilever snap-fit: the beam math</h3>
+  <p>A cantilever snap is a beam fixed at one end with a hook on the other. For a beam of constant rectangular section, length <b>L</b>, thickness <b>h</b> (in the bending direction) and width <b>b</b>, pushed aside by a deflection <b>y</b> (the undercut depth):</p>
+  <p><span class="jf-eq">ε<sub>max</sub> = 1.5 · h · y / L²</span> &nbsp; (strain at the root, as a fraction; ×100 for %)<br>
+     <span class="jf-eq">P = E · b · h² · ε / (6 · L)</span> &nbsp; (force needed to deflect the tip by y)</p>
+  <p>Two things stand out. Strain grows with <b>h</b> and <b>y</b> but falls with the <b>square of L</b>: lengthening the arm by 50 % cuts strain by more than half. And force grows with h², so a thin, long arm is both gentle and safe.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 270" role="img" aria-label="Side view of a cantilever snap-fit beam with length L, thickness h, undercut y, and the strain and force formulas">
+      <rect class="d-plastic" x="30" y="70" width="70" height="170"/>
+      <rect class="d-plastic" x="100" y="90" width="258" height="16"/>
+      <polygon class="d-plastic" points="322,106 322,136 338,136 358,106"/>
+      <path class="d-dash" d="M100 98 Q240 98 358 126" style="stroke:var(--orange)"/>
+      <path class="d-thin arrow arrow-start" d="M100 58 H358"/><text class="t-sm t-c t-b" x="229" y="50">L (length)</text>
+      <path class="d-thin arrow arrow-start" d="M396 106 V136"/><text class="t-sm t-b" x="404" y="126">y</text><text class="t-xs" x="404" y="140">(undercut)</text>
+      <path class="d-thin arrow" d="M180 126 V108"/><text class="t-sm" x="150" y="142">h = beam thickness</text>
+      <text class="t-xs t-m" x="40" y="260">Wall (fixed end) with a root fillet of at least 0.5·h</text>
+      <text class="t-xs" x="288" y="164">hook head</text>
+      <text class="t-xs" x="288" y="178">ramp: lead-in</text>
+      <rect class="f-blue" x="430" y="30" width="280" height="210" rx="10"/>
+      <text class="t t-b" x="446" y="56">Constant-section beam</text>
+      <text class="t-sm t-mono" x="446" y="82">ε = 1.5 · h · y / L²</text>
+      <text class="t-sm t-mono" x="446" y="104">P = E · b · h² · ε / (6L)</text>
+      <text class="t-xs" x="446" y="132">Example (PLA, limit ε ≈ 0.8 %):</text>
+      <text class="t-xs" x="446" y="148">h 1.6, L 18, y 1.0 mm</text>
+      <text class="t-xs" x="446" y="164">ε = 1.5·1.6·1.0 / 324 = 0.74 %  ✔</text>
+      <text class="t-xs" x="446" y="186">Same arm with L = 12 mm:</text>
+      <text class="t-xs" x="446" y="202">ε = 1.67 %  ✘ for PLA, ok for PETG</text>
+      <text class="t-xs t-m" x="446" y="226">Orange dashes = deflected position.</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> Cantilever snap-fit anatomy and the two formulas you need. Dimensions are in mm.</figcaption>
+  </figure>
+
+  <h3>Strain limits by material</h3>
+  <p>The permissible strain is the number that decides whether the design works. The values below are <b>conservative design numbers for printed parts</b> with layers running along the beam, <em>not</em> datasheet elongation. They are indicative: test one prototype before you commit to a design.</p>
+
+  <div class="table-wrap"><table class="data compact jf-table">
+    <thead><tr><th>Material</th><th>One-off assembly (ε max)</th><th>Repeated use (ε max)</th><th>Comment</th></tr></thead>
+    <tbody>
+      <tr><td>PLA</td><td>0.8–1.0 %</td><td>0.4 %</td><td>Stiff and brittle; long, thin arms only. Fatigues quickly.</td></tr>
+      <tr><td>PETG</td><td>2.0 %</td><td>1.0 %</td><td>The best everyday snap-fit material.</td></tr>
+      <tr><td>ABS / ASA</td><td>1.8 %</td><td>0.9 %</td><td>Good if layer adhesion is good (warm chamber).</td></tr>
+      <tr><td>PC</td><td>2.5 %</td><td>1.2 %</td><td>Tough but notch-sensitive; use big fillets.</td></tr>
+      <tr><td>Nylon (PA, dry)</td><td>3.0–4.0 %</td><td>1.5–2.0 %</td><td>Excellent fatigue; absorbs moisture and softens.</td></tr>
+      <tr><td>PP</td><td>4.0 %</td><td>2.0 %</td><td>Great for hinges and latches; difficult to print.</td></tr>
+      <tr><td>CF/GF-filled</td><td>0.5–1.0 %</td><td>0.3–0.5 %</td><td>Stiffer, strain-limited: needs longer arms than unfilled.</td></tr>
+      <tr><td>TPU 95A</td><td>5–8 %</td><td>3–5 %</td><td>Behaves like a spring; a snap arm may be unnecessary.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout warn"><span class="callout-title">Print orientation decides everything</span>
+    <p>A snap arm must be printed so that <b>the tensile stress runs along the extrusion lines, not across layers</b>. A tall hook standing on its tip, bending sideways, will peel apart at a layer line at a fraction of the strain in the table.</p></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 260" role="img" aria-label="Snap arm printed flat with layers along the beam survives; snap arm printed upright cracks along a layer line">
+      <text class="t-sm t-b" x="30" y="28">Good: layers run along the arm</text>
+      <rect class="d-plastic" x="30" y="90" width="40" height="120"/>
+      <rect class="d-plastic" x="70" y="100" width="230" height="24"/>
+      <path class="d-thin" d="M70 106 H300 M70 112 H300 M70 118 H300"/>
+      <path class="d-ink arrow" d="M290 60 V94"/><text class="t-xs" x="270" y="52">push</text>
+      <text class="t-xs" x="30" y="236">Tension acts along each layer: continuous plastic.</text>
+      <text class="t-sm t-b" x="390" y="28" style="fill:var(--red)">Bad: arm stands on its tip</text>
+      <rect class="d-plastic" x="390" y="196" width="150" height="16"/>
+      <rect class="d-plastic" x="450" y="70" width="24" height="126"/>
+      <path class="d-thin" d="M450 80 H474 M450 92 H474 M450 104 H474 M450 116 H474 M450 128 H474 M450 140 H474 M450 152 H474 M450 164 H474 M450 176 H474"/>
+      <path class="d-ink" d="M450 168 l6 -5 l6 6 l6 -5 l6 4" style="stroke:var(--red)"/>
+      <path class="d-ink arrow" d="M580 90 H478"/><text class="t-xs" x="560" y="82">push</text>
+      <text class="t-xs" x="390" y="236">Bending pulls across layers: cracks at a layer line.</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> The same arm, two orientations. If the snap must stand upright, make it 2–3 times thicker or choose a different joint.</figcaption>
+  </figure>
+
+  <h3>Make the arm better: taper and fillet</h3>
+  <p>Strain peaks at the root of the arm. Two cheap changes lower it dramatically. <b>Taper</b> the thickness from <b>h</b> at the root to <b>h/2</b> at the tip: strain follows <span class="jf-eq">ε ≈ 0.92 · h · y / L²</span>, which allows about <b>64 % more deflection</b> for the same peak strain. And add a <b>root fillet of at least 0.5 × h</b> (1 mm minimum) so the stress is not concentrated in a sharp corner. Many failed snaps broke at a 90° corner at the root, not in the middle of the arm.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 210" role="img" aria-label="Three cantilever beam shapes: constant section, tapered, and constant with root fillet, with relative strain">
+      <text class="t-sm t-b" x="20" y="22">Constant</text>
+      <rect class="d-plastic" x="20" y="30" width="20" height="90"/><rect class="d-plastic" x="40" y="60" width="190" height="30"/>
+      <text class="t-xs" x="20" y="144">ε = 1.5·h·y / L²</text><text class="t-xs" x="20" y="160">reference (100 %)</text><text class="t-xs c-red" x="20" y="178">sharp root: stress riser</text>
+      <text class="t-sm t-b" x="260" y="22">Tapered to h/2</text>
+      <rect class="d-plastic" x="260" y="30" width="20" height="90"/><polygon class="d-plastic" points="280,55 450,65 450,85 280,95"/>
+      <text class="t-xs" x="260" y="144">ε = 0.92·h·y / L²</text><text class="t-xs" x="260" y="160">≈ 61 % of the strain</text><text class="t-xs c-green" x="260" y="178">best material use</text>
+      <text class="t-sm t-b" x="500" y="22">Constant + root fillet</text>
+      <rect class="d-plastic" x="500" y="30" width="20" height="90"/><rect class="d-plastic" x="520" y="60" width="190" height="30"/>
+      <path class="d-plastic" d="M520 40 L520 60 L542 60 Q522 58 520 40 Z"/><path class="d-plastic" d="M520 110 L520 90 L542 90 Q522 92 520 110 Z"/>
+      <text class="t-xs" x="500" y="144">fillet r ≥ 0.5·h</text><text class="t-xs" x="500" y="160">peak stress down 20–30 %</text><text class="t-xs c-green" x="500" y="178">easiest to model</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> Three ways to shape a snap arm. Combine taper and fillet for the longest life.</figcaption>
+  </figure>
+
+  <h3>Hook geometry: how the angles set force</h3>
+  <p>The hook has two faces. The <b>lead-in (insertion) ramp</b> sets how hard it is to push in; the <b>return face</b> sets how hard it is to pull out. A ramp at 30°–45° from the motion direction lets the part snap in with moderate force. A return face at 90° is a permanent lock; at 45°–60° it releases when you pull. Keep the undercut <b>y</b> at <b>0.5–1.2 mm</b> and the hook head at least <b>1.6 mm (four lines)</b> wide, or the tip will print as a fuzzy sliver.</p>
+
+  <div class="table-wrap"><table class="data compact jf-table">
+    <thead><tr><th>Return face angle</th><th>Behaviour</th><th>Use</th></tr></thead>
+    <tbody>
+      <tr><td>90° (flat)</td><td>Permanent, breaks before it releases</td><td>Single-use closures, boxes you never reopen</td></tr>
+      <tr><td>60–75°</td><td>Releases with a firm pull</td><td>Battery doors, rarely opened lids</td></tr>
+      <tr><td>45°</td><td>Releases easily; may pop loose under vibration</td><td>Frequently opened lids, clips</td></tr>
+      <tr><td>30°</td><td>Friction catch only</td><td>Light detent, positioning</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Annular snap-fit</h3>
+  <p>An annular snap-fit is a ring that stretches over a bead: bottle caps, pen caps, round lids. The strain is the hoop (circumferential) strain: <span class="jf-eq">ε ≈ y / r</span>, where y is the radial undercut and r the radius of the bead. A 20 mm diameter bead (r = 10 mm) with y = 0.2 mm gives 2 %: borderline for PETG, impossible for PLA. A ring is much stiffer than a beam, so cut <b>4–6 slits</b> through the wall to turn it into separate cantilevers and then use the cantilever formula.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 240" role="img" aria-label="Section of an annular snap-fit: a bead on the shaft locks under the lip of a ring wall, with hoop strain formula">
+      <rect class="d-plastic" x="140" y="40" width="60" height="180"/>
+      <polygon class="d-plastic" points="140,100 128,110 140,120"/><polygon class="d-plastic" points="200,100 212,110 200,120"/>
+      <polygon class="d-surface2" points="96,60 122,60 122,120 140,120 140,132 122,132 122,200 96,200"/>
+      <polygon class="d-surface2" points="244,60 218,60 218,120 200,120 200,132 218,132 218,200 244,200"/>
+      <path class="d-thin arrow" d="M128 96 V108"/><text class="t-xs" x="40" y="92">bead undercut y</text>
+      <text class="t-xs t-c" x="170" y="236">Lip locks under the bead</text>
+      <rect class="f-blue" x="290" y="30" width="420" height="190" rx="10"/>
+      <text class="t t-b" x="306" y="56">Hoop strain in a ring</text>
+      <text class="t-sm t-mono" x="306" y="80">ε ≈ y / r</text>
+      <text class="t-xs" x="306" y="106">r = 10 mm, y = 0.2 mm → ε = 2 %</text>
+      <text class="t-xs" x="306" y="122">PETG ok · PLA cracks · PA ok</text>
+      <text class="t-xs" x="306" y="148">• Slit the ring (4–6 slits, 1 mm wide) to relieve hoop stress</text>
+      <text class="t-xs" x="306" y="164">• Bead height y = 0.3–0.6 mm, 45° lead-in on the bead</text>
+      <text class="t-xs" x="306" y="180">• Print with the axis vertical: layers run around the ring</text>
+      <text class="t-xs" x="306" y="196">• Add 0.2–0.3 mm radial clearance everywhere else</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> A bead-and-lip annular snap in section. Layers run around the ring when the axis is vertical, which is the strong direction for hoop strain.</figcaption>
+  </figure>
+
+  <h3>Torsional snap-fit</h3>
+  <p>In a torsional snap the hook sits on a lever, and a thin bar acts as a torsion spring when you press the lever. It fits compact spaces where a long beam will not. For a thin rectangular bar of length <b>L</b> and thickness <b>t</b> twisted by an angle <b>θ</b> (radians), the maximum shear strain is roughly <span class="jf-eq">γ ≈ θ · t / L</span>. Use shear-strain limits about <b>1.2–1.5 ×</b> the tension values above as a first guess.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 240" role="img" aria-label="Top view of a torsional snap-fit: a thin bar between two posts twists when the lever is pressed">
+      <rect class="d-plastic" x="40" y="110" width="30" height="40"/>
+      <rect class="d-plastic" x="330" y="110" width="30" height="40"/>
+      <rect class="d-plastic" x="70" y="127" width="260" height="6"/>
+      <rect class="d-surface2" x="180" y="70" width="40" height="55"/>
+      <polygon class="d-plastic" points="180,70 220,70 220,50 190,50"/>
+      <text class="t-sm t-b" x="40" y="30">Torsion bar: t = 1.2, L = 22 mm</text>
+      <path class="d-ink arrow" d="M240 56 A32 32 0 0 1 240 100"/><text class="t-xs" x="248" y="84">press</text>
+      <text class="t-xs" x="40" y="186">θ = 12° = 0.21 rad → γ = 0.21 · 1.2 / 22 = 1.1 %</text>
+      <text class="t-xs" x="40" y="204">fine for PETG or PA, too much for PLA</text>
+      <rect class="f-orange" x="420" y="40" width="290" height="170" rx="10"/>
+      <text class="t t-b" x="436" y="66">Design notes</text>
+      <text class="t-xs" x="436" y="92">• Bar thickness 1.0–1.6 mm (2–4 lines)</text>
+      <text class="t-xs" x="436" y="110">• Bar length 15–30 mm; longer = softer</text>
+      <text class="t-xs" x="436" y="128">• Print the bar flat so layers run along its length</text>
+      <text class="t-xs" x="436" y="146">• Add a stop so the lever cannot over-rotate</text>
+      <text class="t-xs" x="436" y="164">• Prefer square (not round) bar sections</text>
+      <text class="t-xs" x="436" y="182">• Shear limit ≈ 1.2–1.5 × tension limit</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> A torsional snap stores energy in a twisting bar, saving the length a cantilever needs.</figcaption>
+  </figure>
+
+  <h2 id="living-hinges">🚀 Living hinges</h2>
+  <p>A living hinge is a thin web of material that bends repeatedly. In injection-moulded polypropylene it can flex a million times; in printed plastic the story is more modest. PP and <b>TPU</b> are excellent, <b>PETG</b> survives tens to hundreds of cycles if designed carefully, and <b>PLA</b> breaks in a handful. Treat a printed living hinge as a <em>limited-life part</em> and consider a pin hinge for anything opened daily.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 250" role="img" aria-label="Living hinge section flat and bent 90 degrees, with web thickness 0.5 mm and width 2 mm">
+      <text class="t-sm t-b" x="20" y="28">As printed (flat)</text>
+      <rect class="d-plastic" x="20" y="80" width="100" height="30"/><rect class="d-plastic" x="140" y="80" width="100" height="30"/><rect class="d-plastic" x="120" y="105" width="20" height="5"/>
+      <path class="d-thin arrow arrow-start" d="M120 130 H140"/><text class="t-xs" x="100" y="150">web length 2 mm</text>
+      <path class="d-thin arrow arrow-start" d="M152 105 V110"/><text class="t-xs" x="160" y="132">0.5 mm thick</text>
+      <text class="t-sm t-b" x="400" y="28">Bent 90°</text>
+      <rect class="d-plastic" x="400" y="80" width="100" height="30"/>
+      <path class="d-ink" d="M500 108 Q514 108 514 124" style="stroke-width:4"/>
+      <rect class="d-plastic" x="512" y="122" width="30" height="100"/>
+      <text class="t-xs" x="560" y="110">web radius ≈ 2 mm</text><text class="t-xs" x="560" y="126">strain ≈ t / (2r) = 12 %</text>
+      <text class="t-xs t-m" x="20" y="200">Use a thickness of 1–1.5 lines (0.45–0.6 mm) and a web length of 2–3 mm for PETG.</text>
+      <text class="t-xs t-m" x="20" y="218">Print flat on the bed so the web lines run across the fold.</text>
+      <text class="t-xs t-m" x="20" y="236">TPU: 0.8–1.2 mm web. PLA: do not rely on it.</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> A 0.5 mm web bent through 90° with a 2 mm radius sees about 12 % outer-fibre strain, far above the elastic limit for most printed plastics, which is why the plastic yields once and then works as a cold-drawn hinge. Expect a short life.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact jf-table">
+    <thead><tr><th>Material</th><th>Web thickness</th><th>Web length</th><th>Expected life</th></tr></thead>
+    <tbody>
+      <tr><td>PP</td><td>0.4–0.5 mm</td><td>1.5–3 mm</td><td>Thousands of cycles</td></tr>
+      <tr><td>PETG</td><td>0.4–0.6 mm</td><td>2–3 mm</td><td>10–200 cycles</td></tr>
+      <tr><td>TPU 95A</td><td>0.8–1.2 mm</td><td>3–5 mm</td><td>Effectively unlimited</td></tr>
+      <tr><td>Nylon (dry)</td><td>0.4–0.6 mm</td><td>2–3 mm</td><td>100–1,000 cycles</td></tr>
+      <tr><td>PLA</td><td>–</td><td>–</td><td>Few; do not use</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="shape-joints">🔧 Press fits, dovetails, finger joints and puzzles</h2>
+  <p>Joints that rely on geometry alone are the most elegant and the most sensitive to tolerance. All gaps below are <b>per face</b>, for a 0.4 mm nozzle, and assume you read the <a href="tolerances-and-fits.html#clearances">clearance table</a> first.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 250" role="img" aria-label="Four shape-locked joints: dovetail, finger joint, tongue and groove, and puzzle knob">
+      <path class="d-plastic" d="M10 60 H65 L55 90 H115 L105 60 H160 V140 H10 Z"/>
+      <polygon class="d-surface2" points="66,40 104,40 104,62 112,88 58,88 66,62"/>
+      <text class="t-sm t-b" x="10" y="26">Dovetail</text><text class="t-xs" x="10" y="164">60–75° flanks</text><text class="t-xs" x="10" y="180">gap 0.2–0.3 per face</text><text class="t-xs" x="10" y="196">slide length ≥ 15 mm</text>
+      <rect class="d-plastic" x="190" y="50" width="40" height="100"/><rect class="d-plastic" x="230" y="50" width="60" height="20"/><rect class="d-plastic" x="230" y="90" width="60" height="20"/><rect class="d-plastic" x="230" y="130" width="60" height="20"/>
+      <rect class="d-surface2" x="290" y="50" width="40" height="100"/><rect class="d-surface2" x="230" y="70" width="60" height="20"/><rect class="d-surface2" x="230" y="110" width="60" height="20"/>
+      <text class="t-sm t-b" x="190" y="26">Finger / box joint</text><text class="t-xs" x="190" y="164">finger 4–8 mm wide</text><text class="t-xs" x="190" y="180">gap 0.1–0.2 per side</text><text class="t-xs" x="190" y="196">glue for strength</text>
+      <rect class="d-plastic" x="370" y="70" width="100" height="70"/><rect class="d-plastic" x="470" y="95" width="30" height="20"/>
+      <path class="d-surface2" d="M470 70 H550 V140 H470 V115 H500 V95 H470 Z"/>
+      <text class="t-sm t-b" x="370" y="26">Tongue &amp; groove</text><text class="t-xs" x="370" y="164">tongue ≈ ⅓ thickness (≥ 1.2)</text><text class="t-xs" x="370" y="180">depth 3–5, gap 0.15–0.25</text><text class="t-xs" x="370" y="196">self-aligns panels</text>
+      <rect class="d-surface2" x="624" y="60" width="86" height="80"/>
+      <rect class="d-plastic" x="560" y="60" width="64" height="80"/><rect class="d-plastic" x="624" y="94" width="12" height="12"/><circle class="d-plastic" cx="642" cy="100" r="14"/>
+      <text class="t-sm t-b" x="560" y="26">Puzzle knob</text><text class="t-xs" x="560" y="164">neck ≥ 3 mm</text><text class="t-xs" x="560" y="180">knob ≈ 1.5 × neck</text><text class="t-xs" x="560" y="196">gap 0.15–0.25</text>
+      <text class="t-xs t-m" x="10" y="232">All four print flat; the loaded direction should never pull layers apart (see Strength &amp; orientation).</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> Shape-locked joints. Dovetails and puzzle knobs lock in two axes; finger joints give large glue area; tongue and groove aligns thin panels.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact jf-table">
+    <thead><tr><th>Joint</th><th>Key numbers (0.4 mm nozzle)</th><th>Watch out</th></tr></thead>
+    <tbody>
+      <tr><td>Press-fit pin</td><td>Pin Ø 0–0.1 larger than hole (diametral); 0.5 mm lead-in chamfer; depth ≥ 2 × Ø</td><td>Creep: the grip loosens over weeks in PLA/PETG</td></tr>
+      <tr><td>Dovetail</td><td>Flank angle 60–75°; clearance 0.2–0.3; add a 1–2° taper along the slide for a wedge-lock</td><td>Print with the slide axis along the layers</td></tr>
+      <tr><td>Finger joint</td><td>Finger width 4–8 mm; clearance 0.1–0.2; ≥ 3 fingers</td><td>Corner stress; fillet the finger roots 0.5 mm</td></tr>
+      <tr><td>Tongue &amp; groove</td><td>Tongue ⅓ wall thickness, ≥ 1.2; depth 3–5; clearance 0.15–0.25</td><td>Thin tongues break; keep them ≥ 3 lines</td></tr>
+      <tr><td>Puzzle knob</td><td>Neck ≥ 3; knob 1.5 × neck; clearance 0.15–0.25 per side</td><td>Corners need 1 mm fillets or they crack</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="bolted">🔧 Bolted joints: clearance holes, counterbores and nut traps</h2>
+  <p>A bolt and nut clamp two parts with a force that plastic cannot match, but plastic must carry the clamping load without crushing. Use a <b>washer</b> or a counterbore with a flat floor under the head, keep the clamp length at least 3 mm of solid plastic, and never overtighten: stop when the surfaces touch. Tightening torque on printed parts is often finger-tight plus a quarter turn.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 300" role="img" aria-label="Counterbore section with a bolt head recessed and a hexagonal nut trap plan with a side slot">
+      <text class="t-sm t-b" x="30" y="30">Counterbore (section)</text>
+      <polygon class="d-plastic" points="30,60 90,60 90,100 100,100 100,200 30,200"/><polygon class="d-plastic" points="200,60 140,60 140,100 130,100 130,200 200,200"/>
+      <rect class="d-metal" x="92" y="78" width="46" height="22"/><rect class="d-metal" x="103" y="100" width="24" height="110"/>
+      <path class="d-thin arrow arrow-start" d="M90 52 H140"/><text class="t-xs t-c" x="115" y="46">head Ø + 0.5</text>
+      <path class="d-thin arrow arrow-start" d="M232 60 V100"/><text class="t-xs" x="238" y="84">k + 0.3</text>
+      <text class="t-xs" x="30" y="226">Clearance hole Ø = bolt Ø + 0.4</text>
+      <text class="t-xs" x="30" y="242">Floor flat; head stays below the surface</text>
+      <text class="t-sm t-b" x="330" y="30">Nut trap (plan)</text>
+      <rect class="d-plastic" x="330" y="40" width="170" height="160"/>
+      <polygon class="d-surface" points="440,120 420,154.6 380,154.6 360,120 380,85.4 420,85.4"/>
+      <rect class="d-surface" x="420" y="85.4" width="80" height="69.2"/>
+      <circle class="d-metal" cx="400" cy="120" r="14" style="fill:none"/>
+      <path class="d-thin arrow arrow-start" d="M380 172 H420"/><text class="t-xs t-c" x="400" y="190">AF + 0.2–0.3</text>
+      <text class="t-xs" x="330" y="226">Hex across corners = AF × 1.155</text>
+      <text class="t-xs" x="330" y="242">Side slot lets the nut slide in</text>
+      <rect class="f-green" x="520" y="30" width="190" height="240" rx="10"/>
+      <text class="t t-b" x="534" y="56">Nut trap rules</text>
+      <text class="t-xs" x="534" y="80">• Pocket depth = nut m + 0.3</text>
+      <text class="t-xs" x="534" y="98">• 0.2–0.3 mm clearance on AF</text>
+      <text class="t-xs" x="534" y="116">• Open the pocket to the side</text>
+      <text class="t-xs" x="534" y="132">  (slot) or from the bottom</text>
+      <text class="t-xs" x="534" y="150">• Top-loaded pocket: pause at</text>
+      <text class="t-xs" x="534" y="166">  the layer, drop the nut in</text>
+      <text class="t-xs" x="534" y="184">• Walls around the pocket</text>
+      <text class="t-xs" x="534" y="200">  ≥ 3 perimeters (1.35 mm)</text>
+      <text class="t-xs" x="534" y="218">• Tighten along Z: nut pulls</text>
+      <text class="t-xs" x="534" y="234">  layers together, not apart</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> A counterbore hides the head; a hexagonal pocket with a slot holds the nut while you tighten. Hexagon corners print rounded, so give 0.2–0.3 mm of clearance on across-flats.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact jf-table">
+    <thead><tr><th>Screw</th><th>Clearance hole Ø</th><th>Socket head Ø × k</th><th>Counterbore Ø × depth</th><th>Nut AF × m</th><th>Nut pocket AF × depth</th></tr></thead>
+    <tbody>
+      <tr><td>M2</td><td>2.4</td><td>3.8 × 2.0</td><td>4.4 × 2.3</td><td>4.0 × 1.6</td><td>4.2 × 1.9</td></tr>
+      <tr><td>M2.5</td><td>2.9</td><td>4.5 × 2.5</td><td>5.0 × 2.8</td><td>5.0 × 2.0</td><td>5.2 × 2.3</td></tr>
+      <tr><td>M3</td><td>3.4</td><td>5.5 × 3.0</td><td>6.0 × 3.3</td><td>5.5 × 2.4</td><td>5.8 × 2.7</td></tr>
+      <tr><td>M4</td><td>4.5</td><td>7.0 × 4.0</td><td>7.6 × 4.3</td><td>7.0 × 3.2</td><td>7.3 × 3.5</td></tr>
+      <tr><td>M5</td><td>5.5</td><td>8.5 × 5.0</td><td>9.2 × 5.3</td><td>8.0 × 4.0</td><td>8.3 × 4.3</td></tr>
+      <tr><td>M6</td><td>6.6</td><td>10.0 × 6.0</td><td>10.8 × 6.3</td><td>10.0 × 5.0</td><td>10.3 × 5.3</td></tr>
+      <tr><td>M8</td><td>8.6</td><td>13.0 × 8.0</td><td>14.0 × 8.3</td><td>13.0 × 6.5</td><td>13.3 × 6.8</td></tr>
+    </tbody>
+  </table></div>
+  <p class="tol-note">All in mm; dimensions for metric socket-head cap screws and standard (ISO 4032) nuts. Hole sizes add the slip-fit allowance of the printed hole; for a horizontal hole, make it a teardrop (<a href="tolerances-and-fits.html#holes">hole shapes</a>).</p>
+
+  <h2 id="heat-set">🚀 Heat-set inserts</h2>
+  <p>A brass <b>heat-set insert</b> is melted into a printed pocket with a soldering iron. The plastic flows into the knurls, solidifies, and you have a metal thread that survives hundreds of screw cycles and pulls out at hundreds of newtons. It is the best way to put a thread in a printed part. The recipe is a hole slightly <em>smaller</em> than the insert, a relief pocket underneath for displaced plastic, and a boss wide enough to take the pressure.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 260" role="img" aria-label="Section of a heat-set insert pocket with insert, relief cavity under it and boss diameter">
+      <path class="d-plastic" d="M60 60 H105 V170 H145 V60 H190 V230 H60 Z"/>
+      <rect class="d-metal" x="107" y="68" width="36" height="66"/><path class="d-thin" d="M118 68 V134 M132 68 V134"/>
+      <path class="d-dash" d="M107 134 H143" style="stroke:var(--orange)"/>
+      <path class="d-thin arrow arrow-start" d="M60 44 H190"/><text class="t-xs t-c" x="125" y="38">boss Ø ≥ 2 × insert Ø</text>
+      <path class="d-thin arrow arrow-start" d="M210 60 V170"/><text class="t-xs" x="218" y="120">pocket depth</text><text class="t-xs" x="218" y="134">= insert + 1</text>
+      <path class="d-thin arrow arrow-start" d="M107 190 H143"/><text class="t-xs t-c" x="125" y="206">hole = OD − 0.5</text>
+      <text class="t-xs" x="154" y="156">relief</text>
+      <rect class="f-orange" x="330" y="30" width="380" height="210" rx="10"/>
+      <text class="t t-b" x="346" y="56">Installation</text>
+      <text class="t-xs" x="346" y="80">1. Iron with insert tip at 200–230 °C (PLA, PETG),</text><text class="t-xs" x="362" y="96">230–260 °C (ABS, ASA, PA)</text>
+      <text class="t-xs" x="346" y="116">2. Rest the insert on the hole, let the heat soak in</text>
+      <text class="t-xs" x="346" y="136">3. Press straight and slowly; stop when flush</text>
+      <text class="t-xs" x="346" y="156">4. Do not push further; remove the iron, hold still 10 s</text>
+      <text class="t-xs" x="346" y="176">5. Test the thread with a screw, not a drill</text>
+      <text class="t-xs t-b" x="346" y="204">Insert pulls along Z? Layers parallel to the pull are weak:</text>
+      <text class="t-xs" x="346" y="220">add a wall of ≥ 4 perimeters or put the insert in a vertical boss.</text>
+    </svg>
+    <figcaption><b>Figure 10.</b> Heat-set insert pocket: a hole smaller than the insert, a relief below for displaced plastic, a chamfer at the mouth, and a boss at least twice the insert diameter.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact jf-table">
+    <thead><tr><th>Thread</th><th>Typical insert OD × length</th><th>Pocket hole Ø</th><th>Pocket depth</th><th>Boss Ø (min)</th></tr></thead>
+    <tbody>
+      <tr><td>M2</td><td>3.5 × 3–4</td><td>3.2</td><td>5.0</td><td>7</td></tr>
+      <tr><td>M2.5</td><td>4.0 × 4</td><td>3.6–3.8</td><td>5.5</td><td>8</td></tr>
+      <tr><td>M3</td><td>4.6 × 5–6</td><td>4.0–4.2</td><td>7.0</td><td>9</td></tr>
+      <tr><td>M4</td><td>6.0 × 6–8</td><td>5.4–5.6</td><td>9.0</td><td>12</td></tr>
+      <tr><td>M5</td><td>7.0 × 8–10</td><td>6.4–6.6</td><td>11.0</td><td>14</td></tr>
+      <tr><td>M6</td><td>8.5 × 10–12</td><td>7.8–8.0</td><td>13.0</td><td>17</td></tr>
+      <tr><td>M8</td><td>11 × 12–14</td><td>10.2–10.4</td><td>15.0</td><td>22</td></tr>
+    </tbody>
+  </table></div>
+  <p class="tol-note">Mm. Insert dimensions vary between manufacturers: always check the datasheet and print a test pocket with two different diameters. Use the smaller hole for PLA and the larger for PETG/ABS if the insert barely fits.</p>
+
+  <h2 id="bosses">🔧 Self-tapping screws and screw bosses</h2>
+  <p>A screw can cut its own thread in a plain pilot hole in printed plastic. It is quick but wears out in 3–5 cycles. Choose it for single-use or low-load closures. The boss that carries the screw must be strong enough not to split: a <b>pilot hole of about 0.8 × the screw diameter</b>, a <b>boss outer diameter of 2.5–3 × the screw</b>, a thread engagement of at least <b>2 × the screw diameter</b>, and <b>gussets (ribs)</b> to the main wall.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 250" role="img" aria-label="Section of a screw boss with pilot hole, gusset ribs and engagement depth">
+      <rect class="d-plastic" x="40" y="190" width="240" height="20"/>
+      <rect class="d-plastic" x="130" y="70" width="60" height="120"/>
+      <polygon class="d-plastic" points="190,190 190,110 235,190"/><polygon class="d-plastic" points="130,190 130,110 85,190"/>
+      <rect class="d-surface" x="150" y="80" width="20" height="110"/>
+      <rect class="d-metal" x="152" y="30" width="16" height="130"/><rect class="d-metal" x="144" y="22" width="32" height="8"/><path class="d-thin" d="M152 110 H168 M152 120 H168 M152 130 H168 M152 140 H168 M152 150 H168"/>
+      <path class="d-thin arrow arrow-start" d="M130 60 H190"/><text class="t-xs t-c" x="160" y="52">boss Ø 2.5–3 × d</text>
+      <path class="d-thin arrow arrow-start" d="M260 110 V160"/><text class="t-xs" x="268" y="132">engagement</text><text class="t-xs" x="268" y="146">≥ 2 × d</text>
+      <text class="t-xs" x="40" y="236">Gussets 60–100 % of wall thickness; fillet 1 mm to the base</text>
+      <rect class="f-purple" x="400" y="30" width="310" height="200" rx="10"/>
+      <text class="t t-b" x="416" y="56">Screw boss checklist</text>
+      <text class="t-xs" x="416" y="80">• Pilot Ø ≈ 0.8 × screw: M2 1.7 · M2.5 2.1</text><text class="t-xs" x="432" y="96">M3 2.5–2.6 · M4 3.3–3.4 mm</text>
+      <text class="t-xs" x="416" y="116">• Boss wall ≥ 1.6 mm (4 lines) around the pilot</text>
+      <text class="t-xs" x="416" y="134">• 2–4 gussets, one per 90–120° of boss</text>
+      <text class="t-xs" x="416" y="152">• Do not connect the boss to a thin outer wall</text><text class="t-xs" x="432" y="168">without a rib: it sinks or pops out</text>
+      <text class="t-xs" x="416" y="188">• Chamfer the pilot entry 0.5 mm</text>
+      <text class="t-xs" x="416" y="206">• Use a thread-forming screw, not a bolt</text>
+    </svg>
+    <figcaption><b>Figure 11.</b> A screw boss with gussets. The boss is a column, so print it vertically and keep the pilot hole in the same direction as the screw.</figcaption>
+  </figure>
+  <h2 id="threads">🔧 Threads: printed, modeled or tapped</h2>
+  <p>There are three honest ways to get a thread in a printed part, and they differ by two orders of magnitude in durability. Detailed clearances for printed threads are on the <a href="tolerances-and-fits.html#threads">tolerance page</a>; here is how to choose.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 230" role="img" aria-label="Three thread options in section: printed thread, tapped thread in plastic, and heat-set metal insert, with expected cycle life">
+      <text class="t-sm t-b" x="20" y="22">Printed thread</text>
+      <rect class="d-plastic" x="20" y="30" width="200" height="110"/><rect class="d-surface" x="100" y="30" width="40" height="110"/>
+      <path class="d-ink" d="M100 40 l-10 6 l10 6 l-10 6 l10 6 l-10 6 l10 6 l-10 6 l10 6 l-10 6 l10 6" style="fill:none"/>
+      <path class="d-ink" d="M140 40 l10 6 l-10 6 l10 6 l-10 6 l10 6 l-10 6 l10 6 l-10 6 l10 6 l-10 6" style="fill:none"/>
+      <text class="t-xs" x="20" y="164">pitch ≥ 2 mm, Ø ≥ 12 mm</text><text class="t-xs" x="20" y="180">3–10 cycles; best as a cap</text><text class="t-xs" x="20" y="196">no extra hardware</text>
+      <text class="t-sm t-b" x="260" y="22">Tapped in plastic</text>
+      <rect class="d-plastic" x="260" y="30" width="200" height="110"/><rect class="d-surface" x="340" y="30" width="40" height="110"/>
+      <path class="d-ink" d="M340 40 l-4 4 l4 4 l-4 4 l4 4 l-4 4 l4 4 l-4 4 l4 4 l-4 4 l4 4 l-4 4 l4 4 l-4 4 l4 4" style="fill:none"/>
+      <path class="d-ink" d="M380 40 l4 4 l-4 4 l4 4 l-4 4 l4 4 l-4 4 l4 4 l-4 4 l4 4 l-4 4 l4 4 l-4 4 l4 4 l-4 4" style="fill:none"/>
+      <text class="t-xs" x="260" y="164">M3 into Ø 2.7–2.8 mm hole</text><text class="t-xs" x="260" y="180">5–20 cycles; cut with a hand tap</text><text class="t-xs" x="260" y="196">only for low loads</text>
+      <text class="t-sm t-b" x="500" y="22">Heat-set insert</text>
+      <rect class="d-plastic" x="500" y="30" width="200" height="110"/><rect class="d-surface" x="580" y="30" width="40" height="110"/>
+      <rect class="d-metal" x="578" y="40" width="44" height="70"/><path class="d-thin" d="M584 40 V110 M616 40 V110"/>
+      <text class="t-xs" x="500" y="164">metal thread in plastic</text><text class="t-xs" x="500" y="180">100+ cycles; hundreds of N</text><text class="t-xs" x="500" y="196">needs inserts and a hot iron</text>
+    </svg>
+    <figcaption><b>Figure 12.</b> Three kinds of thread. The metal insert is by far the most durable; modelled threads below M12 are usually a waste of effort.</figcaption>
+  </figure>
+
+  <div class="callout trick"><span class="callout-title">Big threads, big pitch</span>
+    <p>A printed thread needs about <b>3–4 layers per thread flank</b> to be strong. A pitch of 2 mm with a 0.2 mm layer gives about 10 layers per pitch: good. Fine M3 (0.5 mm pitch) cannot be modeled with a 0.4 mm nozzle: the crests merge into a ridge. Use real hardware for small sizes.</p></div>
+
+  <h2 id="magnets">🔧 Magnets</h2>
+  <p>Disc magnets (neodymium) give a hinge-free closure, a modular mounting system or a tool holder. The design problem is the pocket: it must hold the magnet against the pull, keep the magnet close to the contact face and not let it flip. Make the pocket <b>0.1–0.2 mm larger in diameter</b> than the magnet for a glue fit (or 0.05–0.1 for a press fit in PETG), <b>0.1–0.2 mm deeper</b> than the magnet thickness, and leave a <b>front skin of 0.4–0.6 mm</b> (two to three layers). Every extra 0.5 mm of plastic between magnet faces cuts holding force by roughly a quarter.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 250" role="img" aria-label="Magnet pocket in section with front skin and a pair of magnets marked N and S so that they cannot be flipped">
+      <path class="d-plastic" d="M40 60 H200 V160 H150 V84 H90 V160 H40 Z"/>
+      <rect class="d-metal" x="92" y="86" width="56" height="66"/>
+      <path class="d-thin arrow arrow-start" d="M60 60 V84"/><text class="t-xs" x="40" y="48">skin 0.4–0.6 mm</text>
+      <text class="t-xs" x="40" y="180">Pocket opens at the back or is paused and capped</text>
+      <text class="t-xs" x="40" y="196">Add a dab of CA or epoxy</text>
+      <rect class="d-plastic" x="300" y="60" width="100" height="70"/><rect class="d-surface2" x="410" y="60" width="100" height="70"/>
+      <rect class="d-metal" x="330" y="75" width="40" height="40"/><rect class="d-metal" x="440" y="75" width="40" height="40"/>
+      <text class="t t-b t-c" x="350" y="102">N</text><text class="t t-b t-c" x="460" y="102">S</text>
+      <path class="d-plastic" d="M300 130 h14 v8 h-14 Z"/>
+      <text class="t-xs" x="300" y="160">Mark polarity with a notch,</text><text class="t-xs" x="300" y="176">a key or a shaped pocket so</text><text class="t-xs" x="300" y="192">a magnet cannot be flipped.</text>
+      <rect class="f-red" x="540" y="40" width="170" height="170" rx="10"/>
+      <text class="t-sm t-b" x="554" y="66">Safety</text>
+      <text class="t-xs" x="554" y="86">• Keep away from pacemakers</text><text class="t-xs" x="554" y="102">• Swallowing hazard: seal pockets</text><text class="t-xs" x="554" y="118">• Pinch hazard when pairs snap</text><text class="t-xs" x="554" y="134">• Neodymium weakens above ~80 °C</text><text class="t-xs" x="554" y="150">• Brittle: they chip when slammed</text><text class="t-xs" x="554" y="170">• Never grind or drill them</text>
+    </svg>
+    <figcaption><b>Figure 13.</b> Magnet pocket with a thin skin and a polarity key. Insert the magnet while the print is paused, then cover it with 2–3 layers.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact jf-table">
+    <thead><tr><th>Magnet (Ø × t)</th><th>Pocket Ø (glue fit)</th><th>Pocket Ø (press fit)</th><th>Pocket depth</th><th>Boss/wall around pocket</th></tr></thead>
+    <tbody>
+      <tr><td>5 × 2</td><td>5.2</td><td>5.1</td><td>2.2</td><td>≥ 1.2</td></tr>
+      <tr><td>6 × 3</td><td>6.2</td><td>6.1</td><td>3.2</td><td>≥ 1.2</td></tr>
+      <tr><td>8 × 3</td><td>8.2</td><td>8.1</td><td>3.2</td><td>≥ 1.6</td></tr>
+      <tr><td>10 × 3</td><td>10.2</td><td>10.1</td><td>3.2</td><td>≥ 1.6</td></tr>
+      <tr><td>12 × 3</td><td>12.2</td><td>12.1</td><td>3.2</td><td>≥ 2.0</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="pins-hinges">🔧 Pins and hinges</h2>
+  <p>A pin hinge is the workhorse of printed mechanisms. The pin can be a piece of <b>1.75 mm filament</b> (cheap, in a 1.9–2.0 mm hole), a nail or steel rod, or a printed pin. The rules: a <b>slip fit</b> in the knuckles that rotate and a <b>snug fit</b> in the knuckles that must hold the pin, <b>0.3–0.5 mm</b> gap between the knuckles so they never fuse, knuckles at least <b>3 × the pin diameter</b> long, and a retaining feature at each end (a mushroomed filament end, a cap or a cotter pin).</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 240" role="img" aria-label="Side view of a three-knuckle pin hinge with a metal pin, slip and snug fits and knuckle gaps">
+      <rect class="d-plastic" x="80" y="70" width="60" height="76"/><rect class="d-surface2" x="144" y="70" width="72" height="76"/><rect class="d-plastic" x="220" y="70" width="60" height="76"/>
+      <rect class="d-metal" x="66" y="100" width="228" height="16"/>
+      <circle class="d-metal" cx="66" cy="108" r="9"/><circle class="d-metal" cx="294" cy="108" r="9"/>
+      <text class="t-sm t-b" x="80" y="40">Part A</text><text class="t-sm t-b" x="152" y="40" style="fill:var(--orange)">Part B</text>
+      <path class="d-thin arrow arrow-start" d="M140 160 H144"/><text class="t-xs" x="100" y="180">knuckle gap 0.4</text>
+      <text class="t-xs" x="80" y="206">A: snug hole (pin + 0.1) · B: slip hole (pin + 0.3)</text>
+      <rect class="f-purple" x="400" y="30" width="310" height="190" rx="10"/>
+      <text class="t t-b" x="416" y="56">Pin options</text>
+      <text class="t-xs" x="416" y="80">• 1.75 mm filament in Ø 1.9–2.0: free, flexible,</text><text class="t-xs" x="432" y="96">flatten the end with a hot iron as a rivet head</text>
+      <text class="t-xs" x="416" y="116">• Steel rod / nail: stiff; use for load</text>
+      <text class="t-xs" x="416" y="136">• Printed pin: print standing so layers circle</text><text class="t-xs" x="432" y="152">the pin (strong in bending)</text>
+      <text class="t-xs" x="416" y="172">• Snap-in pin: two small cone detents</text>
+      <text class="t-xs" x="416" y="192">• Horizontal holes: use teardrops, not circles</text>
+    </svg>
+    <figcaption><b>Figure 14.</b> A three-knuckle hinge: the middle knuckle belongs to one part and the outer two to the other, which spreads the load across the pin.</figcaption>
+  </figure>
+
+  <h2 id="print-in-place">🚀 Print-in-place joints</h2>
+  <p>A print-in-place joint is printed fully assembled: the hinge, ball joint or chain link moves right off the bed. The key is a <b>gap that survives printing</b> without fusing: <b>0.3–0.5 mm</b> in the horizontal plane, and in the vertical direction <b>at least two layers</b> (0.4 mm for 0.2 mm layers). Surfaces facing downward over the gap must be 45° chamfers so that no support is needed inside the mechanism.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 240" role="img" aria-label="Top view of a pin inside a ring with 0.4 mm gaps and rules for print-in-place joints">
+      <circle class="d-plastic" cx="130" cy="110" r="76"/><circle class="d-surface" cx="130" cy="110" r="44"/><circle class="d-surface2" cx="130" cy="110" r="40"/>
+      <path class="d-thin arrow arrow-start" d="M170 110 H174"/><text class="t-xs" x="190" y="104">gap 0.4</text>
+      <text class="t-sm t-b" x="40" y="214">Pin Ø 8 in ring Ø 8.8 (≈ 0.4 per side)</text>
+      <rect class="f-green" x="320" y="24" width="390" height="196" rx="10"/>
+      <text class="t t-b" x="336" y="50">Print-in-place rules</text>
+      <text class="t-xs" x="336" y="74">• Horizontal gap 0.3–0.5 mm; vertical gap ≥ 0.4 mm</text>
+      <text class="t-xs" x="336" y="92">• Use 45° cone or chamfer faces for any gap that faces down</text>
+      <text class="t-xs" x="336" y="110">• First layers fuse: widen the bottom gap by 0.2 mm or chamfer it</text>
+      <text class="t-xs" x="336" y="128">• Calibrate flow and use a cooler nozzle: oozing bridges the gap</text>
+      <text class="t-xs" x="336" y="146">• Keep outer-wall order consistent and avoid ironing near gaps</text>
+      <text class="t-xs" x="336" y="164">• Free the joint with a twist or a thin knife along the gap</text>
+      <text class="t-xs" x="336" y="182">• Avoid brims that cross the gap</text>
+      <text class="t-xs" x="336" y="200">• Print a one-link test before the full model</text>
+    </svg>
+    <figcaption><b>Figure 15.</b> Plan view of a print-in-place pin. Both the gap width and the printed layer height decide whether the joint frees.</figcaption>
+  </figure>
+
+  <h2 id="adhesive">🔧 Adhesive joints and glue channels</h2>
+  <p>Glue is the best way to assemble models that were split to fit the bed. Think of the glue line as a part of the joint: give it surface area, a controlled gap and a place for excess to go. <b>Cyanoacrylate (CA, superglue)</b> gives fast bonds on PLA and PETG, <b>two-part epoxy</b> fills gaps and bonds nearly everything, and <b>solvent welding</b> works on ABS and ASA (acetone), where it melts the surfaces together and gives close to parent-material strength. Sand surfaces to 120–220 grit first and wipe with isopropyl alcohol.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 230" role="img" aria-label="Lap joint with glue channels and a scarf joint with an angle of about 15 degrees">
+      <rect class="d-plastic" x="40" y="60" width="200" height="50"/><rect class="d-surface2" x="40" y="115" width="200" height="50"/>
+      <rect class="f-yellow" x="90" y="98" width="10" height="12"/><rect class="f-yellow" x="180" y="98" width="10" height="12"/>
+      <path class="d-thin arrow arrow-start" d="M250 110 V115"/><text class="t-xs" x="258" y="116">glue gap 0.1–0.2</text>
+      <text class="t-xs" x="40" y="190">Channels 1 × 1 mm hold glue and let air escape</text>
+      <polygon class="d-plastic" points="360,60 460,60 440,110 360,110"/><polygon class="d-surface2" points="460,60 560,60 560,110 440,110"/>
+      <text class="t-xs" x="360" y="140">Scarf joint: cut at 10–20° to the axis</text><text class="t-xs" x="360" y="156">Glue area ≈ 4–6 × the cross-section</text>
+      <text class="t-xs" x="360" y="190">Best for tubes and long rods</text>
+      <rect class="f-orange" x="580" y="40" width="130" height="150" rx="10"/>
+      <text class="t-sm t-b" x="590" y="64">Cure</text><text class="t-xs" x="590" y="84">CA: seconds</text><text class="t-xs" x="590" y="100">Epoxy: 5 min–24 h</text><text class="t-xs" x="590" y="116">Clamp, no gaps</text><text class="t-xs" x="590" y="132">Use gloves, ventilate</text>
+    </svg>
+    <figcaption><b>Figure 16.</b> A lap joint with glue reservoirs and a scarf joint. A flat butt joint is the weakest option: avoid it unless you add alignment features.</figcaption>
+  </figure>
+
+  <h2 id="ribs">🔧 Ribs, gussets and fillets</h2>
+  <p>Ribs stiffen thin walls cheaply; gussets support a corner; fillets spread stress. For FDM the rules are simple: rib <b>thickness 0.9–1.8 mm</b> (2–4 lines, at most the wall it sits on), rib <b>height at most 4–5 × its thickness</b> before it buckles or wobbles, and an inside corner <b>fillet of at least 1 mm</b> (3 mm in loaded corners). Orient ribs along the load, and remember that a rib in the XY plane is strong in the layer plane but weak if it is pulled in Z.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 250" role="img" aria-label="Rib on a plate, gusset on an L bracket, and fillet on an inside corner">
+      <text class="t-sm t-b" x="20" y="26">Rib</text>
+      <rect class="d-plastic" x="20" y="170" width="200" height="20"/><rect class="d-plastic" x="110" y="90" width="20" height="80"/>
+      <path class="d-thin arrow arrow-start" d="M110 78 H130"/><text class="t-xs" x="20" y="214">thickness 0.9–1.8; height ≤ 4–5 ×</text><text class="t-xs" x="20" y="230">rib spacing ≥ 3 × wall</text>
+      <text class="t-sm t-b" x="260" y="26">Gusset</text>
+      <rect class="d-plastic" x="270" y="60" width="20" height="130"/><rect class="d-plastic" x="270" y="170" width="170" height="20"/>
+      <polygon class="d-plastic" points="290,170 290,100 360,170"/>
+      <text class="t-xs" x="260" y="214">triangle ≥ 45° steep, leg ≥ 10 mm</text><text class="t-xs" x="260" y="230">cuts bending stress by 50–70 %</text>
+      <text class="t-sm t-b" x="500" y="26">Fillet</text>
+      <rect class="d-plastic" x="510" y="60" width="20" height="130"/><rect class="d-plastic" x="510" y="170" width="190" height="20"/>
+      <path class="d-plastic" d="M530 130 Q530 170 570 170 L530 170 Z"/>
+      <text class="t-xs" x="500" y="214">r ≥ 1 mm (loaded: 3+ mm)</text><text class="t-xs" x="500" y="230">no sharp inside corners</text>
+    </svg>
+    <figcaption><b>Figure 17.</b> Three ways to stiffen an L-shaped part. A gusset costs a little plastic and a fillet costs nothing.</figcaption>
+  </figure>
+
+  <h2 id="splitting">🔧 Splitting large parts with alignment features</h2>
+  <p>When a part is larger than the bed (256 × 256 mm on the X2D; much smaller on many printers), cut it into pieces that print flat, then assemble. Cut at places where the seam is hidden (an edge, a groove), keep each piece's cut face <b>flat on the bed</b>, and give every joint an alignment feature: <b>pegs</b> (Ø 4–6 mm, length 6–8 mm, 0.2 mm clearance), a <b>tongue and groove</b> along the seam, or a <b>dovetail key</b> across it. Glue over the full face; the alignment features carry shear, the glue carries tension.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 250" role="img" aria-label="A part split in two with round pegs and sockets for alignment and a dashed seam line">
+      <rect class="d-plastic" x="30" y="60" width="140" height="100"/>
+      <rect class="d-plastic" x="170" y="80" width="22" height="16"/><rect class="d-plastic" x="170" y="124" width="22" height="16"/>
+      <rect class="d-surface2" x="210" y="60" width="140" height="100"/>
+      <rect class="d-surface" x="210" y="78" width="24" height="20"/><rect class="d-surface" x="210" y="122" width="24" height="20"/>
+      <path class="d-dash" d="M190 50 V170"/>
+      <text class="t-xs" x="30" y="44">Part 1 (cut face on the bed)</text><text class="t-xs" x="210" y="44">Part 2</text>
+      <text class="t-xs" x="30" y="192">Peg: Ø 4–6, length 6–8</text><text class="t-xs" x="30" y="208">Socket: peg + 0.2, depth + 0.5</text>
+      <rect class="f-teal" x="400" y="30" width="310" height="190" rx="10"/>
+      <text class="t t-b" x="416" y="56">Splitting tips</text>
+      <text class="t-xs" x="416" y="80">• Split along existing edges or grooves</text>
+      <text class="t-xs" x="416" y="98">• Use 2+ pegs, not in line with the load</text>
+      <text class="t-xs" x="416" y="116">• Avoid long straight seams on visible faces</text>
+      <text class="t-xs" x="416" y="134">• Add 0.1–0.2 mm gap between the faces for glue</text>
+      <text class="t-xs" x="416" y="152">• Give pegs a 0.5 mm lead-in chamfer</text>
+      <text class="t-xs" x="416" y="170">• Print a one-piece test of the seam first</text>
+      <text class="t-xs" x="416" y="188">• Sand and prime seams before painting</text>
+    </svg>
+    <figcaption><b>Figure 18.</b> A split part with pegs and sockets. Dashed line: seam. Every plane cut becomes a flat face on the bed with no supports required.</figcaption>
+  </figure>
+
+  <h2 id="bearings">🔧 Hardware pockets and bearings</h2>
+  <p>A pocket for a nut, magnet, bearing or electronic part follows the same rules: <b>opening size = part + clearance</b>, <b>depth = part + 0.1–0.2 mm</b>, a <b>retainer</b> (lip, cover or glue), and <b>walls of at least 1.2 mm</b> around. A standard ball bearing needs a round pocket slightly smaller than the outer race for a press fit, and a step at the bottom to carry axial load. For vertical bores a bridge-free design (hexagonal or chamfered ceiling) avoids supports inside.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 250" role="img" aria-label="Section of a 608 bearing pressed into a pocket with a bottom shoulder, with dimension table values">
+      <polygon class="d-plastic" points="40,60 80,60 80,140 100,140 100,180 40,180"/><polygon class="d-plastic" points="200,60 160,60 160,140 140,140 140,180 200,180"/>
+      <rect class="d-metal" x="82" y="82" width="14" height="56"/><rect class="d-metal" x="144" y="82" width="14" height="56"/><rect class="d-metal" x="106" y="82" width="28" height="56"/>
+      <circle class="d-metal" cx="101" cy="110" r="4" style="fill:none"/><circle class="d-metal" cx="139" cy="110" r="4" style="fill:none"/>
+      <path class="d-thin arrow arrow-start" d="M80 48 H160"/><text class="t-xs t-c" x="120" y="42">Ø 22.1–22.3 (press 22.0)</text>
+      <path class="d-thin arrow arrow-start" d="M214 82 V140"/><text class="t-xs" x="222" y="114">7.2</text>
+      <text class="t-xs" x="40" y="206">Shoulder 1 mm; shaft hole Ø 8.4</text><text class="t-xs" x="40" y="222">Retainer: 0.4 mm lip or cover</text>
+      <rect class="f-blue" x="290" y="20" width="420" height="215" rx="10"/>
+      <text class="t-sm t-b" x="304" y="42">Common bearings: pocket sizes</text>
+      <text class="t-xs t-mono" x="304" y="66">Bearing   ID×OD×W      pocket Ø × depth</text>
+      <text class="t-xs t-mono" x="304" y="86">623       3×10×4       10.1 × 4.2</text>
+      <text class="t-xs t-mono" x="304" y="104">624       4×13×5       13.1 × 5.2</text>
+      <text class="t-xs t-mono" x="304" y="122">625       5×16×5       16.1 × 5.2</text>
+      <text class="t-xs t-mono" x="304" y="140">608       8×22×7       22.1 × 7.2</text>
+      <text class="t-xs t-mono" x="304" y="158">6000      10×26×8      26.1 × 8.2</text>
+      <text class="t-xs" x="304" y="184">Adjust ±0.1 to your printer. Warm PETG/ABS</text><text class="t-xs" x="304" y="200">relaxes the press; use CA glue for permanent.</text>
+      <text class="t-xs" x="304" y="220">Print the bore vertically for round, exact pockets.</text>
+    </svg>
+    <figcaption><b>Figure 19.</b> A 608 skateboard bearing in a press-fit pocket with a lower shoulder. Dimensions in mm for a 0.4 mm nozzle.</figcaption>
+  </figure>
+
+  <h2 id="gears">🔧 Gears: involute, backlash and herringbone</h2>
+  <p>Printed gears work well for light loads, if you choose a large enough <b>module</b> (m = pitch diameter ÷ tooth count). With a 0.4 mm nozzle use <b>m ≥ 1.5</b> (preferably 2): at m = 2 a tooth is about 3.1 mm thick at the pitch line, or seven lines. Use a 20° pressure angle with the <b>involute</b> profile (this is what every gear library gives you) and at least <b>17 teeth</b> on the smaller gear to avoid undercut. Mesh them at a center distance of <span class="jf-eq">a = m·(z₁ + z₂)/2 + 0.1–0.2 mm</span>, where the added term is the <b>backlash</b> that stops the gears binding when printed teeth are slightly fat.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 220" role="img" aria-label="Two gear racks meshing with module 2 teeth and a small backlash gap between flanks">
+      <rect class="d-plastic" x="40" y="50" width="290" height="20"/><rect class="d-surface2" x="40" y="110" width="290" height="20"/>
+      <polygon class="d-plastic" points="65.5,70 94.5,70 88.5,106 71.5,106"/><polygon class="d-plastic" points="115.5,70 144.5,70 138.5,106 121.5,106"/><polygon class="d-plastic" points="165.5,70 194.5,70 188.5,106 171.5,106"/><polygon class="d-plastic" points="215.5,70 244.5,70 238.5,106 221.5,106"/><polygon class="d-plastic" points="265.5,70 294.5,70 288.5,106 271.5,106"/>
+      <polygon class="d-surface2" points="90.5,110 119.5,110 113.5,74 96.5,74"/><polygon class="d-surface2" points="140.5,110 169.5,110 163.5,74 146.5,74"/><polygon class="d-surface2" points="190.5,110 219.5,110 213.5,74 196.5,74"/><polygon class="d-surface2" points="240.5,110 269.5,110 263.5,74 246.5,74"/><polygon class="d-surface2" points="290.5,110 319.5,110 313.5,74 296.5,74"/>
+      <path class="d-dash" d="M40 90 H330"/>
+      <text class="t-xs" x="40" y="160">pitch line · module 2 · pitch 6.28 mm</text>
+      <text class="t-xs" x="40" y="176">tooth height 4.5 · backlash 0.1–0.2 (exaggerated)</text>
+      <rect class="f-purple" x="360" y="20" width="350" height="190" rx="10"/>
+      <text class="t t-b" x="376" y="46">Printed gear checklist</text>
+      <text class="t-xs" x="376" y="70">• Module 1.5–2 for 0.4 nozzle; face width 4–6 × m</text>
+      <text class="t-xs" x="376" y="88">• Pressure angle 20°; ≥ 17 teeth (or profile shift)</text>
+      <text class="t-xs" x="376" y="106">• Center distance = m(z₁+z₂)/2 + 0.1–0.2 mm</text>
+      <text class="t-xs" x="376" y="124">• Print the gear flat: teeth then bend along layers</text>
+      <text class="t-xs" x="376" y="142">• Herringbone: two opposed helixes cancel axial force,</text><text class="t-xs" x="392" y="158">helix angle 20–30°, no gap in the middle for easy print</text>
+      <text class="t-xs" x="376" y="178">• Hub: 3 mm minimum wall; use a set screw or D-flat</text>
+      <text class="t-xs" x="376" y="196">• PETG, PA or POM-like filaments run quieter than PLA</text>
+    </svg>
+    <figcaption><b>Figure 20.</b> Teeth of two meshing gears, shown unwrapped as racks. Each flank must clear the opposite one by the backlash allowance.</figcaption>
+  </figure>
+
+  <h2 id="cables">🔧 Cable management</h2>
+  <p>A cable clip needs an <b>opening narrower than the cable</b> so it stays, but <b>wide enough that the clip can stretch open without breaking</b>. Size the hole <b>0.4–0.6 mm</b> over the cable diameter, the opening at <b>70–80 %</b> of the diameter and the wall at <b>1.6–2.0 mm</b>. Print the clip lying flat so the layers wrap around the cable: each flex then stretches the layers instead of peeling them. For bundles, a slot for a hook-and-loop strap or a zip tie (slot 4 × 1.6 mm for a 2.5 mm tie) is more flexible than a fixed clamp.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 230" role="img" aria-label="C-clip around a cable with an opening narrower than the cable, and a zip-tie plate with two slots">
+      <circle class="d-plastic" cx="110" cy="105" r="45"/><circle class="d-surface2" cx="110" cy="105" r="27"/><rect class="d-surface" x="92" y="55" width="36" height="32"/>
+      <path class="d-thin arrow arrow-start" d="M92 44 H128"/><text class="t-xs" x="60" y="34">opening 0.7–0.8 × Ø</text>
+      <text class="t-xs" x="40" y="176">Hole = cable Ø + 0.5</text><text class="t-xs" x="40" y="192">Wall 1.6–2.0 mm</text><text class="t-xs" x="40" y="208">Flat on the bed</text>
+      <rect class="d-plastic" x="250" y="60" width="120" height="90"/><rect class="d-surface" x="280" y="76" width="40" height="8"/><rect class="d-surface" x="280" y="126" width="40" height="8"/>
+      <path class="d-ink" d="M300 80 V130" style="stroke:var(--orange);stroke-width:3"/>
+      <text class="t-xs" x="250" y="176">Tie slot 4 × 1.6 mm</text><text class="t-xs" x="250" y="192">Slot spacing ≥ 6 mm</text>
+      <rect class="f-green" x="420" y="30" width="290" height="170" rx="10"/>
+      <text class="t t-b" x="436" y="56">Cable rules</text>
+      <text class="t-xs" x="436" y="80">• Fillet every sharp edge 1 mm (no cable damage)</text>
+      <text class="t-xs" x="436" y="98">• Screw hole Ø 3.4 plus a counterbore for M3</text>
+      <text class="t-xs" x="436" y="116">• Adhesive foam pad: flat base ≥ 15 × 15 mm</text>
+      <text class="t-xs" x="436" y="134">• Hot cables: use ASA or PC, not PLA</text>
+      <text class="t-xs" x="436" y="152">• Keep a 3 mm minimum bend radius for thin cables;</text><text class="t-xs" x="452" y="168">10× diameter for coax and power</text>
+    </svg>
+    <figcaption><b>Figure 21.</b> A C-clip and a zip-tie plate: the clip opening is narrower than the cable; the plate takes any tie.</figcaption>
+  </figure>
+
+  <h2 id="standoffs">🔧 Standoffs and electronics mounting</h2>
+  <p>A standoff lifts a circuit board off the floor of an enclosure. Use a <b>post with a locating pin</b> (pin Ø = board hole − 0.2 mm, height equal to the board thickness 1.6 mm plus 0.5 mm) or a <b>screw boss with an insert</b> (see above). Height is set by the tallest solder joint under the board plus 1–2 mm; a typical value is <b>4–6 mm</b>. Make the standoff base <b>fillet 1 mm</b> and its diameter at least <b>2 × the pin or screw</b> (M2.5 → 6 mm).</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 230" role="img" aria-label="Circuit board on two printed standoffs with locating pins and a base plate">
+      <rect class="d-plastic" x="40" y="170" width="300" height="16"/>
+      <rect class="d-plastic" x="65" y="130" width="30" height="40"/><rect class="d-plastic" x="285" y="130" width="30" height="40"/>
+      <rect class="d-surface2" x="50" y="124" width="280" height="6"/>
+      <rect class="d-plastic" x="75" y="118" width="10" height="12"/><rect class="d-plastic" x="295" y="118" width="10" height="12"/>
+      <rect class="d-metal" x="140" y="110" width="50" height="14"/><rect class="d-metal" x="220" y="114" width="30" height="10"/>
+      <path class="d-thin arrow arrow-start" d="M350 130 V170"/><text class="t-xs" x="358" y="154">4–6 mm</text>
+      <text class="t-xs" x="40" y="212">PCB 1.6 mm · pin Ø = hole − 0.2 · base fillet 1 mm</text>
+      <rect class="f-orange" x="430" y="30" width="280" height="170" rx="10"/>
+      <text class="t t-b" x="446" y="56">Standoff rules</text>
+      <text class="t-xs" x="446" y="80">• Locate with pins or M2.5/M3 inserts</text>
+      <text class="t-xs" x="446" y="98">• 4 corner posts + 1 centre support if long</text>
+      <text class="t-xs" x="446" y="116">• Keep clear of the largest component</text>
+      <text class="t-xs" x="446" y="134">• Add cable and connector cut-outs at +0.5</text>
+      <text class="t-xs" x="446" y="152">• Insulating plastic only: do not use metal</text><text class="t-xs" x="462" y="168">filaments under live boards</text>
+    </svg>
+    <figcaption><b>Figure 22.</b> A board on printed standoffs with locating pins. The same idea becomes a screw boss when the board is screwed down.</figcaption>
+  </figure>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul>
+    <li>Choose by use: snap for one-off or occasional, insert-plus-screw for repeated, glue for permanent, magnet for convenience.</li>
+    <li>Snap-fit strain ε = 1.5·h·y/L²: keep it under 0.8 % for PLA, about 2 % for PETG/ABS, and orient the arm so layers run along it.</li>
+    <li>Pockets: nut AF + 0.2–0.3, insert hole = OD − 0.5, magnet + 0.1–0.2, bearing + 0.1–0.3.</li>
+    <li>Use pitch ≥ 2 mm for printed threads; for small screws, use metal threads (inserts or self-tapping bosses).</li>
+    <li>Add fillets ≥ 1 mm, ribs 0.9–1.8 mm thick and gussets under every load path.</li>
+    <li>Split big parts along hidden edges, with pegs and glue, and print each face flat.</li>
+  </ul>
+  <p>Next: <a href="strength-and-orientation.html">Strength &amp; orientation</a> explains the layer-direction logic behind these rules, and <a href="design-patterns.html">Design patterns</a> puts the joints to work in complete designs.</p>
+
+</main>
+</body>
+</html>

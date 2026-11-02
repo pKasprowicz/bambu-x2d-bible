@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Parametric CAD workflow · 3D Printing Compendium</title>
+  <meta name="description" content="Parametric thinking for 3D printing: design intent, constraints, sketch-first workflow, variables and tolerance parameter sets, scripted CAD with a complete OpenSCAD box-and-snap-lid, iteration and test-print strategy, Git, publishing and AI-assisted modelling cautions.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+  <style>
+    .pc-eq { font-family: var(--mono, ui-monospace, Consolas, monospace); background: var(--surface-2, rgba(127,127,127,.12)); padding: 2px 8px; border-radius: 6px; }
+    .pc-table td:first-child { white-space: nowrap; font-weight: 600; }
+    .pc-code { font-size: 13px; line-height: 1.45; }
+  </style>
+</head>
+<body data-page="design/parametric-cad-workflow.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 5 · Design for printing</div>
+    <h1>Parametric CAD workflow</h1>
+    <p class="lead">A parametric model is a recipe, not a sculpture: change one number and the whole part follows. This page shows how to capture design intent, keep tolerances as named parameters, script a complete box with a snap-fit lid in OpenSCAD, iterate with cheap test prints and share the result so others can remix it.</p>
+    <div class="meta"><span class="badge intermediate">Intermediate</span><span class="badge time">⏱ 55 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <p>How to think in parameters and constraints, build models sketch-first with a clean feature tree, name and version files, keep one table of tolerances per printer and material, write a parametric box with lid in OpenSCAD (full code below), run short test-print cycles, use Git for design history, publish with a licence and print settings, and use AI assistance without trusting it blindly. The software itself is covered in <a href="../software/cad-modeling.html">CAD modelling</a>; the numbers come from <a href="tolerances-and-fits.html">Tolerances &amp; fits</a>.</p></div>
+
+  <h2 id="thinking">🔰 Parametric thinking</h2>
+  <p>A <b>direct</b> (mesh or sculpt) model remembers only its final shape. A <b>parametric</b> model remembers <em>how</em> it was made: the sketches, the dimensions, the order of operations. Edit a dimension and the software replays the recipe. For 3D printing this is the single most useful habit, because you will almost always need to print a part <b>more than once</b>: the first print is a measurement, not a result. Every fit that is slightly off (0.2 mm is enough) becomes a one-line change instead of an hour of rework.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 240" role="img" aria-label="Parameters feed a parametric model which produces variants: a box in three sizes and a lid with three clearances">
+      <rect class="f-blue" x="20" y="30" width="180" height="180" rx="10"/>
+      <text class="t t-b" x="36" y="56">Parameters</text>
+      <text class="t-xs t-mono" x="36" y="82">inner_x   = 60</text><text class="t-xs t-mono" x="36" y="100">inner_y   = 40</text><text class="t-xs t-mono" x="36" y="118">wall      = 1.6</text><text class="t-xs t-mono" x="36" y="136">clearance = 0.25</text><text class="t-xs t-mono" x="36" y="154">screw_d   = 3</text><text class="t-xs t-mono" x="36" y="172">material  = "PETG"</text>
+      <path class="d-ink arrow" d="M200 120 H250"/>
+      <rect class="f-green" x="252" y="70" width="150" height="100" rx="10"/><text class="t t-b t-c" x="327" y="106">Model</text><text class="t-xs t-c" x="327" y="128">sketches · features</text><text class="t-xs t-c" x="327" y="144">formulas · patterns</text>
+      <path class="d-ink arrow" d="M402 120 H450"/>
+      <rect class="d-plastic" x="460" y="50" width="70" height="40" rx="3"/><rect class="d-plastic" x="460" y="100" width="100" height="50" rx="3"/><rect class="d-plastic" x="460" y="160" width="130" height="50" rx="3"/>
+      <text class="t-xs" x="540" y="74">S</text><text class="t-xs" x="570" y="130">M</text><text class="t-xs" x="600" y="190">L</text>
+      <rect class="d-surface" x="620" y="50" width="86" height="160" rx="8"/><text class="t-xs t-b" x="630" y="74">One recipe</text><text class="t-xs" x="630" y="94">3 sizes</text><text class="t-xs" x="630" y="112">3 materials</text><text class="t-xs" x="630" y="130">2 printers</text><text class="t-xs t-m" x="630" y="160">= 18 parts,</text><text class="t-xs t-m" x="630" y="176">one file</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> Parameters in, parts out. The model is the same; only the numbers change.</figcaption>
+  </figure>
+
+  <p>Parametric modelling is not only for engineers. A phone stand for your phone and your friend's bulkier model is a one-parameter change. A box for a new electronics board is a two-parameter change. The rule of thumb: <b>if you can imagine printing it twice, make it parametric</b>.</p>
+
+  <h2 id="design-intent">🔰 Design intent</h2>
+  <p><b>Design intent</b> is the reason behind each dimension. "The lid lip is 0.25 mm smaller than the box opening, always" is intent. "The lip is 59.5 mm long" is only a number. When intent is encoded as a relationship (<span class="pc-eq">lip = inner − 2 × clearance</span>), the model survives changes. When intent is hidden in typed numbers, the model breaks as soon as one dimension is edited.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 250" role="img" aria-label="Left: hard-coded dimensions break when the box width changes. Right: dimensions linked by formulas follow the change">
+      <rect class="f-red" x="20" y="20" width="330" height="210" rx="10"/><text class="t t-b" x="36" y="46">Bad: typed numbers</text>
+      <rect class="d-plastic" x="50" y="90" width="120" height="70"/><rect class="d-surface2" x="68" y="100" width="84" height="50"/>
+      <rect class="d-plastic" x="200" y="90" width="120" height="70"/><rect class="d-surface2" x="218" y="100" width="84" height="50"/>
+      <path class="d-ink arrow" d="M170 125 H196" style="stroke:var(--red)"/>
+      <text class="t-xs" x="50" y="182">box 60 → 70 and the lid still says 59.5</text><text class="t-xs t-b" x="50" y="204" style="fill:var(--red)">lid no longer fits</text>
+      <rect class="f-green" x="370" y="20" width="330" height="210" rx="10"/><text class="t t-b" x="386" y="46">Good: relationships</text>
+      <rect class="d-plastic" x="400" y="90" width="120" height="70"/><rect class="d-surface2" x="418" y="100" width="84" height="50"/>
+      <rect class="d-plastic" x="550" y="90" width="140" height="70"/><rect class="d-surface2" x="568" y="100" width="104" height="50"/>
+      <path class="d-ink arrow" d="M520 125 H546"/>
+      <text class="t-xs" x="400" y="182">lip = inner − 2 × clearance</text><text class="t-xs t-b c-green" x="400" y="204">change inner_x and the lid follows</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> Encode the relationship, not the result. Anything that must match another feature should be calculated from it.</figcaption>
+  </figure>
+
+  <p>Capture intent in three places: (1) in the <b>names</b> of parameters (<span class="pc-eq">wall</span>, <span class="pc-eq">clearance</span>, not <span class="pc-eq">d12</span>), (2) in <b>formulas</b> and constraints, and (3) in <b>comments or a short note</b> on the first line of the file (what the part is, the units, the printer and material it was tuned for).</p>
+
+  <h2 id="sketch-first">🔰 Sketch-first workflow</h2>
+  <p>In feature-based CAD (Fusion, FreeCAD, Onshape, SolidWorks) every solid starts from a 2D <b>sketch</b>. A clean sketch is the foundation: if the sketch is fully constrained, the features that depend on it behave predictably. Work in this order:</p>
+  <ol class="steps">
+    <li><b>Parameters first.</b> Create named parameters for the interface (screw size, board size, wall, clearance). Never type a measurement twice.</li>
+    <li><b>Base sketch.</b> Draw the main profile on the plane that will lie on the bed. Constrain it fully: dimensions from parameters, symmetry about the origin, coincident or tangent where parts meet.</li>
+    <li><b>Primary feature.</b> Extrude or revolve once. Name it (<span class="pc-eq">Body_Extrude</span>).</li>
+    <li><b>Subtractive features.</b> Cut pockets, holes and slots in a deliberate order: large cuts first, details last.</li>
+    <li><b>Fillets and chamfers last.</b> Round edges after the geometry is stable; they are the first things to break when the model is edited. Add the bottom-edge chamfer (0.4–0.6 mm) for elephant-foot control last of all.</li>
+    <li><b>Check printability.</b> Section the model, measure walls, check the overhangs (≤ 45°) and the orientation.</li>
+  </ol>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 250" role="img" aria-label="Three sketch states: under-constrained (blue), fully constrained (black) and over-constrained (red), shown on a rectangle with a hole">
+      <g transform="translate(20,20)"><rect class="d-surface" x="0" y="20" width="200" height="130" rx="8"/>
+        <rect class="d-thin" x="30" y="45" width="140" height="80" style="stroke:var(--blue)"/><circle class="d-thin" cx="100" cy="85" r="18" style="stroke:var(--blue)"/>
+        <text class="t-sm t-b" x="0" y="14">Under-constrained</text><text class="t-xs" x="0" y="170">some lines drift when you drag</text><text class="t-xs" x="0" y="186">fix: add dimensions and symmetry</text></g>
+      <g transform="translate(260,20)"><rect class="d-surface" x="0" y="20" width="200" height="130" rx="8"/>
+        <rect class="d-ink" x="30" y="45" width="140" height="80"/><circle class="d-ink" cx="100" cy="85" r="18"/>
+        <path class="d-thin arrow arrow-start" d="M30 136 H170"/><text class="t-xs t-c" x="100" y="148">inner_x</text>
+        <text class="t-sm t-b" x="0" y="14">Fully constrained</text><text class="t-xs" x="0" y="170">black: every line is defined</text><text class="t-xs" x="0" y="186">nothing moves unless a parameter does</text></g>
+      <g transform="translate(500,20)"><rect class="d-surface" x="0" y="20" width="200" height="130" rx="8"/>
+        <rect class="d-ink" x="30" y="45" width="140" height="80" style="stroke:var(--red)"/><circle class="d-ink" cx="100" cy="85" r="18" style="stroke:var(--red)"/>
+        <path class="d-thin arrow arrow-start" d="M30 136 H170" style="stroke:var(--red)"/><path class="d-thin arrow arrow-start" d="M30 38 H170" style="stroke:var(--red)"/>
+        <text class="t-sm t-b" x="0" y="14">Over-constrained</text><text class="t-xs" x="0" y="170">two dimensions fight each other</text><text class="t-xs" x="0" y="186">fix: delete the redundant one</text></g>
+    </svg>
+    <figcaption><b>Figure 3.</b> Sketch states. Aim for fully constrained sketches (the colour code differs by program), never over-constrained ones.</figcaption>
+  </figure>
+
+  <div class="callout tip"><span class="callout-title">Tip</span>
+    <p>If a model breaks on every edit, the usual cause is a sketch attached to an <em>edge or face</em> that changed its index. Attach sketches to origin planes or to named datum planes instead of faces of earlier features.</p></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 260" role="img" aria-label="Two feature trees: a clean tree with parameters, base, cuts, fillets and chamfer, and a messy tree with fillets early and unnamed features">
+      <rect class="f-green" x="20" y="20" width="330" height="220" rx="10"/><text class="t t-b" x="36" y="46">Clean feature tree</text>
+      <text class="t-xs t-mono" x="40" y="74">▸ Parameters</text><text class="t-xs t-mono" x="40" y="94">▸ Sketch_Base (constrained)</text><text class="t-xs t-mono" x="40" y="114">▸ Body_Extrude</text><text class="t-xs t-mono" x="40" y="134">▸ Cut_Cavity</text><text class="t-xs t-mono" x="40" y="154">▸ Boss_Pattern (×4)</text><text class="t-xs t-mono" x="40" y="174">▸ Cut_Screw_Holes</text><text class="t-xs t-mono" x="40" y="194">▸ Fillet_Outside</text><text class="t-xs t-mono" x="40" y="214">▸ Chamfer_Bottom</text>
+      <rect class="f-red" x="370" y="20" width="330" height="220" rx="10"/><text class="t t-b" x="386" y="46">Fragile feature tree</text>
+      <text class="t-xs t-mono" x="390" y="74">▸ Sketch1</text><text class="t-xs t-mono" x="390" y="94">▸ Extrude1</text><text class="t-xs t-mono" x="390" y="114">▸ Fillet1 (all edges)</text><text class="t-xs t-mono" x="390" y="134">▸ Sketch2 on a face of Fillet1</text><text class="t-xs t-mono" x="390" y="154">▸ Cut2</text><text class="t-xs t-mono" x="390" y="174">▸ Extrude3 (?)</text><text class="t-xs t-mono" x="390" y="194">▸ Fillet4</text><text class="t-xs t-mono" x="390" y="214">▸ Sketch5 (copy of Sketch2)</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> The order of features is the architecture of the model. Name every feature; put fillets last.</figcaption>
+  </figure>
+
+  <h2 id="variables">🔧 Variables, spreadsheets and design tables</h2>
+  <p>Every parametric program has a place for named values: Fusion's <em>User Parameters</em>, FreeCAD's <em>Spreadsheet</em> workbench, Onshape's <em>Variables</em>, SolidWorks' <em>Equations</em> and <em>Design Tables</em>, OpenSCAD's top-of-file variables. A <b>design table</b> is a spreadsheet where each row is a configuration (for instance <em>S, M, L</em> or <em>PLA, PETG</em>) and each column a parameter. Change the active row, get a different variant.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 230" role="img" aria-label="A design table with rows for small, medium and large boxes and columns for inner size, wall and screw, linked to a model">
+      <rect class="d-surface" x="20" y="20" width="420" height="190" rx="8"/>
+      <path class="d-thin" d="M20 54 H440 M20 90 H440 M20 126 H440 M20 162 H440 M130 20 V210 M200 20 V210 M270 20 V210 M360 20 V210"/>
+      <text class="t-xs t-b" x="30" y="42">variant</text><text class="t-xs t-b" x="140" y="42">inner_x</text><text class="t-xs t-b" x="210" y="42">inner_y</text><text class="t-xs t-b" x="280" y="42">wall</text><text class="t-xs t-b" x="370" y="42">screw</text>
+      <text class="t-xs" x="30" y="76">S</text><text class="t-xs" x="140" y="76">40</text><text class="t-xs" x="210" y="76">30</text><text class="t-xs" x="280" y="76">1.6</text><text class="t-xs" x="370" y="76">M2.5</text>
+      <text class="t-xs" x="30" y="112">M</text><text class="t-xs" x="140" y="112">60</text><text class="t-xs" x="210" y="112">40</text><text class="t-xs" x="280" y="112">1.6</text><text class="t-xs" x="370" y="112">M3</text>
+      <text class="t-xs" x="30" y="148">L</text><text class="t-xs" x="140" y="148">100</text><text class="t-xs" x="210" y="148">70</text><text class="t-xs" x="280" y="148">2.4</text><text class="t-xs" x="370" y="148">M4</text>
+      <text class="t-xs" x="30" y="184">TPU</text><text class="t-xs" x="140" y="184">60</text><text class="t-xs" x="210" y="184">40</text><text class="t-xs" x="280" y="184">2.0</text><text class="t-xs" x="370" y="184">M3</text>
+      <rect class="f-blue" x="20" y="92" width="420" height="34" rx="2" style="opacity:.35"/>
+      <path class="d-ink arrow" d="M440 109 H490"/>
+      <rect class="d-plastic" x="500" y="70" width="140" height="90" rx="4"/><rect class="d-surface2" x="514" y="82" width="112" height="66"/>
+      <text class="t-xs" x="500" y="60">active row: M</text><text class="t-xs" x="500" y="182">model rebuilds</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> A design table drives variants. Switch the active row and the model rebuilds.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact pc-table">
+    <thead><tr><th>Naming style</th><th>Example</th><th>Use for</th></tr></thead>
+    <tbody>
+      <tr><td>Short, lowercase, units implied</td><td><span class="pc-eq">wall</span>, <span class="pc-eq">inner_x</span></td><td>Dimensions in mm</td></tr>
+      <tr><td>Prefixed groups</td><td><span class="pc-eq">fit_slip</span>, <span class="pc-eq">fit_press</span></td><td>Tolerance parameters</td></tr>
+      <tr><td>Derived (never typed)</td><td><span class="pc-eq">outer_x = inner_x + 2 * wall</span></td><td>Anything calculable</td></tr>
+      <tr><td>Boolean switches</td><td><span class="pc-eq">use_inserts = true</span></td><td>Optional features</td></tr>
+      <tr><td>Hardware tables</td><td><span class="pc-eq">m3_clear = 3.4</span></td><td>Screw and nut sizes</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="tolerance-params">🔧 Tolerance parameters per printer and material</h2>
+  <p>Clearances are not constants of the universe: they belong to a <b>printer + nozzle + material + settings</b> combination. Store them in one block at the top of every model so the rest of the model never contains a bare clearance number. When you move to a new filament, you change the block, not the geometry. Start from the values in <a href="tolerances-and-fits.html#calibration">calibration offsets</a>, then adjust them after a tolerance coupon print.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 240" role="img" aria-label="Three tolerance parameter cards: X2D with PLA, X2D with PETG and X2D with ASA, each listing press, slip, loose and print-in-place values">
+      <g transform="translate(20,20)"><rect class="f-blue" width="210" height="200" rx="10"/><text class="t t-b" x="14" y="26">X2D · PLA · 0.4</text>
+        <text class="t-xs t-mono" x="14" y="56">fit_press = 0.05</text><text class="t-xs t-mono" x="14" y="76">fit_snug  = 0.12</text><text class="t-xs t-mono" x="14" y="96">fit_slip  = 0.22</text><text class="t-xs t-mono" x="14" y="116">fit_loose = 0.40</text><text class="t-xs t-mono" x="14" y="136">fit_pip   = 0.30</text><text class="t-xs t-mono" x="14" y="156">hole_add  = 0.15</text><text class="t-xs" x="14" y="184">verified: coupon v3</text></g>
+      <g transform="translate(255,20)"><rect class="f-green" width="210" height="200" rx="10"/><text class="t t-b" x="14" y="26">X2D · PETG · 0.4</text>
+        <text class="t-xs t-mono" x="14" y="56">fit_press = 0.08</text><text class="t-xs t-mono" x="14" y="76">fit_snug  = 0.15</text><text class="t-xs t-mono" x="14" y="96">fit_slip  = 0.28</text><text class="t-xs t-mono" x="14" y="116">fit_loose = 0.45</text><text class="t-xs t-mono" x="14" y="136">fit_pip   = 0.35</text><text class="t-xs t-mono" x="14" y="156">hole_add  = 0.20</text><text class="t-xs" x="14" y="184">PETG swells at the layer edge</text></g>
+      <g transform="translate(490,20)"><rect class="f-orange" width="210" height="200" rx="10"/><text class="t t-b" x="14" y="26">X2D · ASA · 0.4</text>
+        <text class="t-xs t-mono" x="14" y="56">fit_press = 0.05</text><text class="t-xs t-mono" x="14" y="76">fit_snug  = 0.12</text><text class="t-xs t-mono" x="14" y="96">fit_slip  = 0.25</text><text class="t-xs t-mono" x="14" y="116">fit_loose = 0.42</text><text class="t-xs t-mono" x="14" y="136">fit_pip   = 0.32</text><text class="t-xs t-mono" x="14" y="156">hole_add  = 0.18</text><text class="t-xs" x="14" y="184">add shrink 0.5 % to long parts</text></g>
+    </svg>
+    <figcaption><b>Figure 6.</b> Example parameter sets (diametral clearances, mm). They are starting points: your coupon decides the real values.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact pc-table">
+    <thead><tr><th>Parameter</th><th>Meaning</th><th>Typical start (mm)</th></tr></thead>
+    <tbody>
+      <tr><td>fit_press</td><td>Interference-ish fit, parts need force</td><td>0.00–0.10</td></tr>
+      <tr><td>fit_snug</td><td>Hand-press, no play</td><td>0.10–0.20</td></tr>
+      <tr><td>fit_slip</td><td>Slides by hand, minimal play</td><td>0.20–0.30</td></tr>
+      <tr><td>fit_loose</td><td>Free movement, visible play</td><td>0.40–0.60</td></tr>
+      <tr><td>fit_pip</td><td>Print-in-place gap per side</td><td>0.30–0.50</td></tr>
+      <tr><td>hole_add</td><td>Compensation for undersized circles</td><td>0.15–0.40</td></tr>
+      <tr><td>shrink_pct</td><td>Material shrinkage on long dimensions</td><td>0.2–1.0 %</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout trick"><span class="callout-title">Trick</span>
+    <p>Put the printer name and filament in the first comment line: <span class="pc-eq">// tuned: X2D, PETG, 0.4 nozzle, 0.2 layer</span>. Six months later you will know which set of clearances you were using.</p></div>
+
+  <h2 id="libraries">🔧 Modular libraries</h2>
+  <p>Do not rebuild the same screw boss, hinge or snap hook every time. Keep a small <b>library</b>: one file per reusable feature, each with documented parameters and a test render. In OpenSCAD this is <span class="pc-eq">include</span> or <span class="pc-eq">use</span>; in Fusion it is a component library or a derived design; in FreeCAD it is a part you link with <em>App::Link</em>; in CadQuery or build123d it is a plain Python module. Good libraries are small, single-purpose and parameterised by <em>interface</em> (screw size, board size) rather than by raw dimensions.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 250" role="img" aria-label="Library structure: a common settings file, library modules for bosses, snaps and hinges, and project files that use them">
+      <rect class="f-blue" x="20" y="90" width="150" height="70" rx="8"/><text class="t t-b t-c" x="95" y="120">settings.scad</text><text class="t-xs t-c" x="95" y="140">fits · printer · units</text>
+      <rect class="f-green" x="250" y="20" width="170" height="52" rx="8"/><text class="t-sm t-b t-c" x="335" y="52">bosses.scad</text>
+      <rect class="f-green" x="250" y="98" width="170" height="52" rx="8"/><text class="t-sm t-b t-c" x="335" y="130">snaps.scad</text>
+      <rect class="f-green" x="250" y="176" width="170" height="52" rx="8"/><text class="t-sm t-b t-c" x="335" y="208">hinges.scad</text>
+      <rect class="f-orange" x="510" y="52" width="190" height="52" rx="8"/><text class="t-sm t-b t-c" x="605" y="84">sensor_box.scad</text>
+      <rect class="f-orange" x="510" y="146" width="190" height="52" rx="8"/><text class="t-sm t-b t-c" x="605" y="178">tool_holder.scad</text>
+      <path class="d-ink arrow" d="M170 125 H246"/><path class="d-ink arrow" d="M420 46 L508 72 M420 124 L508 80 M420 124 L508 170 M420 202 L508 180"/>
+    </svg>
+    <figcaption><b>Figure 7.</b> A settings file feeds feature libraries, and projects import the libraries. Change the settings once; everything follows.</figcaption>
+  </figure>
+
+  <h2 id="scripted-cad">🚀 Scripted CAD: OpenSCAD, CadQuery and build123d</h2>
+  <p><b>Scripted CAD</b> describes the part in code. Its strengths for printing are: every parameter is a variable by default, the file is plain text (so Git works perfectly), loops and conditions generate patterns (vents, gear teeth, grids) and the same file produces many variants. Its weaknesses: no direct manipulation, steeper learning curve and less comfortable filleting. A practical split: script the <b>parametric, repetitive</b> parts (enclosures, brackets, adapters) and use interactive CAD for <b>organic or one-off</b> shapes.</p>
+
+  <div class="table-wrap"><table class="data compact pc-table">
+    <thead><tr><th>Tool</th><th>Language</th><th>Kernel</th><th>Strengths</th><th>Watch out</th></tr></thead>
+    <tbody>
+      <tr><td>OpenSCAD</td><td>Own declarative language</td><td>Mesh (CGAL / Manifold)</td><td>Simple, huge library base, Customizer panel</td><td>No true fillets; slow on complex booleans in older versions</td></tr>
+      <tr><td>CadQuery</td><td>Python</td><td>OpenCASCADE (B-rep)</td><td>STEP export, fillets, chamfers, selectors</td><td>Selector syntax takes time</td></tr>
+      <tr><td>build123d</td><td>Python</td><td>OpenCASCADE (B-rep)</td><td>Clear builder syntax, strong typing</td><td>Younger ecosystem</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Complete example: parametric box with snap-fit lid (OpenSCAD)</h3>
+  <p>The code below is a complete, working model. It makes a box with rounded corners and a lid whose inner lip carries two snap bumps; the box has matching grooves. Paste it into OpenSCAD, press F5 to preview and F6 to render. Choose <span class="pc-eq">view</span> in the Customizer: <em>print</em> lays both parts on the bed, <em>assembled</em> shows the closed box with a section. Every dimension is in millimetres.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 270" role="img" aria-label="Section of the parametric box and lid with labelled parameters: inner size, wall, floor, lip height, lip thickness, clearance and snap bump">
+      <rect class="d-plastic" x="140" y="110" width="12" height="130"/><rect class="d-plastic" x="448" y="110" width="12" height="130"/><rect class="d-plastic" x="140" y="228" width="320" height="12"/>
+      <rect class="d-plastic" x="130" y="90" width="340" height="14"/><rect class="d-plastic" x="156" y="104" width="8" height="26"/><rect class="d-plastic" x="436" y="104" width="8" height="26"/>
+      <polygon class="d-surface2" points="152,112 156,116 152,122"/><polygon class="d-surface2" points="448,112 444,116 448,122"/>
+      <path class="d-thin arrow arrow-start" d="M152 252 H448"/><text class="t-xs t-c" x="300" y="266">inner_x</text>
+      <path class="d-thin arrow arrow-start" d="M110 110 V240"/><text class="t-xs" x="20" y="180">inner_z + floor</text>
+      <path class="d-thin arrow arrow-start" d="M486 104 V130"/><text class="t-xs" x="494" y="120">lip_h 3</text>
+      <path class="d-thin" d="M140 150 H110"/><text class="t-xs" x="20" y="146">wall 1.6</text>
+      <text class="t-xs" x="486" y="76">lid_t 1.6</text><path class="d-thin" d="M470 90 L484 78"/>
+      <text class="t-xs" x="494" y="154">clearance 0.25</text><path class="d-thin" d="M440 140 L492 152"/>
+      <text class="t-xs" x="494" y="188">bump 0.5, groove +0.25</text><path class="d-thin" d="M449 116 L492 186"/>
+      <text class="t t-b" x="30" y="28">Section: box + lid (closed)</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> The parameters of the box-and-lid model. Lip outer size = inner size − 2 × clearance; groove depth = bump + clearance.</figcaption>
+  </figure>
+
+<pre class="pc-code"><code>// Parametric box with snap-fit lid
+// Units: mm. Tuned: 0.4 nozzle, 0.2 layer, PETG. Print lid plate-down.
+
+/* [View] */
+view = "print";            // [print, assembled, box, lid]
+
+/* [Box size] */
+inner_x = 60;              // inside length
+inner_y = 40;              // inside width
+inner_z = 25;              // inside height
+wall    = 1.6;             // 4 lines of 0.4
+floor_t = 1.2;             // 6 layers of 0.2
+corner_r = 3;              // outside corner radius
+
+/* [Lid and snap] */
+lid_t     = 1.6;
+lip_h     = 3;             // how deep the lip goes
+lip_t     = 1.2;           // lip wall thickness
+clearance = 0.25;          // per side (slip fit)
+bump      = 0.5;           // snap bump height
+bump_h    = 1.2;           // bump height along z
+bump_w    = 10;            // bump width along the wall
+
+/* [Hidden] */
+$fn = 48;
+eps = 0.01;
+outer_x = inner_x + 2 * wall;
+outer_y = inner_y + 2 * wall;
+box_h   = floor_t + inner_z;
+groove_d = bump + clearance;
+
+module rrect(x, y, h, r) {
+    linear_extrude(height = h)
+        offset(r = r) square([x - 2 * r, y - 2 * r], center = true);
+}
+
+// Snap bump profile: 45 degree lead-in, steeper return. Pointing +x.
+module snap_bump() {
+    rotate([90, 0, 0])
+        linear_extrude(height = bump_w, center = true)
+            polygon([[-0.5, -bump_h/2], [0, -bump_h/2],
+                     [bump, -bump_h/2 + bump], [bump, bump_h/2 - bump/2],
+                     [0, bump_h/2], [-0.5, bump_h/2]]);
+}
+
+module box() {
+    difference() {
+        rrect(outer_x, outer_y, box_h, corner_r);
+        translate([0, 0, floor_t])
+            rrect(inner_x, inner_y, inner_z + eps, max(corner_r - wall, 0.2));
+        // grooves in the two short walls, matching the bumps
+        for (s = [-1, 1])
+            translate([s * inner_x / 2, 0, box_h - lip_h / 2])
+                cube([2 * groove_d, bump_w + 2 * clearance,
+                      bump_h + 2 * clearance], center = true);
+    }
+}
+
+module lid() {
+    lip_x = inner_x - 2 * clearance;
+    lip_y = inner_y - 2 * clearance;
+    union() {
+        rrect(outer_x, outer_y, lid_t, corner_r);
+        translate([0, 0, lid_t - eps])
+            difference() {
+                rrect(lip_x, lip_y, lip_h + eps, max(corner_r - wall, 0.2));
+                translate([0, 0, -eps])
+                    rrect(lip_x - 2 * lip_t, lip_y - 2 * lip_t,
+                          lip_h + 3 * eps, 0.2);
+            }
+        // bumps on the outside of the lip, in the middle of its height
+        translate([ lip_x / 2, 0, lid_t + lip_h / 2]) snap_bump();
+        translate([-lip_x / 2, 0, lid_t + lip_h / 2]) mirror([1, 0, 0]) snap_bump();
+    }
+}
+
+if (view == "box") box();
+else if (view == "lid") lid();
+else if (view == "assembled") {
+    difference() {
+        union() {
+            box();
+            translate([0, 0, box_h + lid_t]) rotate([180, 0, 0]) lid();
+        }
+        translate([0, 0, -1]) cube([outer_x, outer_y, 2 * box_h + 4]);  // quarter cut-away
+    }
+}
+else {
+    box();
+    translate([outer_x + 10, 0, 0]) lid();
+}
+</code></pre>
+
+  <div class="callout info"><span class="callout-title">How it works</span>
+    <p>Each outside size is <em>derived</em> (<span class="pc-eq">outer_x = inner_x + 2 × wall</span>). The lid lip is smaller than the box opening by <span class="pc-eq">clearance</span> on each side. The bump is a 45° ramp on the lead-in so the lid slides on, with a steeper return edge so it holds. The groove is cut <span class="pc-eq">bump + clearance</span> deep so the bump has room to snap in. If the snap is too tight, reduce <span class="pc-eq">bump</span> to 0.4; too loose, raise it to 0.6. A matching file may be provided in <a href="../exercises/models.html">Models</a> if available.</p></div>
+
+  <h3>The same box in Python (CadQuery, build123d)</h3>
+  <p>Python CAD gives true fillets and exports STEP files, which many CAD programs and CAM tools read. The shapes below are sketches that show the style; API names change between versions, so check the current documentation of your library before copying.</p>
+<pre class="pc-code"><code># CadQuery: body of the box (sketch of the approach)
+import cadquery as cq
+
+inner_x, inner_y, inner_z = 60, 40, 25
+wall, floor_t, corner_r = 1.6, 1.2, 3
+
+body = (cq.Workplane("XY")
+        .rect(inner_x + 2 * wall, inner_y + 2 * wall)
+        .extrude(floor_t + inner_z)
+        .edges("|Z").fillet(corner_r))
+cavity = (cq.Workplane("XY").workplane(offset=floor_t)
+          .rect(inner_x, inner_y).extrude(inner_z + 1))
+box = body.cut(cavity)
+cq.exporters.export(box, "box.step")</code></pre>
+<pre class="pc-code"><code># build123d: the same box with the builder syntax
+from build123d import *
+
+inner_x, inner_y, inner_z = 60, 40, 25
+wall, floor_t, corner_r = 1.6, 1.2, 3
+
+with BuildPart() as box:
+    Box(inner_x + 2 * wall, inner_y + 2 * wall, floor_t + inner_z,
+        align=(Align.CENTER, Align.CENTER, Align.MIN))
+    fillet(box.edges().filter_by(Axis.Z), radius=corner_r)
+    with Locations((0, 0, floor_t)):
+        Box(inner_x, inner_y, inner_z + 1,
+            align=(Align.CENTER, Align.CENTER, Align.MIN), mode=Mode.SUBTRACT)
+export_step(box.part, "box.step")</code></pre>
+
+  <h2 id="import-export">🔧 Import, export and file formats</h2>
+  <p>Keep the <b>native parametric file</b> as the source of truth and treat everything else as an export. Never edit an STL: it is a triangle soup with no intent.</p>
+
+  <div class="table-wrap"><table class="data compact pc-table">
+    <thead><tr><th>Format</th><th>Contains</th><th>Use it for</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Native (f3d, FCStd, .scad, .py)</td><td>Parameters, history</td><td>Editing</td><td>Back up and version it</td></tr>
+      <tr><td>STEP</td><td>Exact B-rep shapes</td><td>Exchange between CAD programs, remixes</td><td>Best for editing in another CAD tool</td></tr>
+      <tr><td>3MF</td><td>Mesh, units, colours, settings</td><td>Slicer hand-off</td><td>Preferred over STL; keeps scale and plates</td></tr>
+      <tr><td>STL</td><td>Triangle mesh only</td><td>Universal print file</td><td>Export at a tolerance of 0.01 mm; units are mm</td></tr>
+      <tr><td>OBJ</td><td>Mesh with colours</td><td>Multi-colour and textures</td><td>Large files</td></tr>
+    </tbody>
+  </table></div>
+
+  <ul class="checklist">
+    <li>Export in <b>millimetres</b> and check that the part is the right size in the slicer (a 100 × bigger or smaller part is the classic unit error).</li>
+    <li>Use fine mesh resolution: chord tolerance ≤ 0.01 mm, angle ≤ 5° (curves look faceted otherwise).</li>
+    <li>Check the mesh: closed (manifold), no flipped normals, no zero-thickness walls. See <a href="../software/files-and-meshes.html">Files &amp; meshes</a>.</li>
+    <li>Name exports with the version and the variant: <span class="pc-eq">sensor_box_v07_PETG_M.3mf</span>.</li>
+    <li>Position the part in the model with its <b>bed face at z = 0</b> and the origin on a meaningful point, so the slicer's orientation is the intended one.</li>
+  </ul>
+
+  <h2 id="naming-versioning">🔧 Naming and versioning</h2>
+  <p>A consistent naming scheme saves hours. Use <b>lowercase, underscores and numbers</b>: <span class="pc-eq">project_part_vNN</span>. Increase the version number when you print a new revision, not when you save. Write one line per version in a <b>changelog</b> (a text file next to the model): what changed, why, and the result of the print.</p>
+
+  <div class="table-wrap"><table class="data compact pc-table">
+    <thead><tr><th>Version</th><th>Change</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td>v01</td><td>First fit test, clearance 0.2</td><td>Too tight, lid does not close</td></tr>
+      <tr><td>v02</td><td>clearance 0.3, bump 0.5</td><td>Loose, lid rattles</td></tr>
+      <tr><td>v03</td><td>clearance 0.25, bump 0.6</td><td>Good snap; keep</td></tr>
+      <tr><td>v04</td><td>Added vent slots</td><td>OK; check warping</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="iteration">🚀 Design iteration cycles and test-print strategy</h2>
+  <p>The fastest designers print <em>small, often</em>. A well-planned test print answers one question in minutes and costs a few grams of plastic. The cycle is: <b>define the question → make the smallest model that answers it → print → measure → change one parameter → repeat</b>.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 250" role="img" aria-label="Iteration loop: question, small model, print, measure, change one parameter, with a fast inner loop and a slower final print">
+      <rect class="f-blue" x="20" y="90" width="110" height="56" rx="8"/><text class="t-sm t-b t-c" x="75" y="122">Question</text>
+      <rect class="f-green" x="160" y="90" width="110" height="56" rx="8"/><text class="t-sm t-b t-c" x="215" y="122">Small model</text>
+      <rect class="f-orange" x="300" y="90" width="110" height="56" rx="8"/><text class="t-sm t-b t-c" x="355" y="122">Print 10 min</text>
+      <rect class="f-purple" x="440" y="90" width="110" height="56" rx="8"/><text class="t-sm t-b t-c" x="495" y="122">Measure</text>
+      <rect class="f-teal" x="580" y="90" width="120" height="56" rx="8"/><text class="t-sm t-b t-c" x="640" y="122">Change 1 value</text>
+      <path class="d-ink arrow" d="M130 118 H158 M270 118 H298 M410 118 H438 M550 118 H578"/>
+      <path class="d-dash" d="M640 148 V196 H215 V148" style="stroke:var(--orange)"/><text class="t-xs t-c" x="430" y="216">repeat until the fit is right (usually 2–4 loops)</text>
+      <path class="d-ink arrow" d="M75 88 V40 H640" style="stroke:var(--green)"/><text class="t-xs t-c" x="360" y="32">when the fit works: print the full part</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> A fast inner loop on small test pieces, then one confident final print.</figcaption>
+  </figure>
+
+  <p>Strategies for test sections:</p>
+  <ul>
+    <li><b>Print the interface only.</b> Cut a 10–20 mm slice through the lip and wall; print with 2 walls and 0 % infill. This takes 5–10 minutes instead of two hours.</li>
+    <li><b>Slice cut sections.</b> In the slicer, set the model height limit (or cut the model with a plane tool) to print the bottom 5 mm, which includes the first layers, the elephant-foot chamfer and a hole pattern. Many slicers let you cut a model and keep one half.</li>
+    <li><b>Parametric coupons.</b> A strip with 0.1, 0.2, 0.3, 0.4 mm clearances engraved with the value, printed once per filament.</li>
+    <li><b>Change one variable.</b> If you change both the clearance and the orientation, you will not know which did what.</li>
+    <li><b>Use cheap material for geometry, real material for fit.</b> Test shape in any PLA; test strain and snaps in the final filament (PETG behaves very differently).</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 240" role="img" aria-label="A full box with a dashed slice region marked at the corner, and a small test coupon printed from that region">
+      <rect class="d-plastic" x="30" y="70" width="200" height="130"/><rect class="d-surface" x="46" y="86" width="168" height="98"/>
+      <rect class="f-red" x="30" y="70" width="64" height="40" rx="2" style="opacity:.5"/><path class="d-ink" d="M94 70 V110 H30" style="stroke:var(--red);stroke-dasharray:4 3;fill:none"/>
+      <text class="t-sm t-b" x="30" y="52">Full part: 2 h 10 min</text>
+      <path class="d-ink arrow" d="M240 90 H320"/>
+      <rect class="d-plastic" x="340" y="70" width="64" height="40"/><rect class="d-surface" x="352" y="82" width="40" height="16"/>
+      <text class="t-sm t-b" x="340" y="52">Test slice: 8 min</text>
+      <rect class="d-surface" x="450" y="30" width="250" height="180" rx="10"/>
+      <text class="t-sm t-b" x="466" y="56">Slice contains</text>
+      <text class="t-xs" x="466" y="80">• the lip or thread to check</text><text class="t-xs" x="466" y="98">• 2 walls, no infill</text><text class="t-xs" x="466" y="116">• one corner and one wall</text><text class="t-xs" x="466" y="134">• the mating test piece</text>
+      <text class="t-xs t-m" x="466" y="168">Saves 95 % of time and plastic.</text><text class="t-xs t-m" x="466" y="186">Check against the real mating part.</text>
+    </svg>
+    <figcaption><b>Figure 10.</b> Print just the corner that contains the fit: the result tells you about the whole part.</figcaption>
+  </figure>
+
+  <h2 id="git">🔧 Version control with Git</h2>
+  <p>Plain-text sources (OpenSCAD, Python, parameter files, markdown) fit Git perfectly: every change is a readable diff, you can go back to any version and you can branch to try a risky idea. Binary CAD files (Fusion archives, FCStd) are stored as whole files; Git keeps them, but cannot merge them, so commit often and name versions clearly. For large binaries use Git LFS or store them as releases.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 220" role="img" aria-label="A Git graph with main branch commits, a feature branch for a new lid design and a merge">
+      <path class="d-ink" d="M40 80 H680" style="stroke:var(--blue);stroke-width:3"/>
+      <path class="d-ink" d="M170 80 Q190 160 250 160 H430 Q490 160 510 80" style="stroke:var(--orange);stroke-width:3;fill:none"/>
+      <circle class="f-blue" cx="60" cy="80" r="9"/><circle class="f-blue" cx="170" cy="80" r="9"/><circle class="f-blue" cx="510" cy="80" r="9"/><circle class="f-green" cx="620" cy="80" r="9"/>
+      <circle class="f-orange" cx="270" cy="160" r="9"/><circle class="f-orange" cx="350" cy="160" r="9"/><circle class="f-orange" cx="430" cy="160" r="9"/>
+      <text class="t-xs t-c" x="60" y="62">v01</text><text class="t-xs t-c" x="170" y="62">v02 base</text><text class="t-xs t-c" x="510" y="62">merge</text><text class="t-xs t-c" x="620" y="62">v03 tag</text>
+      <text class="t-xs t-c" x="270" y="190">try snap lid</text><text class="t-xs t-c" x="350" y="190">tune bump</text><text class="t-xs t-c" x="430" y="190">vents</text>
+      <text class="t-xs" x="40" y="30">main</text><text class="t-xs" x="206" y="140">branch: snap-lid</text>
+    </svg>
+    <figcaption><b>Figure 11.</b> A branch explores a new lid; the merge brings it into main only when it prints well. Tag the versions you actually printed.</figcaption>
+  </figure>
+
+<pre class="pc-code"><code># start a design repository
+git init sensor-box
+cd sensor-box
+git add sensor_box.scad settings.scad CHANGELOG.md
+git commit -m "v01: first box and lid"
+
+# try an idea on a branch
+git switch -c snap-lid
+# ...edit, print a test slice, measure...
+git commit -am "v02: bump 0.5, clearance 0.25"
+
+# keep the winner
+git switch main
+git merge snap-lid
+git tag v03-printed-petg</code></pre>
+
+  <div class="callout tip"><span class="callout-title">Tip</span>
+    <p>Add exported <span class="pc-eq">.3mf</span> or <span class="pc-eq">.stl</span> files to the repository only for <em>released</em> versions. Add a <span class="pc-eq">.gitignore</span> for temporary exports and slicer cache folders.</p></div>
+
+  <h2 id="assembly-modeling">🔧 Assembly modelling</h2>
+  <p>When a product has several parts (box, lid, PCB, screws, magnets), model them in one <b>assembly</b> so you can check collisions and clearances before printing. Place each part with <b>joints or mates</b> instead of absolute positions: a lid mated to the top face of the box moves when the box grows. Use an interference check (the software can list overlaps) and an <b>exploded view</b> for the instructions. Include the purchased hardware as simple reference models (a cylinder for a screw, a prism for a nut) with correct dimensions.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 260" role="img" aria-label="Exploded assembly with box, PCB, lid and screws along a vertical axis with mate lines and numbering">
+      <path class="d-dash" d="M360 20 V240"/>
+      <rect class="d-plastic" x="270" y="26" width="180" height="16"/><text class="t-xs" x="470" y="38">3 · lid (lip down)</text>
+      <rect class="d-metal" x="352" y="56" width="16" height="36"/><text class="t-xs" x="470" y="78">4 · M3 screws × 4</text>
+      <rect class="d-surface2" x="280" y="110" width="160" height="8"/><text class="t-xs" x="470" y="120">2 · PCB on standoffs</text>
+      <path class="d-plastic" d="M270 150 H450 V230 H270 Z"/><rect class="d-surface" x="282" y="160" width="156" height="60"/><text class="t-xs" x="470" y="190">1 · box with bosses</text>
+      <path class="d-thin" d="M360 42 V56 M360 92 V110 M360 118 V150"/>
+      <text class="t-xs" x="40" y="130">mates:</text><text class="t-xs" x="40" y="148">• lid ↔ box top (coincident)</text><text class="t-xs" x="40" y="166">• PCB ↔ standoffs (slot)</text><text class="t-xs" x="40" y="184">• screw ↔ boss (axis)</text>
+    </svg>
+    <figcaption><b>Figure 12.</b> An exploded assembly numbered in the order of fitting. Mates keep parts related when parameters change.</figcaption>
+  </figure>
+
+  <h2 id="documenting">🔧 Documenting designs</h2>
+  <p>Future you is a stranger. Write the documentation while the design is fresh: three minutes now, hours saved later. Keep it next to the model in a <span class="pc-eq">README.md</span> and include:</p>
+  <ul class="checklist">
+    <li>What it is and a photo of the printed result.</li>
+    <li>A parameter table: name, meaning, default, allowed range.</li>
+    <li>Print settings: printer, nozzle, layer height, walls, infill, supports, orientation, material.</li>
+    <li>Bill of materials: screws, inserts, magnets, with sizes and quantity.</li>
+    <li>Assembly steps (numbered) and a list of known issues.</li>
+    <li>Changelog with the version you printed and the result.</li>
+  </ul>
+
+  <h2 id="publishing">🔧 Publishing, licences and remixing</h2>
+  <p>If you share a model, a short, clear page helps others print it right. Show good photos (including one in daylight with a ruler), the print settings, the orientation picture and the tolerance values used. Consider providing the <b>source files</b> (STEP or the script) so people can remix them, not only the STL.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 250" role="img" aria-label="Layout of a good model page: photos, parameters and print settings, files, licence and remix links">
+      <rect class="d-surface" x="20" y="20" width="400" height="210" rx="10"/>
+      <rect class="f-blue" x="36" y="36" width="190" height="110" rx="6"/><text class="t-xs t-c" x="131" y="94">hero photo + ruler</text>
+      <rect class="f-green" x="238" y="36" width="168" height="50" rx="6"/><text class="t-xs t-c" x="322" y="66">print settings table</text>
+      <rect class="f-orange" x="238" y="96" width="168" height="50" rx="6"/><text class="t-xs t-c" x="322" y="126">orientation image</text>
+      <rect class="f-purple" x="36" y="158" width="120" height="56" rx="6"/><text class="t-xs t-c" x="96" y="190">parameters</text>
+      <rect class="f-teal" x="166" y="158" width="110" height="56" rx="6"/><text class="t-xs t-c" x="221" y="190">files + source</text>
+      <rect class="f-yellow" x="286" y="158" width="120" height="56" rx="6"/><text class="t-xs t-c" x="346" y="190">licence + remix</text>
+      <rect class="d-surface" x="450" y="20" width="250" height="210" rx="10"/>
+      <text class="t-sm t-b" x="466" y="46">Common licences</text>
+      <text class="t-xs" x="466" y="70">CC BY: share, remix, credit me</text><text class="t-xs" x="466" y="88">CC BY-SA: remixes share alike</text><text class="t-xs" x="466" y="106">CC BY-NC: no commercial use</text><text class="t-xs" x="466" y="124">CC0: public domain</text><text class="t-xs" x="466" y="142">MIT / GPL: for code and scripts</text>
+      <text class="t-xs t-m" x="466" y="176">Check the licence of every model you</text><text class="t-xs t-m" x="466" y="192">remix, and of every font and library.</text>
+    </svg>
+    <figcaption><b>Figure 13.</b> A good model page and the licences you will meet. Choose a licence on purpose; "no licence" usually means "all rights reserved".</figcaption>
+  </figure>
+
+  <p><b>Remix and Customizer.</b> A <em>remix</em> is a derived model. Respect the original licence: credit the author, link the source, mention what you changed and use the same or a compatible licence if required. OpenSCAD's <b>Customizer</b> turns the top-of-file variables into a form with sliders, drop-downs and checkboxes (the comments such as <span class="pc-eq">// [print, assembled, box, lid]</span> and <span class="pc-eq">/* [Box size] */</span> in the example above create them). Platforms that run the Customizer let users generate a custom size without installing anything. To make a script Customizer-friendly: keep parameters at the top, give each a one-line comment, group them with section comments and hide derived values under <span class="pc-eq">/* [Hidden] */</span>.</p>
+
+  <h2 id="review-loop">🚀 Design review loop</h2>
+  <p>Before the final print, run a short review. It is a loop, not a one-off: each pass checks printability, function and documentation. Use the <a href="principles.html">design review checklist</a> from Principles and your parameter table.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 260" role="img" aria-label="Design review loop: requirements, model, check printability, simulate or test, review with a second person, release, with feedback arrows back to the model">
+      <circle cx="360" cy="130" r="92" style="fill:none;stroke:var(--blue);stroke-width:2;stroke-dasharray:6 4"/>
+      <rect class="f-blue" x="300" y="14" width="120" height="40" rx="8"/><text class="t-xs t-b t-c" x="360" y="38">1 Requirements</text>
+      <rect class="f-green" x="470" y="70" width="120" height="40" rx="8"/><text class="t-xs t-b t-c" x="530" y="94">2 Model</text>
+      <rect class="f-orange" x="470" y="150" width="140" height="40" rx="8"/><text class="t-xs t-b t-c" x="540" y="174">3 Printability</text>
+      <rect class="f-purple" x="300" y="206" width="120" height="40" rx="8"/><text class="t-xs t-b t-c" x="360" y="230">4 Test print</text>
+      <rect class="f-teal" x="110" y="150" width="130" height="40" rx="8"/><text class="t-xs t-b t-c" x="175" y="174">5 Second pair of eyes</text>
+      <rect class="f-yellow" x="130" y="70" width="110" height="40" rx="8"/><text class="t-xs t-b t-c" x="185" y="94">6 Release</text>
+      <text class="t-xs t-c" x="360" y="120">Failed a check?</text><text class="t-xs t-c" x="360" y="138">go back to 2</text>
+    </svg>
+    <figcaption><b>Figure 14.</b> The review loop: requirements, model, printability, test, second review, release. A failed check sends you back to the model, not forward.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact pc-table">
+    <thead><tr><th>Question</th><th>Where to check</th></tr></thead>
+    <tbody>
+      <tr><td>Do all fits come from named parameters?</td><td>Parameter block</td></tr>
+      <tr><td>Are walls ≥ 2 lines (0.8 mm) everywhere?</td><td>Section view, slicer preview</td></tr>
+      <tr><td>Overhangs ≤ 45° or supported by design?</td><td>Overhang analysis in the slicer</td></tr>
+      <tr><td>Is the main load along the layers?</td><td><a href="strength-and-orientation.html">Strength &amp; orientation</a></td></tr>
+      <tr><td>Do mating parts collide or leave gaps?</td><td>Assembly interference check</td></tr>
+      <tr><td>Can the part be assembled in the planned order?</td><td>Exploded view</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="ai-cautions">⚠️ AI-assisted modelling: cautions</h2>
+  <p>Language models and generative tools can write OpenSCAD or Python CAD code, suggest parameter names and explain an unfamiliar API. They are useful for <b>first drafts</b> and <b>boilerplate</b>, especially for repetitive shapes. They are not a replacement for checking, and they fail in specific ways:</p>
+  <ul>
+    <li><b>Plausible but wrong geometry.</b> Code may run without errors and still make a lid that does not fit, a wall that is 0.1 mm, or an overhang at 90°. Always render and look at a section.</li>
+    <li><b>Invented functions and outdated APIs.</b> Libraries such as CadQuery and build123d change; a generated call may not exist in your version. Read the current documentation.</li>
+    <li><b>No knowledge of your printer.</b> The numbers (clearance, wall, bump) come from general text, not from your coupon. Replace them with your own parameter set.</li>
+    <li><b>Units and scale.</b> Models sometimes mix mm and inches or place the part away from the origin.</li>
+    <li><b>Licensing.</b> Generated code or shapes may resemble existing designs. Treat them as unreviewed and do not publish blindly.</li>
+    <li><b>Safety.</b> Do not use generated designs for loaded, hot, electrical or medical parts without independent calculation and testing.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 200" role="img" aria-label="Workflow: ask for a draft, read the code, render and check, replace numbers with your own parameters, print a test slice">
+      <rect class="f-blue" x="20" y="60" width="120" height="60" rx="8"/><text class="t-xs t-b t-c" x="80" y="94">Draft code</text>
+      <rect class="f-green" x="170" y="60" width="120" height="60" rx="8"/><text class="t-xs t-b t-c" x="230" y="94">Read it</text>
+      <rect class="f-orange" x="320" y="60" width="120" height="60" rx="8"/><text class="t-xs t-b t-c" x="380" y="94">Render + section</text>
+      <rect class="f-purple" x="470" y="60" width="120" height="60" rx="8"/><text class="t-xs t-b t-c" x="530" y="94">Your parameters</text>
+      <rect class="f-teal" x="620" y="60" width="80" height="60" rx="8"/><text class="t-xs t-b t-c" x="660" y="94">Test slice</text>
+      <path class="d-ink arrow" d="M140 90 H168 M290 90 H318 M440 90 H468 M590 90 H618"/>
+      <text class="t-xs" x="20" y="160">A draft is a starting point. Nothing reaches the final print without a render, a section and a test slice.</text>
+    </svg>
+    <figcaption><b>Figure 15.</b> A safe flow for generated code: every draft goes through reading, rendering, your own numbers and a test print.</figcaption>
+  </figure>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul>
+    <li>Parametric means <em>recipe</em>: named parameters, formulas for relationships, features in a deliberate order (fillets last).</li>
+    <li>Keep tolerances in one block per printer, nozzle and material; geometry never contains a bare clearance number.</li>
+    <li>Script repetitive parts (OpenSCAD, CadQuery, build123d); the complete box-and-lid above is a starting library.</li>
+    <li>Print small test slices (5–10 minutes) to settle a fit before the full part, and change one value at a time.</li>
+    <li>Use Git or a changelog; export 3MF/STEP from a native source; document and licence what you publish.</li>
+    <li>Treat AI-generated models as unreviewed drafts: render, section, replace the numbers and test.</li>
+  </ul>
+  <p>Next: practise with the <a href="../exercises/level-2-intermediate.html">Level 2 exercises</a> and browse <a href="design-patterns.html">Design patterns</a> for modules to build into your library. For the rules behind the numbers, see <a href="principles.html">Principles</a>, <a href="tolerances-and-fits.html">Tolerances &amp; fits</a> and <a href="joints-and-fasteners.html">Joints &amp; fasteners</a>.</p>
+
+
+</main>
+</body>
+</html>

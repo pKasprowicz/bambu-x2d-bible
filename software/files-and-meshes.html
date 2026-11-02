@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>File formats &amp; mesh repair · 3D Printing Compendium</title>
+  <meta name="description" content="Compare STL, OBJ, 3MF, STEP, AMF, PLY, glTF, SVG/DXF and G-code formats; understand mesh anatomy and defects; repair, simplify, hollow and split models; use model repositories and licenses carefully; and archive projects with Git LFS.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="software/files-and-meshes.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 3 · Software</div>
+    <h1>File formats &amp; mesh repair</h1>
+    <p class="lead">Every 3D print starts with a file, and many failed prints start with a bad one. Learn which formats to use, what a healthy mesh looks like, how to find and fix problems, and how to find, license and archive models responsibly.</p>
+    <div class="meta"><span class="badge intermediate">Intermediate</span><span class="badge advanced">Advanced</span><span class="badge time">⏱ 40 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <ul>
+      <li>How STL, OBJ, 3MF, STEP, AMF, PLY, glTF, SVG/DXF and G-code differ, and which one to use when.</li>
+      <li>What a mesh is made of, and what "manifold", "watertight" and "inverted normals" mean in practice.</li>
+      <li>How to repair, simplify, hollow and split models with free tools, and what Boolean operations can break.</li>
+      <li>How to read repository licenses carefully, check printability, and archive models with Git LFS and sensible names.</li>
+    </ul>
+  </div>
+
+  <h2 id="formats">File formats compared</h2>
+  <p>Formats fall into four families. <strong>Mesh formats</strong> (STL, OBJ, PLY, AMF, 3MF) store triangles. <strong>Solid (B-rep) formats</strong> (STEP, IGES, Parasolid) store exact surfaces, ideal for editing in CAD. <strong>Scene formats</strong> (glTF, OBJ with materials) store meshes plus textures for display. <strong>Instruction formats</strong> (G-code and its variants) store printer commands and are the <em>output</em> of the slicer, not the input. See <a href="slicers.html">Slicers compared</a> for how a mesh becomes G-code.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 330" role="img" aria-label="Format families: exact solids (STEP, IGES, Parasolid) are tessellated into meshes (STL, OBJ, 3MF) which are sliced into G-code; vector files (SVG, DXF) are extruded into solids">
+      <rect class="f-purple" x="20" y="30" width="190" height="110" rx="12"/><text class="t t-b" x="115" y="54" style="text-anchor:middle">Exact solids</text><text class="t-sm" x="115" y="76" style="text-anchor:middle">STEP · IGES · Parasolid</text><text class="t-xs t-m" x="115" y="96" style="text-anchor:middle">curves are true curves</text><text class="t-xs t-m" x="115" y="112" style="text-anchor:middle">editable in CAD</text>
+      <rect class="f-teal" x="20" y="190" width="190" height="110" rx="12"/><text class="t t-b" x="115" y="214" style="text-anchor:middle">Vector outlines</text><text class="t-sm" x="115" y="236" style="text-anchor:middle">SVG · DXF</text><text class="t-xs t-m" x="115" y="256" style="text-anchor:middle">2D shapes, logos, laser</text><text class="t-xs t-m" x="115" y="272" style="text-anchor:middle">extrude to make 3D</text>
+      <path class="d-ink arrow" d="M214 85 H300"/><text class="t-xs" x="222" y="76">tessellate</text>
+      <path class="d-ink arrow" d="M214 245 C260 245 260 200 300 180"/><text class="t-xs" x="230" y="268">extrude</text>
+      <rect class="f-blue" x="304" y="60" width="230" height="170" rx="12"/><text class="t t-b" x="419" y="84" style="text-anchor:middle">Triangle meshes</text>
+      <g class="t-sm"><text x="322" y="112">STL: bare triangles</text><text x="322" y="132">OBJ / PLY: + colors, UVs</text><text x="322" y="152">AMF: older XML mesh</text><text x="322" y="172">3MF: mesh + units, colors,</text><text x="322" y="190">     materials, settings</text></g>
+      <text class="t-xs t-m" x="322" y="216">what slicers import</text>
+      <path class="d-ink arrow" d="M538 145 H610"/><text class="t-xs" x="550" y="136">slice</text>
+      <rect class="f-orange" x="614" y="60" width="226" height="170" rx="12"/><text class="t t-b" x="727" y="84" style="text-anchor:middle">Machine instructions</text>
+      <g class="t-sm"><text x="632" y="112">.gcode: text commands</text><text x="632" y="132">.bgcode: binary, compact</text><text x="632" y="152">.gcode.3mf: G-code inside</text><text x="632" y="170">     a 3MF package (Bambu)</text></g>
+      <text class="t-xs t-m" x="632" y="216">what the printer reads</text>
+      <text class="t-sm t-m" x="300" y="304">glTF / OBJ travel the display and game-asset route; they can be printed but are rarely ideal sources.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> Where each format sits in the pipeline. Keep the exact version (STEP or native CAD) as the master and export meshes only for slicing.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Format</th><th>Stores</th><th>Units</th><th>Color / multi-material</th><th>Best for</th><th>Watch out for</th></tr></thead>
+    <tbody>
+      <tr><td><strong>STL</strong> (.stl)</td><td>Triangles only (binary or ASCII)</td><td>None; assumed mm</td><td>No</td><td>Universal single-material exchange</td><td>No units, no metadata, large files for fine curves</td></tr>
+      <tr><td><strong>OBJ</strong> (.obj + .mtl)</td><td>Triangles/polygons, normals, UVs, material names</td><td>None</td><td>Via textures or material groups</td><td>Sculpts, textured and colored models</td><td>Polygons can be quads or n-gons; separate .mtl and texture files</td></tr>
+      <tr><td><strong>3MF</strong> (.3mf)</td><td>Mesh, units, build plate, colors, materials, thumbnails, slicer settings</td><td>Yes (default mm)</td><td>Yes</td><td>Modern default for slicers; sharing projects</td><td>Slicer-specific extensions; settings may not transfer between brands</td></tr>
+      <tr><td><strong>AMF</strong> (.amf)</td><td>XML mesh with curved patches, colors, materials</td><td>Yes</td><td>Yes</td><td>Legacy; largely superseded by 3MF</td><td>Poor software support today</td></tr>
+      <tr><td><strong>STEP</strong> (.step/.stp)</td><td>Exact B-rep geometry, assemblies</td><td>Yes</td><td>Limited</td><td>CAD exchange and archiving</td><td>Not directly printable in all slicers; tessellation settings matter</td></tr>
+      <tr><td><strong>IGES</strong> (.igs)</td><td>Older surface/curve exchange</td><td>Yes</td><td>No</td><td>Legacy CAD exchange</td><td>Often surfaces without a closed solid</td></tr>
+      <tr><td><strong>Parasolid</strong> (.x_t/.x_b)</td><td>Exact B-rep kernel format</td><td>Yes</td><td>No</td><td>SolidWorks, NX, Shapr3D exchange</td><td>Proprietary kernel; fewer free tools</td></tr>
+      <tr><td><strong>PLY</strong> (.ply)</td><td>Points/triangles with vertex colors</td><td>None</td><td>Per-vertex color</td><td>3D scans and photogrammetry</td><td>Usually needs conversion and cleanup</td></tr>
+      <tr><td><strong>glTF/GLB</strong></td><td>Meshes, materials, textures, animation</td><td>Meters by convention</td><td>Textures</td><td>Web, AR and game assets</td><td>Meters, not mm; can be non-manifold and non-solid</td></tr>
+      <tr><td><strong>SVG / DXF</strong></td><td>2D vector paths</td><td>Yes (DXF), varies (SVG)</td><td>No</td><td>Logos, laser cutters, extrusions</td><td>Needs closed, clean paths and correct scaling</td></tr>
+      <tr><td><strong>G-code</strong> (.gcode)</td><td>Printer commands</td><td>mm</td><td>Via tool changes</td><td>Direct printing</td><td>Printer-specific; not a model</td></tr>
+    </tbody></table></div>
+
+  <div class="callout trick"><span class="callout-title">The three-file habit</span>
+    <p>For each project keep: (1) the <strong>native</strong> CAD or script file, (2) a <strong>STEP</strong> export for portability, and (3) the <strong>3MF project</strong> you actually sliced. STL is an acceptable throw-away export, not an archive.</p>
+  </div>
+
+  <h3 id="gcode-formats">G-code flavors and containers</h3>
+  <p>Plain <code>.gcode</code> files are text and can be read in any editor. <code>.bgcode</code> is a compact <em>binary</em> G-code format designed to cut file size and speed uploads on printers that support it (introduced by Prusa for its firmware). Bambu Lab printers use <code>.gcode.3mf</code>: a 3MF package containing the plate's G-code, thumbnails and metadata, which is what Bambu Studio sends to the printer. These containers are described in <a href="gcode-and-firmware.html">G-code, firmware &amp; ecosystem</a>. Never edit a file you do not understand and never run G-code from an untrusted source on a printer you care about.</p>
+
+  <h2 id="anatomy">Mesh anatomy</h2>
+  <p>A mesh is a surface described by three things: <strong>vertices</strong> (points in space), <strong>edges</strong> (lines between two vertices) and <strong>faces</strong> (usually triangles bounded by three edges). Each face has an outward-pointing <strong>normal</strong>, a direction perpendicular to the face that tells the software which side is "outside". A printable mesh must enclose a volume unambiguously.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 300" role="img" aria-label="Mesh anatomy: vertices as dots, edges as lines and triangular faces with an outward normal arrow; the outside versus inside of a closed surface">
+      <g transform="translate(20,20)">
+        <text class="t t-b" x="0" y="14">Vertices · edges · faces</text>
+        <path class="d-surface" d="M40 180 L130 190 L180 110 L100 60 L30 100Z"/>
+        <path class="d-thin" d="M40 180 L100 60 M130 190 L100 60 M30 100 L130 190 M180 110 L40 180"/>
+        <g class="k-orange"><circle cx="40" cy="180" r="5"/><circle cx="130" cy="190" r="5"/><circle cx="180" cy="110" r="5"/><circle cx="100" cy="60" r="5"/><circle cx="30" cy="100" r="5"/></g>
+        <text class="t-xs c-orange" x="48" y="206">vertex</text>
+        <path class="d-ink arrow" d="M70 150 L70 110" style="stroke-width:2"/><text class="t-xs" x="76" y="118">normal</text>
+        <text class="t-xs t-m" x="0" y="236">Each triangle has 3 vertices,</text><text class="t-xs t-m" x="0" y="250">3 edges and 1 normal.</text>
+      </g>
+      <g transform="translate(300,20)">
+        <text class="t t-b" x="0" y="14">Closed (watertight) surface</text>
+        <circle class="d-surface" cx="100" cy="120" r="70"/>
+        <g class="d-ink arrow" style="stroke-width:2"><path d="M100 50 V20"/><path d="M170 120 H200"/><path d="M30 120 H0"/><path d="M100 190 V220"/></g>
+        <text class="t-xs" x="62" y="124">inside</text>
+        <text class="t-xs t-m" x="0" y="252">Normals point outward everywhere,</text><text class="t-xs t-m" x="0" y="266">so the slicer knows what is solid.</text>
+      </g>
+      <g transform="translate(590,20)">
+        <text class="t t-b" x="0" y="14">Euler's check</text>
+        <rect class="d-surface2" x="0" y="30" width="250" height="150" rx="8"/>
+        <g class="t-sm t-mono"><text x="14" y="62">cube: V = 8</text><text x="14" y="84">      E = 12 (18 if triangulated)</text><text x="14" y="106">      F = 6 (12 triangles)</text><text x="14" y="136">V − E + F = 2</text></g>
+        <text class="t-xs t-m" x="0" y="206">For a closed surface without holes</text><text class="t-xs t-m" x="0" y="220">the count is 2; many repair tools</text><text class="t-xs t-m" x="0" y="234">use it as a quick sanity check.</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 2.</b> The building blocks of a mesh. Outward normals tell the slicer which side of a face is solid material.</figcaption>
+  </figure>
+
+  <h3>Manifold and watertight, explained</h3>
+  <p>A mesh is <strong>manifold</strong> when every edge is shared by exactly two faces, and the faces around each vertex form a single connected fan. It is <strong>watertight</strong> when it has no holes, so water poured inside could not leak. Slicers compute the interior by counting how many surfaces a ray crosses; if the surface has holes, overlaps or flipped faces, the count goes wrong, and the slicer may print nothing, fill the wrong region or produce odd gaps.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 400" role="img" aria-label="Six mesh defects: a hole, a non-manifold edge shared by three faces, self-intersection, inverted normals, a wall thinner than the nozzle, and a tiny floating shell">
+      <g transform="translate(20,20)">
+        <text class="t t-b" x="0" y="14">1 Hole (open boundary)</text>
+        <path class="d-surface" d="M10 40 H130 V150 H10Z"/>
+        <path class="k-red" d="M40 80 H100 V120 H40Z" style="stroke-width:2.5;stroke-dasharray:4 3"/>
+        <rect class="d-surface2" x="42" y="82" width="56" height="36"/>
+        <text class="t-xs" x="10" y="172">missing faces; slicer sees</text><text class="t-xs" x="10" y="186">an open skin</text>
+      </g>
+      <g transform="translate(300,20)">
+        <text class="t t-b" x="0" y="14">2 Non-manifold edge</text>
+        <path class="d-surface" d="M10 100 H130 M70 100 L70 40 M70 100 L40 150"/>
+        <path class="d-surface2" d="M70 100 L130 60 V120Z"/>
+        <path class="d-surface2" d="M70 100 L10 60 V120Z" opacity=".8"/>
+        <path class="k-red" d="M70 100 H130" style="stroke-width:4"/>
+        <text class="t-xs" x="10" y="172">one edge shared by 3+ faces:</text><text class="t-xs" x="10" y="186">no clear inside/outside</text>
+      </g>
+      <g transform="translate(580,20)">
+        <text class="t t-b" x="0" y="14">3 Self-intersection</text>
+        <rect class="d-surface" x="20" y="50" width="90" height="90"/><rect class="d-surface2" x="70" y="80" width="90" height="90" opacity=".85"/>
+        <rect class="k-red" x="70" y="80" width="40" height="60" style="stroke-width:2.5;stroke-dasharray:4 3"/>
+        <text class="t-xs" x="10" y="192">two shells overlap without a</text><text class="t-xs" x="10" y="206">proper union; slicers may</text><text class="t-xs" x="10" y="220">disagree about the overlap</text>
+      </g>
+      <g transform="translate(20,230)">
+        <text class="t t-b" x="0" y="14">4 Inverted normals</text>
+        <path class="d-surface" d="M10 40 H110 V140 H10Z"/>
+        <g class="d-ink arrow" style="stroke-width:2"><path d="M60 140 V100"/><path d="M110 90 H70"/></g>
+        <text class="t-xs c-red" x="14" y="62">normals face inward</text>
+        <text class="t-xs" x="10" y="162">solid looks hollow; parts</text><text class="t-xs" x="10" y="176">vanish or print inside out</text>
+      </g>
+      <g transform="translate(300,230)">
+        <text class="t t-b" x="0" y="14">5 Walls too thin</text>
+        <rect class="d-surface" x="20" y="40" width="5" height="100"/><rect class="d-surface" x="90" y="40" width="40" height="100"/>
+        <path class="d-ink arrow" d="M8 150 H40"/><text class="t-xs c-red" x="14" y="168">0.2 mm</text>
+        <text class="t-xs c-green" x="90" y="168">1.2 mm</text>
+        <text class="t-xs" x="10" y="190">thinner than one line: skipped</text><text class="t-xs" x="10" y="204">or printed fragile</text>
+      </g>
+      <g transform="translate(580,230)">
+        <text class="t t-b" x="0" y="14">6 Tiny shells</text>
+        <rect class="d-surface" x="10" y="50" width="100" height="90" rx="4"/>
+        <circle class="d-surface2" cx="150" cy="60" r="3"/><circle class="d-surface2" cx="170" cy="90" r="2"/><circle class="d-surface2" cx="140" cy="120" r="3"/>
+        <text class="t-xs" x="10" y="162">stray fragments: wasted time</text><text class="t-xs" x="10" y="176">and stringy blobs</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 3.</b> Six problems that confuse slicers. Most can be fixed automatically; non-manifold edges and self-intersections often need manual attention.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Symptom in the slicer</th><th>Likely mesh cause</th><th>First thing to try</th></tr></thead>
+    <tbody>
+      <tr><td>"Object has errors" or auto-repair warning</td><td>Holes, non-manifold edges, inverted normals</td><td>Accept the slicer's repair, then check the preview</td></tr>
+      <tr><td>Part missing in preview or layers empty</td><td>Flipped normals or open shell</td><td>Recalculate outside normals; close holes</td></tr>
+      <tr><td>Random gaps or lines inside walls</td><td>Self-intersections or overlapping shells</td><td>Boolean union in a mesh tool or CAD; remove duplicates</td></tr>
+      <tr><td>Thin walls vanish</td><td>Walls under line width</td><td>Thicken in CAD or enable thin-wall detection</td></tr>
+      <tr><td>Specks and blobs outside the part</td><td>Tiny stray shells</td><td>Delete tiny components in a mesh editor</td></tr>
+      <tr><td>Huge slicing time or stutter</td><td>Millions of triangles</td><td>Decimate (see below)</td></tr>
+    </tbody></table></div>
+
+  <h2 id="tessellation">Resolution, tessellation and faceted curves</h2>
+  <p>A mesh made of flat triangles can only <em>approximate</em> a curve. When CAD exports a cylinder to STL, it chooses how many segments to use, controlled by two numbers: the <strong>chord (linear) deviation</strong>, the largest distance between the true curve and the triangle edge, and the <strong>angular deviation</strong>, the maximum angle between neighboring normals. Coarse settings produce visible facets, even if your printer could do much better.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 280" role="img" aria-label="A circle approximated by 8, 16 and 64 segments, with the chord deviation marked">
+      <g class="t t-b"><text x="40" y="26">8 segments</text><text x="320" y="26">16 segments</text><text x="600" y="26">64 segments</text></g>
+      <g transform="translate(40,40)"><circle class="d-dash" cx="90" cy="90" r="80"/><path class="d-surface" d="M170 90 L146.6 146.6 L90 170 L33.4 146.6 L10 90 L33.4 33.4 L90 10 L146.6 33.4Z" opacity=".85"/><path class="k-red" d="M90 10 L90 4" style="stroke-width:3"/><text class="t-xs" x="96" y="9">deviation</text><text class="t-xs" x="0" y="196">visible flats, fast to slice</text></g>
+      <g transform="translate(320,40)"><circle class="d-dash" cx="90" cy="90" r="80"/><path class="d-surface" d="M170 90 L163.9 120.6 L146.6 146.6 L120.6 163.9 L90 170 L59.4 163.9 L33.4 146.6 L16.1 120.6 L10 90 L16.1 59.4 L33.4 33.4 L59.4 16.1 L90 10 L120.6 16.1 L146.6 33.4 L163.9 59.4Z" opacity=".85"/><text class="t-xs" x="0" y="196">good for decorative parts</text></g>
+      <g transform="translate(600,40)"><circle class="d-surface" cx="90" cy="90" r="80"/><text class="t-xs" x="0" y="196">smooth; larger file</text></g>
+      <rect class="d-surface2" x="40" y="246" width="780" height="26" rx="8"/>
+      <text class="t-sm" x="54" y="264">Rule of thumb: chord deviation 0.01–0.05 mm is below what most FDM printers can resolve; finer just inflates file size.</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> Tessellation. The number of segments needed to keep the deviation below a target grows with the radius, so large round parts need more triangles than small ones.</figcaption>
+  </figure>
+
+  <div class="callout fact"><span class="callout-title">Why curves look faceted even at 0.1 mm layers</span>
+    <p>Layer height controls detail in Z; tessellation controls detail in X and Y. A beautifully smooth stack of layers still shows polygon corners if the STL was exported with a 0.1 mm chord deviation on a large cylinder. If the slicer is set to arc fitting, it can sometimes smooth small jaggedness, but it cannot recover detail missing from the mesh. Re-export with finer tolerance, or export 3MF/STEP.</p>
+  </div>
+
+  <h2 id="repair">Repair tools and workflow</h2>
+  <p>Start with the least invasive option. Most everyday errors disappear in the first step.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 200" role="img" aria-label="Escalating repair workflow: slicer auto-repair, then a mesh tool such as Blender or MeshLab, then fix in CAD or remodel">
+      <rect class="f-green" x="20" y="30" width="240" height="120" rx="12"/><text class="t t-b" x="140" y="56" style="text-anchor:middle">1 · Slicer auto-repair</text><text class="t-sm" x="140" y="80" style="text-anchor:middle">closes tiny holes, flips</text><text class="t-sm" x="140" y="98" style="text-anchor:middle">normals, removes slivers</text><text class="t-xs t-m" x="140" y="130" style="text-anchor:middle">seconds · always try first</text>
+      <path class="d-ink arrow" d="M264 90 H300"/>
+      <rect class="f-yellow" x="304" y="30" width="250" height="120" rx="12"/><text class="t t-b" x="429" y="56" style="text-anchor:middle">2 · Mesh tool</text><text class="t-sm" x="429" y="80" style="text-anchor:middle">MeshLab, Blender, Netfabb,</text><text class="t-sm" x="429" y="98" style="text-anchor:middle">online repair services</text><text class="t-xs t-m" x="429" y="130" style="text-anchor:middle">minutes · for stubborn meshes</text>
+      <path class="d-ink arrow" d="M558 90 H594"/>
+      <rect class="f-orange" x="598" y="30" width="242" height="120" rx="12"/><text class="t t-b" x="719" y="56" style="text-anchor:middle">3 · Rebuild</text><text class="t-sm" x="719" y="80" style="text-anchor:middle">remodel the problem area</text><text class="t-sm" x="719" y="98" style="text-anchor:middle">in CAD, or remesh and sculpt</text><text class="t-xs t-m" x="719" y="130" style="text-anchor:middle">hours · when repair keeps failing</text>
+      <text class="t-sm t-m" x="20" y="186">Always keep the original file; repairs change geometry, and sometimes in ways you do not want.</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> Escalate only as far as needed. If repair fails repeatedly, the problem is usually the way the model was built, so fix the source.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Tool</th><th>What it does well</th><th>Notes (verify current status)</th></tr></thead>
+    <tbody>
+      <tr><td>Slicer auto-repair (Bambu Studio, OrcaSlicer, PrusaSlicer, Cura)</td><td>Fixes holes and flipped normals on import; warns about errors</td><td>Convenient; cannot fix serious self-intersections</td></tr>
+      <tr><td>Windows 3D Builder</td><td>Simple one-click repair for beginners</td><td>Microsoft no longer actively develops it; may not be available on newer installs</td></tr>
+      <tr><td>Meshmixer</td><td>Inspector, hollowing, plane cuts, support editing</td><td>Autodesk stopped development; still used where installed, but use alternatives for new work</td></tr>
+      <tr><td>MeshLab</td><td>Free, powerful cleaning, decimation and filter scripting; reads scan formats</td><td>Technical interface; steep learning curve</td></tr>
+      <tr><td>Blender + 3D-Print Toolbox</td><td>Checks for non-manifold, thin walls, overhangs and intersections; full sculpting and remeshing</td><td>The add-on ships with Blender or is available as an extension, depending on version</td></tr>
+      <tr><td>Autodesk Netfabb</td><td>Professional repair and analysis</td><td>Commercial; some repair features also exist in other Autodesk products</td></tr>
+      <tr><td>Online repair services</td><td>Upload, repair, download; no install</td><td>Privacy: you upload your model to a third party; availability changes</td></tr>
+    </tbody></table></div>
+
+  <details class="accordion"><summary>🔧 A manual repair recipe in Blender</summary>
+    <ol class="steps">
+      <li>Import the model and set the scene unit scale to millimeters (see <a href="#units">scaling and units</a>).</li>
+      <li>Enable the 3D-Print Toolbox. Run <em>Check All</em>: it reports non-manifold edges, intersections, thin walls and overhangs.</li>
+      <li>In Edit Mode, select non-manifold geometry (<em>Select → Select All by Trait → Non Manifold</em>). Delete loose geometry, merge by distance (a tiny threshold such as 0.0001 m), and fill holes (<kbd>F</kbd> or <em>Fill Holes</em>).</li>
+      <li>Recalculate normals outside (<kbd>Shift</kbd>+<kbd>N</kbd>).</li>
+      <li>If overlapping shells remain, use a <em>Boolean modifier (Union, Exact)</em> to merge them, then apply it.</li>
+      <li>Re-run the check, export as 3MF or STL, and load the result into the slicer for a final preview.</li>
+    </ol>
+  </details>
+
+  <h2 id="booleans">Boolean pitfalls</h2>
+  <p>Boolean operations (union, difference, intersection) on meshes rely on clean surfaces. Common failure causes: coplanar faces (two faces lying exactly on the same plane), tiny gaps or overlaps between parts, non-manifold input and extremely thin slivers. The results are often missing faces or flickering "z-fighting" surfaces.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 260" role="img" aria-label="Boolean subtract with a cutter flush with the face leaves a skin; extending the cutter past the surface cuts cleanly">
+      <g class="t t-b"><text x="30" y="26">Coplanar cutter: ambiguous</text><text x="450" y="26">Overshoot cutter: clean</text></g>
+      <g transform="translate(30,40)">
+        <rect class="d-surface" x="10" y="20" width="160" height="100"/>
+        <rect class="d-dash" x="60" y="20" width="60" height="100"/>
+        <path class="k-red" d="M60 20 H120" style="stroke-width:4"/>
+        <text class="t-xs c-red" x="126" y="24">faces coincide: skin or hole?</text>
+        <text class="t-xs t-m" x="10" y="150">The cutter's top face sits exactly on the surface.</text>
+      </g>
+      <g transform="translate(450,40)">
+        <rect class="d-surface" x="10" y="20" width="160" height="100"/>
+        <rect class="d-dash" x="60" y="2" width="60" height="118"/>
+        <path class="d-ink arrow" d="M150 2 V18" style="stroke-width:1.5"/>
+        <text class="t-xs c-green" x="124" y="14">overshoot 0.1–1 mm</text>
+        <text class="t-xs t-m" x="10" y="150">Extend the cutter beyond every face it should pass through.</text>
+      </g>
+      <rect class="d-surface2" x="30" y="206" width="800" height="34" rx="8"/>
+      <text class="t-sm" x="46" y="228">Also: avoid zero-thickness walls, keep unions overlapping by a small amount, and run the Boolean in CAD rather than on a dense mesh.</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> Classic Boolean trap: coincident faces. Overshoot cutters and overlap joined parts to give the algorithm unambiguous geometry.</figcaption>
+  </figure>
+
+  <h2 id="simplify">Decimation, remeshing and hollowing</h2>
+  <h3>Decimation</h3>
+  <p><strong>Decimation</strong> reduces the number of triangles while trying to keep the shape. Scans and sculpts routinely have millions of triangles, which makes slicing slow and files huge. Target a deviation of 0.01–0.05 mm from the original, and keep flat areas flat; most tools allow you to preserve boundaries and sharp edges. <strong>Remeshing</strong> goes further: it rebuilds the surface with evenly sized triangles, often required before Boolean operations or smoothing. Both operations can blur sharp edges and small text, so compare the result to the original.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 240" role="img" aria-label="Same curved shape with a dense triangle mesh, a decimated mesh with fewer larger triangles, and a remeshed uniform mesh">
+      <g class="t t-b"><text x="30" y="24">Original: dense</text><text x="320" y="24">Decimated</text><text x="600" y="24">Remeshed</text></g>
+      <g transform="translate(30,36)"><path class="d-surface" d="M10 120 Q10 20 110 20 Q210 20 210 120Z"/><path class="d-thin" d="M10 120 L30 70 L60 120 L80 40 L110 120 L140 40 L160 120 L190 70 L210 120 M30 70 L80 40 L140 40 L190 70 M60 120 L110 20 L160 120 M30 70 L60 120 M190 70 L160 120"/><text class="t-xs" x="10" y="150">2 M triangles</text></g>
+      <g transform="translate(320,36)"><path class="d-surface" d="M10 120 Q10 20 110 20 Q210 20 210 120Z"/><path class="d-thin" d="M10 120 L60 50 L110 20 L160 50 L210 120 M60 50 L110 120 L160 50"/><text class="t-xs" x="10" y="150">200 k triangles, similar shape</text></g>
+      <g transform="translate(600,36)"><path class="d-surface" d="M10 120 Q10 20 110 20 Q210 20 210 120Z"/><path class="d-thin" d="M10 120 L50 70 L110 120 L170 70 L210 120 M50 70 L110 20 L170 70 M10 120 L110 20 L210 120"/><text class="t-xs" x="10" y="150">uniform triangles, new topology</text></g>
+      <text class="t-sm t-m" x="30" y="214">Too much decimation shows as faceting and lost fine text; check silhouettes and sharp edges after every pass.</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> Decimation reduces triangle count; remeshing redistributes it. Both are useful for scans, but use them sparingly on engineered parts.</figcaption>
+  </figure>
+
+  <h3 id="hollowing">Hollowing</h3>
+  <p>Hollowing removes the interior of a solid model to save material, mostly for resin printing; FDM printers already print the interior as sparse infill, so hollowing is rarely useful for FDM unless you want an empty cavity (for example a lightweight shell or to insert weights or electronics). If you hollow, leave a wall of at least 2 mm, add drain or escape holes for resin, and verify the inner surface is also watertight.</p>
+
+  <h3 id="splitting">Splitting and cutting with connectors</h3>
+  <p>A model too large for the plate, or one with difficult overhangs, can be cut into parts that print flat and are joined afterwards. Good cuts follow natural seams (a collar, a sleeve edge), put flat faces on the plate and keep joints away from highly loaded areas. Slicers such as Bambu Studio and OrcaSlicer include a cut tool with connectors (pegs, dovetails) that create matching pins and sockets with adjustable clearance, so the parts self-align when glued.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 240" role="img" aria-label="A tall figure cut into two halves with a flat cut plane, then connector pegs and matching sockets, and the glued result">
+      <g class="t t-b"><text x="30" y="24">1 Cut on a flat plane</text><text x="320" y="24">2 Pegs and sockets</text><text x="600" y="24">3 Glue and finish</text></g>
+      <g transform="translate(30,36)"><path class="d-surface" d="M50 20 Q50 0 80 0 Q110 0 110 20 V60 H125 V100 H35 V60 H50Z"/><path class="d-surface2" d="M35 100 H125 V150 H35Z"/><path class="k-red" d="M20 100 H140" style="stroke-width:2;stroke-dasharray:6 4"/><text class="t-xs" x="0" y="180">flat cut face on the plate</text></g>
+      <g transform="translate(320,36)"><path class="d-surface" d="M50 20 Q50 0 80 0 Q110 0 110 20 V60 H125 V86 H35 V60 H50Z"/><rect class="d-plastic" x="55" y="86" width="10" height="14"/><rect class="d-plastic" x="95" y="86" width="10" height="14"/><path class="d-surface2" d="M35 130 H125 V170 H35Z"/><rect class="d-surface" x="55" y="130" width="10" height="14" opacity=".4"/><rect class="d-surface" x="95" y="130" width="10" height="14" opacity=".4"/><text class="t-xs" x="0" y="196">peg ≈ 0.2–0.3 mm smaller than socket</text></g>
+      <g transform="translate(600,36)"><path class="d-surface" d="M50 20 Q50 0 80 0 Q110 0 110 20 V60 H125 V100 H35 V60 H50Z"/><path class="d-surface2" d="M35 100 H125 V150 H35Z"/><path class="k-orange" d="M35 100 H125" style="stroke-width:2"/><text class="t-xs" x="0" y="180">glue line; sand and fill if visible</text></g>
+    </svg>
+    <figcaption><b>Figure 8.</b> Splitting with alignment connectors. A clearance of about 0.2–0.3 mm between pin and socket is a common starting point; tune it with a test print.</figcaption>
+  </figure>
+
+  <h2 id="units">Scaling and units mistakes</h2>
+  <p>STL files carry no units. Slicers assume millimeters, while some CAD or game programs export inches, centimeters or meters. The result is a model that is the wrong size by a predictable factor.</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>You see</th><th>Likely factor</th><th>Cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Model is tiny (≈ 4 % of expected)</td><td>÷ 25.4</td><td>Exported in inches</td><td>Scale 2540 %</td></tr>
+      <tr><td>Model is 10× too small</td><td>÷ 10</td><td>Exported in centimeters</td><td>Scale 1000 %</td></tr>
+      <tr><td>Model is 1000× too small</td><td>÷ 1000</td><td>Exported in meters (Blender, glTF)</td><td>Scale 100000 %, or re-export with the correct unit setting</td></tr>
+      <tr><td>Model is huge</td><td>× 25.4 or × 1000</td><td>Source in mm read as inches/meters</td><td>Scale down; fix the source export unit</td></tr>
+      <tr><td>Non-uniform stretch</td><td>One axis differs</td><td>Lock aspect ratio off or applied non-uniform scale in the source</td><td>Re-export; apply scale before exporting</td></tr>
+    </tbody></table></div>
+  <div class="callout tip"><span class="callout-title">Measure once in the slicer</span>
+    <p>After import, check the object's dimensions in the slicer's object panel against a feature you know (a bolt hole, the overall height). Scaling the whole object also scales hole diameters and tolerances, so for functional parts correct the source file instead of enlarging in the slicer.</p>
+  </div>
+
+  <h2 id="repositories">Model repositories and licensing</h2>
+  <p>You rarely need to start from a blank screen. The main sources, each with its own audience and terms:</p>
+  <div class="grid cols-3">
+    <div class="card accent-green"><h4>Printables</h4><p>Run by Prusa Research; strong community, many functional designs, with contests and a clear license badge on each model.</p></div>
+    <div class="card accent-blue"><h4>MakerWorld</h4><p>Run by Bambu Lab; integrated with Bambu Studio and Handy, with printer-specific profiles uploaded by authors and a points/rewards system.</p></div>
+    <div class="card accent-orange"><h4>Thingiverse</h4><p>One of the oldest repositories (UltiMaker); huge archive, uneven quality and sometimes dated files.</p></div>
+    <div class="card accent-purple"><h4>Thangs</h4><p>Geometric search across many sources plus its own hosting and a community.</p></div>
+    <div class="card accent-pink"><h4>Cults</h4><p>Marketplace oriented toward designers, with a mix of free and paid models.</p></div>
+    <div class="card accent-teal"><h4>GrabCAD</h4><p>Engineering-oriented library of CAD files, often in native or STEP format.</p></div>
+  </div>
+  <p>Site features, ownership and terms change; read the current terms of the site you use.</p>
+
+  <h3>Licensing basics</h3>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>License</th><th>Meaning (summary)</th><th>Can you sell prints?</th><th>Can you remix and share?</th></tr></thead>
+    <tbody>
+      <tr><td>CC0 / public domain</td><td>No rights reserved</td><td>Generally yes</td><td>Yes</td></tr>
+      <tr><td>CC BY</td><td>Credit the author</td><td>Usually yes, with credit</td><td>Yes, with credit</td></tr>
+      <tr><td>CC BY-SA</td><td>Credit + share derivatives under the same license</td><td>Usually yes, with credit</td><td>Yes, same license</td></tr>
+      <tr><td>CC BY-NC</td><td>Credit, non-commercial only</td><td>No (unless the author grants permission)</td><td>Yes, non-commercially</td></tr>
+      <tr><td>CC BY-ND</td><td>Credit, no modified versions shared</td><td>Depends on the commercial clause</td><td>Not for publication</td></tr>
+      <tr><td>Standard digital file / custom license</td><td>Site-specific terms; often personal use only</td><td>Check the terms</td><td>Check the terms</td></tr>
+    </tbody></table></div>
+  <div class="callout warn"><span class="callout-title">Careful and general, not legal advice</span>
+    <p>Creative Commons licenses apply to the <em>design file</em>; they do not clear trademarks, characters or patents embedded in it. A "free" model of a copyrighted character may be an infringing upload. Whether a <em>physical print</em> counts as a derivative or a commercial use can depend on the exact license text and jurisdiction. If you intend to sell, read the license, the site's terms and, where it matters, ask the author in writing. See <a href="../reference/economics-and-ethics.html">Economics, licensing &amp; sustainability</a>.</p>
+  </div>
+
+  <h2 id="printability">Checking printability</h2>
+  <p>Analysis tools color-code the model so problems are visible before you print. Use them as a second set of eyes in addition to the slicer's layer preview.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 260" role="img" aria-label="Overhang analysis shading steep surfaces red, and wall-thickness analysis shading thin walls red and thick walls green">
+      <g class="t t-b"><text x="30" y="24">Overhang analysis</text><text x="450" y="24">Wall thickness analysis</text></g>
+      <g transform="translate(30,36)">
+        <path class="d-surface" d="M10 150 H190 L190 100 L150 100 L110 50 L70 100 L10 100Z"/>
+        <path class="k-red" d="M10 100 H70" style="stroke-width:6"/><path class="k-yellow" d="M70 100 L110 50" style="stroke-width:6"/><path class="k-green" d="M110 50 L150 100 M150 100 H190 M190 100 V150" style="stroke-width:6"/>
+        <text class="t-xs c-red" x="10" y="92">flat ceiling: support</text><text class="t-xs c-green" x="116" y="44">self-supporting</text>
+        <text class="t-xs t-m" x="10" y="176">steeper than about 45° from vertical is risky</text>
+      </g>
+      <g transform="translate(450,36)">
+        <rect class="f-green" x="10" y="20" width="60" height="130" opacity=".7"/><rect class="f-yellow" x="80" y="20" width="26" height="130" opacity=".8"/><rect class="f-red" x="116" y="20" width="10" height="130"/><rect class="f-green" x="136" y="20" width="60" height="130" opacity=".7"/>
+        <text class="t-xs" x="14" y="168">3 mm</text><text class="t-xs" x="76" y="168">1.2 mm</text><text class="t-xs c-red" x="104" y="186">0.3 mm</text>
+        <text class="t-xs t-m" x="10" y="206">Aim for ≥ 2 nozzle widths where strength matters</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 9.</b> Overhang and wall-thickness analysis. Blender's 3D-Print Toolbox, some slicers and CAD packages show these overlays.</figcaption>
+  </figure>
+
+  <h2 id="archiving">Archiving and version control</h2>
+  <p>Models are binary files that grow quickly, and plain Git stores every version in full. <strong>Git LFS</strong> (Large File Storage) keeps lightweight pointers in the repository and the large files on a separate server, which keeps cloning fast. Use Git for text sources (OpenSCAD, CadQuery, notes) and LFS for <code>.3mf</code>, <code>.stl</code>, <code>.step</code>.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 260" role="img" aria-label="Project folder structure with source, exports and gcode, and Git versus Git LFS storage">
+      <g transform="translate(20,20)">
+        <rect class="d-surface2" width="360" height="210" rx="10"/>
+        <g class="t-sm t-mono">
+          <text x="14" y="28">bracket-v2/</text>
+          <text x="34" y="52">├─ src/        bracket.py · params.json</text>
+          <text x="34" y="74">├─ cad/        bracket.f3d / .step</text>
+          <text x="34" y="96">├─ export/     bracket.3mf · bracket.stl</text>
+          <text x="34" y="118">├─ slicer/     project.3mf · profiles/</text>
+          <text x="34" y="140">├─ docs/       README.md · notes.md</text>
+          <text x="34" y="162">└─ photos/     test-print.jpg</text>
+        </g>
+        <text class="t-xs t-m" x="14" y="192">One folder per project; name with a version.</text>
+      </g>
+      <path class="d-ink arrow" d="M384 125 H430"/>
+      <g transform="translate(436,20)">
+        <rect class="f-blue" width="190" height="210" rx="10"/><text class="t t-b" x="95" y="28" style="text-anchor:middle">Git (text)</text><text class="t-xs" x="95" y="56" style="text-anchor:middle">.py · .scad · .json</text><text class="t-xs" x="95" y="74" style="text-anchor:middle">.md · .gitignore</text><text class="t-sm t-m" x="95" y="130" style="text-anchor:middle">full history, diffs</text><text class="t-sm t-m" x="95" y="150" style="text-anchor:middle">small and fast</text>
+        <rect class="f-orange" x="210" width="194" height="210" rx="10"/><text class="t t-b" x="307" y="28" style="text-anchor:middle">Git LFS (binary)</text><text class="t-xs" x="307" y="56" style="text-anchor:middle">.3mf · .stl · .step</text><text class="t-xs" x="307" y="74" style="text-anchor:middle">.f3d · .blend · images</text><text class="t-sm t-m" x="307" y="130" style="text-anchor:middle">pointer in repo,</text><text class="t-sm t-m" x="307" y="150" style="text-anchor:middle">file on LFS server</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 10.</b> A tidy project folder and where each type of file belongs. Many hosting services have an LFS quota, so check limits before storing gigabytes.</figcaption>
+  </figure>
+
+<pre><code># one-time setup in a repository
+git lfs install
+git lfs track "*.3mf" "*.stl" "*.step" "*.blend"
+git add .gitattributes
+git commit -m "Track model files with Git LFS"</code></pre>
+
+  <h3 id="naming">Naming conventions</h3>
+  <ul>
+    <li>Use lowercase, hyphens or underscores, and no spaces: <code>phone-stand_v3.3mf</code>.</li>
+    <li>Put the part, revision and variant in the name: <code>bracket_40x30_t4_r2.step</code>.</li>
+    <li>Add the printer or material only to sliced projects: <code>bracket_r2_x2d_petg.3mf</code>.</li>
+    <li>Never overwrite a printed version; bump the revision so you can reproduce what you printed.</li>
+    <li>Keep the date format ISO (<code>2025-03-14</code>) when you need dates, so names sort correctly.</li>
+  </ul>
+
+  <h3 id="metadata">Metadata worth keeping</h3>
+  <p>A short <code>README.md</code> or notes file beside each project pays off months later. Record: the purpose and source URL (and license) of any remix, the units and key dimensions, the printer and nozzle, the filament brand and temperatures that worked, settings that were changed from default and why, print time and weight, and a photo of the result. 3MF files also carry metadata fields (title, designer, license) that repositories can read; fill them in when you publish.</p>
+
+  <h2 id="file-problems">Troubleshooting file problems</h2>
+  <p>Most "the slicer is doing something strange" reports trace back to the file, not the printer. Work through the symptoms below before changing print settings.</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>First thing to try</th></tr></thead>
+    <tbody>
+      <tr><td>Model appears tiny or enormous</td><td>Unit mismatch (inches vs millimeters, or meters from a game or architecture tool)</td><td>Check the export unit setting; scale by 25.4 or 1000 in the slicer only as a last resort, then fix the source</td></tr>
+      <tr><td>Slicer warns "open edges" or "auto-repaired"</td><td>Non-manifold geometry, holes or flipped faces</td><td>Accept the repair, inspect the preview, and re-export from the source with a clean Boolean union if the shape changed</td></tr>
+      <tr><td>Parts of the model missing in the preview</td><td>Inverted normals, or thin features below the line width</td><td>Recalculate normals outward in a mesh tool; thicken the feature to at least one nozzle width</td></tr>
+      <tr><td>Surface looks faceted or like a polygon</td><td>Coarse tessellation at export</td><td>Lower the export deviation or angle tolerance and re-export; avoid re-importing a decimated mesh</td></tr>
+      <tr><td>File is huge and the slicer is slow</td><td>Over-dense mesh from a scan or sculpt</td><td>Decimate to a sensible triangle count while checking that small features survive</td></tr>
+      <tr><td>Colors or materials are lost</td><td>Format does not carry them (STL), or the importer ignores them</td><td>Use 3MF or OBJ with materials, and assign filaments in the slicer after import</td></tr>
+      <tr><td>Two bodies fused together unexpectedly</td><td>Overlapping shells interpreted as one solid</td><td>Separate them into objects, or keep a small gap and rely on a deliberate print-in-place clearance</td></tr>
+      <tr><td>Hole is smaller than designed</td><td>Polygonal approximation and plastic squish, not a file error</td><td>Apply hole compensation, or model holes slightly larger; see <a href="../design/tolerances-and-fits.html">tolerances and fits</a></td></tr>
+    </tbody></table></div>
+
+  <h3 id="pre-slice-checklist">Pre-slice checklist</h3>
+  <ul class="checklist">
+    <li>The file opens at the expected size, in the expected units.</li>
+    <li>The slicer reports no errors, or the auto-repair result looks right in the preview.</li>
+    <li>The smallest feature is at least one line width thick; ideally at least two for strength.</li>
+    <li>The orientation puts the flattest, largest face on the bed, or follows the load direction (see <a href="../design/strength-and-orientation.html">strength and orientation</a>).</li>
+    <li>Overhangs beyond about 45–60° are supported or redesigned (see <a href="../techniques/supports-bridges-overhangs.html">supports, bridges and overhangs</a>).</li>
+    <li>The source file and the exported file are named consistently with a version number.</li>
+  </ul>
+
+  <h2 id="conversion">Converting between formats</h2>
+  <p>Converting is a one-way street in most cases: going from a rich format to a poorer one discards information, and going back does not restore it. The table summarizes what survives common conversions.</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>From → to</th><th>What is kept</th><th>What is lost</th><th>Advice</th></tr></thead>
+    <tbody>
+      <tr><td>STEP → STL</td><td>Shape, as a triangle approximation</td><td>Exact curves, features, units metadata, assembly structure</td><td>Choose the tessellation tolerance deliberately; keep the STEP</td></tr>
+      <tr><td>STEP → 3MF</td><td>Shape, units, optionally colors and multiple objects</td><td>Exact curves (the mesh is still triangles)</td><td>Preferred route for printing from CAD</td></tr>
+      <tr><td>STL → STEP</td><td>A faceted shell with thousands of tiny faces</td><td>Nothing was recovered; features are not rebuilt</td><td>Avoid, unless you have specialist reverse-engineering software</td></tr>
+      <tr><td>OBJ → STL</td><td>Geometry</td><td>Textures, vertex colors, material assignments</td><td>Fine for single-color prints</td></tr>
+      <tr><td>3MF → STL</td><td>Geometry in world coordinates</td><td>Settings, colors, plates, modifiers</td><td>Use only for sharing a pure shape</td></tr>
+      <tr><td>SVG/DXF → solid</td><td>2D outlines</td><td>Nothing; you add height by extruding in CAD</td><td>Check scale and units on import, and clean up tiny gaps in outlines</td></tr>
+      <tr><td>G-code → anything</td><td>Not recoverable as a model</td><td>The original geometry</td><td>Archive the 3MF or source model, not just the G-code</td></tr>
+    </tbody></table></div>
+
+  <div class="callout tip"><span class="callout-title">Round-trip rule</span>
+    <p>If you need to change a part later, the file you keep must be the one you can edit: a native CAD file, a parametric script, or at least a STEP. STL and 3MF are what you send to the printer, not what you design in.</p>
+  </div>
+
+  <h3 id="scanning-meshes">Meshes from scans and sculpts</h3>
+  <p>Photogrammetry, structured-light and handheld 3D scanners produce dense, noisy meshes that often have holes where the scanner could not see (undercuts, shiny or dark surfaces). Sculpting tools produce high-polygon models with organic shapes but no real wall thickness. Both need cleanup before printing: fill holes, remove floating fragments, smooth noise, decimate to a manageable size, and give the object real thickness (offset or solidify the surface, or hollow it). Treat the cleanup as a small project in itself, and compare the result against the original object with calipers to be sure that dimensions were not altered by smoothing.</p>
+
+  <h3 id="slicer-import">What the slicer does on import</h3>
+  <p>A slicer reads the mesh, merges coincident vertices, checks for open edges, may apply automatic repair, and slices it into layers by intersecting the surface with horizontal planes. This explains several behaviors: tiny gaps smaller than the slicing resolution are closed, overlapping shells are merged or treated as a union, and extremely thin walls are either widened or dropped depending on the wall generator. A model that previews well and has a sound closed surface almost always slices well; if previews show odd gaps, the answer is in the mesh,   not in the print profile. Details about each setting are in <a href="slicer-settings.html">slicer settings</a>.</p>
+
+    <h2 id="quiz">Quick self-check</h2>
+
+  <div class="quiz"><p class="q">Which format is best as a long-term master file of an engineered part?</p>
+    <ul class="options"><li>STL</li><li data-correct>The native CAD file plus a STEP export</li><li>G-code</li></ul>
+    <p class="explain">STEP preserves exact geometry; STL and G-code are lossy or machine-specific outputs.</p></div>
+  <div class="quiz"><p class="q">A model appears solid in a viewer but vanishes in the slicer. A likely cause?</p>
+    <ul class="options"><li>Layer height too low</li><li data-correct>Inverted normals or an open shell</li><li>Too many walls</li></ul>
+    <p class="explain">Slicers use normals and closed surfaces to decide what is inside; errors can make the part vanish.</p></div>
+  <div class="quiz"><p class="q">Your Boolean subtract leaves a thin skin over the hole. How do you fix it?</p>
+    <ul class="options"><li>Increase infill</li><li data-correct>Extend the cutter beyond the surface so no faces coincide</li><li>Export as OBJ</li></ul>
+    <p class="explain">Coincident faces confuse Boolean algorithms; overshoot the cutter.</p></div>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul>
+    <li>Use 3MF for slicing and sharing, STEP for exact geometry, and treat STL as a throw-away export.</li>
+    <li>A printable mesh is closed, manifold, has outward normals and walls thicker than a line width.</li>
+    <li>Faceted curves come from coarse tessellation, not from the printer; re-export with finer tolerance.</li>
+    <li>Repair in escalating steps: slicer, mesh tool, then rebuild the source.</li>
+    <li>Check the license before you remix or sell, and record where each file came from.</li>
+    <li>Keep text sources in Git and binaries in Git LFS, and name files with versions.</li>
+  </ul>
+  <p>Next: <a href="gcode-and-firmware.html">G-code, firmware &amp; ecosystem</a> covers what the slicer produces from these files. Practice with <a href="../exercises/level-2-intermediate.html">Level 2 exercises</a>.</p>
+
+</main>
+</body>
+</html>

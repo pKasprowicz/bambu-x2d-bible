@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Level 2 · Intermediate exercises · 3D Printing Compendium</title>
+  <meta name="description" content="Fifteen intermediate 3D printing exercises: temperature tower, retraction, flow, bridging, overhangs, tolerances, parametric box design, drying, bend tests, supports, seams, fillets, orientation, heat-set inserts and two-color printing.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="exercises/level-2-intermediate.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 7 · Practice &amp; exercises</div>
+    <h1>Level 2 · Intermediate</h1>
+    <p class="lead">From "it prints" to "it prints well, and I can prove why". Fifteen experiments in calibration, design and assembly where you collect data, change one variable at a time and make engineering decisions.</p>
+    <div class="meta"><span class="badge intermediate">Intermediate</span><span class="badge time">⏱ about 35 hours in total</span><span class="badge time">15 exercises</span></div>
+  </header>
+
+  <div class="progress-summary" data-prefix="L2-" data-total="15" data-label="Level 2 progress"></div>
+
+  <h2>What you should be able to do first</h2>
+  <p>Level 2 builds on <a href="level-1-beginner.html">Level 1</a>. You should be comfortable loading filament, reading the first layer, slicing a model and measuring with calipers. You do not need advanced CAD skills, but you will touch a parametric tool (OpenSCAD, Fusion, FreeCAD or Onshape) in exercises L2-7 and L2-14.</p>
+  <p>The core idea of this level is the <strong>controlled experiment</strong>: you change one setting, keep everything else fixed, and measure the effect. Experiments in 3D printing are noisy, so you also learn to repeat a test, record variation and decide when a difference is real.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 200" role="img" aria-label="Recommended calibration order: first layer, temperature, flow, retraction, bridging and overhangs, tolerances">
+      <rect class="f-blue" x="10" y="50" width="108" height="70" rx="10"/><text class="t-sm t-c t-b" x="64" y="82">First layer</text><text class="t-sm t-c" x="64" y="100">L1-3</text>
+      <rect class="f-orange" x="140" y="50" width="108" height="70" rx="10"/><text class="t-sm t-c t-b" x="194" y="82">Temperature</text><text class="t-sm t-c" x="194" y="100">L2-1</text>
+      <rect class="f-green" x="270" y="50" width="108" height="70" rx="10"/><text class="t-sm t-c t-b" x="324" y="82">Flow</text><text class="t-sm t-c" x="324" y="100">L2-3</text>
+      <rect class="f-purple" x="400" y="50" width="108" height="70" rx="10"/><text class="t-sm t-c t-b" x="454" y="82">Retraction</text><text class="t-sm t-c" x="454" y="100">L2-2</text>
+      <rect class="f-teal" x="530" y="50" width="108" height="70" rx="10"/><text class="t-sm t-c t-b" x="584" y="78">Bridges and</text><text class="t-sm t-c t-b" x="584" y="94">overhangs</text><text class="t-sm t-c" x="584" y="110">L2-4, L2-5</text>
+      <rect class="f-red" x="660" y="50" width="108" height="70" rx="10"/><text class="t-sm t-c t-b" x="714" y="82">Tolerances</text><text class="t-sm t-c" x="714" y="100">L2-6</text>
+      <path class="d-ink arrow" d="M118 85 H138"/><path class="d-ink arrow" d="M248 85 H268"/><path class="d-ink arrow" d="M378 85 H398"/><path class="d-ink arrow" d="M508 85 H528"/><path class="d-ink arrow" d="M638 85 H658"/>
+      <text class="t-sm t-c t-m" x="390" y="160">Fix the things that all other results depend on first (adhesion, temperature, flow) and the fine details last.</text>
+      <text class="t-sm t-c t-m" x="390" y="180">Re-check temperature after a change of filament brand or color.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> A sensible order for calibrating a new filament or printer. Each step uses the result of the previous one.</figcaption>
+  </figure>
+
+  <h2>🔧 The experiment log</h2>
+  <p>Every exercise below asks for results. Copy the log table into a spreadsheet or the <a href="index.html#journal">print journal template</a> once and reuse it. Without a log, you cannot compare tests across weeks.</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Field</th><th>Example</th><th>Why record it</th></tr></thead>
+    <tbody>
+      <tr><td>Date / experiment ID</td><td>2026-11-03 L2-1 PLA temp tower</td><td>Find it again</td></tr>
+      <tr><td>Printer / nozzle / plate</td><td>X2D, left nozzle 0.4 mm, textured PEI</td><td>Different hardware, different result</td></tr>
+      <tr><td>Filament (brand, color, batch, dry?)</td><td>Brand PLA, white, lot 24-0731, opened 2 weeks</td><td>Color and batch change flow and temperature</td></tr>
+      <tr><td>Fixed settings</td><td>0.2 mm, 3 walls, 15 % gyroid, 200 mm/s</td><td>To prove only one variable changed</td></tr>
+      <tr><td>Variable and values</td><td>Nozzle 220 → 190 °C in 5 °C steps</td><td>The experiment itself</td></tr>
+      <tr><td>Result + photo</td><td>Best tier 205 °C, strings above 215 °C</td><td>The decision</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout trick"><span class="callout-title">Pro trick: repeat once</span><p>Print each calibration test at least twice before changing a profile for good, or measure three positions on one print. If two runs disagree by more than your measurement resolution, the effect you saw may be noise.</p></div>
+
+  <h2>Overview of all fifteen exercises</h2>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>#</th><th>Exercise</th><th>Main skill</th><th>Time</th><th>Model / file</th></tr></thead>
+    <tbody>
+      <tr><td><a href="#L2-1">L2-1</a></td><td>Temperature tower</td><td>Calibration</td><td>2 h</td><td><a href="models/temp_tower.scad">temp_tower.scad</a></td></tr>
+      <tr><td><a href="#L2-2">L2-2</a></td><td>Retraction test</td><td>Calibration</td><td>2.5 h</td><td><a href="models/retraction_test.scad">retraction_test.scad</a></td></tr>
+      <tr><td><a href="#L2-3">L2-3</a></td><td>Flow calibration cube</td><td>Calibration</td><td>1.5 h</td><td><a href="models/flow_cube.scad">flow_cube.scad</a></td></tr>
+      <tr><td><a href="#L2-4">L2-4</a></td><td>Bridging test</td><td>Calibration</td><td>2 h</td><td><a href="models/bridge_test.scad">bridge_test.scad</a></td></tr>
+      <tr><td><a href="#L2-5">L2-5</a></td><td>Overhang test</td><td>Calibration</td><td>2 h</td><td><a href="models/overhang_ladder.scad">overhang_ladder.scad</a></td></tr>
+      <tr><td><a href="#L2-6">L2-6</a></td><td>Tolerance coupon</td><td>Design for fit</td><td>2 h</td><td><a href="models/tolerance_gauge.scad">tolerance_gauge.scad</a></td></tr>
+      <tr><td><a href="#L2-7">L2-7</a></td><td>Parametric box in CAD</td><td>Design</td><td>3 h</td><td><a href="models/parametric_box.scad">parametric_box.scad</a></td></tr>
+      <tr><td><a href="#L2-8">L2-8</a></td><td>Filament drying experiment</td><td>Materials</td><td>10 h (mostly waiting)</td><td>retraction test</td></tr>
+      <tr><td><a href="#L2-9">L2-9</a></td><td>PETG vs PLA bend test</td><td>Materials / testing</td><td>3 h</td><td>bars</td></tr>
+      <tr><td><a href="#L2-10">L2-10</a></td><td>Support settings comparison</td><td>Slicing</td><td>3 h</td><td>arch model</td></tr>
+      <tr><td><a href="#L2-11">L2-11</a></td><td>Seam placement</td><td>Slicing / aesthetics</td><td>2 h</td><td>cylinder</td></tr>
+      <tr><td><a href="#L2-12">L2-12</a></td><td>Fillet vs chamfer</td><td>Design / strength</td><td>3 h</td><td>L-brackets</td></tr>
+      <tr><td><a href="#L2-13">L2-13</a></td><td>Orientation strength test</td><td>Anisotropy</td><td>3 h</td><td>bars</td></tr>
+      <tr><td><a href="#L2-14">L2-14</a></td><td>Design with a heat-set insert</td><td>Assembly</td><td>3 h</td><td><a href="models/snap_fit_test.scad">snap_fit_test.scad</a>, <a href="models/parametric_box.scad">box</a></td></tr>
+      <tr><td><a href="#L2-15">L2-15</a></td><td>Two-color print</td><td>Multi-color</td><td>2 h</td><td><a href="models/text_label_test.scad">text_label_test.scad</a></td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>🔧 Exercises</h2>
+
+  <section class="exercise" id="L2-1">
+    <header><span class="badge intermediate">Level 2 · Medium</span><h3>Exercise 1 — Temperature tower</h3><span class="badge time">⏱ 2 h (incl. ~1 h print)</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Determine the best nozzle temperature for a specific spool using a scored temperature tower, and justify the result with a table and a chart. Unlike <a href="level-1-beginner.html#L1-11">L1-11</a> you now score every tier systematically and cross-check with a mechanical test.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li><a href="models/temp_tower.scad">temp_tower.scad</a> (7 tiers; set <code>start_temp</code> and <code>step</code> to cover the label's range) or the built-in calibration tower of your slicer</li>
+        <li>One dry spool of the filament you want to tune (PLA, PETG, ABS …)</li>
+        <li>A magnifier or macro photo, a ruler</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 700 330" role="img" aria-label="Line chart of quality scores versus nozzle temperature: layer bonding rises, stringing cleanliness falls, bridge quality peaks in the middle, and the combined score peaks around 205 to 210 degrees">
+          <path class="d-grid" d="M80 40 H560 M80 80 H560 M80 120 H560 M80 160 H560 M80 200 H560 M80 240 H560 M80 40 V240 M160 40 V240 M240 40 V240 M320 40 V240 M400 40 V240 M480 40 V240 M560 40 V240"/>
+          <path class="d-ink" d="M80 40 V240 H560"/>
+          <rect class="f-green" x="280" y="40" width="120" height="200" style="fill-opacity:.25;stroke:none"/>
+          <polyline class="k-blue" points="80,180 160,148 240,112 320,80 400,60 480,48 560,40"/>
+          <polyline class="k-orange" points="80,40 160,44 240,56 320,80 400,120 480,160 560,192"/>
+          <polyline class="k-green" points="80,160 160,112 240,72 320,60 400,80 480,120 560,160"/>
+          <polyline class="k-red" style="stroke-dasharray:6 4" points="80,127 160,101 240,80 320,73 400,87 480,109 560,131"/>
+          <g class="t-sm t-c"><text x="80" y="260">190</text><text x="160" y="260">195</text><text x="240" y="260">200</text><text x="320" y="260">205</text><text x="400" y="260">210</text><text x="480" y="260">215</text><text x="560" y="260">220</text></g>
+          <text class="t-sm t-c" x="320" y="282">Nozzle temperature (°C)</text>
+          <g class="t-sm t-r"><text x="72" y="44">5</text><text x="72" y="124">3</text><text x="72" y="204">1</text></g>
+          <text class="t-sm" x="8" y="22">score (5 = best)</text>
+          <rect class="s-blue" x="580" y="60" width="14" height="4"/><text class="t-sm" x="600" y="66">Layer bonding</text>
+          <rect class="s-orange" x="580" y="84" width="14" height="4"/><text class="t-sm" x="600" y="90">No stringing</text>
+          <rect class="s-green" x="580" y="108" width="14" height="4"/><text class="t-sm" x="600" y="114">Bridges</text>
+          <rect class="s-red" x="580" y="132" width="14" height="4"/><text class="t-sm" x="600" y="138">Average</text>
+          <text class="t-sm t-m" x="340" y="310">Illustrative example for PLA. Your curves will differ.</text>
+        </svg>
+        <figcaption><b>Figure 2.</b> Three quality criteria move in opposite directions. The best temperature is where the average (dashed) peaks, here near 205–210 °C.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Choose the range.</strong> Use the label range from <a href="level-1-beginner.html#L1-13">L1-13</a>. Seven tiers of 5 °C cover a 30 °C span. For PETG typical start values are 250 → 220 °C; for ABS 260 → 230 °C. Hedge: always stay inside your hotend's limits.</li>
+        <li><strong>Print the tower</strong> with the fan setting you normally use for this material and with the tier changes programmed in the slicer. Do not touch the cooling or speed during the print.</li>
+        <li><strong>Score each tier from 1 to 5</strong> for layer bonding (try to snap the tier: higher effort is better), stringing, bridge underside, overhang underside, surface finish and detail sharpness.</li>
+        <li><strong>Chart the average</strong> per tier as in Figure 2. Mark the peak and the width of the plateau.</li>
+        <li><strong>Validate.</strong> Print one useful part (e.g. the cable clip) at the winner and at the winner minus 10 °C and compare breaking by hand.</li>
+        <li><strong>Save a filament preset</strong> with your chosen temperature and name it with brand and color.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>A scored table for all tiers and a chart like Figure 2</li>
+        <li>A chosen temperature plus a plateau (e.g. "205–210 °C works, 207 °C chosen")</li>
+        <li>A saved filament preset in your slicer with the new value</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>A tower with tiers of 5 °C steps cannot show differences smaller than 5 °C. If two neighboring tiers look the same, pick the middle of the plateau, not the edge. Choose slightly hotter if you print fast or with a large nozzle (more melting needed) and slightly cooler for small detailed parts.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <div class="table-wrap"><table class="data compact">
+          <thead><tr><th>Tier °C</th><th>Bond</th><th>Strings</th><th>Bridge</th><th>Overhang</th><th>Avg</th></tr></thead>
+          <tbody>
+            <tr><td>220</td><td>5</td><td>1</td><td>2</td><td>3</td><td>2.8</td></tr>
+            <tr><td>215</td><td>5</td><td>2</td><td>3</td><td>3</td><td>3.3</td></tr>
+            <tr><td>210</td><td>4</td><td>3</td><td>4</td><td>4</td><td>3.8</td></tr>
+            <tr><td><strong>205</strong></td><td>4</td><td>4</td><td>5</td><td>4</td><td><strong>4.3</strong></td></tr>
+            <tr><td>200</td><td>3</td><td>5</td><td>4</td><td>4</td><td>4.0</td></tr>
+            <tr><td>195</td><td>2</td><td>5</td><td>3</td><td>3</td><td>3.3</td></tr>
+            <tr><td>190</td><td>2</td><td>5</td><td>2</td><td>2</td><td>2.8</td></tr>
+          </tbody>
+        </table></div>
+        <p>Result: 205 °C gives the best average with a plateau from 200 to 210 °C, so you choose 205 °C. The numbers are an example; use your own. Read <a href="../techniques/calibration.html">Calibration playbook</a> for the theory and the temperature ranges of other materials in <a href="../materials/overview.html">Filament overview</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L2-2">
+    <header><span class="badge intermediate">Level 2 · Medium</span><h3>Exercise 2 — Retraction test</h3><span class="badge time">⏱ 2.5 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Find the retraction length and speed that stop stringing and blobs for your extruder type without causing clogs or under-extrusion. Retraction is a short reverse move of the filament before the nozzle travels across empty space.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li><a href="models/retraction_test.scad">retraction_test.scad</a> (four 40 mm towers) or any retraction test model</li>
+        <li>Filament at the temperature found in L2-1, dry</li>
+        <li>Your slicer's retraction settings (length, speed; optional wipe and z-hop)</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 270" role="img" aria-label="Three stages of retraction: printing, retract and travel across a gap, and prime at the next tower, with strings shown if ooze occurs">
+          <rect class="d-metal2" x="10" y="226" width="740" height="8"/>
+          <g>
+            <rect class="d-plastic" x="40" y="150" width="40" height="76"/>
+            <rect class="d-plastic" x="170" y="150" width="40" height="76"/>
+            <rect class="d-metal" x="45" y="100" width="30" height="30" rx="3"/><path class="d-metal2" d="M52 130 h16 l-8 12 z"/>
+            <path class="d-plastic2 arrow" d="M60 40 V100"/>
+            <text class="t-sm t-c t-b" x="125" y="24">1 · Print</text>
+            <text class="t-sm t-c" x="125" y="256">filament pushed forward</text>
+          </g>
+          <g>
+            <rect class="d-plastic" x="300" y="150" width="40" height="76"/>
+            <rect class="d-plastic" x="430" y="150" width="40" height="76"/>
+            <rect class="d-metal" x="345" y="100" width="30" height="30" rx="3"/><path class="d-metal2" d="M352 130 h16 l-8 12 z"/>
+            <path class="d-plastic2 arrow" d="M360 100 V44"/>
+            <path class="d-dash arrow" d="M376 118 H416"/>
+            <text class="t-sm t-c t-b" x="385" y="24">2 · Retract + travel</text>
+            <text class="t-sm t-c" x="385" y="256">filament pulled back, pressure drops</text>
+          </g>
+          <g>
+            <rect class="d-plastic" x="560" y="150" width="40" height="76"/>
+            <rect class="d-plastic" x="690" y="150" width="40" height="76"/>
+            <rect class="d-metal" x="695" y="100" width="30" height="30" rx="3"/><path class="d-metal2" d="M702 130 h16 l-8 12 z"/>
+            <path class="d-plastic2 arrow" d="M710 40 V100"/>
+            <path class="d-thin k-red" d="M600 156 C 630 168, 660 168, 690 156"/>
+            <text class="t-sm t-c t-b" x="645" y="24">3 · Prime</text>
+            <text class="t-sm t-c" x="645" y="256">too little retraction leaves strings</text>
+          </g>
+        </svg>
+        <figcaption><b>Figure 3.</b> Retraction in three stages. Strings (red) form when pressure in the nozzle is not relieved before the move.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Note your starting values.</strong> Direct-drive extruders typically work with about 0.5–2 mm retraction at 25–45 mm/s; Bowden setups often need 3–7 mm. Write down both your starting length and speed.</li>
+        <li><strong>Print the towers</strong> with length 0 mm (retraction off). This is your "worst case" baseline.</li>
+        <li><strong>Change only the length</strong> in steps (e.g. 0.4, 0.8, 1.2, 1.6 mm). Use the slicer's retraction tower option if it has one, or print four separate towers.</li>
+        <li><strong>Compare the strings</strong> between towers under a good light and rank them 0 (none) to 5 (heavy).</li>
+        <li><strong>Test the speed</strong> at the best length: 20, 35 and 50 mm/s. Too fast can grind filament; too slow lets pressure leak out.</li>
+        <li><strong>Check for side effects:</strong> gaps after travel (under-extrusion) or grinding noise. Pick the smallest retraction that gives clean towers.</li>
+      </ol>
+      <div class="callout x2d"><span class="callout-title">X2D note</span><p>The main (left) nozzle uses a direct-drive extruder and needs little retraction. The auxiliary (right) nozzle is fed through a PTFE tube from the rear extruder and needs a much longer retraction and a larger flow-dynamics value. Tune the two nozzles separately and do not copy values from one to the other. Details: <a href="../x2d/dual-nozzle-printing.html">Dual-nozzle printing</a>.</p></div>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>A table of stringing score vs retraction length (and speed)</li>
+        <li>A chosen length and speed with no visible strings and no gaps after travel</li>
+        <li>Settings saved in a filament or process profile</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Wet filament strings badly no matter what retraction you use. If increasing retraction never improves things, dry the filament and repeat the baseline (exercise <a href="#L2-8">L2-8</a>). A nozzle that is too hot gives the same symptom, so check L2-1 first.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <div class="table-wrap"><table class="data compact">
+          <thead><tr><th>Retraction (direct drive, 35 mm/s)</th><th>Stringing (0–5)</th><th>Comment</th></tr></thead>
+          <tbody>
+            <tr><td>0 mm</td><td>5</td><td>Heavy strings and blobs</td></tr>
+            <tr><td>0.4 mm</td><td>3</td><td>Fine strings</td></tr>
+            <tr><td>0.8 mm</td><td>1</td><td>Almost clean</td></tr>
+            <tr><td>1.2 mm</td><td>0</td><td>Clean</td></tr>
+            <tr><td>1.6 mm</td><td>0</td><td>Clean, small gap after travel</td></tr>
+          </tbody>
+        </table></div>
+        <p>Choose 1.2 mm: the smallest value with score 0 and no side effects. Longer retraction does not make strings better once they are gone but increases wear and the chance of heat creep clogs. Go deeper in <a href="../techniques/calibration.html">Calibration playbook</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L2-3">
+    <header><span class="badge intermediate">Level 2 · Medium</span><h3>Exercise 3 — Flow calibration cube</h3><span class="badge time">⏱ 1.5 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Calibrate the flow ratio (extrusion multiplier) by measuring the real wall thickness of a thin-walled box and correcting the setting by the ratio of expected to measured thickness.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li><a href="models/flow_cube.scad">flow_cube.scad</a>: a 20 mm open box with 0.84 mm walls (2 × 0.42 mm line width). Slice with 2 walls, 0 % infill, no top layers, a bottom of 4–5 layers.</li>
+        <li>Calipers (0.01 mm), ideally a micrometer for thin walls</li>
+        <li>Fine sandpaper to deburr the cut edge if needed</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 270" role="img" aria-label="Top view of a thin-walled box with measurement points, and a comparison of expected and measured wall thickness with the correction formula">
+          <rect class="d-surface" x="20" y="20" width="220" height="220" rx="4"/>
+          <rect class="f-orange" x="50" y="50" width="160" height="160" style="fill:none"/>
+          <rect class="d-plastic" x="50" y="50" width="160" height="6"/><rect class="d-plastic" x="50" y="204" width="160" height="6"/><rect class="d-plastic" x="50" y="50" width="6" height="160"/><rect class="d-plastic" x="204" y="50" width="6" height="160"/>
+          <g class="k-red" style="stroke-width:3"><path d="M120 44 l10 12 M130 44 l-10 12 M120 198 l10 12 M130 198 l-10 12 M44 120 l12 10 M44 130 l12 -10 M198 120 l12 10 M198 130 l12 -10"/></g>
+          <text class="t-sm t-c t-b" x="130" y="136">Top view</text>
+          <text class="t-sm t-c" x="130" y="154">measure at mid-height</text>
+          <text class="t-sm t-c" x="130" y="172">on each wall, 2 heights</text>
+          <rect class="f-blue" x="300" y="40" width="168" height="26" rx="2"/>
+          <text class="t-sm" x="480" y="58">Expected 2 × 0.42 = 0.84 mm</text>
+          <rect class="f-orange" x="300" y="90" width="184" height="26" rx="2"/>
+          <text class="t-sm" x="496" y="108">Measured 0.92 mm → too much plastic</text>
+          <rect class="f-yellow" x="300" y="140" width="152" height="26" rx="2"/>
+          <text class="t-sm" x="464" y="158">Measured 0.76 mm → too little</text>
+          <rect class="f-teal" x="300" y="190" width="440" height="60" rx="10"/>
+          <text class="t t-c t-b" x="520" y="214">new flow = old flow × expected / measured</text>
+          <text class="t-sm t-c" x="520" y="236">e.g. 0.98 × 0.84 / 0.92 = 0.895 ≈ 0.90</text>
+        </svg>
+        <figcaption><b>Figure 4.</b> Measure the wall in several places (red marks). The correction is a ratio, applied to the old flow ratio, not to a number you invent.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Confirm the line width.</strong> Use the slicer's outer-wall line width (typically 0.42 mm for a 0.4 mm nozzle). The expected wall is the number of walls times the line width: 2 × 0.42 = 0.84 mm.</li>
+        <li><strong>Print the cube</strong> at the normal speed and temperature from L2-1. Write down the current flow ratio.</li>
+        <li><strong>Measure the wall</strong> with a micrometer or calipers at 8 points (two heights on each of the four walls), staying away from corners. Average them.</li>
+        <li><strong>Compute the new flow ratio</strong> with the formula in Figure 4 and enter it in the filament profile.</li>
+        <li><strong>Reprint and confirm.</strong> The measured wall should now be within ±0.03 mm of the target.</li>
+        <li><strong>Check a solid surface.</strong> Print a flat top surface; if the surface is rough (too much) or has gaps (too little), refine the value by 0.01–0.02 steps.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>8 measurements recorded and averaged</li>
+        <li>A calculated new flow ratio, applied and tested with a second print</li>
+        <li>Final wall thickness within ±0.03 mm of expected</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Measurement error is huge compared to the numbers here: calipers can mislead on a 0.84 mm wall because of the jaw angle and compressed plastic. If you do not have a micrometer, measure many points and use the average. Also make sure the actual line width in the slicer equals the number you use in the formula.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>Example: current flow 0.98; measured mean 0.89 mm vs expected 0.84 mm. New flow = 0.98 × 0.84 / 0.89 = 0.925, rounded to 0.92. After reprinting the mean wall is 0.85 mm. Typical flow ratios for PLA lie between 0.92 and 1.00; much lower or higher values often point to a wrong filament diameter setting, a partially clogged nozzle or the wrong line width. Bambu Studio's automatic flow calibration performs the same measurement with a scanned pattern; the manual method teaches the principle. See <a href="../x2d/settings-and-profiles.html">Bambu Studio settings &amp; profiles</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L2-4">
+    <header><span class="badge intermediate">Level 2 · Medium</span><h3>Exercise 4 — Bridging test</h3><span class="badge time">⏱ 2 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Measure how far your printer can bridge (print in mid-air between two supports) at your current settings, and improve it by changing speed, fan and flow for bridges only.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li><a href="models/bridge_test.scad">bridge_test.scad</a>: five bridges with spans of 10, 20, 30, 40 and 50 mm</li>
+        <li>A ruler and a feeler gauge or paper strips for sag measurement, a camera</li>
+        <li>PLA (bridges are easiest with PLA and strong part cooling)</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 260" role="img" aria-label="Side view of a bridge between two pillars with sag measured at the center, plus the three settings that matter: speed, cooling and flow">
+          <rect class="d-metal2" x="20" y="220" width="460" height="8"/>
+          <rect class="d-plastic" x="60" y="110" width="50" height="110"/>
+          <rect class="d-plastic" x="390" y="110" width="50" height="110"/>
+          <path class="d-plastic" d="M60 110 H440 V122 H390 C 330 140, 170 140, 110 122 H60 z"/>
+          <path class="d-dash k-blue" d="M110 110 H390"/>
+          <path class="d-thin arrow arrow-start" d="M250 110 V138"/>
+          <text class="t-sm" x="258" y="132">sag</text>
+          <path class="d-thin arrow arrow-start" d="M110 190 H390"/>
+          <text class="t-sm t-c" x="250" y="208">span (e.g. 30 mm)</text>
+          <text class="t t-b" x="500" y="40">Bridge settings that matter</text>
+          <rect class="f-blue" x="500" y="54" width="250" height="44" rx="8"/><text class="t-sm t-b" x="512" y="74">Fan: 100 % for the bridge</text><text class="t-sm" x="512" y="90">freezes the strand quickly</text>
+          <rect class="f-green" x="500" y="108" width="250" height="44" rx="8"/><text class="t-sm t-b" x="512" y="128">Speed: slower (20–50 mm/s)</text><text class="t-sm" x="512" y="144">less pull, straighter strands</text>
+          <rect class="f-orange" x="500" y="162" width="250" height="44" rx="8"/><text class="t-sm t-b" x="512" y="182">Flow: a little lower (0.85–1.0)</text><text class="t-sm" x="512" y="198">thinner strand cools faster</text>
+          <text class="t-sm t-m" x="60" y="248">The dashed line is the ideal flat bridge.</text>
+        </svg>
+        <figcaption><b>Figure 5.</b> Sag is the vertical drop at the center of the bridge. Three slicer settings control it.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Print the test</strong> with your normal settings and note the bridge speed, bridge fan and bridge flow values from the profile.</li>
+        <li><strong>Inspect the underside</strong> of each bridge and score 0–3: 3 = flat and clean, 2 = slightly loose strands, 1 = visible sag, 0 = collapsed.</li>
+        <li><strong>Measure the sag</strong> at the center of the longest working bridge: slide a feeler strip or card under it until it just touches.</li>
+        <li><strong>Change one thing:</strong> fan to 100 % for bridges, then bridge speed to 30 mm/s, then bridge flow to 0.9. Reprint the test after each change (use the slicer's bridge options in the process profile).</li>
+        <li><strong>Plot</strong> maximum acceptable span (score ≥ 2) against each setting.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>Five bridges tested at baseline and three variants</li>
+        <li>Sag or score recorded for each span and setting</li>
+        <li>A stated maximum bridge span for your printer and a recommended bridge setting</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Orientation of the bridge direction matters: the first bridge line is anchored at both ends, the later ones lie next to it. If your slicer offers "bridge direction" or "thick bridges", test them separately. Cooling is the single biggest factor, so check that the part-cooling fan duct is clean and the fan actually runs at the commanded speed.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>Typical PLA result: with default settings, 10–20 mm bridges are flat, 30 mm sags 0.5 mm and 40–50 mm look rough. With 100 % fan, 35 mm/s and flow 0.9, the 30 mm bridge becomes clean and the 40 mm bridge is acceptable. Bridges beyond about 50 mm usually need supports or a design change (arches, chamfers). In practice you design bridges below 20–30 mm for functional parts. More methods in <a href="../techniques/supports-bridges-overhangs.html">Supports, bridges &amp; overhangs</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L2-5">
+    <header><span class="badge intermediate">Level 2 · Medium</span><h3>Exercise 5 — Overhang test</h3><span class="badge time">⏱ 2 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Find the steepest overhang angle your printer produces cleanly without support, then turn the result into a design rule you can apply in CAD (for example "never exceed 50° from vertical for visible surfaces").</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li><a href="models/overhang_ladder.scad">overhang_ladder.scad</a> with ramps from 30° to 80° measured from vertical</li>
+        <li>PLA at the temperature from L2-1, part cooling at 100 % for overhangs</li>
+        <li>A camera or phone for macro photos of the undersides</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 270" role="img" aria-label="Overhang ladder with ramps at 30, 45, 60 and 75 degrees from vertical, showing how much each layer is offset from the one below and the resulting surface quality">
+          <rect class="d-metal2" x="20" y="236" width="720" height="8"/>
+          <g>
+            <path class="d-plastic" d="M40 236 V70 H90 L130 236 z"/>
+            <text class="t-sm t-c t-b" x="85" y="260">30°</text>
+            <text class="t-sm t-c" x="85" y="56">excellent</text>
+          </g>
+          <g>
+            <path class="d-plastic" d="M220 236 V70 H270 L330 236 z"/>
+            <text class="t-sm t-c t-b" x="275" y="260">45°</text>
+            <text class="t-sm t-c" x="275" y="56">good</text>
+          </g>
+          <g>
+            <path class="d-plastic" d="M410 236 V70 H460 L546 236 z"/>
+            <text class="t-sm t-c t-b" x="478" y="260">60°</text>
+            <text class="t-sm t-c" x="478" y="56">rough underside</text>
+          </g>
+          <g>
+            <path class="d-plastic" d="M600 236 V70 H650 L740 236 z"/>
+            <path class="k-red" d="M650 72 C 668 120, 700 150, 726 190" style="stroke-dasharray:5 4"/>
+            <text class="t-sm t-c t-b" x="670" y="260">75°</text>
+            <text class="t-sm t-c" x="670" y="56">droops, needs support</text>
+          </g>
+        </svg>
+        <figcaption><b>Figure 6.</b> The shallower the angle (measured from vertical), the more each layer rests on the one below. Beyond roughly 45–60° the outer surface starts to droop.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Print the ladder</strong> without supports. Keep the layer height at 0.2 mm; a thinner layer height gives more overlap and slightly steeper possible angles.</li>
+        <li><strong>Photograph the underside</strong> of each ramp in the same light, from the same distance.</li>
+        <li><strong>Score each angle</strong>: 3 = smooth, 2 = slightly rough but functional, 1 = ragged or drooping, 0 = failed. Write the largest angle with score ≥ 2 as your "clean limit" and the largest with score 1 as your "absolute limit".</li>
+        <li><strong>Repeat with a different setting</strong>: reduce layer height to 0.12 mm, or lower the print speed on overhangs to 50 %. See if the limit shifts by 5–10°.</li>
+        <li><strong>Write a one-line design rule</strong> for yourself, such as "use 45° chamfers, no flat roofs".</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>All angles photographed and scored for two settings</li>
+        <li>A numeric clean limit and absolute limit</li>
+        <li>A design rule written in your notes</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Be careful with what "angle" means. In this model the angle is measured from vertical: 0° is a straight wall and 90° would be a flat ceiling. Some slicers and models quote angles from the horizontal. Always check the model's description before comparing numbers with others.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>Typical PLA with strong cooling: 30° and 45° are clean, 60° has visible stair-stepping but good strength, 70° starts to droop and 80° fails without support. The geometry explains it: at angle θ from vertical, each layer of thickness h is offset sideways by h·tan θ. For h = 0.2 mm and θ = 45° the offset is 0.2 mm, about half a line width, so every layer is half supported. At 70° the offset is 0.55 mm, more than the line width of 0.42 mm, so the new line is largely in the air. More in <a href="../design/principles.html">Design principles</a> and <a href="../techniques/supports-bridges-overhangs.html">Supports, bridges &amp; overhangs</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L2-6">
+    <header><span class="badge intermediate">Level 2 · Medium</span><h3>Exercise 6 — Tolerance coupon</h3><span class="badge time">⏱ 2 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Measure the clearance your printer needs for sliding fits, tight fits and press fits, and record a personal "tolerance table" you will use in every later design. Printed holes are usually slightly smaller and printed pegs slightly larger than designed.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li><a href="models/tolerance_gauge.scad">tolerance_gauge.scad</a>: set <code>part="both"</code> or print <code>"plate"</code> and <code>"pegs"</code> separately; clearances from 0 to 0.5 mm in 8 mm pegs</li>
+        <li>Calipers; a set of drill bits or pin gauges (optional)</li>
+        <li>Your most-used material (PLA or PETG)</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 250" role="img" aria-label="Cross section of a peg in a hole with a gap labelled clearance, and a table of fit classes with clearance ranges">
+          <rect class="d-plastic" x="40" y="60" width="90" height="120"/>
+          <rect class="d-plastic" x="230" y="60" width="90" height="120"/>
+          <rect class="f-blue" x="148" y="40" width="64" height="120" rx="2"/>
+          <path class="d-thin arrow arrow-start" d="M130 196 H148"/>
+          <path class="d-thin arrow arrow-start" d="M212 196 H230"/>
+          <text class="t-sm t-c" x="139" y="218">c</text><text class="t-sm t-c" x="221" y="218">c</text>
+          <text class="t-sm t-c t-b" x="180" y="24">peg</text>
+          <text class="t-sm t-c" x="180" y="240">c = clearance per side</text>
+          <g transform="translate(370 20)">
+            <rect class="f-green" x="0" y="0" width="360" height="36" rx="6"/><text class="t-sm t-b" x="10" y="23">Sliding / rotating</text><text class="t-sm" x="190" y="23">0.3–0.5 mm per side</text>
+            <rect class="f-teal" x="0" y="44" width="360" height="36" rx="6"/><text class="t-sm t-b" x="10" y="67">Snug, removable</text><text class="t-sm" x="190" y="67">0.15–0.25 mm per side</text>
+            <rect class="f-yellow" x="0" y="88" width="360" height="36" rx="6"/><text class="t-sm t-b" x="10" y="111">Light press fit</text><text class="t-sm" x="190" y="111">0.05–0.1 mm per side</text>
+            <rect class="f-orange" x="0" y="132" width="360" height="36" rx="6"/><text class="t-sm t-b" x="10" y="155">Permanent press</text><text class="t-sm" x="190" y="155">0 to −0.05 mm (interference)</text>
+            <text class="t-sm t-m" x="0" y="196">Starting points only. Your own coupon decides.</text>
+          </g>
+        </svg>
+        <figcaption><b>Figure 7.</b> Clearance <i>c</i> is the gap on each side of a peg. The right-hand table shows typical starting ranges, which depend on printer, nozzle and material.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Print the plate and the pegs</strong> in the same orientation and with the same settings you will use for real parts.</li>
+        <li><strong>Measure</strong> the actual diameter of each peg and each hole with calipers (hole: use the inside jaws or the smallest drill that passes).</li>
+        <li><strong>Tabulate</strong> designed vs measured diameters and compute the offset for holes and pegs separately.</li>
+        <li><strong>Test the fit</strong> by hand: for every hole try the matching peg (and the neighbors). Record "falls through", "slides", "snug", "needs force", "stuck".</li>
+        <li><strong>Write your tolerance table</strong>: the clearance you will add for each fit class and a correction for small holes (usually bigger than for large holes).</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>Table of designed vs measured size for at least 5 pegs and 5 holes</li>
+        <li>A fit-class table with your recommended clearances</li>
+        <li>The table saved where you will find it when you start a new design</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Do not trust the first measurement after printing: the plastic is warm and still shrinking a little. Wait until the part is at room temperature. Measure holes in two perpendicular directions: elephant-foot and first-layer squish can make holes slightly oval.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <div class="table-wrap"><table class="data compact">
+          <thead><tr><th>Designed clearance (per side)</th><th>Measured hole</th><th>Measured peg</th><th>Feel</th></tr></thead>
+          <tbody>
+            <tr><td>0.00 mm</td><td>7.82 mm</td><td>8.06 mm</td><td>Does not fit</td></tr>
+            <tr><td>0.10 mm</td><td>8.01 mm</td><td>8.06 mm</td><td>Needs force (press)</td></tr>
+            <tr><td>0.20 mm</td><td>8.21 mm</td><td>8.06 mm</td><td>Snug, slides with effort</td></tr>
+            <tr><td>0.30 mm</td><td>8.41 mm</td><td>8.06 mm</td><td>Free sliding</td></tr>
+            <tr><td>0.50 mm</td><td>8.80 mm</td><td>8.06 mm</td><td>Loose, rattles</td></tr>
+          </tbody>
+        </table></div>
+        <p>Example reading: holes print about 0.18 mm too small and pegs 0.06 mm too large, so a nominal 0.2 mm clearance gives a snug fit. Your numbers will differ; record yours. Details and rules of thumb in <a href="../design/tolerances-and-fits.html">Tolerances &amp; fits</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L2-7">
+    <header><span class="badge intermediate">Level 2 · Medium</span><h3>Exercise 7 — Design a parametric box in CAD</h3><span class="badge time">⏱ 3 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Model a box with a lid whose dimensions come from a small set of named parameters, so that changing one number rebuilds the whole part. Parametric thinking is the biggest productivity step in CAD.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>Any parametric tool: Fusion (user parameters), FreeCAD (spreadsheet or Part Design), Onshape (variables) or OpenSCAD</li>
+        <li><a href="models/parametric_box.scad">parametric_box.scad</a> as a reference, to read after you tried yourself</li>
+        <li>The tolerance table from L2-6</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 270" role="img" aria-label="Section of a box and lid with named parameters: inner length, inner width, wall thickness, corner radius, lid lip height and lid clearance">
+          <path class="d-plastic" d="M60 80 V220 H300 V80 H284 V204 H76 V80 z"/>
+          <path class="d-plastic" d="M60 40 H300 V60 H284 V52 H76 V60 H60 z" style="fill-opacity:.7"/>
+          <path class="d-thin arrow arrow-start" d="M76 240 H284"/>
+          <text class="t-sm t-c t-b" x="180" y="258">inner_l</text>
+          <path class="d-thin arrow arrow-start" d="M44 80 V220"/>
+          <text class="t-sm t-r t-b" x="38" y="154">inner_h</text>
+          <path class="d-thin arrow arrow-start" d="M60 66 H76"/>
+          <text class="t-sm t-b" x="62" y="30">wall</text>
+          <g class="t-sm">
+            <text x="340" y="50" class="t-b">Parameters</text>
+            <text x="340" y="76" class="t-mono">inner_l  = 60;  // mm</text>
+            <text x="340" y="96" class="t-mono">inner_w  = 40;</text>
+            <text x="340" y="116" class="t-mono">inner_h  = 30;</text>
+            <text x="340" y="136" class="t-mono">wall     = 2.4;  // 6 × 0.4 mm lines</text>
+            <text x="340" y="156" class="t-mono">corner_r = 4;</text>
+            <text x="340" y="176" class="t-mono">lid_gap  = 0.3;  // from L2-6</text>
+            <text x="340" y="196" class="t-mono">lip_h    = 3;</text>
+          </g>
+          <rect class="f-teal" x="340" y="212" width="400" height="40" rx="8"/>
+          <text class="t-sm t-b" x="352" y="236">Outer size = inner + 2 × wall, never typed twice</text>
+        </svg>
+        <figcaption><b>Figure 8.</b> The box is defined by seven named values. All other dimensions are expressions of them.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>List the parameters first</strong> (Figure 8). Decide units (mm) and give each a clear name.</li>
+        <li><strong>Model the base</strong> using only parameters: outer rounded rectangle, subtract the inner cavity, keep a floor of 4 layers (0.8 mm at 0.2 mm layer height) or more.</li>
+        <li><strong>Model the lid</strong> with a lip that enters the base: lip outer size = inner size − 2 × lid_gap.</li>
+        <li><strong>Test the parametric behavior:</strong> change inner_l to 90 and inner_h to 20. Everything must update without errors. Fix anything that breaks.</li>
+        <li><strong>Print the box</strong> at a small size for speed (e.g. 40×30×20) and check that the lid fits as designed.</li>
+        <li><strong>Document:</strong> add a comment next to each parameter with its meaning and valid range.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>All dimensions driven by parameters; at least two parameter sets rebuild correctly</li>
+        <li>Printed lid fits with the intended clearance</li>
+        <li>The file exports valid STL or 3MF with no non-manifold warnings</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>If the model breaks at a different size, you have most likely typed a number instead of using an expression, or the corner radius is bigger than half the wall-to-wall distance. Add a guard such as <code>corner_r = min(corner_r, inner_w/2)</code> in OpenSCAD or a constraint in the sketch.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>In OpenSCAD the base is a <code>difference()</code> of two rounded boxes: the outer one of size <code>inner + 2*wall</code> and the inner one moved up by the floor thickness. The lid is a rounded plate of outer size plus a lip, rotated 180° so that its flat face lies on the bed. In a graphical CAD tool the same logic is a sketch with driven dimensions and a user-parameter table. The reference file shows both parts and a "preview" mode. Find the workflow in <a href="../design/parametric-cad-workflow.html">Parametric CAD workflow</a> and a CAD overview in <a href="../software/cad-modeling.html">CAD &amp; modeling software</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L2-8">
+    <header><span class="badge intermediate">Level 2 · Medium</span><h3>Exercise 8 — Filament drying experiment</h3><span class="badge time">⏱ 10 h (mostly waiting)</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Prove for yourself how much moisture matters. You will print the same test with a wet and a dried section of one spool, and quantify the difference with a score and a weight measurement.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>A hygroscopic filament: PETG, nylon, TPU or PVA show it fastest; PLA shows it more slowly. Use a spool that has been open on a shelf for weeks, or deliberately expose a short length to humid air for a day</li>
+        <li>A filament dryer or the AMS 2 Pro drying function, a kitchen scale with 0.1 g resolution (or better)</li>
+        <li><a href="models/retraction_test.scad">retraction_test.scad</a> as the test print, plus a macro camera</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 270" role="img" aria-label="Experiment timeline: weigh and print wet, dry for 6 hours at the material temperature, weigh and print dry, compare, with a bar chart of weight loss">
+          <g>
+            <rect class="f-orange" x="10" y="40" width="130" height="80" rx="10"/><text class="t-sm t-c t-b" x="75" y="70">1 · Wet test</text><text class="t-sm t-c" x="75" y="90">weigh, print,</text><text class="t-sm t-c" x="75" y="106">photo</text>
+            <rect class="f-blue" x="170" y="40" width="130" height="80" rx="10"/><text class="t-sm t-c t-b" x="235" y="70">2 · Dry</text><text class="t-sm t-c" x="235" y="90">4–8 h at the</text><text class="t-sm t-c" x="235" y="106">material temp</text>
+            <rect class="f-green" x="330" y="40" width="130" height="80" rx="10"/><text class="t-sm t-c t-b" x="395" y="70">3 · Dry test</text><text class="t-sm t-c" x="395" y="90">weigh, print,</text><text class="t-sm t-c" x="395" y="106">photo</text>
+            <rect class="f-purple" x="490" y="40" width="130" height="80" rx="10"/><text class="t-sm t-c t-b" x="555" y="70">4 · Compare</text><text class="t-sm t-c" x="555" y="90">score, weight</text><text class="t-sm t-c" x="555" y="106">loss, sound</text>
+            <path class="d-ink arrow" d="M140 80 H168"/><path class="d-ink arrow" d="M300 80 H328"/><path class="d-ink arrow" d="M460 80 H488"/>
+          </g>
+          <g transform="translate(650 40)">
+            <path class="d-ink" d="M0 0 V80 H100"/>
+            <rect class="s-orange" x="14" y="20" width="26" height="60"/><rect class="s-green" x="54" y="46" width="26" height="34"/>
+            <text class="t-xs t-c" x="27" y="96">wet</text><text class="t-xs t-c" x="67" y="96">dry</text>
+            <text class="t-xs" x="-4" y="-8">print score</text>
+          </g>
+          <text class="t-sm" x="10" y="170">Typical drying settings (verify on your dryer and spool label):</text>
+          <text class="t-sm t-mono" x="10" y="194">PLA 45–55 °C · PETG 60–65 °C · TPU 50–55 °C · PA/nylon 70–80 °C · PVA 45–50 °C</text>
+          <text class="t-sm t-m" x="10" y="226">Stay below the softening point of the plastic and of the spool itself. Cardboard spools tolerate less heat.</text>
+        </svg>
+        <figcaption><b>Figure 9.</b> The experiment has four stages. The same filament, printer and file are used before and after drying.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Weigh the spool</strong> (with a known empty spool weight, or use the same spool before and after) and note ambient humidity if you have a hygrometer.</li>
+        <li><strong>Print the wet test.</strong> Listen: popping or crackling at the nozzle and steam-like wisps are signs of moisture. Photograph the strings and surface.</li>
+        <li><strong>Dry the spool</strong> at the recommended temperature for 4–8 hours (see <a href="../materials/drying-and-storage.html">Drying &amp; storage</a>). Weigh again right after drying while the spool is still warm and again when it has cooled.</li>
+        <li><strong>Print the dry test</strong> with identical settings.</li>
+        <li><strong>Compare</strong>: stringing score (0–5), surface finish, popping, layer adhesion by hand snap. Compute the weight loss in percent.</li>
+        <li><strong>Store the spool properly</strong> afterwards (sealed container with desiccant) and write down the time until symptoms come back, if you test that later.</li>
+      </ol>
+      <div class="callout warn"><span class="callout-title">Safety</span><p>Never dry above the recommended temperature and never leave a heating device unattended near flammable materials. Use a dedicated filament dryer or the AMS 2 Pro with its documented limits.</p></div>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>Two prints with photos and scores, with identical settings</li>
+        <li>Weight before and after drying, plus the calculated loss in percent</li>
+        <li>A written rule for how you will store this material in the future</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>The weight change for a 1 kg spool is small: 0.1–0.5 % is only 1–5 g. A scale with 0.1 g resolution is needed. To make the effect clearer, weigh a short loose piece (e.g. 20 g of filament) instead of the whole spool, or let a small sample absorb moisture for a day before drying.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>Example for PETG: wet print score 4 (heavy strings, rough surface, popping), dry print score 1; sample weight dropped from 20.00 g to 19.92 g (0.4 %) after 6 h at 65 °C. Interpretation: even sub-percent moisture is visible. PLA may show almost no change after one week in a dry room, whereas nylon can change visibly in hours. Typical symptoms and a summary of drying temperatures are in <a href="../materials/drying-and-storage.html">Drying &amp; storage</a> and <a href="../x2d/ams-2-pro.html">AMS 2 Pro deep dive</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L2-9">
+    <header><span class="badge intermediate">Level 2 · Medium</span><h3>Exercise 9 — PETG vs PLA bend test</h3><span class="badge time">⏱ 3 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Compare how two materials behave under a repeatable three-point bend test and learn to separate <em>stiffness</em> (how much it bends), <em>strength</em> (when it breaks) and <em>toughness</em> (how much energy it absorbs). This is a simple home test, not a standardized material test.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>Two test bars per material (e.g. 100 × 10 × 4 mm), printed flat with identical settings</li>
+        <li>A test rig: two supports 80 mm apart (two bolts or a jig) and a way to load the center: a bucket hung with a loop, filled gradually with water or sand</li>
+        <li>A kitchen scale, calipers, a ruler to measure deflection</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 270" role="img" aria-label="Three-point bend rig with a bar on two supports and a bucket hanging at the center, plus load versus deflection curves for a stiff brittle material and a ductile material">
+          <rect class="d-metal2" x="20" y="200" width="30" height="40"/><rect class="d-metal2" x="290" y="200" width="30" height="40"/>
+          <path class="d-plastic" d="M30 192 C 100 192, 150 205, 170 208 C 190 205, 240 192, 310 192 V 200 C 240 200, 190 213, 170 216 C 150 213, 100 200, 30 200 z"/>
+          <path class="d-thin" d="M170 208 V120"/>
+          <path class="d-surface" d="M130 120 H210 L200 60 H140 z"/>
+          <text class="t-sm t-c t-b" x="170" y="98">load (bucket)</text>
+          <path class="d-thin arrow arrow-start" d="M170 224 V250"/>
+          <text class="t-sm" x="180" y="248">deflection</text>
+          <g transform="translate(380 30)">
+            <path class="d-ink" d="M0 0 V200 H350"/>
+            <path class="k-blue" d="M0 200 L90 70 L110 40 L112 120"/>
+            <path class="k-green" d="M0 200 L60 120 C 100 80, 160 66, 230 62 C 280 60, 310 70, 330 90"/>
+            <text class="t-sm t-b" x="115" y="36" style="fill:var(--blue)">PLA: stiff, breaks suddenly</text>
+            <text class="t-sm t-b" x="150" y="52" style="fill:var(--green)">PETG: flexes, tougher</text>
+            <text class="t-sm t-c" x="175" y="226">deflection →</text>
+            <text class="t-sm" x="-4" y="-10">load</text>
+          </g>
+        </svg>
+        <figcaption><b>Figure 10.</b> A bend rig (left) and typical shapes of the load–deflection curve (right): steep and short for stiff, brittle material; flatter and longer for a ductile one.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Print the bars</strong> flat, 4 walls, 100 % infill (or the real infill you want to compare), same layer height. Use dry filament and the temperatures from L2-1.</li>
+        <li><strong>Measure</strong> the real width and thickness of each bar with calipers. Thin bars are much more sensitive to dimension errors: stiffness scales with thickness cubed.</li>
+        <li><strong>Mount the bar</strong> on the 80 mm supports and apply the load gradually: add 200 g at a time, wait 10 s and measure deflection at the center.</li>
+        <li><strong>Continue until failure</strong> or until the bar slips off the supports. Wear eye protection; plastic pieces can fly.</li>
+        <li><strong>Record</strong> the load at 2 mm deflection (a stiffness measure), the maximum load, and whether the break was clean (brittle) or the bar bent permanently (ductile).</li>
+        <li><strong>Test at least two bars of each material</strong> and compare averages.</li>
+      </ol>
+      <div class="callout warn"><span class="callout-title">Safety</span><p>Wear safety glasses, keep hands and feet out of the area below the load and do not stand over the bar when it fails.</p></div>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>Load–deflection table or sketch for each material</li>
+        <li>Stiffness, maximum load and failure mode recorded</li>
+        <li>A short conclusion about when to choose each material</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>For a rectangular bar of width b and thickness t on a span L, the load at a given deflection is proportional to b·t³/L³ and to the material's modulus. If your bars differ in thickness by only 0.1 mm (2.5 % of 4 mm), the stiffness differs by about 7.5 %, more than many material differences. That is why you measure the real dimensions.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>Typical qualitative result: PLA bars carry a higher load at 2 mm deflection, then snap suddenly with a clean fracture; PETG bars deflect further, whiten at the bend and may not break at all within the rig's range. So PLA is the better choice for rigid, unloaded or lightly loaded parts; PETG for parts that must flex, take impacts or bear loads at a hinge. The quantitative values depend heavily on brand, color, moisture and print settings, so avoid quoting a number as "the" PLA value. See <a href="../materials/overview.html">Filament overview</a> and <a href="../materials/everyday-plastics.html">PLA, PETG &amp; everyday plastics</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L2-10">
+    <header><span class="badge intermediate">Level 2 · Medium</span><h3>Exercise 10 — Support settings comparison</h3><span class="badge time">⏱ 3 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Compare normal (grid), tree and no supports on an overhanging part and measure print time, material and surface quality, plus how well each variant releases. You decide which strategy is best for which geometry.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>A test model with an arch, an overhanging shelf and a bridge, for example a 40 mm tall arch with a 30 mm bridge or any support benchmark. You can build one in 10 minutes in a CAD tool.</li>
+        <li>Pliers, a deburring tool and your slicer (Bambu Studio offers normal and tree supports, with auto and manual placement)</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 260" role="img" aria-label="Three variants of the same arch: grid support under the whole shelf, tree support touching at a few points, and no support, each with a rating for time, material and surface">
+          <g>
+            <path class="d-plastic" d="M30 200 V120 H130 V200 z"/>
+            <path class="d-plastic" d="M30 120 V100 H230 V120 z"/>
+            <path class="d-dash" d="M130 120 V200 M150 120 V200 M170 120 V200 M190 120 V200 M210 120 V200"/>
+            <path class="d-plastic" d="M210 200 V100 H230 V200 z"/>
+            <text class="t-sm t-c t-b" x="130" y="30">A · Normal (grid)</text>
+            <text class="t-sm t-c" x="130" y="226">stable, lots of material</text>
+            <text class="t-sm t-c" x="130" y="244">underside smooth but stuck</text>
+          </g>
+          <g>
+            <path class="d-plastic" d="M290 120 V100 H490 V120 z"/>
+            <path class="d-plastic" d="M290 200 V100 H310 V200 z"/><path class="d-plastic" d="M470 200 V100 H490 V200 z"/>
+            <path class="k-orange" d="M390 200 V160 M390 160 L360 122 M390 160 L420 122 M390 160 V122" style="stroke-width:3"/>
+            <text class="t-sm t-c t-b" x="390" y="30">B · Tree</text>
+            <text class="t-sm t-c" x="390" y="226">little material, few contact points</text>
+            <text class="t-sm t-c" x="390" y="244">small scars, easy removal</text>
+          </g>
+          <g>
+            <path class="d-plastic" d="M550 120 V100 H730 V120 z"/>
+            <path class="d-plastic" d="M550 200 V100 H570 V200 z"/><path class="d-plastic" d="M710 200 V100 H730 V200 z"/>
+            <path class="k-red" d="M570 120 C 600 138, 680 138, 710 120" style="stroke-dasharray:5 4"/>
+            <text class="t-sm t-c t-b" x="640" y="30">C · No support</text>
+            <text class="t-sm t-c" x="640" y="226">fastest and cleanest top</text>
+            <text class="t-sm t-c" x="640" y="244">underside droops if span is long</text>
+          </g>
+        </svg>
+        <figcaption><b>Figure 11.</b> Three strategies for the same shelf. Orange: tree support branches touching only a few points; red dashed: sagging underside without support.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Slice the model three times</strong> with the same settings and only the support type changed: normal, tree, none. Record the estimated print time and filament use from the slicer.</li>
+        <li><strong>Print all three variants</strong> and weigh them after removing the supports.</li>
+        <li><strong>Rate the result</strong>: surface quality of the supported areas (0–5), how hard the supports were to remove (0–5), any damage to thin features.</li>
+        <li><strong>Test the interface settings</strong> on normal supports: Z-gap (top distance) 0.1, 0.2, 0.3 mm. Smaller gap = better surface but harder removal.</li>
+        <li><strong>Summarize</strong> in a table and write one recommended rule for yourself.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>Time and material figures for all variants</li>
+        <li>Quality and removal ratings with photos</li>
+        <li>A recommendation: which support type for which geometry</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Weigh the part before and after removing the supports; the difference is the support waste. A slicer estimate is usually close but includes purge or wipe material on multi-material jobs, so compare like with like. Tree supports are not automatically better; they can fail on large flat undersides.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <div class="table-wrap"><table class="data compact">
+          <thead><tr><th>Variant</th><th>Time</th><th>Support waste</th><th>Surface</th><th>Removal</th></tr></thead>
+          <tbody>
+            <tr><td>Normal, Z-gap 0.2 mm</td><td>1 h 32 min</td><td>8.4 g</td><td>4</td><td>Moderate</td></tr>
+            <tr><td>Tree</td><td>1 h 18 min</td><td>4.1 g</td><td>3</td><td>Easy</td></tr>
+            <tr><td>None</td><td>1 h 05 min</td><td>0 g</td><td>2 (shelf droops)</td><td>n/a</td></tr>
+          </tbody>
+        </table></div>
+        <p>Example numbers only. Pattern: tree supports win on organic or pointed overhangs, normal supports on large flat undersides, and the best support is a design change (a 45° chamfer) that needs none. See <a href="../techniques/supports-bridges-overhangs.html">Supports, bridges &amp; overhangs</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L2-11">
+    <header><span class="badge intermediate">Level 2 · Medium</span><h3>Exercise 11 — Seam placement</h3><span class="badge time">⏱ 2 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Understand where the slicer starts and ends each outer loop (the seam) and compare four seam strategies on the same cylinder: nearest, aligned, back (rear) and random. Choose the best for visible parts.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>A 30 mm tall, 25 mm diameter cylinder with a small notch (a vertical groove 1 mm wide) and a box shape</li>
+        <li>Your slicer with the seam position setting (Bambu Studio: Quality → Seam position; also scarf seam if available)</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 250" role="img" aria-label="Four top views of a circular outer wall with seam locations: nearest scatters points, aligned forms a vertical line, back places the line at the rear, random distributes dots around the loop">
+          <g>
+            <circle class="d-ink" cx="100" cy="100" r="60"/>
+            <g class="s-red"><circle cx="152" cy="66" r="4"/><circle cx="60" cy="128" r="4"/><circle cx="118" cy="44" r="4"/><circle cx="147" cy="130" r="4"/><circle cx="75" cy="55" r="4"/></g>
+            <text class="t-sm t-c t-b" x="100" y="186">Nearest</text><text class="t-sm t-c" x="100" y="206">scattered dots</text>
+          </g>
+          <g>
+            <circle class="d-ink" cx="290" cy="100" r="60"/>
+            <g class="s-red"><circle cx="290" cy="40" r="4"/></g>
+            <path class="k-red" d="M290 40 V30" style="stroke-width:2"/>
+            <text class="t-sm t-c t-b" x="290" y="186">Aligned</text><text class="t-sm t-c" x="290" y="206">one visible line</text>
+          </g>
+          <g>
+            <circle class="d-ink" cx="480" cy="100" r="60"/>
+            <g class="s-red"><circle cx="480" cy="40" r="4"/></g>
+            <text class="t-sm t-c" x="480" y="26">rear of the part</text>
+            <text class="t-sm t-c t-b" x="480" y="186">Back</text><text class="t-sm t-c" x="480" y="206">hidden against the wall</text>
+          </g>
+          <g>
+            <circle class="d-ink" cx="670" cy="100" r="60"/>
+            <g class="s-red"><circle cx="722" cy="70" r="3"/><circle cx="640" cy="152" r="3"/><circle cx="690" cy="42" r="3"/><circle cx="620" cy="70" r="3"/><circle cx="700" cy="150" r="3"/><circle cx="610" cy="110" r="3"/><circle cx="728" cy="106" r="3"/></g>
+            <text class="t-sm t-c t-b" x="670" y="186">Random</text><text class="t-sm t-c" x="670" y="206">speckled texture</text>
+          </g>
+          <text class="t-sm t-c t-m" x="380" y="238">Red dots mark where a loop starts and ends on successive layers.</text>
+        </svg>
+        <figcaption><b>Figure 12.</b> The seam is where each loop begins and ends. Aligned creates one line, random spreads it out, nearest saves travel but can look messy.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Slice and print the cylinder</strong> four times (or four cylinders on one plate) with each seam option.</li>
+        <li><strong>Inspect</strong> in raking light. Photograph the seam from the side and compare how visible it is.</li>
+        <li><strong>Try the notch:</strong> with "aligned" seam, set the seam position to hide in the groove or a corner of the model and check again.</li>
+        <li><strong>Paint the seams</strong> on a sharp part: use seam painting in the slicer to place them in a corner of a box and print.</li>
+        <li><strong>Decide</strong> your default and write down when you choose another (round vs sharp shapes, functional vs display parts).</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>Photos of four seam types on the same shape</li>
+        <li>A ranking and a reasoned default</li>
+        <li>One seam hidden in a corner or groove</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Seams are the most visible on smooth curves and the least visible on sharp corners and textured surfaces. A tiny retraction or pressure advance mismatch makes seams worse, so if the seam bulges or has a gap, revisit the pressure advance (<a href="level-3-advanced.html#L3-1">L3-1</a>) and flow (L2-3).</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>Typical result: aligned gives a neat vertical line you can hide; nearest gives a messy diagonal pattern; random hides the seam as texture but is not good for sealing surfaces; back is excellent for display parts viewed from the front. On a box, the best seam is on a vertical corner at the back. For curved parts a scarf seam (where the slicer ramps the start and end of the loop) reduces the visibility further. See <a href="../software/slicer-settings.html">Slicer settings explained</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L2-12">
+    <header><span class="badge intermediate">Level 2 · Medium</span><h3>Exercise 12 — Fillet vs chamfer</h3><span class="badge time">⏱ 3 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Test how an inside corner treatment (sharp, 45° chamfer or rounded fillet) changes the load a bracket can carry, and how an outside edge treatment changes printability and first-layer quality. Sharp inside corners concentrate stress; generous radii spread it.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>Three L-shaped brackets with a 20 mm leg, 5 mm thickness and 15 mm width, differing only in the inside corner: sharp, 3 mm chamfer, 5 mm fillet. Make five of each if you want statistics</li>
+        <li>A way to apply load to the end of one leg while the other is clamped (a vise or a bolted plate) and a bucket with water, as in L2-9</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 260" role="img" aria-label="Three L-brackets with sharp, chamfered and filleted inside corners, with stress flow lines crowding at the sharp corner">
+          <g>
+            <path class="d-plastic" d="M30 40 H60 V170 H180 V200 H30 z"/>
+            <path class="k-red" d="M110 40 C 110 120, 100 160, 190 160" style="stroke-width:2"/>
+            <circle class="s-red" cx="60" cy="170" r="5"/>
+            <text class="t-sm t-c t-b" x="105" y="232">Sharp</text><text class="t-sm t-c" x="105" y="250">stress peak at corner</text>
+          </g>
+          <g>
+            <path class="d-plastic" d="M290 40 H320 V150 L340 170 H440 V200 H290 z"/>
+            <text class="t-sm t-c t-b" x="365" y="232">Chamfer 45°</text><text class="t-sm t-c" x="365" y="250">prints without support</text>
+          </g>
+          <g>
+            <path class="d-plastic" d="M550 40 H580 V140 Q580 170 610 170 H700 V200 H550 z"/>
+            <text class="t-sm t-c t-b" x="625" y="232">Fillet r = 5 mm</text><text class="t-sm t-c" x="625" y="250">smoothest load path</text>
+          </g>
+          <g class="t-sm t-m"><text x="30" y="26">Load applied at the free end of the vertical leg, pulling to the right.</text></g>
+        </svg>
+        <figcaption><b>Figure 13.</b> Inside corners compared. Stress concentrates at sharp inside corners; chamfers and fillets spread it over a larger area.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Print all brackets</strong> lying on their side so that layers run along the leg (the load will act across layers at the corner, the usual worst case). Use the same settings and walls for all.</li>
+        <li><strong>Load each bracket</strong> in the same way and record the load at failure. Increase gradually; avoid shocks.</li>
+        <li><strong>Note where each bracket breaks.</strong> Sharp corners usually break exactly at the inside corner; fillets may break a little away from it or at a layer boundary.</li>
+        <li><strong>Second question:</strong> print a chamfer and a fillet on the bottom outside edge of a small block. Which one has the cleaner first layer (elephant foot)?</li>
+        <li><strong>Write a rule</strong> for yourself about radii for inside and outside edges.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>Failure loads for the three corner types (average of at least 2 each)</li>
+        <li>Photos of the fracture locations</li>
+        <li>A design rule: minimum inside radius and when to use a chamfer instead</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Printed parts are weakest between layers. If the corner is oriented so the layers peel apart under load, the corner shape matters less than the orientation (see <a href="#L2-13">L2-13</a>). Make sure only the corner geometry changes between the samples; even different seam positions can shift results.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>Typical result: sharp corner fails first; the chamfer carries noticeably more; the fillet carries the most (relative improvements of tens of percent are common, but vary widely). For outside bottom edges, a 0.5–1 mm chamfer avoids elephant foot and eases removal, while a fillet there creates tiny overhangs at the first layers. Rule of thumb: inside radius ≥ wall thickness, outside bottom edge chamfer instead of fillet. Read <a href="../design/strength-and-orientation.html">Strength &amp; orientation</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L2-13">
+    <header><span class="badge intermediate">Level 2 · Medium</span><h3>Exercise 13 — Orientation strength test</h3><span class="badge time">⏱ 3 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Measure the anisotropy of an FDM part: print identical bars flat, on edge and standing upright, and compare how much load each carries. This is the single most useful strength lesson in 3D printing.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>Three or more bars per orientation, 80 × 10 × 5 mm, sliced with identical settings; the rig from L2-9 or any simple way to load them to failure</li>
+        <li>Optionally a hook and a bucket for tension tests of dog-bone shapes</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 270" role="img" aria-label="Three bars printed flat, on edge and upright with layer lines drawn, and a bar chart showing relative strength: on edge highest, flat high, upright lowest">
+          <g>
+            <rect class="d-plastic" x="20" y="140" width="190" height="22"/>
+            <g class="d-thin"><path d="M20 146 H210 M20 152 H210 M20 158 H210"/></g>
+            <text class="t-sm t-c t-b" x="115" y="182">Flat (XY)</text><text class="t-sm t-c" x="115" y="200">layers along the length</text>
+          </g>
+          <g>
+            <rect class="d-plastic" x="20" y="60" width="190" height="40"/>
+            <g class="d-thin"><path d="M20 68 H210 M20 76 H210 M20 84 H210 M20 92 H210"/></g>
+            <text class="t-sm t-c t-b" x="115" y="116">On edge</text>
+          </g>
+          <g>
+            <rect class="d-plastic" x="260" y="40" width="40" height="150"/>
+            <g class="d-thin"><path d="M260 60 H300 M260 80 H300 M260 100 H300 M260 120 H300 M260 140 H300 M260 160 H300 M260 180 H300"/></g>
+            <text class="t-sm t-c t-b" x="280" y="214">Upright (Z)</text><text class="t-sm t-c" x="280" y="232">layers across the length</text>
+          </g>
+          <g transform="translate(400 30)">
+            <path class="d-ink" d="M0 0 V200 H340"/>
+            <rect class="s-green" x="30" y="30" width="60" height="170"/><rect class="s-blue" x="130" y="50" width="60" height="150"/><rect class="s-red" x="230" y="140" width="60" height="60"/>
+            <text class="t-sm t-c" x="60" y="220">On edge</text><text class="t-sm t-c" x="160" y="220">Flat</text><text class="t-sm t-c" x="260" y="220">Upright</text>
+            <text class="t-sm t-c t-b" x="60" y="22">100 %</text><text class="t-sm t-c t-b" x="160" y="42">~90 %</text><text class="t-sm t-c t-b" x="260" y="132">~30 %</text>
+            <text class="t-xs t-m" x="0" y="248">Illustrative relative values for 3-point bending, not measurements.</text>
+          </g>
+        </svg>
+        <figcaption><b>Figure 14.</b> Layer lines act like the weak seams of a laminate. Upright bars split along a layer boundary at a fraction of the load a flat bar carries. Chart values are illustrative.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Print the bars</strong> in three orientations (flat, on edge, upright). Upright bars are tall and thin: add a brim for stability.</li>
+        <li><strong>Test each bar</strong> in bending (or, if you can, tension) and record the load at failure.</li>
+        <li><strong>Inspect the breaks</strong>: flat and on-edge bars should break across several layers; upright bars delaminate along one layer.</li>
+        <li><strong>Calculate the ratio</strong> upright : flat. Express it in percent of the strongest orientation.</li>
+        <li><strong>Apply</strong>: take a real part you printed in the past and decide whether its orientation matched the load direction.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>At least 2 bars per orientation tested to failure</li>
+        <li>A table of failure loads and a ratio upright:flat</li>
+        <li>A rule: "orient layers so the main load runs along them, never across them"</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>A flat bar in 3-point bending has its layers parallel to the neutral axis and its outer layers in tension along the filament direction. A bar standing upright has its bottom-side layers pulled apart. The load direction relative to the layers matters, not the part's shape alone.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>Typical PLA outcome: on-edge and flat bars carry similar high loads; the upright bar fails at a much lower load (often only a third to a half). Annealed or hot-chamber printed parts (ABS, ASA, nylon at chamber temperature) lose less strength between layers, which is a reason to use the X2D's heated chamber for functional parts. A higher nozzle temperature, slower speed and less cooling also improve layer adhesion. See <a href="../design/strength-and-orientation.html">Strength &amp; orientation</a> and <a href="../x2d/engineering-and-chamber.html">Engineering materials &amp; chamber</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L2-14">
+    <header><span class="badge intermediate">Level 2 · Medium</span><h3>Exercise 14 — Design with a heat-set insert</h3><span class="badge time">⏱ 3 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Design and install a threaded brass insert (for example M3 × 5.7 mm long) into a printed boss and test its pull-out strength. Heat-set inserts give plastic parts strong, reusable metal threads.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>Brass heat-set inserts M3 (typical outer diameter about 4.6 mm, length about 5.7 mm; check your supplier's datasheet for the recommended hole size)</li>
+        <li>A soldering iron with a tapered insert tip at 200–230 °C for PLA/PETG (lower for PLA than for ABS/PC; follow supplier guidance)</li>
+        <li>M3 screws, a luggage scale or bucket for pull-out tests</li>
+        <li>The tolerance table from L2-6, a CAD tool and <a href="models/snap_fit_test.scad">snap_fit_test.scad</a> or <a href="models/parametric_box.scad">parametric_box.scad</a> as a source of bosses</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 270" role="img" aria-label="Cross section of a boss with a hole slightly smaller than the insert, a soldering iron pressing the insert in, and the finished insert flush with the surface and a reserve hole below for displaced plastic">
+          <g>
+            <rect class="d-plastic" x="40" y="130" width="140" height="100"/>
+            <rect class="d-surface" x="95" y="130" width="30" height="80"/>
+            <text class="t-sm t-c t-b" x="110" y="40">1 · Hole</text>
+            <text class="t-sm t-c" x="110" y="58">Ø ≈ insert Ø − 0.2 to 0.3 mm</text>
+            <path class="d-thin arrow arrow-start" d="M95 250 H125"/>
+            <text class="t-sm t-c" x="110" y="264">hole Ø</text>
+          </g>
+          <g>
+            <rect class="d-plastic" x="280" y="130" width="140" height="100"/>
+            <rect class="d-surface" x="335" y="150" width="30" height="80"/>
+            <rect class="d-metal" x="337" y="118" width="26" height="32"/>
+            <rect class="d-metal2" x="344" y="62" width="12" height="56"/>
+            <path class="k-orange arrow" d="M350 40 V100" style="stroke-width:3"/>
+            <text class="t-sm t-c t-b" x="350" y="30">2 · Heat and press</text>
+            <text class="t-sm t-c" x="350" y="250">melted plastic flows into knurls</text>
+          </g>
+          <g>
+            <rect class="d-plastic" x="530" y="130" width="140" height="100"/>
+            <rect class="d-surface" x="585" y="186" width="30" height="44"/>
+            <rect class="d-metal" x="585" y="130" width="30" height="56"/>
+            <path class="d-thin" d="M591 130 V186 M599 130 V186 M607 130 V186"/>
+            <text class="t-sm t-c t-b" x="600" y="40">3 · Flush and cool</text>
+            <text class="t-sm t-c" x="600" y="250">extra depth below for the screw tip</text>
+          </g>
+        </svg>
+        <figcaption><b>Figure 15.</b> Insert installation. The hole is slightly smaller than the insert; molten plastic flows around the knurls and locks it in place. Leave spare depth below the insert.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Read the supplier's datasheet</strong> for the recommended hole diameter and depth. Design the hole in CAD as a parameter and add 1–2 mm of depth below the insert.</li>
+        <li><strong>Design the boss</strong> with a wall thickness of at least 1.5× the insert's outer diameter's wall (e.g. outer Ø 8–9 mm for an M3 insert) so that the plastic does not split.</li>
+        <li><strong>Print three samples</strong> with different hole diameters (e.g. 4.0, 4.2 and 4.4 mm) with the hole axis vertical so it is round.</li>
+        <li><strong>Install the inserts</strong> at the right temperature, pressing straight, slowly, until flush. Do not push below the surface. Let the plastic cool before loading.</li>
+        <li><strong>Pull-out test:</strong> screw an M3 into the insert and hang a load or pull with a scale until it fails. Compare to an M3 screw tapped directly into plastic.</li>
+        <li><strong>Record the best hole diameter</strong> in your tolerance table.</li>
+      </ol>
+      <div class="callout warn"><span class="callout-title">Safety</span><p>The iron tip and the insert are hot enough to burn skin and to emit fumes. Work with ventilation, use a stand and hold the part with pliers or a fixture.</p></div>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>Inserts installed straight and flush in three hole sizes</li>
+        <li>Pull-out values recorded and compared with a screw in plastic</li>
+        <li>A recommended hole diameter for your printer and material</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>If plastic bulges around the insert, you pushed too fast or the iron is too hot; if the insert pulls out easily, the hole was too large or the iron too cold. The correct condition produces a small ring of molten plastic that you can scrape off.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>With an insert of 4.6 mm outer diameter, a 4.2 mm hole worked best in PETG; 4.0 mm split the boss and 4.4 mm held about half the load. A well-installed M3 insert carries far more load than a self-tapping screw and survives repeated assembly; the exact pull-out force depends on material and depth, so use your own test. Joint and fastener details: <a href="../design/joints-and-fasteners.html">Joints &amp; fasteners</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L2-15">
+    <header><span class="badge intermediate">Level 2 · Medium</span><h3>Exercise 15 — Two-color print</h3><span class="badge time">⏱ 2 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Print a two-color object (a name plate or a logo tile) using color changes, compare two methods (a mid-print filament swap and a multi-filament system) and measure the waste each produces.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li><a href="models/text_label_test.scad">text_label_test.scad</a> or your own tile with raised text</li>
+        <li>Two filaments of the same type and similar temperatures, in high-contrast colors</li>
+        <li>AMS or an AMS 2 Pro on the X2D (or a manual pause-and-swap if you have no multi-filament system)</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 250" role="img" aria-label="Two methods for a two-color nameplate: a manual color change at a layer height creating a flat color switch, and a multi-material print with flush into a purge tower, with approximate waste comparison">
+          <g>
+            <rect class="d-plastic" x="40" y="100" width="260" height="40" style="fill:var(--blue-s)"/>
+            <rect class="d-plastic" x="40" y="80" width="260" height="20" style="fill:var(--orange-s)"/>
+            <text class="t-sm t-c" x="170" y="94">text layers (color B)</text>
+            <text class="t-sm t-c" x="170" y="125">base layers (color A)</text>
+            <path class="d-dash" d="M30 100 H310"/>
+            <text class="t-sm t-c t-b" x="170" y="40">Method 1 · Swap at a layer</text>
+            <text class="t-sm t-c" x="170" y="170">one change, almost no waste</text>
+            <text class="t-sm t-c" x="170" y="190">needs a pause and a manual swap</text>
+          </g>
+          <g>
+            <rect class="d-plastic" x="400" y="100" width="200" height="40" style="fill:var(--blue-s)"/>
+            <rect class="d-plastic" x="430" y="80" width="30" height="20" style="fill:var(--orange-s)"/>
+            <rect class="d-plastic" x="500" y="80" width="30" height="20" style="fill:var(--orange-s)"/>
+            <rect class="f-gray" x="640" y="60" width="80" height="80" rx="4"/>
+            <text class="t-sm t-c" x="680" y="104">purge /</text><text class="t-sm t-c" x="680" y="120">flush</text>
+            <text class="t-sm t-c t-b" x="560" y="40">Method 2 · Multi-filament (AMS)</text>
+            <text class="t-sm t-c" x="560" y="170">automatic changes, flush waste</text>
+            <text class="t-sm t-c" x="560" y="190">waste depends on color order</text>
+          </g>
+          <text class="t-sm t-c t-m" x="380" y="232">Waste is the price of convenience: weigh the flushed material and count color changes.</text>
+        </svg>
+        <figcaption><b>Figure 16.</b> A single layer-height color change wastes almost nothing; a repeated multi-color print flushes the nozzle at every change.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Prepare the model</strong> so that the text is a separate body or sits above a fixed layer height (the text must start exactly at a layer boundary).</li>
+        <li><strong>Method 1:</strong> insert a pause or color-change command at that layer in the slicer and swap the filament by hand. Print and check the transition line.</li>
+        <li><strong>Method 2:</strong> assign the two colors to two AMS slots and print with automatic changes. Read the purge volume and the estimated flush waste in the slicer preview.</li>
+        <li><strong>Compare</strong> the two prints: color separation, surface at the color boundary, time, extra waste, number of manual interventions.</li>
+        <li><strong>Try a lighter-to-darker order</strong>: changing from a dark to a light filament needs more flushing than light to dark. Test the effect on waste with the slicer's flush settings.</li>
+      </ol>
+      <div class="callout x2d"><span class="callout-title">X2D note</span><p>On the X2D, put the colors that must flow through the main nozzle in the AMS 2 Pro and keep the combination within the supported nozzle limits (the main nozzle handles every colored change; the auxiliary nozzle is designed for specific use such as a second material). Check <a href="../x2d/dual-nozzle-printing.html">Dual-nozzle printing</a> and <a href="../techniques/multi-color-and-multi-material.html">Multi-color &amp; multi-material</a> before you assign materials.</p></div>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>One successful two-color print by each method (or one method and a documented attempt)</li>
+        <li>Waste in grams for the automatic method</li>
+        <li>Notes on which method you prefer for which job</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Flat-colored text on a base is much more forgiving than a color change on a vertical wall. Use a high contrast pair (white on black) for your first try, and weigh the purge tower or the flushed material (some slicers list it in the preview).</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>Example: 60 × 25 mm nameplate. Method 1: one swap, a 0.4 g strand of waste, clean transition, 1 manual step. Method 2: two changes per layer in the text region, 6.5 g flushed, no manual step. For a single plate the manual method wins; for many plates or many colors automation wins. Ways to reduce waste are discussed in exercise <a href="level-3-advanced.html#L3-8">L3-8</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <h2>Key takeaways</h2>
+  <ul>
+    <li>A good experiment changes one variable, controls the rest, repeats and records. A beautiful single print proves nothing.</li>
+    <li>Calibrate in order: first layer, temperature, flow, retraction, then bridges, overhangs and tolerances.</li>
+    <li>Keep a personal tolerance table and design rules; they make every later design faster.</li>
+    <li>Orientation matters more than infill for strength: layers are the weak direction.</li>
+    <li>Moisture, temperature and cooling explain most of the "mystery" defects; measure them before changing slicer magic.</li>
+    <li>Support is a design decision: chamfer or reorient first, add support last.</li>
+  </ul>
+
+  <h2>Next steps</h2>
+  <div class="grid cols-3">
+    <a class="card accent-red" href="level-3-advanced.html"><h3>Level 3 · Advanced</h3><p>Pressure advance, input shaping, snap-fits, threads, gears and G-code.</p></a>
+    <a class="card accent-blue" href="quizzes.html"><h3>Quizzes</h3><p>Test your knowledge of materials, slicing, design and troubleshooting.</p></a>
+    <a class="card accent-green" href="models.html"><h3>Test models</h3><p>Download the parametric OpenSCAD files used in these exercises.</p></a>
+  </div>
+</main>
+</body>
+</html>

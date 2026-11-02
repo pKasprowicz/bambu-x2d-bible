@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The 3D Printing Compendium · from first print to expert</title>
+  <meta name="description" content="A free, illustrated, interactive 3D printing compendium: materials, software, techniques, design for additive manufacturing, exercises and a dedicated Bambu Lab X2D + AMS 2 Pro section.">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/nav.js" defer></script>
+  <script src="assets/js/site.js" defer></script>
+</head>
+<body data-page="index.html">
+<main class="content">
+
+  <section class="home-hero">
+    <svg class="hero-art diagram" viewBox="0 -14 640 244" role="img" aria-label="A 3D printer nozzle depositing layers of a part while a filament spool feeds it">
+      <rect class="d-surface2 d-thin" x="40" y="196" width="560" height="14" rx="4"/>
+      <g>
+        <rect class="s-orange" x="230" y="176" width="180" height="20" rx="3" opacity=".95"/>
+        <rect class="s-orange" x="236" y="158" width="168" height="18" rx="3" opacity=".85"/>
+        <rect class="s-orange" x="244" y="140" width="152" height="18" rx="3" opacity=".75"/>
+        <rect class="s-orange" x="254" y="122" width="132" height="18" rx="3" opacity=".65"/>
+        <rect class="s-orange" x="268" y="104" width="104" height="18" rx="3" opacity=".55"/>
+        <rect class="s-orange" x="286" y="92" width="68" height="12" rx="3" opacity=".45"/>
+      </g>
+      <rect class="d-metal d-thin" x="40" y="62" width="560" height="10" rx="4"/>
+      <rect class="f-blue" x="290" y="34" width="60" height="34" rx="8"/>
+      <path class="d-metal d-ink" d="M300 68 h40 l-8 14 h-24 z"/>
+      <path class="d-ink" d="M320 82 v6"/>
+      <path class="d-plastic d-ink" d="M320 34 C320 10 250 20 200 12" fill="none"/>
+      <circle class="f-orange" cx="150" cy="26" r="30"/>
+      <circle class="d-surface" cx="150" cy="26" r="9"/>
+      <path class="k-orange d-thin" d="M150 -2 a28 28 0 0 1 0 56 M150 -2 a22 22 0 0 0 0 56" fill="none"/>
+      <text class="t t-sm t-m" x="500" y="130">layer by layer</text>
+      <path class="d-mute arrow" d="M500 136 C 470 150 450 160 420 170"/>
+      <g class="t-xs t-m"><text class="t t-xs t-m" x="48" y="226">X</text><text class="t t-xs t-m" x="580" y="226">Y · Z ↑</text></g>
+    </svg>
+    <div class="kicker" style="color:var(--brand-ink);font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:12.5px">The complete visual guide</div>
+    <h1>The <span>3D Printing</span> Compendium</h1>
+    <p class="lead">From unboxing your first printer to designing, tuning and troubleshooting like a pro — with 60+ illustrated chapters, interactive tools, hands-on exercises and a dedicated <b>Bambu Lab X2D + AMS 2 Pro</b> section.</p>
+    <div class="btn-row">
+      <a class="btn" href="start-here.html">🧭 Start here</a>
+      <a class="btn ghost" href="foundations/first-print.html">🖨️ Your first print</a>
+      <a class="btn ghost" href="x2d/overview.html">🔴 X2D + AMS 2 Pro</a>
+      <a class="btn ghost" href="tools/calculators.html">🧮 Tools</a>
+    </div>
+  </section>
+
+  <div class="stats" id="home-stats">
+    <div class="stat"><b data-count="pages">60+</b><span>illustrated chapters</span></div>
+    <div class="stat"><b>400+</b><span>original SVG diagrams</span></div>
+    <div class="stat"><b>70+</b><span>hands-on exercises</span></div>
+    <div class="stat"><b>25+</b><span>materials explained</span></div>
+    <div class="stat"><b>15+</b><span>interactive calculators &amp; labs</span></div>
+    <div class="stat"><b>200+</b><span>glossary terms</span></div>
+  </div>
+
+  <h2 id="paths">Pick your path</h2>
+  <div class="grid cols-4">
+    <a class="card accent-green" href="start-here.html#beginner"><span class="ico">🔰</span><h3>I'm a beginner</h3><p>Never printed? Follow the guided route from "what is this?" to a successful first print.</p></a>
+    <a class="card accent-blue" href="start-here.html#intermediate"><span class="ico">🔧</span><h3>I can print — I want better prints</h3><p>Calibration, slicer settings, materials, supports and fixing defects.</p></a>
+    <a class="card accent-purple" href="start-here.html#advanced"><span class="ico">🚀</span><h3>I want to design &amp; engineer</h3><p>Design for additive manufacturing, tolerances, joints, strength and parametric CAD.</p></a>
+    <a class="card accent-red" href="start-here.html#x2d"><span class="ico">🔴</span><h3>I own a Bambu X2D</h3><p>Dual nozzles, AMS 2 Pro, heated chamber, TPU and engineering materials.</p></a>
+  </div>
+
+  <h2 id="parts">What's inside</h2>
+  <div id="home-parts" class="grid cols-3"></div>
+
+  <h2 id="highlights">Highlights</h2>
+  <div class="grid cols-2">
+    <figure class="fig" style="margin:0">
+      <svg class="diagram" viewBox="0 0 420 200" role="img" aria-label="A layered learning ladder from beginner to expert">
+        <rect class="f-green" x="20" y="140" width="380" height="42" rx="8"/><text class="t t-b" x="36" y="167">1 · Print reliably — foundations, materials, first print</text>
+        <rect class="f-blue" x="60" y="94" width="340" height="42" rx="8"/><text class="t t-b" x="76" y="121">2 · Print well — slicing, calibration, troubleshooting</text>
+        <rect class="f-purple" x="100" y="48" width="300" height="42" rx="8"/><text class="t t-b" x="116" y="75">3 · Design — DfAM, tolerances, joints, CAD</text>
+        <rect class="f-orange" x="140" y="4" width="260" height="40" rx="8"/><text class="t t-b" x="156" y="29">4 · Engineer — optimize, scale, produce</text>
+      </svg>
+      <figcaption><b>The ladder.</b> Each level has chapters and exercises; skip what you already know.</figcaption>
+    </figure>
+    <div>
+      <ul style="line-height:1.9;padding-left:1.1em">
+        <li>🧵 <a href="materials/overview.html">Materials</a> — PLA to PPS-CF, with charts and drying tables</li>
+        <li>🧰 <a href="software/slicer-settings.html">Every slicer setting explained</a> with cross-sections</li>
+        <li>🩺 <a href="techniques/troubleshooting.html">Visual defect gallery</a> with an interactive symptom picker</li>
+        <li>📐 <a href="design/principles.html">Design rules</a> with good-vs-bad diagrams in millimeters</li>
+        <li>🧪 <a href="exercises/index.html">Exercises for 4 levels</a> + downloadable OpenSCAD test models</li>
+        <li>🔴 <a href="x2d/overview.html">Bambu X2D + AMS 2 Pro</a> — hardware tour, dual-nozzle strategy, recipes</li>
+        <li>🧮 <a href="tools/visual-lab.html">Visual lab</a> — animations of CoreXY, ringing, bridging, flush and more</li>
+      </ul>
+      <p style="color:var(--muted);font-size:.92rem">Tip: press <kbd>/</kbd> anywhere to search, use the 🌓 button for dark mode.</p>
+    </div>
+  </div>
+
+  <div class="callout info"><span class="callout-title">About this project</span>
+    <p>This is an independent, community-style educational resource. It is <b>not affiliated with or endorsed by Bambu Lab</b> or any other company. Specifications are taken from public documentation at the time of writing — always check the <a href="https://wiki.bambulab.com">official Bambu Lab wiki</a> for the latest details, and follow the manufacturer's safety instructions.</p></div>
+
+  <script>
+    document.addEventListener("c3d:ready", function () {
+      var host = C3D.$("#home-parts");
+      var accents = { orange: "orange", blue: "blue", green: "green", purple: "purple", red: "red", teal: "teal", pink: "pink", yellow: "yellow", gray: "gray" };
+      var total = 0;
+      window.C3D_NAV.parts.forEach(function (p) {
+        total += p.pages.length;
+        if (p.id === "start") return;
+        var first = p.pages[0];
+        var a = document.createElement("a");
+        a.className = "card accent-" + (accents[p.color] || "gray");
+        a.href = first.f;
+        a.innerHTML = '<span class="ico">' + p.icon + '</span><h3>' + p.title + '</h3><p>' +
+          p.pages.slice(0, 4).map(function (x) { return x.t; }).join(" · ") + (p.pages.length > 4 ? " …" : "") +
+          '</p><p style="color:var(--muted);font-size:.85rem">' + p.pages.length + " chapters</p>";
+        host.appendChild(a);
+      });
+      var c = C3D.$('[data-count="pages"]');
+      if (c) c.textContent = total + "";
+    });
+  </script>
+</main>
+</body>
+</html>

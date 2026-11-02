@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>X2D + AMS 2 Pro challenges · 3D Printing Compendium</title>
+  <meta name="description" content="Twelve hands-on exercises for the Bambu Lab X2D and AMS 2 Pro: setup validation, nozzle assignment, flush volumes, aux-nozzle speed, chamber warping, TPU with rigid parts, drying weigh-ins, slot planning, support interfaces, filament profiles, batches and a maintenance log.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="exercises/x2d-challenges.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Exercises · Bambu X2D + AMS 2 Pro</div>
+    <h1>X2D + AMS 2 Pro challenges</h1>
+    <p class="lead">Twelve hands-on exercises that teach the X2D's dual-nozzle logic, the chamber, TPU routing, drying and upkeep by doing. Each has a goal, a materials list, steps, success criteria, a hint and a worked solution.</p>
+    <div class="meta"><span class="badge intermediate">Beginner → Expert</span><span class="badge x2d">X2D + AMS 2 Pro</span><span class="badge time">⏱ 60 min read</span></div>
+  </header>
+
+  <div class="progress-summary" data-prefix="X-" data-total="12" data-label="X2D challenges"></div>
+
+  <div class="callout goal"><span class="callout-title">How to use these exercises</span>
+    <p>Work through them in order the first time; later ones reuse skills from earlier ones. Mark each as done with the button under the exercise; progress is stored in your browser only. Open the hint only when stuck, and the solution after you have tried. Numbers are <b>starting points</b>, not guarantees: your filament, room and plate will shift them. Background reading: <a href="../x2d/settings-and-profiles.html">settings and profiles</a>, <a href="../x2d/engineering-and-chamber.html">engineering and chamber</a>, <a href="../x2d/tpu-and-flexibles.html">TPU and flexibles</a>, <a href="../x2d/maintenance-and-troubleshooting.html">maintenance and troubleshooting</a>, and the <a href="../x2d/recipes.html">recipes</a>.</p></div>
+
+  <div class="callout x2d"><span class="callout-title">Safety and honesty</span>
+    <p>Work in a ventilated space, let the chamber and hotends cool before touching them, and never override a safety feature. Where an exercise asks you to measure something, record <i>your</i> result; the page deliberately does not promise specific outcomes except where the manufacturer documents them (chamber up to 65 °C, right nozzle up to 200 mm/s, TPU left nozzle only, and so on).</p></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 260" role="img" aria-label="Map of the twelve exercises grouped by skill: setup, dual nozzle, materials, upkeep">
+      <rect class="f-blue" x="20" y="20" width="170" height="220" rx="10" opacity=".35"/><text class="t-sm t-b" x="34" y="44">Setup</text>
+      <rect class="d-surface" x="34" y="58" width="142" height="26" rx="6"/><text class="t-xs" x="44" y="75">X-1 Validation print</text>
+      <rect class="d-surface" x="34" y="92" width="142" height="26" rx="6"/><text class="t-xs" x="44" y="109">X-8 Slot planning</text>
+      <rect class="d-surface" x="34" y="126" width="142" height="26" rx="6"/><text class="t-xs" x="44" y="143">X-10 Filament profile</text>
+      <rect class="d-surface" x="34" y="160" width="142" height="26" rx="6"/><text class="t-xs" x="44" y="177">X-11 Multi-plate batch</text>
+      <rect class="f-orange" x="205" y="20" width="170" height="220" rx="10" opacity=".35"/><text class="t-sm t-b" x="219" y="44">Dual nozzle</text>
+      <rect class="d-surface" x="219" y="58" width="142" height="26" rx="6"/><text class="t-xs" x="229" y="75">X-2 Assignment drill</text>
+      <rect class="d-surface" x="219" y="92" width="142" height="26" rx="6"/><text class="t-xs" x="229" y="109">X-3 Flush volumes</text>
+      <rect class="d-surface" x="219" y="126" width="142" height="26" rx="6"/><text class="t-xs" x="229" y="143">X-4 Aux speed</text>
+      <rect class="f-red" x="390" y="20" width="170" height="220" rx="10" opacity=".35"/><text class="t-sm t-b" x="404" y="44">Materials</text>
+      <rect class="d-surface" x="404" y="58" width="142" height="26" rx="6"/><text class="t-xs" x="414" y="75">X-5 Chamber warp</text>
+      <rect class="d-surface" x="404" y="92" width="142" height="26" rx="6"/><text class="t-xs" x="414" y="109">X-6 TPU + rigid</text>
+      <rect class="d-surface" x="404" y="126" width="142" height="26" rx="6"/><text class="t-xs" x="414" y="143">X-7 Drying weigh-in</text>
+      <rect class="d-surface" x="404" y="160" width="142" height="26" rx="6"/><text class="t-xs" x="414" y="177">X-9 Support interface</text>
+      <rect class="f-green" x="575" y="20" width="170" height="220" rx="10" opacity=".35"/><text class="t-sm t-b" x="589" y="44">Upkeep</text>
+      <rect class="d-surface" x="589" y="58" width="142" height="26" rx="6"/><text class="t-xs" x="599" y="75">X-12 Maintenance log</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> The twelve exercises by skill area.</figcaption>
+  </figure>
+
+  <h2 id="exercises">The exercises</h2>
+
+  <section class="exercise" id="X-1">
+    <header><span class="badge beginner">Beginner</span><h3>X-1 · Setup validation print</h3><span class="badge time">⏱ 1–2 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Prove that a freshly set-up X2D + AMS 2 Pro can load, switch and print in both nozzles, so you have a known-good baseline before every other exercise.</p>
+      <span class="ex-label">You will need</span>
+      <ul><li>X2D with firmware and Bambu Studio up to date (Studio 2.5.3.60 or newer for the 01.01.00.00 features)</li><li>AMS 2 Pro with at least two spools of PLA in different colors</li><li>Textured PEI plate, clean</li><li>A small multi-color test model with overhangs (e.g. a calibration cube with a letter in a second color)</li></ul>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Check the basics.</strong> Confirm the AMS is detected, the PTFE tubes are seated, the nozzle diameter shown in Studio matches the hotends fitted, and the plate type matches the real plate.</li>
+        <li><strong>Sync filaments.</strong> Read the slot types from the AMS into Studio; confirm that colors and types match the spools.</li>
+        <li><strong>Slice.</strong> Use default PLA presets, prime tower on, and note which nozzle each color is assigned to in the preview.</li>
+        <li><strong>Print and watch.</strong> Watch the first layer, the first filament change and the first nozzle switch (if any).</li>
+        <li><strong>Inspect.</strong> Look for stringing at color changes, layer consistency, and any color contamination.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist"><li>Every color loads and changes without a manual intervention.</li><li>The first layer is even across the plate.</li><li>The part matches the model in the slicer within a visual check.</li><li>You noted the print time and the amount of waste in your log.</li></ul>
+      <details class="hint"><summary>Hint</summary><p>If a color change fails, first check the AMS slot LED state and tube seating (see the LED table in the maintenance page) before changing any slicer settings.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary><p>A clean baseline has a uniform first layer, crisp color boundaries at the letter, and a purge in the prime tower that is a solid, un-tangled block. If the tower collapses, widen its footprint or reduce its height in the preview; if colors bleed, re-run the flush settings in X-3. Record the date, firmware version and the filaments used: this is the reference for later comparisons.</p></details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 200" role="img" aria-label="Setup validation flow: check hardware, sync filaments, slice, print, inspect, log">
+      <rect class="f-blue" x="14" y="60" width="104" height="60" rx="8"/><text class="t-xs t-c t-b" x="66" y="86">1 Check</text><text class="t-xs t-c" x="66" y="102">tubes, nozzle</text>
+      <path class="d-ink arrow" d="M120 90 H138"/>
+      <rect class="f-green" x="140" y="60" width="104" height="60" rx="8"/><text class="t-xs t-c t-b" x="192" y="86">2 Sync</text><text class="t-xs t-c" x="192" y="102">slot types</text>
+      <path class="d-ink arrow" d="M246 90 H264"/>
+      <rect class="f-yellow" x="266" y="60" width="104" height="60" rx="8"/><text class="t-xs t-c t-b" x="318" y="86">3 Slice</text><text class="t-xs t-c" x="318" y="102">tower on</text>
+      <path class="d-ink arrow" d="M372 90 H390"/>
+      <rect class="f-orange" x="392" y="60" width="104" height="60" rx="8"/><text class="t-xs t-c t-b" x="444" y="86">4 Print</text><text class="t-xs t-c" x="444" y="102">watch layer 1</text>
+      <path class="d-ink arrow" d="M498 90 H516"/>
+      <rect class="f-purple" x="518" y="60" width="104" height="60" rx="8"/><text class="t-xs t-c t-b" x="570" y="86">5 Inspect</text><text class="t-xs t-c" x="570" y="102">bleed, strings</text>
+      <path class="d-ink arrow" d="M624 90 H642"/>
+      <rect class="f-teal" x="644" y="60" width="104" height="60" rx="8"/><text class="t-xs t-c t-b" x="696" y="86">6 Log</text><text class="t-xs t-c" x="696" y="102">baseline</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> X-1: the validation loop. Repeat it after any firmware update or hotend swap.</figcaption>
+  </figure>
+
+  <section class="exercise" id="X-2">
+    <header><span class="badge beginner">Beginner</span><h3>X-2 · Nozzle assignment drill</h3><span class="badge time">⏱ 45 min</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Learn to read and control which nozzle prints which filament, and see how the assignment affects the number of nozzle switches and the waste.</p>
+      <span class="ex-label">You will need</span>
+      <ul><li>Bambu Studio with an X2D printer preset</li><li>A model with 3–4 colors (any multi-part project)</li><li>No printing is required for the first pass: slicing alone is enough</li></ul>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Load a multi-color project.</strong> Assign four different filaments to its parts.</li>
+        <li><strong>Try Filament-saving grouping.</strong> Slice and record the estimated time, filament use and the number of nozzle changes.</li>
+        <li><strong>Try Convenience grouping.</strong> Slice again and record the same three values.</li>
+        <li><strong>Use Custom.</strong> Assign filaments manually to left or right, then slice and record.</li>
+        <li><strong>Compare.</strong> Fill in a small table with the three strategies and write one sentence on which you would choose for this model.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist"><li>You can state which nozzle each color uses in each mode.</li><li>You can explain why the number of switches changed.</li><li>You noticed that the prime tower is still needed in all modes.</li></ul>
+      <details class="hint"><summary>Hint</summary><p>Check the filament and nozzle compatibility chart before assigning: a material that is not supported on the right nozzle (e.g. TPU) can never go there, whatever the grouping mode says.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary><p>Typically Filament-saving trades extra switching for less purged material, Convenience keeps assignment simple and predictable, and Custom lets you force a material that needs a specific nozzle. Your table might show, for instance, fewer filament grams in Filament-saving but more changes; the right answer depends on your model, which is why you measure.</p></details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 240" role="img" aria-label="Three grouping modes compared: Filament-saving, Convenience and Custom, each showing which colors go to the left or right nozzle">
+      <rect class="d-surface2" x="14" y="14" width="236" height="212" rx="10"/><text class="t-sm t-b" x="28" y="38">Filament-saving</text>
+      <rect class="f-red" x="28" y="52" width="96" height="60" rx="6" opacity=".8"/><text class="t-xs t-c" x="76" y="78">Left</text><text class="t-xs t-c" x="76" y="94">colors 1, 2</text>
+      <rect class="f-purple" x="136" y="52" width="96" height="60" rx="6" opacity=".8"/><text class="t-xs t-c" x="184" y="78">Right</text><text class="t-xs t-c" x="184" y="94">colors 3, 4</text>
+      <text class="t-xs" x="28" y="140">Goal: less purge.</text><text class="t-xs" x="28" y="158">More possible switches.</text>
+      <rect class="d-surface2" x="262" y="14" width="236" height="212" rx="10"/><text class="t-sm t-b" x="276" y="38">Convenience</text>
+      <rect class="f-red" x="276" y="52" width="96" height="60" rx="6" opacity=".8"/><text class="t-xs t-c" x="324" y="78">Left</text><text class="t-xs t-c" x="324" y="94">AMS A slots</text>
+      <rect class="f-purple" x="384" y="52" width="96" height="60" rx="6" opacity=".8"/><text class="t-xs t-c" x="432" y="78">Right</text><text class="t-xs t-c" x="432" y="94">AMS B slots</text>
+      <text class="t-xs" x="276" y="140">Goal: simple, predictable.</text><text class="t-xs" x="276" y="158">Assignment follows the AMS.</text>
+      <rect class="d-surface2" x="510" y="14" width="236" height="212" rx="10"/><text class="t-sm t-b" x="524" y="38">Custom</text>
+      <rect class="f-red" x="524" y="52" width="96" height="60" rx="6" opacity=".8"/><text class="t-xs t-c" x="572" y="78">Left</text><text class="t-xs t-c" x="572" y="94">you choose</text>
+      <rect class="f-purple" x="632" y="52" width="96" height="60" rx="6" opacity=".8"/><text class="t-xs t-c" x="680" y="78">Right</text><text class="t-xs t-c" x="680" y="94">you choose</text>
+      <text class="t-xs" x="524" y="140">Goal: force constraints</text><text class="t-xs" x="524" y="158">(e.g. TPU on the left).</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> X-2: the three grouping modes (illustrative assignments; your result depends on the model).</figcaption>
+  </figure>
+
+  <section class="exercise" id="X-3">
+    <header><span class="badge intermediate">Intermediate</span><h3>X-3 · Flush-volume reduction experiment</h3><span class="badge time">⏱ 2–3 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Find the smallest flush volumes that still give clean color transitions for two specific filament pairs, and quantify the waste you saved.</p>
+      <span class="ex-label">You will need</span>
+      <ul><li>Two filament pairs: one similar-color pair (e.g. light blue → white) and one hard pair (e.g. black → white)</li><li>A small two-color test model</li><li>Scale (optional) to weigh the waste</li></ul>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Baseline.</strong> Slice with default flush volumes; record purge amount and prime-tower size.</li>
+        <li><strong>Open the flush dialog.</strong> Note the automatic values per color pair and write them down.</li>
+        <li><strong>Reduce.</strong> Lower the multiplier or the individual values by about 20–30 % for the easy pair and keep the hard pair as it is.</li>
+        <li><strong>Print and compare.</strong> Print both versions and examine the first layers after each color change for contamination.</li>
+        <li><strong>Iterate.</strong> Repeat once more with a further reduction until you see contamination; then step back.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist"><li>You have a table of pair → flush value → visual result.</li><li>The easy pair uses clearly less purge than the default without visible bleed.</li><li>You did not reduce the hard pair so far that dark pigment shows in the light color.</li></ul>
+      <details class="hint"><summary>Hint</summary><p>Dark → light transitions need far more flushing than light → dark. Reduce the light → dark direction first.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary><p>A typical outcome: the flush matrix is asymmetric, so the savings come from the easy directions; the hard pair stays near its default. Document the final matrix as a preset note so you can re-apply it. Also check whether the dual-nozzle assignment (X-2) can avoid the hard transition altogether by putting dark and light colors on different nozzles: that saves more than any flush tweak.</p></details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 240" role="img" aria-label="Flush matrix mock: colors in rows and columns with dark to light cells requiring larger flush volumes">
+      <text class="t-xs t-b" x="60" y="30">Flush-volume matrix (mock-up, values illustrative)</text>
+      <rect class="d-surface2" x="40" y="44" width="300" height="170" rx="6"/>
+      <text class="t-xs" x="120" y="64">to white</text><text class="t-xs" x="190" y="64">to light blue</text><text class="t-xs" x="270" y="64">to black</text>
+      <text class="t-xs" x="48" y="94">from black</text><text class="t-xs" x="48" y="134">from light blue</text><text class="t-xs" x="48" y="174">from white</text>
+      <rect class="f-red" x="116" y="78" width="60" height="24" rx="3"/><text class="t-xs t-c" x="146" y="94">high</text>
+      <rect class="f-orange" x="196" y="78" width="60" height="24" rx="3"/><text class="t-xs t-c" x="226" y="94">med</text>
+      <rect class="f-gray" x="276" y="78" width="60" height="24" rx="3"/><text class="t-xs t-c" x="306" y="94">—</text>
+      <rect class="f-yellow" x="116" y="118" width="60" height="24" rx="3"/><text class="t-xs t-c" x="146" y="134">low</text>
+      <rect class="f-gray" x="196" y="118" width="60" height="24" rx="3"/><text class="t-xs t-c" x="226" y="134">—</text>
+      <rect class="f-green" x="276" y="118" width="60" height="24" rx="3"/><text class="t-xs t-c" x="306" y="134">low</text>
+      <rect class="f-gray" x="116" y="158" width="60" height="24" rx="3"/><text class="t-xs t-c" x="146" y="174">—</text>
+      <rect class="f-green" x="196" y="158" width="60" height="24" rx="3"/><text class="t-xs t-c" x="226" y="174">low</text>
+      <rect class="f-green" x="276" y="158" width="60" height="24" rx="3"/><text class="t-xs t-c" x="306" y="174">low</text>
+      <rect class="f-yellow" x="400" y="44" width="340" height="170" rx="8"/>
+      <text class="t-sm t-b" x="416" y="70">What to learn</text>
+      <text class="t-xs" x="416" y="96">• Dark → light needs the most flush.</text>
+      <text class="t-xs" x="416" y="116">• Light → dark needs the least.</text>
+      <text class="t-xs" x="416" y="136">• Similar hues need little.</text>
+      <text class="t-xs" x="416" y="156">• Reduce only where the result is clean.</text>
+      <text class="t-xs" x="416" y="176">• Different nozzles for dark and light</text><text class="t-xs" x="416" y="192">avoids the hard transition.</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> X-3: a mock-up of the flush matrix idea, not a screenshot.</figcaption>
+  </figure>
+
+  <section class="exercise" id="X-4">
+    <header><span class="badge intermediate">Intermediate</span><h3>X-4 · Aux-nozzle speed test</h3><span class="badge time">⏱ 2 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Observe how the right (auxiliary) nozzle's documented limits (up to about 200 mm/s and roughly 1000 mm/s²) change print time and quality compared with the left nozzle, and decide which jobs belong where.</p>
+      <span class="ex-label">You will need</span>
+      <ul><li>A second AMS (AMS HT or AMS 2 Pro) on the lower inlet, or a Filament Track Switch setup, so the right nozzle has a filament source</li><li>PLA, a simple test model (cube with an overhang and a bridge)</li><li>Timer or the printer's estimated time</li></ul>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Print on the left nozzle.</strong> Use Standard speed; note the estimate and the real time.</li>
+        <li><strong>Reassign to the right nozzle.</strong> Slice again with the same settings; check the estimate.</li>
+        <li><strong>Compare.</strong> Print the right-nozzle version and compare surface quality and time.</li>
+        <li><strong>Calibrate if needed.</strong> The right nozzle uses manual flow-dynamics calibration; run it if the surface shows over- or under-extrusion.</li>
+        <li><strong>Conclude.</strong> Write which kinds of jobs (supports, draft, utility parts) suit the right nozzle.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist"><li>You measured a time difference and can explain it.</li><li>You compared surface and bridge quality between the nozzles.</li><li>You listed three jobs for each nozzle.</li></ul>
+      <details class="hint"><summary>Hint</summary><p>Only compare like with like: same filament, same layer height, same plate. Check the compatibility chart for the filament on the right nozzle.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary><p>The right nozzle is capped, so jobs that benefit from high speed run longer there. That is why supports, utility parts and slower, cleaner jobs fit the right nozzle, while fast prints, TPU and anything the chart marks unsuitable stay on the left. Time estimates will differ by your model: record the ratio rather than assuming one.</p></details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 220" role="img" aria-label="Bar comparison template for left and right nozzle print time and the 200 millimeters per second limit">
+      <rect class="d-surface2" x="14" y="14" width="360" height="192" rx="10"/><text class="t-sm t-b" x="28" y="38">Record your times</text>
+      <rect class="f-red" x="28" y="56" width="200" height="26" rx="4"/><text class="t-xs" x="36" y="74">Left nozzle: ____ min</text>
+      <rect class="f-purple" x="28" y="96" width="280" height="26" rx="4"/><text class="t-xs" x="36" y="114">Right nozzle: ____ min</text>
+      <text class="t-xs" x="28" y="150">Ratio right / left = ____</text><text class="t-xs" x="28" y="170">(bar lengths illustrative)</text>
+      <rect class="f-yellow" x="390" y="14" width="356" height="192" rx="10"/><text class="t-sm t-b" x="404" y="38">Documented right-nozzle limits</text>
+      <text class="t-xs" x="404" y="66">• speed up to ~200 mm/s</text><text class="t-xs" x="404" y="86">• acceleration ~1000 mm/s²</text><text class="t-xs" x="404" y="106">• longer retraction, larger K</text><text class="t-xs" x="404" y="126">• manual flow-dynamics calibration</text><text class="t-xs" x="404" y="146">• no TPU, no PPS-CF, no PPA-CF</text><text class="t-xs" x="404" y="166">• 235.5 × 256 × 256 mm volume</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> X-4: a recording template and the documented aux limits.</figcaption>
+  </figure>
+
+  <section class="exercise" id="X-5">
+    <header><span class="badge advanced">Advanced</span><h3>X-5 · Chamber warp test</h3><span class="badge time">⏱ 4–6 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Measure how chamber temperature and soak time affect warping on a large ABS or ASA footprint, and set your own pre-heat rule.</p>
+      <span class="ex-label">You will need</span>
+      <ul><li>ABS or ASA, dry</li><li>Engineering or smooth PEI plate with glue stick (check your plate guidance)</li><li>A 200 × 100 × 5 mm flat bar model (or any large flat part)</li><li>A straightedge and feeler gauges (or a ruler and paper strips)</li><li>Fume filter fitted and the room ventilated</li></ul>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Print A: no soak.</strong> Heating air mode, start the print right after the bed reaches temperature.</li>
+        <li><strong>Print B: soak.</strong> Pre-heat the bed (above 90 °C takes about 30 minutes to condition the chamber) and let the chamber warm before starting.</li>
+        <li><strong>Print C: soak plus brim.</strong> As B but with a wide brim and rounded corners.</li>
+        <li><strong>Measure.</strong> After full cooldown, lay each part on a flat surface and measure the largest gap at the corners.</li>
+        <li><strong>Record.</strong> Log temperatures, times and the gap in a table.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist"><li>Three parts printed with identical settings except the variable.</li><li>Measured corner lift recorded for each.</li><li>A written rule for your preferred pre-heat time and brim for large ABS/ASA parts.</li></ul>
+      <details class="hint"><summary>Hint</summary><p>Keep the door and lid closed until the part is cool; opening early undoes the point of the test. Do not compare different spools.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary><p>Expect less lift with a soaked chamber and a brim, and the most with a cold start; the size of the difference is yours to measure. Bambu documents a chamber heater up to 65 °C and a longer pre-heat for beds above 90 °C. If lift persists, reduce part cooling, use a bigger brim, or round the corners, as explained on the <a href="../x2d/engineering-and-chamber.html">engineering page</a>.</p></details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 240" role="img" aria-label="Warp test layout showing three bars A, B, C and corner lift gaps measured with a straightedge">
+      <rect class="d-surface2" x="14" y="14" width="480" height="212" rx="10"/><text class="t-sm t-b" x="28" y="38">Corner-lift measurement</text>
+      <line class="d-ink" x1="40" y1="150" x2="470" y2="150"/>
+      <path class="f-orange" d="M50 150 q8 -26 40 -4 H190 q30 -22 38 4 Z" opacity=".8"/><text class="t-xs" x="60" y="176">A: no soak (gap ____ mm)</text>
+      <path class="f-blue" d="M250 150 q4 -12 20 -2 H340 q16 -10 20 2 Z" opacity=".8"/><text class="t-xs" x="250" y="176">B: soak (____ mm)</text>
+      <path class="f-green" d="M380 150 q2 -6 12 0 H440 q8 -6 10 0 Z" opacity=".8"/><text class="t-xs" x="380" y="196">C: soak + brim (____ mm)</text>
+      <text class="t-xs" x="40" y="214">Illustrative shapes; measure your own gaps.</text>
+      <rect class="f-yellow" x="510" y="14" width="236" height="212" rx="10"/><text class="t-sm t-b" x="524" y="38">Variables</text>
+      <text class="t-xs" x="524" y="64">Same: filament, plate,</text><text class="t-xs" x="524" y="80">layer height, speed.</text>
+      <text class="t-xs" x="524" y="108">Change: soak, brim.</text>
+      <text class="t-xs" x="524" y="136">Keep: door and lid shut</text><text class="t-xs" x="524" y="152">until fully cool.</text>
+      <text class="t-xs" x="524" y="180">Chamber: up to 65 °C</text><text class="t-xs" x="524" y="196">(documented).</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> X-5: three bars, one variable at a time. Shapes are illustrative.</figcaption>
+  </figure>
+
+  <section class="exercise" id="X-6">
+    <header><span class="badge advanced">Advanced</span><h3>X-6 · TPU + rigid combo</h3><span class="badge time">⏱ 3–4 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Print a rigid part with an integrated TPU element (e.g. a PETG clip with a soft grip), respecting the rule that TPU runs on the left nozzle only.</p>
+      <span class="ex-label">You will need</span>
+      <ul><li>TPU 95A HF on an external spool (or 85A/90A via the top holder/Feed Assist)</li><li>PETG or PLA in the AMS</li><li>Hardened-steel hotend of a suitable diameter: TPU 85A needs 0.6 or 0.8 mm; 95A HF works on 0.4–0.8 mm</li><li>Engineering or smooth PEI with glue, or textured PEI without glue</li></ul>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Check compatibility.</strong> Match the TPU hardness to the nozzle diameter using the chart.</li>
+        <li><strong>Route the TPU.</strong> Feed from the external path to the left inlet (95A HF) or the top holder/Feed Assist (85A/90A); do not use the Filament Track Switch.</li>
+        <li><strong>Design the interface.</strong> Model the TPU element in contact with the rigid part over a large area or with mechanical interlocks (the two bond weakly).</li>
+        <li><strong>Slice.</strong> Assign both filaments to the left nozzle; keep the default volumetric limit for TPU; set flow dynamics to Auto or Off.</li>
+        <li><strong>Print, then test.</strong> Pull, flex and twist the combined part; look for delamination at the interface.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist"><li>TPU printed from the correct path and only on the left nozzle.</li><li>No jams or clicking during the TPU sections.</li><li>The interface survives a hand test, or you can explain why not and what to change.</li></ul>
+      <details class="hint"><summary>Hint</summary><p>Interlocks beat adhesion: dovetails, undercuts or holes through which the TPU flows hold better than flat overlap. Place the model at the middle-front of the plate for TPU.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary><p>The reliable pattern is a rigid frame with through-holes or grooves that the TPU fills, printed with a slow TPU speed and a thorough flush on each material swap. Dry the TPU first (Bambu documents oven 70 °C for 8 h or bed 75–85 °C for 8 h), keep the chamber unheated, and never glue on textured PEI. See the <a href="../x2d/tpu-and-flexibles.html">TPU page</a>.</p></details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 230" role="img" aria-label="TPU and rigid combination: external TPU spool feeds the left nozzle, PETG from AMS feeds the same nozzle, interlocking dovetail between the two materials">
+      <rect class="d-surface2" x="14" y="14" width="360" height="202" rx="10"/><text class="t-sm t-b" x="28" y="38">Routing</text>
+      <rect class="f-orange" x="28" y="56" width="140" height="40" rx="6"/><text class="t-xs t-c" x="98" y="80">ext spool: TPU</text>
+      <rect class="f-purple" x="28" y="110" width="140" height="40" rx="6"/><text class="t-xs t-c" x="98" y="134">AMS: PETG</text>
+      <path class="d-ink arrow" d="M170 76 H240"/><path class="d-ink arrow" d="M170 130 H240"/>
+      <rect class="f-red" x="242" y="76" width="120" height="74" rx="8"/><text class="t-xs t-c t-b" x="302" y="108">Left nozzle</text><text class="t-xs t-c" x="302" y="126">both materials</text>
+      <text class="t-xs" x="28" y="186">Never TPU on the right nozzle.</text>
+      <rect class="d-surface2" x="390" y="14" width="356" height="202" rx="10"/><text class="t-sm t-b" x="404" y="38">Interlock detail</text>
+      <rect class="f-purple" x="410" y="70" width="140" height="100"/><path class="f-orange" d="M550 90 H600 L590 110 L600 130 L590 150 L600 170 H550 Z" opacity=".9"/><rect class="f-orange" x="600" y="70" width="120" height="100" opacity=".9"/>
+      <text class="t-xs t-c" x="480" y="124">rigid</text><text class="t-xs t-c" x="660" y="124">TPU</text><text class="t-xs" x="404" y="196">Mechanical interlock holds better than flat contact.</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> X-6: routing and an interlock idea.</figcaption>
+  </figure>
+
+  <section class="exercise" id="X-7">
+    <header><span class="badge intermediate">Intermediate</span><h3>X-7 · Drying experiment with a weigh-in</h3><span class="badge time">⏱ 10–12 h (mostly waiting)</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Quantify how much moisture a spool loses during drying by weighing it before and after, and link that to print quality.</p>
+      <span class="ex-label">You will need</span>
+      <ul><li>A hygroscopic spool that has been exposed to air for some time (PETG, nylon or TPU)</li><li>A kitchen scale accurate to 1 g</li><li>The X2D's drying function for the AMS 2 Pro (6-pin connection needed), or an oven/dryer for TPU as documented</li><li>A small test model, e.g. a stringing tower</li></ul>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Weigh.</strong> Weigh the sealed-in-air spool with its holder; write the value down.</li>
+        <li><strong>Print a control.</strong> Print the test model before drying; photograph stringing and surface.</li>
+        <li><strong>Dry.</strong> Dry at the temperature and time recommended for the material (for the AMS 2 Pro, temperatures up to 65 °C and a printer ambient of at least 25 °C are documented; do not mix high- and low-temperature spools in one drying run). TPU: oven 70 °C or bed 75–85 °C, for 8 h as documented.</li>
+        <li><strong>Weigh again.</strong> Let the spool return to room temperature in a sealed environment before weighing, so condensation does not skew the result.</li>
+        <li><strong>Print a second test.</strong> Compare it with the control.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist"><li>Mass before and after recorded, and the difference calculated.</li><li>Two test prints compared with photos.</li><li>Drying time and temperature logged for the material.</li></ul>
+      <details class="hint"><summary>Hint</summary><p>Weight loss is small (typically a few grams), so use the same scale, same spool holder and the same conditions. A gram or two is a meaningful signal.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary><p>A successful experiment shows a measurable drop in mass and less stringing and a smoother surface in the second print. Note that the spool may swell slightly after drying (Bambu documents a TPU spool going from 65.4 to 69.4 mm in diameter), so check that it still fits the holder. Store dried spools below about 20 % relative humidity, using the AMS 2 Pro's desiccant (yellow indicates good, purple means replace).</p></details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 230" role="img" aria-label="Drying experiment timeline: weigh, control print, dry, cool, weigh, second print, compare, with a mass-loss bar">
+      <rect class="f-blue" x="14" y="30" width="98" height="52" rx="8"/><text class="t-xs t-c" x="63" y="54">Weigh</text><text class="t-xs t-c" x="63" y="70">before</text>
+      <path class="d-ink arrow" d="M114 56 H128"/>
+      <rect class="f-green" x="130" y="30" width="98" height="52" rx="8"/><text class="t-xs t-c" x="179" y="54">Control</text><text class="t-xs t-c" x="179" y="70">print</text>
+      <path class="d-ink arrow" d="M230 56 H244"/>
+      <rect class="f-orange" x="246" y="30" width="98" height="52" rx="8"/><text class="t-xs t-c" x="295" y="54">Dry</text><text class="t-xs t-c" x="295" y="70">hours</text>
+      <path class="d-ink arrow" d="M346 56 H360"/>
+      <rect class="f-yellow" x="362" y="30" width="98" height="52" rx="8"/><text class="t-xs t-c" x="411" y="54">Cool</text><text class="t-xs t-c" x="411" y="70">sealed</text>
+      <path class="d-ink arrow" d="M462 56 H476"/>
+      <rect class="f-purple" x="478" y="30" width="98" height="52" rx="8"/><text class="t-xs t-c" x="527" y="54">Weigh</text><text class="t-xs t-c" x="527" y="70">after</text>
+      <path class="d-ink arrow" d="M578 56 H592"/>
+      <rect class="f-teal" x="594" y="30" width="148" height="52" rx="8"/><text class="t-xs t-c" x="668" y="54">Second print</text><text class="t-xs t-c" x="668" y="70">compare</text>
+      <rect class="d-surface2" x="14" y="110" width="728" height="106" rx="10"/><text class="t-sm t-b" x="28" y="134">Mass log</text>
+      <text class="t-xs" x="28" y="160">Before: ______ g</text><text class="t-xs" x="228" y="160">After: ______ g</text><text class="t-xs" x="428" y="160">Loss: ______ g</text><text class="t-xs" x="28" y="190">Material: ________   Temp: ____ °C   Time: ____ h</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> X-7: the weigh-in timeline and log template.</figcaption>
+  </figure>
+
+  <section class="exercise" id="X-8">
+    <header><span class="badge intermediate">Intermediate</span><h3>X-8 · AMS slot planning puzzle</h3><span class="badge time">⏱ 45 min</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Plan filament slots for a realistic job list across one AMS 2 Pro, satisfying nozzle, material and routing constraints. This is a paper (or Studio) exercise.</p>
+      <span class="ex-label">You will need</span>
+      <ul><li>Pencil and paper, or the Studio project with printer set</li><li>The compatibility chart and the notes on the <a href="../x2d/tpu-and-flexibles.html">TPU page</a></li></ul>
+      <span class="ex-label">The puzzle</span>
+      <p>You have one AMS 2 Pro (four slots, upper inlet → left nozzle) and one external spool. Jobs: (a) PLA figure in 3 colors plus PLA support; (b) PETG bracket; (c) TPU 95A HF gasket; (d) a PA6-CF jig. You do not want to change spools between (a) and (b), and the TPU must not touch the AMS.</p>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>List the constraints.</strong> Which jobs can share an AMS load-out? Which need the external spool?</li>
+        <li><strong>Group the jobs.</strong> Put jobs that share a load-out in the same session; separate the rest.</li>
+        <li><strong>Assign slots.</strong> Fill the four slots for the first session and name the external spool.</li>
+        <li><strong>Assign nozzles.</strong> State which nozzle each filament uses (all left with one AMS).</li>
+        <li><strong>Check.</strong> Verify each filament against the chart; mark any drying needs.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist"><li>No TPU in the AMS or on the right nozzle.</li><li>PA6-CF is on the left nozzle and dried.</li><li>At most one spool swap between sessions.</li></ul>
+      <details class="hint"><summary>Hint</summary><p>Four slots hold PLA ×3 colors + PETG; the support can share a slot with one of the colors if the support is in the body color (or print it as a second pass).</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary><p>Session 1 (AMS A): slot 1–3 PLA colors, slot 4 PETG; run jobs (a) and (b). Session 2: load PA6-CF into the AMS (dry it first, keep it away from low-temperature spools while drying) and run (d). Session 3: TPU on the external spool, left nozzle, job (c). Alternative: a second AMS on the lower inlet or a Filament Track Switch widens the options, but it does not change the TPU rule.</p></details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 240" role="img" aria-label="Worked slot plan for the puzzle: session one with three PLA colors and PETG in the AMS; session two with PA6-CF; session three with TPU on the external spool">
+      <rect class="d-surface2" x="14" y="14" width="236" height="212" rx="10"/><text class="t-sm t-b" x="28" y="38">Session 1</text>
+      <rect class="f-blue" x="28" y="52" width="48" height="40" rx="5"/><text class="t-xs t-c" x="52" y="76">PLA</text>
+      <rect class="f-green" x="80" y="52" width="48" height="40" rx="5"/><text class="t-xs t-c" x="104" y="76">PLA</text>
+      <rect class="f-yellow" x="132" y="52" width="48" height="40" rx="5"/><text class="t-xs t-c" x="156" y="76">PLA</text>
+      <rect class="f-purple" x="184" y="52" width="48" height="40" rx="5"/><text class="t-xs t-c" x="208" y="76">PETG</text>
+      <text class="t-xs" x="28" y="124">Jobs: (a) figure, (b) bracket</text><text class="t-xs" x="28" y="144">All on the left nozzle.</text>
+      <rect class="d-surface2" x="262" y="14" width="236" height="212" rx="10"/><text class="t-sm t-b" x="276" y="38">Session 2</text>
+      <rect class="f-orange" x="276" y="52" width="48" height="40" rx="5"/><text class="t-xs t-c" x="300" y="76">PA-CF</text>
+      <rect class="f-gray" x="328" y="52" width="48" height="40" rx="5"/><rect class="f-gray" x="380" y="52" width="48" height="40" rx="5"/><rect class="f-gray" x="432" y="52" width="48" height="40" rx="5"/>
+      <text class="t-xs" x="276" y="124">Job: (d) jig. Dry first.</text><text class="t-xs" x="276" y="144">Left nozzle only.</text>
+      <rect class="d-surface2" x="510" y="14" width="236" height="212" rx="10"/><text class="t-sm t-b" x="524" y="38">Session 3</text>
+      <rect class="f-red" x="524" y="52" width="140" height="40" rx="5"/><text class="t-xs t-c" x="594" y="76">ext spool: TPU 95A HF</text>
+      <text class="t-xs" x="524" y="124">Job: (c) gasket.</text><text class="t-xs" x="524" y="144">Direct path, left nozzle.</text><text class="t-xs" x="524" y="164">AMS not involved.</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> X-8: one possible solution to the puzzle.</figcaption>
+  </figure>
+
+  <section class="exercise" id="X-9">
+    <header><span class="badge advanced">Advanced</span><h3>X-9 · Support-interface material test</h3><span class="badge time">⏱ 3–4 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Test whether a different material for the support interface (PETG under PLA, or a rigid/soft combo) improves surface finish and removability compared with same-material supports.</p>
+      <span class="ex-label">You will need</span>
+      <ul><li>PLA and PETG spools (a third material if available, for example PVA, which Bambu lists as recommended on the right nozzle)</li><li>A test overhang model (a bridge plus a 45° and a 70° overhang)</li><li>Deburring tool and a camera</li></ul>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Baseline.</strong> Print with PLA supports in PLA; note removal effort and the underside quality.</li>
+        <li><strong>Variant A.</strong> Set the support interface filament to PETG; keep the body in PLA.</li>
+        <li><strong>Vary the gap.</strong> Try a top Z-distance of 0.1 and 0.2 mm.</li>
+        <li><strong>Rate.</strong> Score removal ease (1–5), surface quality (1–5) and filament waste (grams).</li>
+        <li><strong>Pick a rule.</strong> Write which combination you will use for which parts.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist"><li>At least three variants printed and scored.</li><li>The prime tower and flush volumes were reviewed for each material change.</li><li>A one-line support rule for your future prints.</li></ul>
+      <details class="hint"><summary>Hint</summary><p>Each material change costs a flush, so interface-only changes add purge; compare the score gain against the waste.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary><p>The usual finding is that a dissimilar interface material (PETG under PLA) separates cleanly and leaves a smoother underside, at the price of more purge. Whether it is worth it depends on the part: visible faces, yes; hidden ones, no. See also the <a href="../x2d/recipes.html#r6">support-interface recipe</a>.</p></details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 230" role="img" aria-label="Support layers: part in PLA, interface layers in PETG, support body in PLA, over the build plate, with Z distance labelled">
+      <rect class="d-surface2" x="14" y="14" width="420" height="202" rx="10"/><text class="t-sm t-b" x="28" y="38">Cross-section</text>
+      <rect class="f-blue" x="60" y="56" width="320" height="26"/><text class="t-xs t-c" x="220" y="74">PLA part (overhang)</text>
+      <rect class="f-purple" x="60" y="88" width="320" height="10"/><text class="t-xs" x="388" y="96">interface (PETG)</text>
+      <rect class="d-surface" x="60" y="98" width="320" height="4"/><text class="t-xs" x="388" y="110">Z gap</text>
+      <rect class="f-teal" x="60" y="102" width="320" height="64"/><text class="t-xs t-c" x="220" y="138">support body</text>
+      <rect class="f-gray" x="40" y="166" width="360" height="10"/><text class="t-xs" x="40" y="196">build plate</text>
+      <rect class="f-yellow" x="450" y="14" width="296" height="202" rx="10"/><text class="t-sm t-b" x="464" y="38">Score sheet</text>
+      <text class="t-xs" x="464" y="66">Variant    Remove  Surface  Waste</text>
+      <text class="t-xs" x="464" y="90">PLA/PLA     __     __      __ g</text>
+      <text class="t-xs" x="464" y="110">PETG iface  __     __      __ g</text>
+      <text class="t-xs" x="464" y="130">Gap 0.1     __     __      __ g</text>
+      <text class="t-xs" x="464" y="150">Gap 0.2     __     __      __ g</text>
+    </svg>
+    <figcaption><b>Figure 10.</b> X-9: interface layers and a score sheet.</figcaption>
+  </figure>
+
+  <section class="exercise" id="X-10">
+    <header><span class="badge advanced">Advanced</span><h3>X-10 · Filament profile creation</h3><span class="badge time">⏱ 3 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Create and calibrate a custom filament preset for a non-Bambu spool, including the flow dynamics setting, and verify it with a test print.</p>
+      <span class="ex-label">You will need</span>
+      <ul><li>A third-party spool you want to use regularly (PLA is simplest)</li><li>Its manufacturer's temperature range from the label</li><li>Bambu Studio on the X2D</li></ul>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Duplicate a close preset.</strong> Start from the generic profile of the same material.</li>
+        <li><strong>Edit.</strong> Set nozzle temperature within the manufacturer's range, bed temperature, and the volumetric limit; name the preset clearly.</li>
+        <li><strong>Choose the flow-dynamics mode.</strong> Filament presets have Auto and Off; pick Auto for the left nozzle, and for the right nozzle run the manual calibration.</li>
+        <li><strong>Dry and load.</strong> Dry the spool if it is hygroscopic; load it into an AMS slot and select the new preset.</li>
+        <li><strong>Test and save.</strong> Print a test model, adjust, and save the final version.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist"><li>The preset appears for the AMS slot and prints without under- or over-extrusion.</li><li>The preset name records brand, material and date.</li><li>You noted any changes from the starting profile.</li></ul>
+      <details class="hint"><summary>Hint</summary><p>Change one parameter at a time and test; changing temperature and flow together hides cause and effect.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary><p>A good preset starts from the generic preset, stays inside the label range, and is verified with the same test model each time. Export it (or share it with the project) so you can rebuild it. Values you arrive at are specific to your spool and are not documented figures, so keep notes. See <a href="../x2d/settings-and-profiles.html">settings and profiles</a>.</p></details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 240" role="img" aria-label="Mock of a filament preset editor with fields for name, temperature, volumetric limit and flow dynamics mode; mock-up not a screenshot">
+      <rect class="d-surface2" x="14" y="14" width="440" height="212" rx="10"/><text class="t-sm t-b" x="28" y="38">Filament preset (mock-up, not a screenshot)</text>
+      <rect class="d-surface" x="28" y="52" width="410" height="26" rx="4"/><text class="t-xs" x="38" y="70">Name: Brand PLA Blue 2025-xx</text>
+      <rect class="d-surface" x="28" y="86" width="200" height="26" rx="4"/><text class="t-xs" x="38" y="104">Nozzle temp: within label range</text>
+      <rect class="d-surface" x="238" y="86" width="200" height="26" rx="4"/><text class="t-xs" x="248" y="104">Bed temp: per plate</text>
+      <rect class="d-surface" x="28" y="120" width="200" height="26" rx="4"/><text class="t-xs" x="38" y="138">Volumetric limit</text>
+      <rect class="d-surface" x="238" y="120" width="200" height="26" rx="4"/><text class="t-xs" x="248" y="138">Flow dynamics: Auto | Off</text>
+      <rect class="f-green" x="28" y="162" width="120" height="30" rx="6"/><text class="t-xs t-c" x="88" y="182">Save</text>
+      <rect class="f-yellow" x="470" y="14" width="276" height="212" rx="10"/><text class="t-sm t-b" x="484" y="38">Method</text>
+      <text class="t-xs" x="484" y="64">1. Copy generic preset</text><text class="t-xs" x="484" y="84">2. Change one thing</text><text class="t-xs" x="484" y="104">3. Print the same test</text><text class="t-xs" x="484" y="124">4. Compare</text><text class="t-xs" x="484" y="144">5. Save with a clear name</text>
+    </svg>
+    <figcaption><b>Figure 11.</b> X-10: a mock of the preset editor and the method.</figcaption>
+  </figure>
+
+  <section class="exercise" id="X-11">
+    <header><span class="badge advanced">Advanced</span><h3>X-11 · Multi-plate batch</h3><span class="badge time">⏱ 3–5 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Set up a project with several plates that print in sequence with minimal human intervention, and share it as a .gcode.3mf.</p>
+      <span class="ex-label">You will need</span>
+      <ul><li>PLA or PETG, two matching spools in adjacent slots (for Auto-Refill: same brand, type and color, same side)</li><li>Three different small models</li><li>Optional: the Handy app for remote monitoring</li></ul>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Create plates.</strong> Place each model on its own plate; arrange for spacing.</li>
+        <li><strong>Per-plate settings.</strong> Check the plate type, nozzle assignment and prime tower on each.</li>
+        <li><strong>Slice all.</strong> Review time and filament per plate; make sure the total filament fits the loaded spools.</li>
+        <li><strong>Send.</strong> Export or send via the cloud or LAN, and start. Plan to swap the plate between jobs if the printer cannot clear it.</li>
+        <li><strong>Review.</strong> After the batch, log failures and the cause.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist"><li>All plates sliced with correct plate type and nozzle assignment.</li><li>Filament budget checked before starting.</li><li>Print options and AI detections (spaghetti, foreign object, etc.) enabled.</li></ul>
+      <details class="hint"><summary>Hint</summary><p>Estimate the filament use per plate; a spool that is almost empty will pause the print unless an identical backup spool is present.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary><p>The key is a filament budget: add up the grams per plate and compare with the spool weights. Keep the part count per plate moderate, leave clearance, and use a tested filament profile. Because the printer does not unload parts by itself, each plate needs you (or a part-removal routine of your own) between jobs. Review the logs afterwards and update the next batch.</p></details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 210" role="img" aria-label="Batch planning: three plates each with a filament budget bar versus the total spool capacity">
+      <rect class="d-surface2" x="14" y="14" width="500" height="182" rx="10"/><text class="t-sm t-b" x="28" y="38">Filament budget (illustrative)</text>
+      <text class="t-xs" x="28" y="66">Plate 1</text><rect class="f-blue" x="96" y="52" width="120" height="18" rx="3"/>
+      <text class="t-xs" x="28" y="96">Plate 2</text><rect class="f-green" x="96" y="82" width="180" height="18" rx="3"/>
+      <text class="t-xs" x="28" y="126">Plate 3</text><rect class="f-orange" x="96" y="112" width="90" height="18" rx="3"/>
+      <path class="d-dash" d="M420 46 V150"/><text class="t-xs" x="330" y="166">Spool capacity ──────▶ (limit)</text><text class="t-xs" x="28" y="166">Sum of bars must stay under the limit</text>
+      <rect class="f-yellow" x="530" y="14" width="216" height="182" rx="10"/><text class="t-sm t-b" x="544" y="38">Checklist</text>
+      <text class="t-xs" x="544" y="64">☐ Plate type per plate</text><text class="t-xs" x="544" y="84">☐ Nozzle assignment</text><text class="t-xs" x="544" y="104">☐ Matching backup spool</text><text class="t-xs" x="544" y="124">☐ AI detections on</text><text class="t-xs" x="544" y="144">☐ Clear plate between jobs</text>
+    </svg>
+    <figcaption><b>Figure 12.</b> X-11: filament budget against spool capacity.</figcaption>
+  </figure>
+
+  <section class="exercise" id="X-12">
+    <header><span class="badge expert">Expert</span><h3>X-12 · Maintenance log</h3><span class="badge time">⏱ 1 h + ongoing</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Build and keep a maintenance log for your X2D and AMS 2 Pro, turning the manufacturer's maintenance topics into a schedule you actually follow.</p>
+      <span class="ex-label">You will need</span>
+      <ul><li>A spreadsheet or notebook</li><li>The <a href="../x2d/maintenance-and-troubleshooting.html">maintenance page</a> and the screen's toolbox (Dry Filament, Linear Rod Cleaning, Lead Screw Lubrication, Nozzle Cold Pull, Heating Base Maintenance Mode)</li><li>Isopropyl alcohol, lint-free cloth, spare PTFE and desiccant as needed</li></ul>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>List the items.</strong> Nozzles and the Gear-and-Trigger mechanism, aux extruder and its PTFE tube, filters (G3, H12 HEPA, carbon), cameras, rods and lead screws, build plate, AMS desiccant and drying modules, firmware.</li>
+        <li><strong>Set intervals.</strong> Use documented ones where they exist (for example desiccant is replaced after roughly 4–6 weeks, or when the indicator turns purple); label the rest "typical" and adjust to your use.</li>
+        <li><strong>Do a first pass.</strong> Perform each task once and record the date, hours (if known) and findings.</li>
+        <li><strong>Record anomalies.</strong> Note any wear, noise or print-quality change and link it to the task that fixed it.</li>
+        <li><strong>Review monthly.</strong> Update the intervals from what you see.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist"><li>A log with at least ten items and an interval for each.</li><li>First-pass results filled in.</li><li>One improvement made from what the log revealed.</li></ul>
+      <details class="hint"><summary>Hint</summary><p>Tie tasks to events, such as "every spool change check the PTFE end" or "every firmware update repeat the validation print (X-1)", rather than to dates alone.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary><p>A good log is short enough that you use it. Split it into per-print (glance at plate and nozzle), per-week (clean rods, check desiccant), per-month (filters, PTFE ends, camera lenses) and per-update (X-1). Pair it with your own error notes so that recurring faults stand out; if you meet an issue you cannot resolve, collect logs and contact support as described on the maintenance page.</p></details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 240" role="img" aria-label="Maintenance log template grouped by frequency: per print, weekly, monthly, per update, with example items">
+      <rect class="f-green" x="14" y="14" width="172" height="212" rx="10" opacity=".4"/><text class="t-sm t-b" x="28" y="38">Per print</text><text class="t-xs" x="28" y="64">Plate clean</text><text class="t-xs" x="28" y="82">Nozzle glance</text><text class="t-xs" x="28" y="100">Spool dry?</text>
+      <rect class="f-blue" x="198" y="14" width="172" height="212" rx="10" opacity=".4"/><text class="t-sm t-b" x="212" y="38">Weekly</text><text class="t-xs" x="212" y="64">Rods, lead screws</text><text class="t-xs" x="212" y="82">Desiccant color</text><text class="t-xs" x="212" y="100">Purge chute</text>
+      <rect class="f-orange" x="382" y="14" width="172" height="212" rx="10" opacity=".4"/><text class="t-sm t-b" x="396" y="38">Monthly</text><text class="t-xs" x="396" y="64">Filters</text><text class="t-xs" x="396" y="82">PTFE ends</text><text class="t-xs" x="396" y="100">Camera lenses</text>
+      <rect class="f-purple" x="566" y="14" width="180" height="212" rx="10" opacity=".4"/><text class="t-sm t-b" x="580" y="38">Per update</text><text class="t-xs" x="580" y="64">Firmware, Studio</text><text class="t-xs" x="580" y="82">Validation print X-1</text><text class="t-xs" x="580" y="100">Calibrations</text>
+      <text class="t-xs" x="28" y="170">Intervals above are typical: adjust to your use.</text>
+    </svg>
+    <figcaption><b>Figure 13.</b> X-12: a log template. Intervals are typical starting points.</figcaption>
+  </figure>
+
+  <h2 id="after">After the challenges</h2>
+  <div class="grid cols-3">
+    <div class="card accent-blue"><h4>Keep your baselines</h4><p>Store the X-1 print, the X-5 warp bars and the X-9 supports. Future comparisons need a reference.</p></div>
+    <div class="card accent-green"><h4>Turn results into presets</h4><p>Your flush matrix (X-3), filament profile (X-10) and slot plans (X-8) are reusable; export them.</p></div>
+    <div class="card accent-orange"><h4>Go further</h4><p>Apply the skills to the <a href="../x2d/recipes.html">15 recipes</a>, and refine them with your own numbers.</p></div>
+  </div>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul class="checklist">
+    <li>Nozzle assignment, flush volumes and slot planning decide waste and reliability on the X2D.</li>
+    <li>TPU stays on the left nozzle and off the AMS; the right nozzle is limited in speed.</li>
+    <li>Chamber and dry-filament practice make the biggest difference to engineering materials.</li>
+    <li>A maintenance log turns good intentions into a habit.</li>
+  </ul>
+
+  <div class="callout tip"><span class="callout-title">Where to go next</span>
+    <p>Read <a href="../x2d/maintenance-and-troubleshooting.html">maintenance and troubleshooting</a> for recovery steps, or return to the <a href="../x2d/settings-and-profiles.html">settings and profiles</a> page to fold your results into presets.</p></div>
+
+</main>
+</body>
+</html>

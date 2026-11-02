@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>X2D + AMS 2 Pro print recipes · 3D Printing Compendium</title>
+  <meta name="description" content="Fifteen end-to-end print recipes for the Bambu Lab X2D with AMS 2 Pro: figurine, PETG bracket, ASA outdoor part, PA-CF jig, TPU gasket with housing, support interfaces, lithophane, trays, hinges, drafts, miniatures, gradients, keycaps, inserts and overnight batches, each with a slot-plan diagram.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+  <style>
+    .rc-facts { list-style: none; margin: .4em 0 1em; padding: 0; display: grid; gap: 4px; }
+    .rc-facts li { padding-left: 0; }
+    .rc-facts li::before { content: none; }
+    .rc-facts b { display: inline-block; min-width: 9.5em; color: var(--brand-ink); }
+  </style>
+</head>
+<body data-page="x2d/recipes.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 6 · Bambu X2D + AMS 2 Pro</div>
+    <h1>Print recipes for the X2D + AMS 2 Pro</h1>
+    <p class="lead">Fifteen complete jobs, each with a goal, filament and slot plan, nozzle assignment, key slicer settings, orientation, a qualitative time class, pitfalls and finishing. Every number is a <b>starting point</b>: your spool, plate and room will move it.</p>
+    <div class="meta"><span class="badge intermediate">Intermediate</span><span class="badge x2d">X2D + AMS 2 Pro</span><span class="badge time">⏱ 40 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">How to use this page</span>
+    <p>Pick the recipe closest to your goal, read the slot-plan figure, then adapt the settings with your own filament presets (see <a href="settings-and-profiles.html">settings and profiles</a>). Material behavior is explained in <a href="engineering-and-chamber.html">engineering and chamber</a> and <a href="tpu-and-flexibles.html">TPU and flexibles</a>.</p></div>
+
+  <div class="callout x2d"><span class="callout-title">Slot-plan assumptions</span>
+    <p>Bambu pairs each AMS with one nozzle side: an AMS on the buffer's <b>upper</b> inlet feeds the left (main) hotend, one on the <b>lower</b> inlet feeds the right (auxiliary) hotend. A single AMS 2 Pro, as in most households, therefore feeds the left nozzle. Recipes that use the right nozzle assume a <b>second AMS</b> on the lower inlet (an AMS HT or another AMS 2 Pro) or a Filament Track Switch (sold separately; Studio 2.5.3+, firmware 01.01.00.00+). The right nozzle is limited to 200 mm/s and about 1000 mm/s², and TPU never goes there. If you only own one AMS, use the "single-AMS note" in each recipe.</p></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 300" role="img" aria-label="Legend for slot-plan diagrams: AMS A with four slots feeding the left nozzle, AMS B feeding the right nozzle, with arrows and color keys">
+      <rect class="d-surface2" x="20" y="20" width="330" height="108" rx="10"/>
+      <text class="t-sm t-b" x="34" y="44">AMS A · upper inlet</text>
+      <rect class="f-blue" x="34" y="56" width="68" height="60" rx="6"/><text class="t-xs t-c" x="68" y="82">slot 1</text><text class="t-xs t-c" x="68" y="98">material</text>
+      <rect class="f-green" x="112" y="56" width="68" height="60" rx="6"/><text class="t-xs t-c" x="146" y="82">slot 2</text>
+      <rect class="f-orange" x="190" y="56" width="68" height="60" rx="6"/><text class="t-xs t-c" x="224" y="82">slot 3</text>
+      <rect class="f-gray" x="268" y="56" width="68" height="60" rx="6"/><text class="t-xs t-c" x="302" y="82">unused</text>
+      <rect class="d-surface2" x="20" y="152" width="330" height="108" rx="10"/>
+      <text class="t-sm t-b" x="34" y="176">AMS B · lower inlet (optional)</text>
+      <rect class="f-teal" x="34" y="188" width="68" height="60" rx="6"/><text class="t-xs t-c" x="68" y="222">slot 1</text>
+      <rect class="f-gray" x="112" y="188" width="68" height="60" rx="6"/><text class="t-xs t-c" x="146" y="222">unused</text>
+      <path class="d-ink arrow" d="M352 74 H430"/><path class="d-ink arrow" d="M352 206 H430"/>
+      <rect class="f-red" x="432" y="40" width="170" height="68" rx="10"/><text class="t-sm t-c t-b" x="517" y="70">Left / main nozzle</text><text class="t-xs t-c" x="517" y="88">full speed, all materials</text>
+      <rect class="f-purple" x="432" y="172" width="170" height="68" rx="10"/><text class="t-sm t-c t-b" x="517" y="202">Right / aux nozzle</text><text class="t-xs t-c" x="517" y="220">≤ 200 mm/s, no TPU</text>
+      <rect class="f-yellow" x="620" y="40" width="120" height="200" rx="10"/><text class="t-sm t-b" x="632" y="66">Reading</text><text class="t-xs" x="632" y="92">Colored slot = used</text><text class="t-xs" x="632" y="110">Gray slot = unused</text><text class="t-xs" x="632" y="134">Arrows go from</text><text class="t-xs" x="632" y="150">the AMS to the</text><text class="t-xs" x="632" y="166">nozzle it feeds.</text><text class="t-xs" x="632" y="198">"ext" = external</text><text class="t-xs" x="632" y="214">spool path.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> How to read the slot-plan figures on this page.</figcaption>
+  </figure>
+
+  <h2 id="overview">Overview of the 15 recipes</h2>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>#</th><th>Recipe</th><th>Materials</th><th>Main idea</th><th>Level</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><a href="#r1">Multi-color figurine</a></td><td>PLA ×4 + support</td><td>Prime tower, flush, detail</td><td><span class="chip yellow">mid</span></td></tr>
+      <tr><td>2</td><td><a href="#r2">Functional PETG bracket</a></td><td>PETG</td><td>Walls and orientation</td><td><span class="chip green">easy</span></td></tr>
+      <tr><td>3</td><td><a href="#r3">ASA outdoor part</a></td><td>ASA</td><td>Chamber, brim, UV</td><td><span class="chip yellow">mid</span></td></tr>
+      <tr><td>4</td><td><a href="#r4">PA-CF jig</a></td><td>PA-CF</td><td>Dry, stiff, abrasion</td><td><span class="chip red">hard</span></td></tr>
+      <tr><td>5</td><td><a href="#r5">TPU gasket + rigid housing</a></td><td>TPU + PETG</td><td>Main-nozzle TPU</td><td><span class="chip red">hard</span></td></tr>
+      <tr><td>6</td><td><a href="#r6">PLA/PETG support interface</a></td><td>PLA + PETG</td><td>Clean release</td><td><span class="chip yellow">mid</span></td></tr>
+      <tr><td>7</td><td><a href="#r7">Lithophane</a></td><td>White PLA</td><td>Thickness = brightness</td><td><span class="chip green">easy</span></td></tr>
+      <tr><td>8</td><td><a href="#r8">Large flat tray</a></td><td>PETG</td><td>Warp control, big nozzle</td><td><span class="chip yellow">mid</span></td></tr>
+      <tr><td>9</td><td><a href="#r9">Print-in-place hinge</a></td><td>PLA / PETG</td><td>Clearance</td><td><span class="chip yellow">mid</span></td></tr>
+      <tr><td>10</td><td><a href="#r10">High-speed draft</a></td><td>PLA</td><td>Volume over speed</td><td><span class="chip green">easy</span></td></tr>
+      <tr><td>11</td><td><a href="#r11">Detail miniature</a></td><td>PLA</td><td>Thin layers, supports</td><td><span class="chip yellow">mid</span></td></tr>
+      <tr><td>12</td><td><a href="#r12">Gradient vase</a></td><td>PLA ×3–4</td><td>Layer-based color</td><td><span class="chip yellow">mid</span></td></tr>
+      <tr><td>13</td><td><a href="#r13">Multi-material keycap</a></td><td>PLA ×2</td><td>Legend inlay</td><td><span class="chip yellow">mid</span></td></tr>
+      <tr><td>14</td><td><a href="#r14">Enclosure with heat-set inserts</a></td><td>PETG or ASA</td><td>Inserts and holes</td><td><span class="chip yellow">mid</span></td></tr>
+      <tr><td>15</td><td><a href="#r15">Overnight farm-style batch</a></td><td>PLA / PETG</td><td>Reliability, AI detection</td><td><span class="chip red">hard</span></td></tr>
+    </tbody></table></div>
+
+  <h2 id="r1">Recipe 1 · Multi-color figurine</h2>
+  <ul class="rc-facts">
+    <li><b>Goal</b>A multi-color character figurine with a clean surface and minimal waste.</li>
+    <li><b>Filament and slots</b>AMS A: slot 1 body color, 2 accent, 3 eye/detail, 4 base. AMS B slot 1: Support for PLA (right nozzle).</li>
+    <li><b>Nozzle assignment</b>Colors → left nozzle (Filament-saving or Convenience grouping); support → right nozzle. <i>Single-AMS note:</i> put the support in slot 4 and drop one color.</li>
+    <li><b>Key settings (starting points)</b>0.4 mm nozzle, layer 0.08–0.12 mm, 2–3 walls, 10–15 % infill, prime tower on, tree supports, outer wall slow.</li>
+    <li><b>Orientation</b>Face up and forward, so color transitions land on hidden areas.</li>
+    <li><b>Time class</b>Long (hours), driven by layer count and color changes.</li>
+    <li><b>Pitfalls</b>Color bleed after dark→light changes (check the flush matrix), tower wobble, visible support scars on the face.</li>
+    <li><b>Finishing</b>Trim supports, light sanding on seams, matte clear coat if wanted.</li>
+  </ul>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 600 150" role="img" aria-label="Slot plan for the figurine: four PLA colors in AMS A feed the left nozzle, Support for PLA in AMS B feeds the right nozzle">
+      <rect class="d-surface2" x="8" y="6" width="300" height="68" rx="8"/><text class="t-xs t-b" x="16" y="20">AMS A · upper inlet</text>
+      <rect class="f-blue" x="16" y="26" width="60" height="40" rx="5"/><text class="t-xs t-c" x="46" y="42">1</text><text class="t-xs t-c" x="46" y="56">body</text>
+      <rect class="f-yellow" x="84" y="26" width="60" height="40" rx="5"/><text class="t-xs t-c" x="114" y="42">2</text><text class="t-xs t-c" x="114" y="56">accent</text>
+      <rect class="f-green" x="152" y="26" width="60" height="40" rx="5"/><text class="t-xs t-c" x="182" y="42">3</text><text class="t-xs t-c" x="182" y="56">eyes</text>
+      <rect class="f-pink" x="220" y="26" width="60" height="40" rx="5"/><text class="t-xs t-c" x="250" y="42">4</text><text class="t-xs t-c" x="250" y="56">base</text>
+      <rect class="d-surface2" x="8" y="80" width="300" height="64" rx="8"/><text class="t-xs t-b" x="16" y="94">AMS B · lower inlet</text>
+      <rect class="f-teal" x="16" y="100" width="60" height="38" rx="5"/><text class="t-xs t-c" x="46" y="116">1</text><text class="t-xs t-c" x="46" y="130">support</text>
+      <path class="d-ink arrow" d="M310 40 H400"/><path class="d-ink arrow" d="M310 112 H400"/>
+      <rect class="f-red" x="402" y="16" width="190" height="48" rx="8"/><text class="t-xs t-c t-b" x="497" y="36">Left: all four colors</text><text class="t-xs t-c" x="497" y="52">0.08–0.12 mm layers</text>
+      <rect class="f-purple" x="402" y="88" width="190" height="48" rx="8"/><text class="t-xs t-c t-b" x="497" y="108">Right: support only</text><text class="t-xs t-c" x="497" y="124">≤ 200 mm/s</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> Recipe 1: four colors left, support right.</figcaption>
+  </figure>
+
+  <h2 id="r2">Recipe 2 · Functional PETG bracket</h2>
+  <ul class="rc-facts">
+    <li><b>Goal</b>A bracket that carries a static load, e.g. a shelf or monitor arm mount.</li>
+    <li><b>Filament and slots</b>AMS A slot 1: PETG. Others unused (or a second PETG as an Auto-Refill backup: same brand, type and color, same side).</li>
+    <li><b>Nozzle assignment</b>Left nozzle only. Right nozzle idle.</li>
+    <li><b>Key settings (starting points)</b>0.4 or 0.6 mm nozzle, layer 0.20–0.28 mm, 4+ walls, 30–40 % gyroid infill, bed typically 70–80 °C, textured PEI.</li>
+    <li><b>Orientation</b>Layers perpendicular to the load direction, so the load is not trying to split layer bonds; the long edge on the plate. See <a href="../design/strength-and-orientation.html">strength and orientation</a>.</li>
+    <li><b>Time class</b>Medium.</li>
+    <li><b>Pitfalls</b>Stringing from wet PETG, screws crushing into holes (add washers or inserts), layer splitting if loaded across layers.</li>
+    <li><b>Finishing</b>Deburr, test-fit screws, add 3–4 perimeters around holes with a modifier.</li>
+  </ul>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 600 150" role="img" aria-label="Slot plan for the PETG bracket: PETG in AMS A slot 1 to the left nozzle; right nozzle idle">
+      <rect class="d-surface2" x="8" y="6" width="300" height="68" rx="8"/><text class="t-xs t-b" x="16" y="20">AMS A · upper inlet</text>
+      <rect class="f-purple" x="16" y="26" width="60" height="40" rx="5"/><text class="t-xs t-c" x="46" y="42">1</text><text class="t-xs t-c" x="46" y="56">PETG</text>
+      <rect class="f-purple" x="84" y="26" width="60" height="40" rx="5" opacity=".5"/><text class="t-xs t-c" x="114" y="42">2</text><text class="t-xs t-c" x="114" y="56">backup</text>
+      <rect class="f-gray" x="152" y="26" width="60" height="40" rx="5"/><text class="t-xs t-c" x="182" y="48">—</text>
+      <rect class="f-gray" x="220" y="26" width="60" height="40" rx="5"/><text class="t-xs t-c" x="250" y="48">—</text>
+      <path class="d-ink arrow" d="M310 40 H400"/>
+      <rect class="f-red" x="402" y="16" width="190" height="48" rx="8"/><text class="t-xs t-c t-b" x="497" y="36">Left: PETG</text><text class="t-xs t-c" x="497" y="52">walls over infill</text>
+      <rect class="f-gray" x="402" y="88" width="190" height="48" rx="8"/><text class="t-xs t-c" x="497" y="116">Right: idle</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> Recipe 2: one material, one nozzle. A matching second spool in slot 2 enables Auto-Refill.</figcaption>
+  </figure>
+
+  <h2 id="r3">Recipe 3 · ASA outdoor part</h2>
+  <ul class="rc-facts">
+    <li><b>Goal</b>A UV-resistant part for outdoors, e.g. a sensor housing or garden clip.</li>
+    <li><b>Filament and slots</b>AMS A slot 1: ASA, dried if the spool has been open for a while.</li>
+    <li><b>Nozzle assignment</b>Left nozzle. (The right nozzle is rated for ASA with caution.)</li>
+    <li><b>Key settings (starting points)</b>Bed 100–110 °C (documented range for ABS/PC; check the ASA spool label), air mode Heating, high-temperature bed leveling first, full pre-heat soak, brim, low part fan.</li>
+    <li><b>Orientation</b>Flat on the plate; round the footprint corners.</li>
+    <li><b>Time class</b>Medium to long, with soak.</li>
+    <li><b>Pitfalls</b>Opening the door early (cracks), fumes (filter in), corner lift on large footprints.</li>
+    <li><b>Finishing</b>Wait until the chamber has cooled; optional vapor smoothing is a post-processing step (see <a href="../techniques/post-processing.html">post-processing</a>).</li>
+  </ul>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 600 150" role="img" aria-label="Slot plan for ASA outdoor part: ASA in slot 1 to the left nozzle with heating mode noted">
+      <rect class="d-surface2" x="8" y="6" width="300" height="68" rx="8"/><text class="t-xs t-b" x="16" y="20">AMS A · upper inlet</text>
+      <rect class="f-orange" x="16" y="26" width="60" height="40" rx="5"/><text class="t-xs t-c" x="46" y="42">1</text><text class="t-xs t-c" x="46" y="56">ASA</text>
+      <rect class="f-gray" x="84" y="26" width="60" height="40" rx="5"/><text class="t-xs t-c" x="114" y="48">—</text>
+      <rect class="f-gray" x="152" y="26" width="60" height="40" rx="5"/><text class="t-xs t-c" x="182" y="48">—</text>
+      <rect class="f-gray" x="220" y="26" width="60" height="40" rx="5"/><text class="t-xs t-c" x="250" y="48">—</text>
+      <path class="d-ink arrow" d="M310 40 H400"/>
+      <rect class="f-red" x="402" y="16" width="190" height="48" rx="8"/><text class="t-xs t-c t-b" x="497" y="36">Left: ASA</text><text class="t-xs t-c" x="497" y="52">Heating mode, soak</text>
+      <rect class="f-yellow" x="402" y="88" width="190" height="48" rx="8"/><text class="t-xs t-c" x="497" y="108">Chamber: up to 65 °C</text><text class="t-xs t-c" x="497" y="124">door and lid closed</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> Recipe 3: ASA on the left nozzle, with the chamber doing the work.</figcaption>
+  </figure>
+
+  <h2 id="r4">Recipe 4 · PA-CF jig</h2>
+  <ul class="rc-facts">
+    <li><b>Goal</b>A stiff, wear-resistant assembly jig or fixture.</li>
+    <li><b>Filament and slots</b>AMS A slot 1: PAHT-CF or PA6-CF (dried). Keep high-temperature spools away from low-temperature ones during drying.</li>
+    <li><b>Nozzle assignment</b>Left nozzle only: PA6-CF is rated not recommended on the right nozzle. Standard 0.4 mm or larger hardened-steel hotend (0.2 mm is not available for these filaments).</li>
+    <li><b>Key settings (starting points)</b>Air mode Heating, high-temperature bed leveling, engineering plate with glue, brim, moderate volumetric speed.</li>
+    <li><b>Orientation</b>Orient reference faces down; let functional faces be bottom-surface smooth.</li>
+    <li><b>Time class</b>Medium to long.</li>
+    <li><b>Pitfalls</b>Wet filament (rough, weak), AMS tube wear with third-party CF, warp.</li>
+    <li><b>Finishing</b>Light sanding of locating faces; test with real parts before using.</li>
+  </ul>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 600 150" role="img" aria-label="Slot plan for PA-CF jig: PA-CF in slot 1 to the left nozzle only">
+      <rect class="d-surface2" x="8" y="6" width="300" height="68" rx="8"/><text class="t-xs t-b" x="16" y="20">AMS A · upper inlet</text>
+      <rect class="f-purple" x="16" y="26" width="60" height="40" rx="5"/><text class="t-xs t-c" x="46" y="42">1</text><text class="t-xs t-c" x="46" y="56">PA-CF</text>
+      <rect class="f-gray" x="84" y="26" width="60" height="40" rx="5"/><text class="t-xs t-c" x="114" y="48">—</text>
+      <rect class="f-gray" x="152" y="26" width="60" height="40" rx="5"/><text class="t-xs t-c" x="182" y="48">—</text>
+      <rect class="f-gray" x="220" y="26" width="60" height="40" rx="5"/><text class="t-xs t-c" x="250" y="48">—</text>
+      <path class="d-ink arrow" d="M310 40 H400"/>
+      <rect class="f-red" x="402" y="16" width="190" height="48" rx="8"/><text class="t-xs t-c t-b" x="497" y="36">Left: PA-CF</text><text class="t-xs t-c" x="497" y="52">hardened, dried</text>
+      <rect class="f-red" x="402" y="88" width="190" height="48" rx="8" opacity=".35"/><text class="t-xs t-c" x="497" y="108">Right: not for PA6-CF</text><text class="t-xs t-c" x="497" y="124">(rated not recommended)</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> Recipe 4: carbon-fiber nylon stays on the main nozzle.</figcaption>
+  </figure>
+
+  <h2 id="r5">Recipe 5 · TPU gasket + rigid housing</h2>
+  <ul class="rc-facts">
+    <li><b>Goal</b>A rigid PETG housing with a TPU gasket that seals a lid.</li>
+    <li><b>Filament and slots</b>External spool: TPU 95A HF (recommended external path). AMS B slot 1 (or A if wiring allows): PETG for the housing.</li>
+    <li><b>Nozzle assignment</b>TPU → left nozzle only (direct path); PETG → right nozzle via the lower-inlet AMS, with a 200 mm/s cap. <i>Single-AMS note:</i> print the housing and the gasket as two jobs, TPU alone on the left nozzle.</li>
+    <li><b>Key settings (starting points)</b>TPU: 95A HF on 0.4–0.8 mm, bed 30–35 °C, no chamber heating, default volumetric limit, flow dynamics Auto/Off, glue only on smooth/engineering plates (never on textured PEI), model at the middle-front. Gasket: print flat, 100 % or high wall count, design for modest compression.</li>
+    <li><b>Orientation</b>Gasket flat; housing with its sealing face either on the plate or downhill-protected from support scars.</li>
+    <li><b>Time class</b>Medium; TPU part is slow per mm³.</li>
+    <li><b>Pitfalls</b>Feeding TPU from a standard AMS path, TPU on the right nozzle (unsupported), glue on textured PEI.</li>
+    <li><b>Finishing</b>Trim stringing with a sharp blade; leak-test with water before relying on it.</li>
+  </ul>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 600 150" role="img" aria-label="Slot plan for TPU gasket and PETG housing: TPU from an external spool to the left nozzle, PETG from AMS B to the right nozzle">
+      <rect class="d-surface2" x="8" y="6" width="300" height="68" rx="8"/><text class="t-xs t-b" x="16" y="20">External spool (direct path)</text>
+      <rect class="f-orange" x="16" y="26" width="120" height="40" rx="5"/><text class="t-xs t-c" x="76" y="42">ext</text><text class="t-xs t-c" x="76" y="56">TPU 95A HF</text>
+      <rect class="d-surface2" x="8" y="80" width="300" height="64" rx="8"/><text class="t-xs t-b" x="16" y="94">AMS B · lower inlet</text>
+      <rect class="f-purple" x="16" y="100" width="60" height="38" rx="5"/><text class="t-xs t-c" x="46" y="116">1</text><text class="t-xs t-c" x="46" y="130">PETG</text>
+      <path class="d-ink arrow" d="M310 40 H400"/><path class="d-ink arrow" d="M310 112 H400"/>
+      <rect class="f-red" x="402" y="16" width="190" height="48" rx="8"/><text class="t-xs t-c t-b" x="497" y="36">Left: TPU gasket</text><text class="t-xs t-c" x="497" y="52">slow, default limits</text>
+      <rect class="f-teal" x="402" y="88" width="190" height="48" rx="8"/><text class="t-xs t-c t-b" x="497" y="108">Right: PETG housing</text><text class="t-xs t-c" x="497" y="124">≤ 200 mm/s</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> Recipe 5: TPU direct to the left nozzle, PETG to the right.</figcaption>
+  </figure>
+
+  <h2 id="r6">Recipe 6 · PLA/PETG support interface</h2>
+  <ul class="rc-facts">
+    <li><b>Goal</b>A PLA part with overhangs that release cleanly from a PETG support interface (PETG and PLA bond poorly, so the interface peels away).</li>
+    <li><b>Filament and slots</b>AMS A: slot 1 PLA (part), slot 2 PETG (interface layers only).</li>
+    <li><b>Nozzle assignment</b>Both on the left nozzle (single AMS works). With a second AMS you may move the PETG interface to the right nozzle, accepting its speed cap.</li>
+    <li><b>Key settings (starting points)</b>Support filament: PETG for the interface only; support body can stay in the part filament or the same PETG; top Z-distance about 0.1–0.2 mm; 2–3 interface layers; interface spacing 0 for a dense face; prime tower on and sized for the PLA↔PETG flush.</li>
+    <li><b>Orientation</b>Place the most visible overhang so that the interface covers the smallest area.</li>
+    <li><b>Time class</b>Longer than single-material, because of the extra changes and flush.</li>
+    <li><b>Pitfalls</b>PLA and PETG have different temperature windows: a too-short flush leaves PETG in the PLA nozzle and vice versa; interface too thin tears; PETG too cold bonds weakly to the support body.</li>
+    <li><b>Finishing</b>Peel supports along the interface; any fuzz comes off with a deburring tool.</li>
+  </ul>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 600 150" role="img" aria-label="Slot plan for PLA with PETG support interface: PLA slot 1 and PETG slot 2 both feed the left nozzle">
+      <rect class="d-surface2" x="8" y="6" width="300" height="68" rx="8"/><text class="t-xs t-b" x="16" y="20">AMS A · upper inlet</text>
+      <rect class="f-blue" x="16" y="26" width="60" height="40" rx="5"/><text class="t-xs t-c" x="46" y="42">1</text><text class="t-xs t-c" x="46" y="56">PLA</text>
+      <rect class="f-purple" x="84" y="26" width="60" height="40" rx="5"/><text class="t-xs t-c" x="114" y="42">2</text><text class="t-xs t-c" x="114" y="56">PETG</text>
+      <rect class="f-gray" x="152" y="26" width="60" height="40" rx="5"/><text class="t-xs t-c" x="182" y="48">—</text>
+      <rect class="f-gray" x="220" y="26" width="60" height="40" rx="5"/><text class="t-xs t-c" x="250" y="48">—</text>
+      <path class="d-ink arrow" d="M310 40 H400"/>
+      <rect class="f-red" x="402" y="16" width="190" height="48" rx="8"/><text class="t-xs t-c t-b" x="497" y="36">Left: part + interface</text><text class="t-xs t-c" x="497" y="52">flush on every swap</text>
+      <rect class="f-gray" x="402" y="88" width="190" height="48" rx="8"/><text class="t-xs t-c" x="497" y="116">Right: optional</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> Recipe 6: two materials on one nozzle; see exercise <a href="../exercises/x2d-challenges.html#X-9">X-9</a>.</figcaption>
+  </figure>
+
+  <h2 id="r7">Recipe 7 · Lithophane</h2>
+  <ul class="rc-facts">
+    <li><b>Goal</b>A backlit photo panel where thickness encodes brightness.</li>
+    <li><b>Filament and slots</b>AMS A slot 1: white or natural PLA. All values below are typical, not X2D-documented.</li>
+    <li><b>Nozzle assignment</b>Left nozzle.</li>
+    <li><b>Key settings (starting points)</b>Layer 0.08–0.12 mm, 100 % infill (it is a thin panel), slow outer wall, no supports, no ironing, a typical thickness range of roughly 0.6 mm (bright) to 3–4 mm (dark).</li>
+    <li><b>Orientation</b>Upright, with the image facing the front for best surface quality; alternatively flat on the plate for a smoother face (the back gets the texture instead).</li>
+    <li><b>Time class</b>Medium; mostly slow thin layers.</li>
+    <li><b>Pitfalls</b>Strong contrast in the source photo clips highlights; a part-cooling fan too high causes layer lines; tall thin panels wobble.</li>
+    <li><b>Finishing</b>Test with a bright LED or phone flashlight; add a base or frame so it stands.</li>
+  </ul>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 600 150" role="img" aria-label="Lithophane thickness versus brightness: thin zones glow, thick zones stay dark">
+      <rect class="d-surface2" x="8" y="6" width="290" height="138" rx="8"/><text class="t-xs t-b" x="16" y="22">Cross-section of the panel</text>
+      <rect class="f-yellow" x="30" y="90" width="40" height="14" /><rect class="f-gray" x="70" y="60" width="40" height="44"/><rect class="f-yellow" x="110" y="84" width="40" height="20"/><rect class="f-gray" x="150" y="48" width="40" height="56"/><rect class="f-yellow" x="190" y="94" width="40" height="10"/><rect class="f-gray" x="230" y="70" width="40" height="34"/>
+      <text class="t-xs" x="30" y="120">thin = bright</text><text class="t-xs" x="190" y="120">thin</text><text class="t-xs" x="150" y="40">thick = dark</text>
+      <path class="d-mute arrow" d="M150 136 V110"/><text class="t-xs" x="160" y="136">light from behind</text>
+      <path class="d-ink arrow" d="M300 76 H400"/>
+      <rect class="f-blue" x="402" y="16" width="190" height="48" rx="8"/><text class="t-xs t-c t-b" x="497" y="36">AMS slot 1: white PLA</text><text class="t-xs t-c" x="497" y="52">single color</text>
+      <rect class="f-red" x="402" y="88" width="190" height="48" rx="8"/><text class="t-xs t-c t-b" x="497" y="108">Left nozzle</text><text class="t-xs t-c" x="497" y="124">thin layers, slow walls</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> Recipe 7: one material, one nozzle; thickness does the imaging.</figcaption>
+  </figure>
+
+  <h2 id="r8">Recipe 8 · Large flat tray</h2>
+  <ul class="rc-facts">
+    <li><b>Goal</b>A tray that fills much of the plate, flat and without corner lift. The common dual-nozzle area is 235.5 × 256 mm; a left-only job can use 256 × 256 mm.</li>
+    <li><b>Filament and slots</b>AMS A slot 1: PETG (or ABS/ASA if you need heat resistance).</li>
+    <li><b>Nozzle assignment</b>Left nozzle only, so you can use the full 256 mm area.</li>
+    <li><b>Key settings (starting points)</b>0.6 mm nozzle for speed (typical), layer 0.28–0.30 mm, brim or mouse ears on corners, 3 walls, sparse infill, bed 70–80 °C for PETG, textured PEI, no part cooling on the first layers. For ABS/ASA, use Heating mode and soak.</li>
+    <li><b>Orientation</b>Flat. Round the footprint corners and add a low rim to resist curling.</li>
+    <li><b>Time class</b>Medium to long.</li>
+    <li><b>Pitfalls</b>Corner lift from cooling, elephant's foot, using the aux-limited area by accident (the slicer may restrict the plate when the right nozzle is used).</li>
+    <li><b>Finishing</b>Remove after the plate cools; a flatness check with a ruler.</li>
+  </ul>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 600 150" role="img" aria-label="Large flat tray footprint on the build plate, showing left-only area 256 by 256 and common area 235.5 by 256">
+      <rect class="d-surface2" x="8" y="6" width="300" height="138" rx="8"/>
+      <rect class="f-blue" x="30" y="24" width="150" height="100" opacity=".4"/><text class="t-xs t-c" x="105" y="76">256 × 256</text><text class="t-xs t-c" x="105" y="92">left only</text>
+      <rect class="d-dash" x="30" y="24" width="138" height="100" fill="none"/><text class="t-xs" x="190" y="60">235.5 × 256</text><text class="t-xs" x="190" y="76">common area</text><text class="t-xs" x="190" y="92">(dual nozzle)</text>
+      <path class="d-ink arrow" d="M310 40 H400"/>
+      <rect class="f-red" x="402" y="16" width="190" height="48" rx="8"/><text class="t-xs t-c t-b" x="497" y="36">Left: PETG tray</text><text class="t-xs t-c" x="497" y="52">full 256 mm area</text>
+      <rect class="f-yellow" x="402" y="88" width="190" height="48" rx="8"/><text class="t-xs t-c t-b" x="497" y="108">Corner control</text><text class="t-xs t-c" x="497" y="124">brim, round corners</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> Recipe 8: use the left-only volume for the biggest footprints.</figcaption>
+  </figure>
+
+  <h2 id="r9">Recipe 9 · Print-in-place hinge</h2>
+  <ul class="rc-facts">
+    <li><b>Goal</b>A hinge printed as one assembly that rotates as soon as it is removed.</li>
+    <li><b>Filament and slots</b>AMS A slot 1: PLA or PETG. Optional slot 2: a contrasting color for the pin.</li>
+    <li><b>Nozzle assignment</b>Left nozzle. The right nozzle's lower speed would change clearances between parts, so avoid mixing them in the same assembly.</li>
+    <li><b>Key settings (starting points)</b>Layer 0.16–0.20 mm, clearance 0.3–0.4 mm for a 0.4 mm nozzle (typical), slow outer walls, supports off if the design is self-supporting, ironing off.</li>
+    <li><b>Orientation</b>Hinge axis horizontal or vertical according to the design; avoid supports in the gap.</li>
+    <li><b>Time class</b>Short.</li>
+    <li><b>Pitfalls</b>Joints fused by elephant's foot; too much flow; wet filament that strings across the gap.</li>
+    <li><b>Finishing</b>Work the hinge open and closed ten times; a drop of lubricant if needed. Clearance background: <a href="../design/tolerances-and-fits.html">tolerances and fits</a>.</li>
+  </ul>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 600 150" role="img" aria-label="Print-in-place hinge cross-section with a clearance gap between the pin and the knuckle">
+      <rect class="d-surface2" x="8" y="6" width="300" height="138" rx="8"/>
+      <rect class="f-blue" x="30" y="50" width="90" height="46" rx="4"/><rect class="f-blue" x="190" y="50" width="90" height="46" rx="4"/>
+      <circle class="f-green" cx="155" cy="73" r="30"/><circle class="d-surface" cx="155" cy="73" r="20"/><circle class="f-orange" cx="155" cy="73" r="14"/>
+      <path class="d-ink arrow" d="M155 128 V100"/><text class="t-xs t-c" x="155" y="140">clearance gap</text>
+      <path class="d-ink arrow" d="M310 40 H400"/>
+      <rect class="f-red" x="402" y="16" width="190" height="48" rx="8"/><text class="t-xs t-c t-b" x="497" y="36">Left: one nozzle</text><text class="t-xs t-c" x="497" y="52">same speed for all parts</text>
+      <rect class="f-yellow" x="402" y="88" width="190" height="48" rx="8"/><text class="t-xs t-c t-b" x="497" y="108">Clearance</text><text class="t-xs t-c" x="497" y="124">0.3–0.4 mm typical</text>
+    </svg>
+    <figcaption><b>Figure 10.</b> Recipe 9: the gap is the design; keep it clean.</figcaption>
+  </figure>
+
+  <h2 id="r10">Recipe 10 · High-speed draft</h2>
+  <ul class="rc-facts">
+    <li><b>Goal</b>A quick, rough fit-check part to validate dimensions before a final print.</li>
+    <li><b>Filament and slots</b>AMS A slot 1: PLA.</li>
+    <li><b>Nozzle assignment</b>Left nozzle (full-speed). A high-flow hotend (HF 0.4 / 0.6 / 0.8) is the right tool; Bambu states HF can cut print time by up to 30 %.</li>
+    <li><b>Key settings (starting points)</b>Speed mode Sport (124 %) or Ludicrous (166 %) if the part and filament tolerate it; layer 0.28–0.32 mm with a 0.6 mm nozzle (typical); 2 walls, 10 % infill, no supports where possible.</li>
+    <li><b>Orientation</b>Whatever minimizes support and print height; surface finish is not the goal.</li>
+    <li><b>Time class</b>Short.</li>
+    <li><b>Pitfalls</b>Ringing and weak layer bonds at high speed; volumetric flow exceeding the filament's limit; the printer is loud in Sport/Ludicrous.</li>
+    <li><b>Finishing</b>None; discard after the fit check.</li>
+  </ul>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 600 150" role="img" aria-label="Speed mode ladder: Silent 50 percent, Standard 100, Sport 124, Ludicrous 166">
+      <rect class="d-surface2" x="8" y="6" width="300" height="138" rx="8"/>
+      <rect class="f-blue" x="24" y="110" width="50" height="24"/><text class="t-xs t-c" x="49" y="104">50 %</text><text class="t-xs t-c" x="49" y="144">Silent</text>
+      <rect class="f-green" x="88" y="80" width="50" height="54"/><text class="t-xs t-c" x="113" y="74">100 %</text><text class="t-xs t-c" x="113" y="144">Standard</text>
+      <rect class="f-orange" x="152" y="62" width="50" height="72"/><text class="t-xs t-c" x="177" y="56">124 %</text><text class="t-xs t-c" x="177" y="144">Sport</text>
+      <rect class="f-red" x="216" y="36" width="50" height="98"/><text class="t-xs t-c" x="241" y="30">166 %</text><text class="t-xs t-c" x="241" y="144">Ludicrous</text>
+      <path class="d-ink arrow" d="M310 40 H400"/>
+      <rect class="f-red" x="402" y="16" width="190" height="48" rx="8"/><text class="t-xs t-c t-b" x="497" y="36">Left: PLA draft</text><text class="t-xs t-c" x="497" y="52">HF hotend if fitted</text>
+      <rect class="f-gray" x="402" y="88" width="190" height="48" rx="8"/><text class="t-xs t-c" x="497" y="108">Right: not used</text><text class="t-xs t-c" x="497" y="124">≤ 200 mm/s cap</text>
+    </svg>
+    <figcaption><b>Figure 11.</b> Recipe 10: the speed modes, as documented percentages.</figcaption>
+  </figure>
+
+  <h2 id="r11">Recipe 11 · Detail miniature</h2>
+  <ul class="rc-facts">
+    <li><b>Goal</b>A 28–32 mm-scale tabletop miniature with crisp faces and fine edges.</li>
+    <li><b>Filament and slots</b>AMS A slot 1: PLA (a matte, light color shows detail best). Slot 2: optional second color for a base.</li>
+    <li><b>Nozzle assignment</b>Left nozzle with the 0.2 mm hotend if you have swapped to one (PLA is fine there); otherwise 0.4 mm with thin layers. Both hotends must be the same diameter. Remember that the 0.2 mm hotend is not compatible with the CF/GF families in the chart.</li>
+    <li><b>Key settings (starting points)</b>Layer 0.04–0.08 mm on 0.2 mm; 0.08 mm on 0.4 mm; slow outer wall; tree supports with a small contact; cooling high for PLA; arc fitting and "ironing" off.</li>
+    <li><b>Orientation</b>Tilt 15–45° so overhangs are supported by the body rather than by the support structure; keep faces away from the support side.</li>
+    <li><b>Time class</b>Long for the size.</li>
+    <li><b>Pitfalls</b>Support scars on the face, thin weapons snapping, stringing between legs.</li>
+    <li><b>Finishing</b>Careful support removal, primer, paint.</li>
+  </ul>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 600 150" role="img" aria-label="Slot plan for the detail miniature: PLA slot 1 to the left nozzle, optional base color in slot 2">
+      <rect class="d-surface2" x="8" y="6" width="300" height="68" rx="8"/><text class="t-xs t-b" x="16" y="20">AMS A · upper inlet</text>
+      <rect class="f-gray" x="16" y="26" width="60" height="40" rx="5" opacity=".6"/><text class="t-xs t-c" x="46" y="42">1</text><text class="t-xs t-c" x="46" y="56">PLA</text>
+      <rect class="f-green" x="84" y="26" width="60" height="40" rx="5"/><text class="t-xs t-c" x="114" y="42">2</text><text class="t-xs t-c" x="114" y="56">base</text>
+      <rect class="f-gray" x="152" y="26" width="60" height="40" rx="5"/><text class="t-xs t-c" x="182" y="48">—</text>
+      <rect class="f-gray" x="220" y="26" width="60" height="40" rx="5"/><text class="t-xs t-c" x="250" y="48">—</text>
+      <path class="d-ink arrow" d="M310 40 H400"/>
+      <rect class="f-red" x="402" y="16" width="190" height="48" rx="8"/><text class="t-xs t-c t-b" x="497" y="36">Left: 0.2 or 0.4 mm</text><text class="t-xs t-c" x="497" y="52">thin layers, slow walls</text>
+      <rect class="f-yellow" x="402" y="88" width="190" height="48" rx="8"/><text class="t-xs t-c t-b" x="497" y="108">Tilt 15–45°</text><text class="t-xs t-c" x="497" y="124">fewer support scars</text>
+    </svg>
+    <figcaption><b>Figure 12.</b> Recipe 11: fine hotend and orientation matter more than the AMS here.</figcaption>
+  </figure>
+
+  <h2 id="r12">Recipe 12 · Gradient vase</h2>
+  <ul class="rc-facts">
+    <li><b>Goal</b>A single-wall or two-wall vase with a color gradient from base to rim.</li>
+    <li><b>Filament and slots</b>AMS A: slots 1–3 (or 4) in graduated shades of one hue, e.g. dark → mid → light.</li>
+    <li><b>Nozzle assignment</b>Left nozzle. Many changes mean many flushes; with a second AMS on the right you could shift a subset of colors, but one nozzle keeps the result consistent.</li>
+    <li><b>Key settings (starting points)</b>Spiral vase mode is single-color, so color gradients usually use a few layer-height-based color changes (the "change filament at layer" function) with the prime tower on; layer 0.2 mm; flush volumes small because the colors are similar.</li>
+    <li><b>Orientation</b>Upright.</li>
+    <li><b>Time class</b>Medium; each color step adds a flush.</li>
+    <li><b>Pitfalls</b>Visible color lines are a feature, not a bug; tall tower instability; shallow gradients where hues are too close to see the step.</li>
+    <li><b>Finishing</b>Waterproof liner if it will hold flowers and water (the print is not guaranteed watertight).</li>
+  </ul>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 600 150" role="img" aria-label="Gradient vase: three layer bands in different shades from the base to the rim, fed by three AMS slots">
+      <rect class="d-surface2" x="8" y="6" width="300" height="138" rx="8"/>
+      <path class="f-blue" d="M110 20 H200 L190 50 H120 Z"/><path class="f-teal" d="M120 50 H190 L186 90 H124 Z"/><path class="f-green" d="M124 90 H186 L180 128 H130 Z"/>
+      <text class="t-xs" x="215" y="38">rim: slot 3 (light)</text><text class="t-xs" x="215" y="74">middle: slot 2</text><text class="t-xs" x="215" y="112">base: slot 1 (dark)</text>
+      <path class="d-ink arrow" d="M310 40 H400"/>
+      <rect class="f-red" x="402" y="16" width="190" height="48" rx="8"/><text class="t-xs t-c t-b" x="497" y="36">Left: 3 shades</text><text class="t-xs t-c" x="497" y="52">changes at set layers</text>
+      <rect class="f-yellow" x="402" y="88" width="190" height="48" rx="8"/><text class="t-xs t-c t-b" x="497" y="108">Flush: small</text><text class="t-xs t-c" x="497" y="124">similar hues need little</text>
+    </svg>
+    <figcaption><b>Figure 13.</b> Recipe 12: layer-based color bands.</figcaption>
+  </figure>
+
+  <h2 id="r13">Recipe 13 · Multi-material keycap</h2>
+  <ul class="rc-facts">
+    <li><b>Goal</b>A keycap with a contrasting legend inlaid into the top face.</li>
+    <li><b>Filament and slots</b>AMS A slot 1: body color, slot 2: legend color. Both PLA for simplicity.</li>
+    <li><b>Nozzle assignment</b>Left nozzle. The legend and the body must share a nozzle so registration comes from one hotend.</li>
+    <li><b>Key settings (starting points)</b>Layer 0.08–0.12 mm, slow outer wall, 2–3 top layers, legend depth about 0.4–0.6 mm, small prime tower or purge into infill, several keycaps per plate to share the tower.</li>
+    <li><b>Orientation</b>Legend face up, the stem pointing down. Tree supports may be needed inside, depending on the stem design.</li>
+    <li><b>Time class</b>Short per keycap, medium per plate.</li>
+    <li><b>Pitfalls</b>Legend bleeding into the body, tiny features under-extruded at color changes, stem tolerance (typical: fit-check one first).</li>
+    <li><b>Finishing</b>Light sanding of the stem; do not sand the legend.</li>
+  </ul>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 600 150" role="img" aria-label="Keycap cross-section with a legend inlay in the top face and the stem below; two filament slots to the left nozzle">
+      <rect class="d-surface2" x="8" y="6" width="300" height="138" rx="8"/>
+      <path class="f-blue" d="M60 50 H250 L270 110 H40 Z"/><rect class="f-orange" x="130" y="50" width="60" height="10"/>
+      <rect class="f-blue" x="145" y="110" width="30" height="24"/><text class="t-xs t-c" x="160" y="44">legend inlay</text><text class="t-xs t-c" x="160" y="90">body</text><text class="t-xs t-c" x="160" y="144">stem</text>
+      <path class="d-ink arrow" d="M310 40 H400"/>
+      <rect class="f-red" x="402" y="16" width="190" height="48" rx="8"/><text class="t-xs t-c t-b" x="497" y="36">Left: slots 1 and 2</text><text class="t-xs t-c" x="497" y="52">shared tower</text>
+      <rect class="f-yellow" x="402" y="88" width="190" height="48" rx="8"/><text class="t-xs t-c t-b" x="497" y="108">Batch several</text><text class="t-xs t-c" x="497" y="124">one tower for all</text>
+    </svg>
+    <figcaption><b>Figure 14.</b> Recipe 13: a legend a few tenths of a millimeter deep.</figcaption>
+  </figure>
+
+  <h2 id="r14">Recipe 14 · Enclosure with heat-set inserts</h2>
+  <ul class="rc-facts">
+    <li><b>Goal</b>A two-part electronics enclosure with M3 threaded inserts for the lid screws.</li>
+    <li><b>Filament and slots</b>AMS A slot 1: PETG (indoor) or ASA (heat or UV exposure). Optionally a second slot as a backup.</li>
+    <li><b>Nozzle assignment</b>Left nozzle.</li>
+    <li><b>Key settings (starting points)</b>0.4 mm nozzle, layer 0.20 mm, 3–4 walls, 25 % infill, standard insert holes (typical: about 0.2–0.4 mm under the insert's outer diameter; check the datasheet), add a vertical "pillar" with extra walls around holes.</li>
+    <li><b>Orientation</b>Lid and base each on their largest flat face; avoid bridging the insert holes.</li>
+    <li><b>Time class</b>Medium.</li>
+    <li><b>Pitfalls</b>Inserts pushed in too fast melt the pillar; walls that are too thin split; ABS/ASA lid warps if it is a large flat part (see <a href="engineering-and-chamber.html">engineering and chamber</a>).</li>
+    <li><b>Finishing</b>Press inserts with a soldering iron tip heated to the material's range (PETG lower than ASA), push straight and slowly, stop when flush, let cool before tightening. See also <a href="../design/joints-and-fasteners.html">joints and fasteners</a>.</li>
+  </ul>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 600 150" role="img" aria-label="Enclosure cross-section with a heat-set insert pushed into a pillar and a screw from the lid">
+      <rect class="d-surface2" x="8" y="6" width="300" height="138" rx="8"/>
+      <rect class="f-purple" x="40" y="100" width="230" height="14"/><rect class="f-purple" x="40" y="40" width="16" height="74"/><rect class="f-purple" x="254" y="40" width="16" height="74"/>
+      <rect class="f-purple" x="110" y="62" width="30" height="40"/><rect class="f-yellow" x="118" y="66" width="14" height="20"/>
+      <rect class="f-blue" x="40" y="26" width="230" height="10"/><rect class="d-ink" x="122" y="12" width="6" height="40"/>
+      <text class="t-xs" x="150" y="76">insert in pillar</text><text class="t-xs" x="150" y="20">lid screw</text>
+      <path class="d-ink arrow" d="M310 40 H400"/>
+      <rect class="f-red" x="402" y="16" width="190" height="48" rx="8"/><text class="t-xs t-c t-b" x="497" y="36">Left: PETG or ASA</text><text class="t-xs t-c" x="497" y="52">3–4 walls</text>
+      <rect class="f-yellow" x="402" y="88" width="190" height="48" rx="8"/><text class="t-xs t-c t-b" x="497" y="108">Insert holes</text><text class="t-xs t-c" x="497" y="124">sized from datasheet</text>
+    </svg>
+    <figcaption><b>Figure 15.</b> Recipe 14: the insert sits in a reinforced pillar.</figcaption>
+  </figure>
+
+  <h2 id="r15">Recipe 15 · Overnight farm-style batch</h2>
+  <ul class="rc-facts">
+    <li><b>Goal</b>Print a full plate of identical small parts unattended and have them all succeed.</li>
+    <li><b>Filament and slots</b>AMS A: slots 1–2 hold the same brand, type and color so Auto-Refill can hand over when one runs out; the other slots can hold a second color for a later job.</li>
+    <li><b>Nozzle assignment</b>Left nozzle. With a second AMS on the right nozzle you could split the batch across both for a different material, but the speed cap applies.</li>
+    <li><b>Key settings (starting points)</b>Standard speed (not Ludicrous), a tested filament profile, brim on tall thin parts, first-layer inspection on, enable the AI detections (spaghetti, etc.) and the pause-on-failure options, "Purify Air at Print End" if the exhaust fan is fitted.</li>
+    <li><b>Orientation</b>Arrange evenly; leave gaps for the toolhead and for part removal.</li>
+    <li><b>Time class</b>Long, intended overnight.</li>
+    <li><b>Pitfalls</b>An unfinished spool, a wet spool, the first-layer problem you did not see, nozzle and bed not recently cleaned.</li>
+    <li><b>Finishing</b>Remove after the plate cools; batch inspect; log the result for the next batch.</li>
+  </ul>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 600 150" role="img" aria-label="Slot plan for overnight batch: two identical spools in slots 1 and 2 with Auto-Refill to the left nozzle, plus monitoring">
+      <rect class="d-surface2" x="8" y="6" width="300" height="68" rx="8"/><text class="t-xs t-b" x="16" y="20">AMS A · upper inlet</text>
+      <rect class="f-blue" x="16" y="26" width="60" height="40" rx="5"/><text class="t-xs t-c" x="46" y="42">1</text><text class="t-xs t-c" x="46" y="56">PLA</text>
+      <rect class="f-blue" x="84" y="26" width="60" height="40" rx="5"/><text class="t-xs t-c" x="114" y="42">2</text><text class="t-xs t-c" x="114" y="56">same</text>
+      <path class="d-mute d-dash arrow" d="M76 46 H84"/>
+      <rect class="f-gray" x="152" y="26" width="60" height="40" rx="5"/><text class="t-xs t-c" x="182" y="48">—</text>
+      <rect class="f-gray" x="220" y="26" width="60" height="40" rx="5"/><text class="t-xs t-c" x="250" y="48">—</text>
+      <path class="d-ink arrow" d="M310 40 H400"/>
+      <rect class="f-red" x="402" y="16" width="190" height="48" rx="8"/><text class="t-xs t-c t-b" x="497" y="36">Left: full plate</text><text class="t-xs t-c" x="497" y="52">Standard speed</text>
+      <rect class="f-green" x="402" y="88" width="190" height="48" rx="8"/><text class="t-xs t-c t-b" x="497" y="108">AI detections on</text><text class="t-xs t-c" x="497" y="124">pause on failure</text>
+    </svg>
+    <figcaption><b>Figure 16.</b> Recipe 15: matching spools enable Auto-Refill; detections watch the job.</figcaption>
+  </figure>
+
+  <h2 id="adapt">Adapting a recipe</h2>
+  <div class="grid cols-3">
+    <div class="card accent-blue"><h4>Change the material</h4><p>Check the nozzle-compatibility chart first, then the air mode and plate. Re-dry the spool. Treat the new job as a fresh starting point, not an edit.</p></div>
+    <div class="card accent-green"><h4>Change the nozzle</h4><p>A larger nozzle is faster but coarser; both hotends must have the same diameter. Re-run calibrations after a hotend swap, as prompted.</p></div>
+    <div class="card accent-orange"><h4>Change the plate</h4><p>Smooth/engineering PEI with glue suits TPU and nylons; textured PEI without glue suits TPU too (never glue on textured PEI). Cool Plate is not for TPU.</p></div>
+  </div>
+
+  <div class="callout warn"><span class="callout-title">Pre-flight checklist</span>
+    <ul class="checklist">
+      <li>Filament dry and matched to the profile (in the slicer, the slot's color/type is synced).</li>
+      <li>Plate clean and the correct type chosen in Studio.</li>
+      <li>Nozzle assignment visible in the preview: nothing TPU on the right nozzle.</li>
+      <li>Flush volumes and the prime tower are reviewed.</li>
+      <li>Door and lid closed for ABS/ASA/PC/PA; filter fitted.</li>
+    </ul></div>
+
+  <div class="callout x2d"><span class="callout-title">Documented anchors you can rely on</span>
+    <p>Left-only volume 256 × 256 × 260 mm; right-only and common dual area 235.5 × 256 × 256 mm; right nozzle ≤ 200 mm/s; chamber up to 65 °C; speed modes 50 / 100 / 124 / 166 %. Everything else in the recipes above is a starting point to refine.</p></div>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul class="checklist">
+    <li>Think in <b>nozzle assignment first</b>: TPU and fast, precise work on the left; slower support and utility work on the right.</li>
+    <li>A single AMS 2 Pro feeds the left nozzle; plan a second AMS or a track switch before designing right-nozzle workflows.</li>
+    <li>Matching spools in adjacent slots give Auto-Refill for long jobs.</li>
+    <li>Every value here is a starting point; record what works in a filament profile (see <a href="settings-and-profiles.html">settings and profiles</a>).</li>
+  </ul>
+
+  <div class="callout tip"><span class="callout-title">Where to go next</span>
+    <p>Practice these workflows in the <a href="../exercises/x2d-challenges.html">X2D challenges</a>, and keep the machine healthy with <a href="maintenance-and-troubleshooting.html">maintenance and troubleshooting</a>. Flexible parts: <a href="tpu-and-flexibles.html">TPU and flexibles</a>.</p></div>
+
+</main>
+</body>
+</html>

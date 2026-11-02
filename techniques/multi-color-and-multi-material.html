@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Multi-color &amp; multi-material · 3D Printing Compendium</title>
+  <meta name="description" content="How multi-color and multi-material 3D printing works: filament swaps, AMS-style feeders, toolchangers, dual nozzles, purge and flush mechanics, waste reduction, color tricks and design rules.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="techniques/multi-color-and-multi-material.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 4 · Techniques</div>
+    <h1>Multi-color &amp; multi-material</h1>
+    <p class="lead">Print in several colors or several plastics in one job. Learn the hardware approaches, why color changes create waste, how to shrink that waste, and how to design models that look great in color without hours of purging.</p>
+    <div class="meta"><span class="badge intermediate">Intermediate</span><span class="badge time">⏱ 40 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <p>Five ways to print with more than one filament, what happens inside the nozzle during a change, how prime towers and flush volumes work, how to cut waste, how to design for color, which materials stick to each other, and the usual AMS-style pitfalls and how to avoid them.</p></div>
+
+  <h2 id="approaches">🔰 Five ways to print in more than one filament</h2>
+  <p>A single-nozzle printer has one melt zone and one nozzle, so changing filament means getting one plastic out and the next in. Different machines solve that problem in different ways, each with its own strengths and costs.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 420" role="img" aria-label="Five schematics: manual filament swap, multi-spool feeder into one nozzle, toolchanger with several toolheads, dual-nozzle toolhead, and mixing hotend with several inputs into one melt chamber">
+      <rect class="f-gray" x="20" y="20" width="140" height="170" rx="10" opacity="0.5"/>
+      <text class="t t-c t-b" x="90" y="42">1 · Manual swap</text>
+      <circle class="d-plastic" cx="55" cy="95" r="18"/><circle class="d-plastic2" cx="125" cy="95" r="18"/>
+      <rect class="d-metal2" x="70" y="130" width="40" height="30" rx="4"/>
+      <path class="d-thin" d="M55 113 Q60 125 80 130 M125 113 Q120 125 100 130"/>
+      <text class="t-xs t-c" x="90" y="178">You pause and change</text>
+
+      <rect class="f-blue" x="170" y="20" width="140" height="170" rx="10" opacity="0.3"/>
+      <text class="t t-c t-b" x="240" y="42">2 · Feeder / AMS</text>
+      <rect class="d-metal" x="185" y="55" width="110" height="38" rx="6"/>
+      <circle class="d-plastic" cx="205" cy="74" r="10"/><circle class="d-plastic2" cx="232" cy="74" r="10"/>
+      <circle class="s-green" cx="259" cy="74" r="10" style="fill:var(--green)"/><circle class="s-red" cx="283" cy="74" r="8" style="fill:var(--red)"/>
+      <path class="k-orange" d="M240 93 V125"/>
+      <rect class="d-metal2" x="220" y="125" width="40" height="30" rx="4"/>
+      <text class="t-xs t-c" x="240" y="178">Hub selects, one nozzle</text>
+
+      <rect class="f-purple" x="320" y="20" width="140" height="170" rx="10" opacity="0.3"/>
+      <text class="t t-c t-b" x="390" y="42">3 · Toolchanger</text>
+      <rect class="d-metal2" x="335" y="70" width="28" height="40" rx="4"/><rect class="d-metal2" x="369" y="70" width="28" height="40" rx="4"/>
+      <rect class="d-metal2" x="403" y="70" width="28" height="40" rx="4"/>
+      <path class="d-ink" d="M349 110 V125 M383 110 V125 M417 110 V125"/>
+      <circle class="s-orange" cx="349" cy="132" r="4"/><circle class="s-blue" cx="383" cy="132" r="4"/><circle class="s-green" cx="417" cy="132" r="4"/>
+      <text class="t-xs t-c" x="390" y="178">Whole heads swap</text>
+
+      <rect class="f-teal" x="470" y="20" width="140" height="170" rx="10" opacity="0.3"/>
+      <text class="t t-c t-b" x="540" y="42">4 · Dual nozzle</text>
+      <rect class="d-metal" x="495" y="60" width="90" height="50" rx="6"/>
+      <rect class="d-metal2" x="504" y="110" width="30" height="22" rx="3"/><rect class="d-metal2" x="546" y="110" width="30" height="22" rx="3"/>
+      <circle class="s-orange" cx="519" cy="138" r="4"/><circle class="s-blue" cx="561" cy="138" r="4"/>
+      <text class="t-xs t-c" x="540" y="178">Two nozzles, one lifts</text>
+
+      <rect class="f-orange" x="620" y="20" width="140" height="170" rx="10" opacity="0.3"/>
+      <text class="t t-c t-b" x="690" y="42">5 · Mixing</text>
+      <path class="k-red" d="M650 60 L690 100 M690 60 V100 M730 60 L690 100"/>
+      <rect class="d-metal2" x="670" y="100" width="40" height="34" rx="4"/>
+      <circle class="s-purple" cx="690" cy="142" r="4"/>
+      <text class="t-xs t-c" x="690" y="178">Blends inside nozzle</text>
+
+      <text class="t-sm t-c" x="390" y="226">The key trade-off is how much plastic is wasted at each color change versus complexity and cost</text>
+      <rect class="d-surface" x="20" y="246" width="740" height="150" rx="10"/>
+      <text class="t t-b" x="40" y="272">Rough comparison</text>
+      <text class="t-sm" x="40" y="298">Manual swap: cheapest, no waste, but you must be present. Good for a handful of layers.</text>
+      <text class="t-sm" x="40" y="320">Feeder (AMS-style): automatic, many colors, waste per change. Most common approach today.</text>
+      <text class="t-sm" x="40" y="342">Toolchanger: almost no purge since each head holds its own filament; costlier, more complex.</text>
+      <text class="t-sm" x="40" y="364">Dual nozzle: less purging for two-material or two-color work; fewer total colors per layer.</text>
+      <text class="t-sm" x="40" y="386">Mixing: blends gradients; rarely used for crisp colors.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> Five hardware approaches. They differ in where filament is switched: before the nozzle (swap, feeder), at the toolhead (toolchanger, dual nozzle) or inside the melt zone (mixing).</figcaption>
+  </figure>
+
+  <h3>1. Filament swaps (M600 and pause-at-layer)</h3>
+  <p>The simplest method: tell the slicer to pause at a certain layer. The printer parks, you unload the old filament, load the new one, purge a short length until the new color flows cleanly, and resume. The G-code commonly used is <code>M600</code> (filament change), though some firmware calls it a pause plus a macro. It needs no extra hardware and wastes only a few centimeters of filament, which makes it ideal for <strong>stripes and layers of color</strong> such as lithophanes, name plates, and a color change halfway up a vase. The drawback is that you must be at the printer, and every change adds a manual step.</p>
+
+  <h3>2. Multi-spool feeders (AMS-style systems)</h3>
+  <p>A feeder holds several spools and pushes the chosen filament through a tube to a single extruder. The system retracts the old filament out of the hotend (often into a buffer or back to the feeder) and loads the new one automatically. It can do hundreds of changes per print with no human help. Because there is still one nozzle, every change must <strong>flush</strong> the old color out of the melt zone before the new color is clean, and that creates waste (see <a href="#waste">waste mechanics</a>). Examples include Bambu's AMS family, Prusa's MMU, Creality's CFS and similar systems.</p>
+
+  <h3>3. Toolchangers</h3>
+  <p>A toolchanger parks several complete toolheads on a rack. To change colors the gantry puts one head down and picks up another. Because each head carries its own nozzle and its own filament, there is nothing to purge from the melt zone; at most you wipe the nozzle on a small tower to remove ooze. The result is <strong>very low waste</strong>, and a toolchanger can combine very different materials (for example PLA and PETG with different temperatures). Costs are mechanical complexity, alignment between heads (offsets must be calibrated to a fraction of a millimeter), and heads that idle at a standby temperature and leak.</p>
+
+  <h3>4. Dual-nozzle and multi-nozzle toolheads</h3>
+  <p>Two nozzles share one carriage; the active one lowers while the idle one is lifted (or both sit at fixed offsets and the slicer plans around their positions). Each nozzle can hold a different filament, so for two-color or model-plus-support prints almost no purging is needed. A dual-nozzle machine with an AMS-style feeder on each side can do both: print fast with minimal waste while still reaching many colors. The nozzles have a fixed offset, so the build area for a given nozzle may be smaller than the full bed.</p>
+  <div class="callout x2d"><span class="callout-title">Bambu X2D</span>
+    <p>The X2D is a dual-nozzle printer designed to cut the purge needed for two-filament jobs. The two nozzles are not identical in role, so how a model is split between them matters; read <a href="../x2d/dual-nozzle-printing.html">Dual-nozzle printing</a> for the limits and strategies.</p></div>
+
+  <h3>5. Mixing hotends and gradient printing</h3>
+  <p>A mixing hotend feeds two, three or more filaments into one melt chamber, where they blend before leaving the nozzle. By changing the ratio per layer you get gradients; by changing it quickly you get marbled or "tweed" effects. Colors are never crisp because the chamber holds a pool of the previous mix, and not many printers use this today. It is a fun niche for rainbow vases.</p>
+
+  <div class="callout info"><span class="callout-title">Painting versus assigning</span>
+    <p>Some slicers let you <em>paint</em> colors directly onto the model surface, while others only let you assign a filament to an entire object or part. The hardware method decides how many colors you can reach; the slicer's tools decide how comfortable it is to use them. Both are covered below.</p></div>
+
+  <h2 id="waste">Purge, flush and the waste problem</h2>
+  <h3>🔰 What actually happens during a color change</h3>
+  <p>When a single-nozzle printer swaps filaments, the melted old plastic is still inside the nozzle and melt zone. If the new filament is pushed in, the first segment of extrusion will be a blend of old and new colors. Three jobs have to be done before printing resumes with a clean new color:</p>
+  <ol class="steps">
+    <li><strong>Retract and unload</strong>The old filament is pulled up out of the melt zone, often with a cooling-and-tip-shaping routine so it does not leave strings or blobs in the extruder.</li>
+    <li><strong>Load and push</strong>The new filament is fed down to the extruder gears and pushed into the melt zone, shoving the remaining old melt out of the nozzle.</li>
+    <li><strong>Flush</strong>The printer extrudes extra filament (the <em>flush volume</em>) until the output is clean new color. This material is thrown away or hidden in a purge area.</li>
+  </ol>
+  <p>Flush volume is typically in the hundreds of cubic millimeters per change, but it depends strongly on the colors involved, as seen below.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 360" role="img" aria-label="Cutaway of a nozzle showing old color being pushed out by new color in four stages: old only, new arriving, mixed output, clean new color">
+      <g>
+        <text class="t t-c t-b" x="100" y="22">1 · Old color</text>
+        <rect class="d-metal" x="60" y="40" width="80" height="150" rx="4"/>
+        <rect x="76" y="48" width="48" height="110" style="fill:var(--orange);stroke:none"/>
+        <path class="d-metal2" d="M60 190 L88 230 H112 L140 190 Z"/>
+        <path style="fill:var(--orange);stroke:none" d="M88 190 H112 V228 H88 Z"/>
+      </g>
+      <g>
+        <text class="t t-c t-b" x="290" y="22">2 · New pushes in</text>
+        <rect class="d-metal" x="250" y="40" width="80" height="150" rx="4"/>
+        <rect x="266" y="48" width="48" height="50" style="fill:var(--blue);stroke:none"/>
+        <rect x="266" y="98" width="48" height="60" style="fill:var(--orange);stroke:none"/>
+        <path class="d-metal2" d="M250 190 L278 230 H302 L330 190 Z"/>
+        <path style="fill:var(--orange);stroke:none" d="M278 190 H302 V228 H278 Z"/>
+      </g>
+      <g>
+        <text class="t t-c t-b" x="480" y="22">3 · Mixed output</text>
+        <rect class="d-metal" x="440" y="40" width="80" height="150" rx="4"/>
+        <rect x="456" y="48" width="48" height="100" style="fill:var(--blue);stroke:none"/>
+        <rect x="456" y="148" width="48" height="10" style="fill:var(--teal);stroke:none"/>
+        <path class="d-metal2" d="M440 190 L468 230 H492 L520 190 Z"/>
+        <path style="fill:var(--teal);stroke:none" d="M468 190 H492 V228 H468 Z"/>
+      </g>
+      <g>
+        <text class="t t-c t-b" x="670" y="22">4 · Clean new</text>
+        <rect class="d-metal" x="630" y="40" width="80" height="150" rx="4"/>
+        <rect x="646" y="48" width="48" height="110" style="fill:var(--blue);stroke:none"/>
+        <path class="d-metal2" d="M630 190 L658 230 H682 L710 190 Z"/>
+        <path style="fill:var(--blue);stroke:none" d="M658 190 H682 V228 H658 Z"/>
+      </g>
+      <path class="d-ink arrow" d="M150 120 H240"/><path class="d-ink arrow" d="M340 120 H430"/><path class="d-ink arrow" d="M530 120 H620"/>
+      <path class="d-dash" d="M20 250 H760"/>
+      <rect class="f-orange" x="40" y="268" width="160" height="26" rx="6"/><text class="t-sm t-c" x="120" y="286">old color stays in the nozzle</text>
+      <rect class="f-teal" x="310" y="268" width="170" height="26" rx="6"/><text class="t-sm t-c" x="395" y="286">blend: must not be printed</text>
+      <rect class="f-blue" x="580" y="268" width="170" height="26" rx="6"/><text class="t-sm t-c" x="665" y="286">resume printing here</text>
+      <text class="t-sm t-c" x="390" y="330">Stages 2 and 3 are the flush: it is waste unless hidden inside infill or an object.</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> The nozzle and melt zone hold a small reservoir of old color. Flushing replaces it with new color; the blend in between has to go somewhere.</figcaption>
+  </figure>
+
+  <h3>The prime (wipe) tower</h3>
+  <p>The usual dumping ground is a <strong>prime tower</strong> (also called a wipe tower): a thin rectangular stack printed beside the model. At each color change the nozzle moves to the tower, flushes there, and then lays down a few tower layers in the new color to condition the nozzle before returning to the model. The tower also serves as an anchor: its layers are present on every layer that changes color so that pressure and flow settle before returning to the part.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 360" role="img" aria-label="Top view of a build plate with a model and a prime tower beside it; side view of the tower with colored bands for each color change and larger bands where more flush is needed">
+      <rect class="d-surface" x="20" y="30" width="330" height="290" rx="8"/>
+      <text class="t-xs" x="28" y="46">build plate, top view</text>
+      <circle class="d-plastic" cx="150" cy="170" r="70"/>
+      <path style="fill:var(--blue);stroke:none;opacity:.8" d="M150 170 L220 170 A70 70 0 0 1 185 230.6 Z"/>
+      <path style="fill:var(--green);stroke:none;opacity:.8" d="M150 170 L185 230.6 A70 70 0 0 1 115 230.6 Z"/>
+      <text class="t-sm t-c" x="150" y="260">model</text>
+      <rect class="d-metal2" x="260" y="60" width="70" height="70" rx="3"/>
+      <rect x="266" y="66" width="58" height="58" style="fill:none;stroke:var(--ink);stroke-dasharray:3 3"/>
+      <text class="t-xs t-c" x="295" y="150">prime tower</text>
+      <path class="d-mute arrow" d="M224 160 Q250 130 262 112"/>
+      <text class="t-xs" x="28" y="310">nozzle travels to the tower at each change</text>
+
+      <text class="t t-b" x="400" y="46">Tower side view</text>
+      <rect class="d-metal" x="420" y="60" width="90" height="270" rx="3"/>
+      <rect x="426" y="66" width="78" height="30" style="fill:var(--blue);stroke:none"/>
+      <rect x="426" y="96" width="78" height="22" style="fill:var(--green);stroke:none"/>
+      <rect x="426" y="118" width="78" height="40" style="fill:var(--blue);stroke:none"/>
+      <rect x="426" y="158" width="78" height="22" style="fill:var(--orange);stroke:none"/>
+      <rect x="426" y="180" width="78" height="46" style="fill:var(--green);stroke:none"/>
+      <rect x="426" y="226" width="78" height="28" style="fill:var(--blue);stroke:none"/>
+      <rect x="426" y="254" width="78" height="70" style="fill:var(--orange);stroke:none"/>
+      <path class="d-thin" d="M520 160 H560"/>
+      <text class="t-sm" x="566" y="150">A tall band = a color change that</text>
+      <text class="t-sm" x="566" y="167">needs a lot of flush (e.g. dark → light)</text>
+      <path class="d-thin" d="M520 105 H560"/>
+      <text class="t-sm" x="566" y="100">A thin band = small change</text>
+      <text class="t-sm" x="566" y="117">(light → dark)</text>
+      <path class="d-ink arrow" d="M400 330 V70"/>
+      <text class="t-xs" x="372" y="190" style="writing-mode:vertical-rl">height (layers)</text>
+      <text class="t-sm" x="566" y="260">The tower grows with every layer that has a change</text>
+      <text class="t-sm" x="566" y="277">So skipping layers without changes saves material</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> The prime tower collects the flush. Its bands show how the amount of purge differs from change to change.</figcaption>
+  </figure>
+
+  <h3>🔧 The flush matrix: dark to light needs more</h3>
+  <p>The amount of flush needed depends on how visible the old color would be in the new one. Going from a pale color to a dark one hides leftovers easily, but going from black to white shows even a trace of the old plastic. Slicers store this as a <strong>flush matrix</strong>: a table whose rows are the "from" filament and columns the "to" filament, with a volume (mm³) in each cell. The slicer usually estimates it from the color values of the filaments and lets you edit it; a global multiplier scales everything.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 330" role="img" aria-label="A four by four flush matrix for black, red, yellow and white filaments showing low volumes when going from light to dark and high volumes from dark to light, with color-coded intensity">
+      <text class="t t-b" x="180" y="30">from ↓ / to →</text>
+      <rect x="150" y="46" width="86" height="40" style="fill:#111;stroke:var(--line)"/><text class="t-sm t-c" x="193" y="70" style="fill:#fff">Black</text>
+      <rect x="238" y="46" width="86" height="40" style="fill:var(--red);stroke:var(--line)"/><text class="t-sm t-c" x="281" y="70" style="fill:#fff">Red</text>
+      <rect x="326" y="46" width="86" height="40" style="fill:var(--yellow);stroke:var(--line)"/><text class="t-sm t-c" x="369" y="70" style="fill:#000">Yellow</text>
+      <rect x="414" y="46" width="86" height="40" style="fill:#f4f4f4;stroke:var(--line)"/><text class="t-sm t-c" x="457" y="70" style="fill:#000">White</text>
+      <rect x="62" y="88" width="86" height="40" style="fill:#111;stroke:var(--line)"/><text class="t-sm t-c" x="105" y="112" style="fill:#fff">Black</text>
+      <rect x="62" y="130" width="86" height="40" style="fill:var(--red);stroke:var(--line)"/><text class="t-sm t-c" x="105" y="154" style="fill:#fff">Red</text>
+      <rect x="62" y="172" width="86" height="40" style="fill:var(--yellow);stroke:var(--line)"/><text class="t-sm t-c" x="105" y="196" style="fill:#000">Yellow</text>
+      <rect x="62" y="214" width="86" height="40" style="fill:#f4f4f4;stroke:var(--line)"/><text class="t-sm t-c" x="105" y="238" style="fill:#000">White</text>
+      <g class="t-sm t-c">
+        <rect x="150" y="88" width="86" height="40" style="fill:var(--surface-2);stroke:var(--line)"/><text x="193" y="113">—</text>
+        <rect x="238" y="88" width="86" height="40" style="fill:var(--green);opacity:.35;stroke:var(--line)"/><text x="281" y="113">140</text>
+        <rect x="326" y="88" width="86" height="40" style="fill:var(--orange);opacity:.55;stroke:var(--line)"/><text x="369" y="113">320</text>
+        <rect x="414" y="88" width="86" height="40" style="fill:var(--red);opacity:.7;stroke:var(--line)"/><text x="457" y="113">550</text>
+        <rect x="150" y="130" width="86" height="40" style="fill:var(--green);opacity:.15;stroke:var(--line)"/><text x="193" y="155">60</text>
+        <rect x="238" y="130" width="86" height="40" style="fill:var(--surface-2);stroke:var(--line)"/><text x="281" y="155">—</text>
+        <rect x="326" y="130" width="86" height="40" style="fill:var(--orange);opacity:.4;stroke:var(--line)"/><text x="369" y="155">240</text>
+        <rect x="414" y="130" width="86" height="40" style="fill:var(--red);opacity:.55;stroke:var(--line)"/><text x="457" y="155">420</text>
+        <rect x="150" y="172" width="86" height="40" style="fill:var(--green);opacity:.15;stroke:var(--line)"/><text x="193" y="197">60</text>
+        <rect x="238" y="172" width="86" height="40" style="fill:var(--green);opacity:.25;stroke:var(--line)"/><text x="281" y="197">100</text>
+        <rect x="326" y="172" width="86" height="40" style="fill:var(--surface-2);stroke:var(--line)"/><text x="369" y="197">—</text>
+        <rect x="414" y="172" width="86" height="40" style="fill:var(--orange);opacity:.4;stroke:var(--line)"/><text x="457" y="197">260</text>
+        <rect x="150" y="214" width="86" height="40" style="fill:var(--green);opacity:.15;stroke:var(--line)"/><text x="193" y="239">60</text>
+        <rect x="238" y="214" width="86" height="40" style="fill:var(--green);opacity:.15;stroke:var(--line)"/><text x="281" y="239">80</text>
+        <rect x="326" y="214" width="86" height="40" style="fill:var(--green);opacity:.25;stroke:var(--line)"/><text x="369" y="239">110</text>
+        <rect x="414" y="214" width="86" height="40" style="fill:var(--surface-2);stroke:var(--line)"/><text x="457" y="239">—</text>
+      </g>
+      <text class="t-sm" x="540" y="82">Example values in mm³ (illustrative):</text>
+      <text class="t-sm" x="540" y="104">Dark → light = large (top right).</text>
+      <text class="t-sm" x="540" y="122">Light → dark = small (bottom left).</text>
+      <text class="t-sm" x="540" y="154">Black → White is the worst case.</text>
+      <text class="t-sm" x="540" y="186">Similar colors need little (e.g.</text>
+      <text class="t-sm" x="540" y="204">yellow → red: moderate).</text>
+      <text class="t-sm t-c" x="390" y="290">Values are placeholders to show the pattern; your slicer computes defaults and lets you edit them.</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> A flush matrix for four colors. Read across: "from black to white" needs the largest volume; "from white to black" the smallest.</figcaption>
+  </figure>
+  <ul>
+    <li><strong>Plan the color order.</strong> If the model allows, order layers so that changes go from light to dark more often than dark to light.</li>
+    <li><strong>Multiplier.</strong> A global flush multiplier (for example 0.6–1.2 of the matrix) trades waste against color purity. Start at 1.0, lower slowly and inspect the first print for tinted areas.</li>
+    <li><strong>Translucent and silk filaments</strong> hide leftovers poorly and often need more flush than the color suggests.</li>
+    <li><strong>Material differences.</strong> When temperatures differ (PLA at 210 °C then PETG at 250 °C), the nozzle also has to change temperature, which adds waiting time and ooze.</li>
+  </ul>
+
+  <h2 id="minimize">Minimizing waste</h2>
+  <p>On a busy multi-color print the flush and tower can exceed the weight of the model itself. A small figurine in four colors might use 20 g of model and 40 g of purge. The following techniques bring that ratio down, roughly in order of effect.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 330" role="img" aria-label="Horizontal bar chart comparing relative waste for the baseline, with purge into infill, with fewer color changes, with a smaller flush multiplier, and with dual nozzle, with a model icon">
+      <text class="t t-b" x="20" y="26">Relative waste for the same four-color model (illustrative)</text>
+      <path class="d-ink" d="M250 44 V280 M250 280 H740"/>
+      <text class="t-sm t-r" x="240" y="72">Baseline</text>
+      <rect class="f-red" x="252" y="56" width="460" height="24"/><text class="t-sm" x="720" y="73">100 %</text>
+      <text class="t-sm t-r" x="240" y="112">Flush into infill</text>
+      <rect class="f-orange" x="252" y="96" width="340" height="24"/><text class="t-sm" x="600" y="113">~75 %</text>
+      <text class="t-sm t-r" x="240" y="152">Fewer color changes</text>
+      <rect class="f-yellow" x="252" y="136" width="260" height="24"/><text class="t-sm" x="520" y="153">~55 %</text>
+      <text class="t-sm t-r" x="240" y="192">Flush multiplier 0.7</text>
+      <rect class="f-green" x="252" y="176" width="230" height="24"/><text class="t-sm" x="490" y="193">~50 %</text>
+      <text class="t-sm t-r" x="240" y="232">Dual nozzle (2 colors)</text>
+      <rect class="f-teal" x="252" y="216" width="110" height="24"/><text class="t-sm" x="370" y="233">~25 %</text>
+      <text class="t-sm t-r" x="240" y="272">Toolchanger</text>
+      <rect class="f-blue" x="252" y="256" width="40" height="24"/><text class="t-sm" x="300" y="273">~10 %</text>
+      <text class="t-sm t-c" x="390" y="312">Numbers are relative illustrations for explaining the ranking, not measurements.</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> The biggest wins come from reducing the number of changes and from hardware that avoids melt-zone flushing.</figcaption>
+  </figure>
+
+  <h3>Techniques that work on any printer</h3>
+  <ol class="steps">
+    <li><strong>Reduce color changes per layer</strong>Every extra color on a layer is another trip to the tower. Merge small color islands into the neighboring color or paint fewer regions. Changing color <em>once per layer</em> is far cheaper than five times per layer.</li>
+    <li><strong>Flush into infill</strong>Many slicers can flush the old color into the model's own sparse infill, and into the support, instead of the tower. The purge is hidden inside the part. Enable it in the multi-material options; it works best on parts with a lot of infill volume and no see-through walls.</li>
+    <li><strong>Flush into a "sacrificial" object</strong>Add a cheap, simple model, such as a calibration cube or a purge brick, and assign it as the flush target. It costs no extra time and becomes a useful test piece.</li>
+    <li><strong>Reduce the flush multiplier</strong>Lower the global flush multiplier in 0.1 steps until you just see slight tint on the model, then go back up one step.</li>
+    <li><strong>Shrink the tower</strong>A narrower tower uses less plastic per layer, but too narrow a tower becomes unstable and cannot hold the required flush. Keep it as small as the flush volumes allow, and use a rib or brim on tall towers.</li>
+    <li><strong>Place the tower sensibly</strong>Put it near the model so that travel is short and next to the corner where the printer parks, avoiding long moves. A tower too close to the model risks tool collisions.</li>
+    <li><strong>Reorder filaments</strong>Where the model lets you pick which color is which, assign the darkest colors to occur after light ones (light → dark is cheap).</li>
+    <li><strong>Use a skirt instead of wiping when possible</strong>For two-color prints, some slicers let you skip the tower altogether and purge at the edge.</li>
+  </ol>
+
+  <div class="callout trick"><span class="callout-title">Keep the waste usefully</span>
+    <p>Chop leftover purge into small pieces and keep a "rainbow bin"; some people melt them into purge bricks, others use them for prototypes where color does not matter. Pure waste can be sorted by material; do not mix PLA with PETG or TPU, as that cannot be recycled together.</p></div>
+
+  <h3>🚀 Where the physics sets limits</h3>
+  <p>Nozzle and melt-zone volume sets a lower bound on flush per change (the volume of the melt chamber and the nozzle channel). High-flow hotends with larger melt volumes need more flush per change. A shorter melt path and a small tip help. Higher temperature lowers viscosity so that the old color flows out faster, so some filaments flush better when printed hot, but ensure the hotter temperature is safe for both materials.</p>
+  <p>Another effect is <strong>filament moisture</strong>: wet filament bubbles and leaves residue, so flushing takes longer. Dry spools help every part of multi-color printing (see <a href="../materials/drying-and-storage.html">drying &amp; storage</a>).</p>
+
+  <h2 id="layering-tricks">Color layering tricks</h2>
+  <h3>🔰 One color per layer range</h3>
+  <p>The cheapest kind of multi-color print changes color only at certain heights. Each change costs one flush, not hundreds. Use this for:</p>
+  <ul>
+    <li><strong>Stripes and bands</strong> on vases, towers and bottles.</li>
+    <li><strong>Signs and plates</strong> where the base is one color and the first N layers of text are another. Print the text upside down in the slicer's layer view, or print the sign flat with the lettering raised on the final layers.</li>
+    <li><strong>Color at a specific layer</strong>: use "add color change" at a layer in the slicer's preview slider so the printer pauses or swaps at that height.</li>
+  </ul>
+
+  <h3>Lithophanes in color</h3>
+  <p>A lithophane is a thin plastic panel whose thickness varies with image brightness: thin areas let light through (bright) and thick areas block it (dark). Printed in white or off-white filament and lit from behind, it shows a photograph. Multi-color versions stack thin layers of different colors (for example cyan, magenta, yellow and white) so that light passing through several layers shows color, as in a subtractive print.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 300" role="img" aria-label="Left: cross-section of a lithophane with thickness varying from thin to thick and a light source behind. Right: stack of colored layers each above a white base, where light passes through different stacks and produces different colors">
+      <text class="t t-b" x="20" y="22">Single-color lithophane</text>
+      <rect class="f-yellow" x="30" y="60" width="30" height="170" rx="4"/><text class="t-xs t-c" x="45" y="250">light</text>
+      <path class="d-ink arrow" d="M70 90 H100"/><path class="d-ink arrow" d="M70 140 H100"/><path class="d-ink arrow" d="M70 190 H100"/>
+      <path class="d-plastic" d="M110 60 V230 H300 V60 H280 V100 H260 V70 H240 V120 H220 V84 H200 V132 H180 V70 H160 V104 H140 V80 H120 V60 Z"/>
+      <path class="d-mute" d="M110 60 V230"/>
+      <text class="t-xs t-c" x="205" y="250">thin = bright, thick = dark</text>
+      <text class="t t-b" x="400" y="22">Color layers stack (cyan + yellow = green)</text>
+      <rect class="f-gray" x="420" y="60" width="30" height="170" rx="4" opacity="0.4"/><text class="t-xs t-c" x="435" y="250">light</text>
+      <rect x="470" y="60" width="60" height="30" style="fill:#fff;stroke:var(--ink)"/>
+      <rect x="470" y="90" width="60" height="14" style="fill:var(--teal);stroke:var(--ink)"/>
+      <text class="t-xs" x="540" y="80">white base</text>
+      <rect x="470" y="130" width="60" height="30" style="fill:#fff;stroke:var(--ink)"/>
+      <rect x="470" y="160" width="60" height="14" style="fill:var(--teal);stroke:var(--ink)"/>
+      <rect x="470" y="174" width="60" height="14" style="fill:var(--yellow);stroke:var(--ink)"/>
+      <text class="t-xs" x="540" y="150">white + cyan + yellow</text>
+      <text class="t-xs" x="540" y="195">transmits green light</text>
+      <text class="t-xs" x="540" y="101">cyan only: transmits cyan</text>
+      <text class="t-sm t-c" x="590" y="270">Color depends on the order and thickness of translucent layers</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> Lithophane principle: thickness controls brightness, and layers of different translucent colors filter the light.</figcaption>
+  </figure>
+
+  <h3>Filament-height-map art ("Hueforge"-style)</h3>
+  <p>A related technique prints an image as a stack of thin translucent filaments of different colors, with thickness mapped from the image. By varying layer thickness in small steps, one image can show a full range of hues viewed from the front with reflected light. Special software generates the layer plan and the change list, typically with one change per layer range, and the slicer prints a mostly flat model whose "height map" is the picture. Prints are 1–3 mm thick, so the total time can be short, but the number of color changes can be very high. Use opaque white or black as a base to control contrast.</p>
+  <div class="callout fact"><span class="callout-title">Why this is cheap</span>
+    <p>Because each change happens on a flat, fixed layer range, the printer can do many changes with little purge if the layers are thin and the flush lands on a hidden surface. This is why layer-based color art is the best starting point for beginners with a feeder.</p></div>
+
+  <h2 id="design">Designing for multi-color</h2>
+  <p>A well-designed multi-color model is one the slicer can easily split into regions. A badly designed one forces dozens of tiny color changes per layer.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 320" role="img" aria-label="Three designs of the same badge: bad with tiny color islands on every layer, better with larger flat color faces, best with separate bodies for each color">
+      <text class="t t-c t-b" x="140" y="22">Poor: many small islands</text>
+      <rect class="d-surface" x="40" y="50" width="200" height="130" rx="8"/>
+      <g style="fill:var(--orange);stroke:none"><rect x="58" y="68" width="14" height="14"/><rect x="92" y="96" width="12" height="12"/><rect x="132" y="70" width="10" height="10"/><rect x="170" y="108" width="14" height="14"/><rect x="205" y="72" width="12" height="12"/><rect x="72" y="140" width="10" height="10"/><rect x="146" y="148" width="12" height="12"/><rect x="190" y="150" width="14" height="14"/></g>
+      <text class="t-sm t-c" x="140" y="206">Each island costs a trip to the tower</text>
+      <text class="t t-c t-b" x="390" y="22">Better: big flat regions</text>
+      <rect class="d-surface" x="290" y="50" width="200" height="130" rx="8"/>
+      <rect x="310" y="70" width="80" height="90" style="fill:var(--orange);stroke:none"/>
+      <rect x="400" y="70" width="70" height="40" style="fill:var(--blue);stroke:none"/>
+      <text class="t-sm t-c" x="390" y="206">Few regions, few changes</text>
+      <text class="t t-c t-b" x="640" y="22">Best: separate bodies</text>
+      <rect class="d-surface" x="540" y="50" width="200" height="130" rx="8"/>
+      <rect x="556" y="66" width="80" height="98" rx="6" style="fill:var(--orange);stroke:var(--ink)"/>
+      <rect x="646" y="66" width="80" height="44" rx="6" style="fill:var(--blue);stroke:var(--ink)"/>
+      <text class="t-sm t-c" x="640" y="206">One part per color, assigned directly</text>
+      <rect class="f-blue" x="40" y="236" width="700" height="60" rx="10" opacity="0.2"/>
+      <text class="t-sm t-c" x="390" y="262">Design rule: group color by body or by large face; keep tiny details monochrome or paint them.</text>
+      <text class="t-sm t-c" x="390" y="282">Minimum feature size in a color should be a few nozzle diameters (about 1–2 mm).</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> The same badge three ways. Fewer, larger color regions cut changes, time and bleed.</figcaption>
+  </figure>
+
+  <h3>Practical design rules</h3>
+  <ul class="checklist">
+    <li><strong>Flat color faces.</strong> A color applied on a vertical wall will show the layer lines, but color boundaries on vertical walls are crisp. On sloped surfaces, boundaries become jagged because layers step.</li>
+    <li><strong>Separate bodies per color.</strong> Export each color as its own body (or STL part) that overlaps its neighbor by a very small margin (0.02–0.05 mm) or share the exact surface. In the slicer, assign a filament per body.</li>
+    <li><strong>Embed, don't paint, for small icons.</strong> Cut a recess in the base and place a second body in the recess so that it fills it completely.</li>
+    <li><strong>Boolean thoughtfully.</strong> Subtract the color body from the base so volumes do not overlap, or the slicer may print both.</li>
+    <li><strong>Prefer thick color regions.</strong> A color layer less than two layers thick can show the color below.</li>
+    <li><strong>Use the painting tool for organic shapes.</strong> Slicers with paint tools let you brush colors onto the surface by triangle, bucket fill, or by angle threshold. Use "fill by angle" to mark all faces facing up.</li>
+    <li><strong>Check the preview.</strong> View the sliced model layer by layer, and count changes in the statistics.</li>
+  </ul>
+
+  <h2 id="compat">Material compatibility in multi-material prints</h2>
+  <p>Color changes inside one material (PLA to PLA) are easy. Mixing <em>different</em> plastics in one part is harder: the layers must bond across the interface, the nozzle temperatures differ and shrinkage can pull the materials apart. Adhesion depends on whether the two polymers are chemically similar enough to intermingle.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 360" role="img" aria-label="Compatibility matrix of PLA, PETG, ABS, TPU, PA and support materials showing good, fair or poor adhesion between pairs">
+      <g class="t-sm t-c">
+        <text x="190" y="40" class="t-b">PLA</text><text x="270" y="40" class="t-b">PETG</text><text x="350" y="40" class="t-b">ABS/ASA</text><text x="430" y="40" class="t-b">TPU</text><text x="510" y="40" class="t-b">PA</text><text x="590" y="40" class="t-b">PVA/BVOH</text>
+      </g>
+      <g class="t-sm t-r">
+        <text x="148" y="82" class="t-b">PLA</text><text x="148" y="122" class="t-b">PETG</text><text x="148" y="162" class="t-b">ABS/ASA</text><text x="148" y="202" class="t-b">TPU</text><text x="148" y="242" class="t-b">PA</text><text x="148" y="282" class="t-b">PVA/BVOH</text>
+      </g>
+      <g class="t-sm t-c">
+        <rect x="152" y="52" width="76" height="36" class="f-green"/><text x="190" y="75">good</text>
+        <rect x="232" y="52" width="76" height="36" class="f-yellow"/><text x="270" y="75">fair</text>
+        <rect x="312" y="52" width="76" height="36" class="f-red"/><text x="350" y="75">poor</text>
+        <rect x="392" y="52" width="76" height="36" class="f-yellow"/><text x="430" y="75">fair</text>
+        <rect x="472" y="52" width="76" height="36" class="f-red"/><text x="510" y="75">poor</text>
+        <rect x="552" y="52" width="76" height="36" class="f-green"/><text x="590" y="75">good</text>
+
+        <rect x="152" y="92" width="76" height="36" class="f-yellow"/><text x="190" y="115">fair</text>
+        <rect x="232" y="92" width="76" height="36" class="f-green"/><text x="270" y="115">good</text>
+        <rect x="312" y="92" width="76" height="36" class="f-yellow"/><text x="350" y="115">fair</text>
+        <rect x="392" y="92" width="76" height="36" class="f-yellow"/><text x="430" y="115">fair</text>
+        <rect x="472" y="92" width="76" height="36" class="f-yellow"/><text x="510" y="115">fair</text>
+        <rect x="552" y="92" width="76" height="36" class="f-yellow"/><text x="590" y="115">fair</text>
+
+        <rect x="152" y="132" width="76" height="36" class="f-red"/><text x="190" y="155">poor</text>
+        <rect x="232" y="132" width="76" height="36" class="f-yellow"/><text x="270" y="155">fair</text>
+        <rect x="312" y="132" width="76" height="36" class="f-green"/><text x="350" y="155">good</text>
+        <rect x="392" y="132" width="76" height="36" class="f-red"/><text x="430" y="155">poor</text>
+        <rect x="472" y="132" width="76" height="36" class="f-yellow"/><text x="510" y="155">fair</text>
+        <rect x="552" y="132" width="76" height="36" class="f-red"/><text x="590" y="155">poor</text>
+
+        <rect x="152" y="172" width="76" height="36" class="f-yellow"/><text x="190" y="195">fair</text>
+        <rect x="232" y="172" width="76" height="36" class="f-yellow"/><text x="270" y="195">fair</text>
+        <rect x="312" y="172" width="76" height="36" class="f-red"/><text x="350" y="195">poor</text>
+        <rect x="392" y="172" width="76" height="36" class="f-green"/><text x="430" y="195">good</text>
+        <rect x="472" y="172" width="76" height="36" class="f-yellow"/><text x="510" y="195">fair</text>
+        <rect x="552" y="172" width="76" height="36" class="f-red"/><text x="590" y="195">poor</text>
+
+        <rect x="152" y="212" width="76" height="36" class="f-red"/><text x="190" y="235">poor</text>
+        <rect x="232" y="212" width="76" height="36" class="f-yellow"/><text x="270" y="235">fair</text>
+        <rect x="312" y="212" width="76" height="36" class="f-yellow"/><text x="350" y="235">fair</text>
+        <rect x="392" y="212" width="76" height="36" class="f-yellow"/><text x="430" y="235">fair</text>
+        <rect x="472" y="212" width="76" height="36" class="f-green"/><text x="510" y="235">good</text>
+        <rect x="552" y="212" width="76" height="36" class="f-red"/><text x="590" y="235">poor</text>
+
+        <rect x="152" y="252" width="76" height="36" class="f-green"/><text x="190" y="275">good</text>
+        <rect x="232" y="252" width="76" height="36" class="f-yellow"/><text x="270" y="275">fair</text>
+        <rect x="312" y="252" width="76" height="36" class="f-red"/><text x="350" y="275">poor</text>
+        <rect x="392" y="252" width="76" height="36" class="f-red"/><text x="430" y="275">poor</text>
+        <rect x="472" y="252" width="76" height="36" class="f-red"/><text x="510" y="275">poor</text>
+        <rect x="552" y="252" width="76" height="36" class="f-green"/><text x="590" y="275">good</text>
+      </g>
+      <text class="t-sm t-c" x="390" y="318">Typical tendencies only; real adhesion depends on temperature, cooling, surface area and the exact filament.</text>
+      <text class="t-sm t-c" x="390" y="338">Always print a small test (two blocks side by side, pull-apart) before committing to a big job.</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> General adhesion tendencies between material pairs. Similar polymers bond; dissimilar ones often need mechanical interlocking.</figcaption>
+  </figure>
+  <div class="callout warn"><span class="callout-title">Hedge your expectations</span>
+    <p>This matrix summarizes common experience, not a guarantee. Support materials marked "good" next to a build material are designed to bond enough to print but still release or dissolve later. Where bonding is "poor", design a mechanical lock (dovetail, pin, overlap) rather than relying on stickiness.</p></div>
+
+  <h3>Interface layers and bridging across materials</h3>
+  <p>When the second material is printed on top of the first, the interface layer is where adhesion happens. The first layer on a different material is printed over a surface that may be much cooler or hotter than normal, and the flow settings must suit the new filament. To improve the bond:</p>
+  <ul>
+    <li><strong>Use a compatible middle layer.</strong> For a PLA part supported by a dissolvable filament, use the slicer's support-interface filament assignment, then print a few thin interface layers of the support material directly beneath the model.</li>
+    <li><strong>Raise the nozzle temperature of the second material slightly</strong> for the first interface layers, so it melts into the surface rather than sitting on it.</li>
+    <li><strong>Increase overlap.</strong> Let the two bodies share a wider surface with a "interlocking" geometry such as dovetails or dashes; most slicers have an "interlocking beam" or "wall overlap" setting.</li>
+    <li><strong>Reduce the cooling</strong> on the interface layer to give the bond time to form.</li>
+    <li><strong>Bridging across materials.</strong> Bridges that span over a different material can sag or let go. Shorten them with a design change, and test the bridge speed and fan for the upper material first. More in <a href="supports-bridges-overhangs.html#bridges">bridges</a>.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 330" role="img" aria-label="Cross-sections of an interface between two materials: flat butt joint, overlapping dovetail interlock, and support interface layer with soluble material">
+      <text class="t t-c t-b" x="140" y="22">Flat butt joint</text>
+      <rect class="d-plastic" x="40" y="60" width="200" height="60"/>
+      <rect class="d-plastic2" x="40" y="120" width="200" height="60"/>
+      <path class="d-ink" d="M40 120 H240" style="stroke-dasharray:4 3"/>
+      <text class="t-sm t-c" x="140" y="206">Weak: depends only on surface bond</text>
+
+      <text class="t t-c t-b" x="390" y="22">Dovetail interlock</text>
+      <rect class="d-plastic" x="290" y="60" width="200" height="60"/>
+      <path class="d-plastic2" d="M290 120 H330 L320 150 H360 L350 120 H370 L360 150 H400 L390 120 H410 L400 150 H440 L430 120 H490 V180 H290 Z"/>
+      <text class="t-sm t-c" x="390" y="206">Strong: geometry locks the bodies</text>
+
+      <text class="t t-c t-b" x="640" y="22">Support interface</text>
+      <rect class="d-plastic" x="540" y="60" width="200" height="60"/>
+      <rect style="fill:var(--teal);stroke:var(--ink)" x="540" y="120" width="200" height="12"/>
+      <g style="stroke:var(--ink);fill:none"><path d="M550 132 V186 M580 132 V186 M610 132 V186 M640 132 V186 M670 132 V186 M700 132 V186 M730 132 V186"/></g>
+      <text class="t-sm t-c" x="640" y="206">Thin interface layer, sparse body</text>
+
+      <rect class="f-blue" x="40" y="236" width="700" height="66" rx="10" opacity="0.2"/>
+      <text class="t-sm t-c" x="390" y="262">Where materials do not bond, give them geometry to hold on with.</text>
+      <text class="t-sm t-c" x="390" y="282">Use the interface layer to control release (support) or to improve bonding (model).</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> Interfaces between different materials. Mechanical interlocking is more reliable than chemical adhesion for dissimilar polymers.</figcaption>
+  </figure>
+
+  <h2 id="ams-pitfalls">Feeder and AMS-style pitfalls</h2>
+  <h3>🔧 Common problems and cures</h3>
+  <div class="table-wrap"><table class="data"><thead><tr><th>Problem</th><th>Cause</th><th>What to do</th></tr></thead><tbody>
+    <tr><td>Filament tangled or crossed on a spool</td><td>Loose end, spool wound badly, spool jerk</td><td>Re-wind or secure the end in the spool clip every time; check spools before a long print.</td></tr>
+    <tr><td>Feeder cannot push or retract filament</td><td>Brittle or very soft filament, old dried-out spools, tube friction</td><td>Avoid very flexible filament through the feeder (use the external spool or direct feed); replace tubes with kinks.</td></tr>
+    <tr><td>Filament snaps in the tube</td><td>Brittle filament (PLA that absorbed moisture and aged, some silk or CF-filled spools)</td><td>Dry it, store it in a sealed box and replace filament that snaps easily when bent.</td></tr>
+    <tr><td>Clog after a change</td><td>Different temperatures, filament left half-melted, dirty tip</td><td>Run a cold pull; set the nozzle temperature to the higher of the two during flush.</td></tr>
+    <tr><td>Wrong color, tinted print</td><td>Insufficient flush or leftover in the nozzle</td><td>Increase the flush multiplier; check the matrix; watch for transparent filaments.</td></tr>
+    <tr><td>Spool not recognized or runs out unexpectedly</td><td>Sensor not detecting, wrong filament length in the profile</td><td>Verify the spool amount before the print; allow auto-refill from a same-color spool.</td></tr>
+    <tr><td>Tower collapses</td><td>Too thin, too tall, poor adhesion</td><td>Widen the tower, add a brim, slow the tower, reduce its layer height cost.</td></tr>
+  </tbody></table></div>
+  <ul>
+    <li><strong>Flexibles.</strong> Soft TPU compresses in tubes and gears. Most feeders handle only harder grades (for example around 95A); otherwise feed from an external spool straight to the extruder. See <a href="../materials/flexibles-and-specialty.html">flexibles &amp; specialty filaments</a>.</li>
+    <li><strong>Brittleness.</strong> Dry filament is more flexible. Heated dryers, or a feeder with built-in drying, help keep spools usable.</li>
+    <li><strong>Mixed temperatures.</strong> A change from a low-temperature to a high-temperature filament means the nozzle must heat, wait, flush, and then settle; it takes longer and uses more flush than changes between similar materials.</li>
+    <li><strong>Abrasive filaments.</strong> Carbon-fiber or glow-in-the-dark filaments wear the feeder's gears and the nozzle; keep those on a hardened-steel nozzle and consider direct feed.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 300" role="img" aria-label="Filament path from spool through feeder and tube to extruder, with callouts marking friction points: sharp tube bend, spool brake, gear grip and nozzle">
+      <circle class="d-plastic" cx="90" cy="150" r="60"/><circle class="d-surface" cx="90" cy="150" r="20"/>
+      <text class="t-sm t-c" x="90" y="240">spool</text>
+      <rect class="d-metal" x="190" y="110" width="110" height="80" rx="8"/>
+      <text class="t-sm t-c" x="245" y="154">feeder hub</text>
+      <path class="k-orange" d="M150 150 H190 M300 150 H380 Q430 150 450 110 Q470 60 520 60 H560"/>
+      <rect class="d-metal2" x="560" y="30" width="80" height="60" rx="6"/>
+      <text class="t-sm t-c" x="600" y="64">extruder</text>
+      <path class="k-orange" d="M640 60 H690"/>
+      <rect class="d-metal2" x="690" y="40" width="40" height="40" rx="4"/>
+      <circle class="d-hot" cx="710" cy="96" r="8"/>
+      <text class="t-sm t-c" x="710" y="124">nozzle</text>
+      <circle class="s-red" cx="150" cy="150" r="10"/><text class="t-xs" x="125" y="86">1 spool drag</text>
+      <circle class="s-red" cx="430" cy="140" r="10"/><text class="t-xs t-c" x="440" y="200">2 tight tube bend</text>
+      <circle class="s-red" cx="560" cy="60" r="10"/><text class="t-xs t-c" x="560" y="120">3 gear grip</text>
+      <text class="t-sm t-c" x="390" y="276">Any point of friction or kink makes soft or brittle filament fail first.</text>
+    </svg>
+    <figcaption><b>Figure 10.</b> Where friction hides in a filament path. Keep tubes short and gently curved and spools free-spinning.</figcaption>
+  </figure>
+
+  <h2 id="assign">Assigning filaments to objects, parts and painted regions</h2>
+  <p>In most slicers the assignment can be made at four levels. Use the highest level that does the job; it gives the slicer the most room to optimize.</p>
+  <div class="table-wrap"><table class="data"><thead><tr><th>Level</th><th>How</th><th>Good for</th><th>Watch out for</th></tr></thead><tbody>
+    <tr><td><strong>Whole object</strong></td><td>Pick a filament in the object list</td><td>Plates with different colored objects</td><td>Each color still shares the same tower; group objects by color order.</td></tr>
+    <tr><td><strong>Part of an object</strong></td><td>Split into parts and assign each part</td><td>Logos, inlays, two-tone housings</td><td>Overlapping parts print twice; use boolean subtraction.</td></tr>
+    <tr><td><strong>Modifier / layer range</strong></td><td>Layer slider or height-range modifier</td><td>Stripes, bands, text on the top</td><td>One change per range; cheap.</td></tr>
+    <tr><td><strong>Painted regions</strong></td><td>Brush, bucket fill or fill by angle</td><td>Organic shapes, gradients, game art</td><td>Many small islands raise purge and time dramatically.</td></tr>
+    <tr><td><strong>Support / interface</strong></td><td>Support filament options</td><td>Soluble or easy-release supports</td><td>Check the temperature compatibility with the model.</td></tr>
+  </tbody></table></div>
+  <div class="callout tip"><span class="callout-title">Preview before you print</span>
+    <p>Always inspect the sliced preview: check the number of color changes, the tower size and the estimated filament per color. If the tower weighs more than the model, simplify the colors or merge regions before you press print.</p></div>
+
+  <div class="callout x2d"><span class="callout-title">Bambu X2D and AMS 2 Pro</span>
+    <p>With two nozzles and AMS units that feed them, the X2D can print two filaments with far less purging than a single-nozzle machine, and can still reach more colors by changing the material on each side. Flush settings and the flush matrix live in the slicer; details are in <a href="../x2d/settings-and-profiles.html">Bambu Studio settings &amp; profiles</a> and <a href="../x2d/ams-2-pro.html">AMS 2 Pro</a>.</p></div>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul class="checklist">
+    <li>Choose the method by how many colors and how much waste you can accept: swap for a few layers, feeder for many colors, dual nozzle or toolchanger for low waste.</li>
+    <li>Every color change on a single nozzle costs a flush; the flush amount depends on the colors, and dark → light costs the most.</li>
+    <li>Cut waste by reducing changes per layer, flushing into infill, lowering the multiplier sensibly and shrinking the tower.</li>
+    <li>Layer-based color (stripes, lithophanes, height-map art) is the cheapest way to get color.</li>
+    <li>Design with big flat color regions and separate bodies; avoid tiny islands.</li>
+    <li>Different plastics bond best when they are chemically alike; otherwise lock them mechanically.</li>
+    <li>Keep filament dry, free-running and appropriately stiff for the feeder path.</li>
+  </ul>
+
+  <h2 id="related">Related pages</h2>
+  <div class="grid cols-3">
+    <a class="card" href="supports-bridges-overhangs.html"><h3>Supports, bridges &amp; overhangs</h3><p>Soluble supports and interface layers.</p></a>
+    <a class="card" href="calibration.html"><h3>Calibration playbook</h3><p>Temperature and flow for each filament.</p></a>
+    <a class="card" href="../exercises/x2d-challenges.html"><h3>X2D + AMS 2 Pro challenges</h3><p>Try dual-nozzle exercises.</p></a>
+  </div>
+</main>
+</body>
+</html>

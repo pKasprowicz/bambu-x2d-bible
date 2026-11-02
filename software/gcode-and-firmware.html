@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>G-code, firmware &amp; ecosystem · 3D Printing Compendium</title>
+  <meta name="description" content="A G-code primer with annotated examples, firmware families (Marlin, Klipper, RepRapFirmware, Prusa, Bambu, Creality), Klipper concepts, host software, network security and privacy, monitoring, automation, post-processing and safe editing of start and end G-code.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="software/gcode-and-firmware.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 3 · Software</div>
+    <h1>G-code, firmware &amp; ecosystem</h1>
+    <p class="lead">Behind every print is a text file of simple commands and a firmware that turns them into motor pulses and heater power. Learn to read G-code, understand how the main firmware families differ, and connect your printer to your network safely.</p>
+    <div class="meta"><span class="badge advanced">Advanced</span><span class="badge intermediate">Intermediate</span><span class="badge time">⏱ 45 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <ul>
+      <li>How to read G-code, with the essential commands explained line by line, including a first-layer example.</li>
+      <li>What firmware does, and how Marlin, Klipper, RepRapFirmware, Prusa, Bambu and Creality differ.</li>
+      <li>Key control concepts: motion planning, pressure advance, input shaping and bed mesh compensation.</li>
+      <li>Host software, network modes, security and privacy basics, monitoring and automation.</li>
+      <li>How to edit start and end G-code, post-process files and debug a print by reading its G-code, safely.</li>
+    </ul>
+  </div>
+
+  <h2 id="gcode-primer">G-code primer</h2>
+  <p><strong>G-code</strong> is a line-based language of machine commands. Each line holds a <em>command</em> (like <code>G1</code>) followed by <em>parameters</em> (letters with numbers, like <code>X50 Y20 E0.8 F1800</code>). Anything after a semicolon is a comment that the printer ignores. Your <a href="slicers.html">slicer</a> writes the file; the printer's firmware reads it one line at a time and executes it. Because the language dates back to CNC machines of the 1950s, dialects differ between firmware, but the basics are shared.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 330" role="img" aria-label="From a G-code line to motion: parse, plan, split into steps, and drive the stepper motors, while the extruder feeds proportional filament">
+      <rect class="d-surface2" x="20" y="20" width="270" height="110" rx="10"/>
+      <text class="t-sm t-b" x="34" y="44">G-code line</text>
+      <text class="t-mono" x="34" y="72" style="font-size:15px">G1 X60 Y30 E1.2 F3000</text>
+      <g class="t-xs"><text x="34" y="96">X, Y: target position (mm)</text><text x="34" y="112">E: filament to push (mm) · F: feed (mm/min)</text></g>
+      <path class="d-ink arrow" d="M294 75 H330"/>
+      <rect class="f-blue" x="334" y="20" width="160" height="110" rx="10"/><text class="t t-b" x="414" y="46" style="text-anchor:middle">Planner</text><text class="t-xs" x="414" y="68" style="text-anchor:middle">look-ahead queue</text><text class="t-xs" x="414" y="84" style="text-anchor:middle">limits speed, accel,</text><text class="t-xs" x="414" y="100" style="text-anchor:middle">corner speeds</text>
+      <path class="d-ink arrow" d="M498 75 H534"/>
+      <rect class="f-green" x="538" y="20" width="160" height="110" rx="10"/><text class="t t-b" x="618" y="46" style="text-anchor:middle">Stepper driver</text><text class="t-xs" x="618" y="68" style="text-anchor:middle">move → thousands of</text><text class="t-xs" x="618" y="84" style="text-anchor:middle">step pulses per second</text>
+      <path class="d-ink arrow" d="M702 75 H738"/>
+      <rect class="f-orange" x="742" y="20" width="98" height="110" rx="10"/><text class="t t-b" x="791" y="46" style="text-anchor:middle">Motion</text><text class="t-xs" x="791" y="68" style="text-anchor:middle">toolhead</text><text class="t-xs" x="791" y="84" style="text-anchor:middle">+ extruder</text>
+      <g transform="translate(20,160)">
+        <rect class="d-surface2" x="0" y="0" width="400" height="150" rx="10"/>
+        <path class="d-grid" d="M20 20 H380 M20 60 H380 M20 100 H380 M60 10 V130 M140 10 V130 M220 10 V130 M300 10 V130"/>
+        <path class="k-orange" d="M40 110 L140 110 L220 50 L330 50" style="stroke-width:4"/>
+        <circle class="d-surface" cx="40" cy="110" r="5"/><circle class="d-surface" cx="140" cy="110" r="5"/><circle class="d-surface" cx="220" cy="50" r="5"/><circle class="d-surface" cx="330" cy="50" r="5"/>
+        <text class="t-xs" x="20" y="142">A path is a chain of straight G1 moves. Curves are many short moves.</text>
+      </g>
+      <g transform="translate(440,160)">
+        <rect class="d-surface2" x="0" y="0" width="400" height="150" rx="10"/>
+        <text class="t-sm t-b" x="14" y="24">Steps per millimeter (typical)</text>
+        <g class="t-xs"><text x="14" y="50">X/Y belts, 16 T pulley, 1/16 µstep, 0.9°: 160 steps/mm</text><text x="14" y="70">Z leadscrew (8 mm lead): 400 steps/mm</text><text x="14" y="90">E direct drive geared: ≈ 400–700 steps/mm</text></g>
+        <text class="t-xs t-m" x="14" y="124">At 200 mm/s on X, firmware must generate roughly 32,000 pulses per second.</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 1.</b> A G-code line becomes motion: parse, plan, convert to step pulses, move. Extrusion (E) is synchronized to travel so line width stays constant.</figcaption>
+  </figure>
+
+  <h3 id="essential-commands">Essential commands</h3>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Command</th><th>Meaning</th><th>Example and notes</th></tr></thead>
+    <tbody>
+      <tr><td><code>G0</code> / <code>G1</code></td><td>Move; G1 usually carries extrusion, G0 is a "rapid" move</td><td><code>G1 X100 Y50 E2.5 F1800</code>. Feed rate F is in mm/min (1800 = 30 mm/s). Many firmwares treat G0 and G1 the same.</td></tr>
+      <tr><td><code>G2</code> / <code>G3</code></td><td>Arc clockwise / counter-clockwise</td><td><code>G2 X20 Y0 I10 J0</code>: I, J are offsets from the start point to the arc center. Reduces file size when arc fitting is enabled.</td></tr>
+      <tr><td><code>G28</code></td><td>Home axes</td><td><code>G28</code> (all) or <code>G28 X Y</code>. Always the first motion of a job.</td></tr>
+      <tr><td><code>G29</code></td><td>Bed leveling / mesh probing</td><td>Marlin and some vendors use it; Klipper uses <code>BED_MESH_CALIBRATE</code>. Bambu start G-code also triggers leveling through its own routine.</td></tr>
+      <tr><td><code>G90</code> / <code>G91</code></td><td>Absolute / relative positioning (XYZ)</td><td>Absolute is the norm; relative is used for small hops and retractions.</td></tr>
+      <tr><td><code>M82</code> / <code>M83</code></td><td>Absolute / relative extruder mode</td><td>Relative (<code>M83</code>) is preferred since E never grows large.</td></tr>
+      <tr><td><code>G92</code></td><td>Set current position without moving</td><td><code>G92 E0</code> resets the extruder counter (needed with absolute E).</td></tr>
+      <tr><td><code>M104</code> / <code>M109</code></td><td>Set hotend temperature / set and wait</td><td><code>M104 S210</code> starts heating; <code>M109 S210</code> blocks until reached.</td></tr>
+      <tr><td><code>M140</code> / <code>M190</code></td><td>Set bed temperature / set and wait</td><td><code>M140 S60</code> then <code>M190 S60</code> later.</td></tr>
+      <tr><td><code>M106</code> / <code>M107</code></td><td>Part-cooling fan speed / off</td><td><code>M106 S255</code> is 100 %; S range 0–255. <code>M106 P1 S128</code> can address a second fan.</td></tr>
+      <tr><td><code>M204</code></td><td>Set acceleration</td><td><code>M204 S3000</code> (some firmware uses P/T for print and travel).</td></tr>
+      <tr><td><code>M205</code></td><td>Set jerk or junction deviation limits</td><td><code>M205 X8 Y8</code> in Marlin; Klipper uses <code>SET_VELOCITY_LIMIT</code> instead.</td></tr>
+      <tr><td><code>M900 K…</code></td><td>Linear/pressure advance factor (Marlin, Bambu)</td><td><code>M900 K0.04</code>. Klipper: <code>SET_PRESSURE_ADVANCE ADVANCE=0.04</code>. RepRapFirmware: <code>M572 D0 S0.04</code>.</td></tr>
+      <tr><td><code>M220</code> / <code>M221</code></td><td>Speed / flow override (percent)</td><td><code>M221 S95</code> reduces flow to 95 %.</td></tr>
+      <tr><td><code>M600</code></td><td>Filament change (pause, unload, wait)</td><td>Used for color changes on single-extruder machines.</td></tr>
+      <tr><td><code>T0</code>, <code>T1</code>…</td><td>Select tool/extruder</td><td>Tool changers and multi-extruder machines. Dual-nozzle and AMS printers wrap tool or filament change in vendor-specific sequences (for example, Bambu uses <code>M620</code>/<code>M621</code> blocks, which you should not edit).</td></tr>
+      <tr><td><code>G4</code></td><td>Dwell (wait)</td><td><code>G4 P500</code> waits 500 ms.</td></tr>
+      <tr><td><code>M84</code></td><td>Disable stepper motors</td><td>End-of-print command.</td></tr>
+      <tr><td><code>M73</code></td><td>Progress and time remaining</td><td>Updates the printer display.</td></tr>
+    </tbody></table></div>
+
+  <div class="callout info"><span class="callout-title">Dialects differ</span>
+    <p>A command with the same name can behave differently between firmwares, or may not exist. Always check the documentation of your printer's firmware before copying lines from forums.</p>
+  </div>
+
+  <h3 id="arcs">Arcs and relative moves</h3>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 260" role="img" aria-label="Arc moves G2 and G3 with center offsets I and J compared to the same curve made of many short line segments">
+      <g class="t t-b"><text x="30" y="24">Straight segments (G1 × many)</text><text x="450" y="24">One arc (G2 / G3)</text></g>
+      <g transform="translate(30,40)">
+        <path class="d-dash" d="M20 160 A120 120 0 0 1 140 40"/>
+        <path class="k-orange" d="M20 160 L26 126 L42 96 L66 70 L96 52 L140 40" style="stroke-width:3"/>
+        <g class="d-surface"><circle cx="20" cy="160" r="4"/><circle cx="26" cy="126" r="4"/><circle cx="42" cy="96" r="4"/><circle cx="66" cy="70" r="4"/><circle cx="96" cy="52" r="4"/><circle cx="140" cy="40" r="4"/></g>
+        <text class="t-xs" x="170" y="100">5 lines → 5 G1 commands</text><text class="t-xs t-m" x="170" y="118">more lines = smoother, bigger file</text>
+      </g>
+      <g transform="translate(450,40)">
+        <path class="k-green" d="M20 160 A120 120 0 0 1 140 40" style="stroke-width:3"/>
+        <circle class="d-surface" cx="20" cy="160" r="4"/><circle class="d-surface" cx="140" cy="40" r="4"/>
+        <circle class="d-ink" cx="140" cy="160" r="3"/><path class="d-dash" d="M20 160 H140 V40"/>
+        <text class="t-xs" x="62" y="176">I = +120</text><text class="t-xs" x="146" y="104">J = +120 − 120 = 0, pointing to the center</text>
+        <text class="t-xs t-mono" x="170" y="150">G2 X140 Y40 I120 J0</text>
+        <text class="t-xs t-m" x="170" y="168">(offsets from start to center)</text>
+      </g>
+      <rect class="d-surface2" x="30" y="226" width="800" height="26" rx="8"/>
+      <text class="t-sm" x="44" y="244">Arc fitting in the slicer replaces runs of short segments with G2/G3 where the printer's firmware supports them.</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> Arc commands trade a bit of firmware complexity for smaller files and smoother motion. Check that your firmware supports arcs before enabling arc fitting.</figcaption>
+  </figure>
+
+  <h2 id="first-layer">Line-by-line: a first-layer sample</h2>
+  <p>This simplified sample shows what a typical job looks like from the start. It is a generic, Marlin-style example for teaching, not a profile for any specific printer: real start G-code from vendors includes many extra steps.</p>
+
+<pre><code>; ===== start G-code =====
+M140 S60               ; start heating bed to 60 C (do not wait yet)
+M104 S150              ; pre-heat nozzle to a safe probing temperature
+G28                    ; home X, Y, Z
+G29                    ; probe the bed and build a leveling mesh
+M190 S60               ; wait for the bed to reach 60 C
+M109 S210              ; heat nozzle to 210 C and wait
+G90                    ; absolute XYZ positioning
+M83                    ; relative extruder moves
+G92 E0                 ; reset extruder position
+G1 Z2.0 F600           ; lift the nozzle
+G1 X10 Y10 F6000       ; travel to the purge line start
+G1 Z0.3 F600           ; lower to first-layer height
+G1 X110 Y10 E10 F1200  ; purge line: slow, thick bead
+G1 Z2.0 F600           ; lift away
+; ===== layer 1 =====
+;LAYER_CHANGE
+;Z:0.2
+M106 S0                ; fan off for the first layer
+G1 Z0.2 F600           ; move to layer height 0.2
+G1 X60.0 Y60.0 F6000   ; travel to the start of the outer wall
+G1 E0.8 F1800          ; un-retract (prime the nozzle)
+G1 F1200               ; set first-layer print speed (20 mm/s)
+G1 X80.0 Y60.0 E0.66   ; draw 20 mm of line; E is filament pushed
+G1 X80.0 Y80.0 E0.66   ; next side of the square
+G1 E-0.8 F2100         ; retract before travel
+G1 Z0.6 F600           ; z-hop
+G1 X120.0 Y60.0 F6000  ; travel to the next island
+; ===== end G-code =====
+M104 S0                ; heater off
+M140 S0                ; bed off
+M107                   ; fan off
+G91                    ; relative positioning
+G1 Z10 F600            ; raise the nozzle
+G90                    ; back to absolute
+G1 X0 Y200 F6000       ; park the toolhead
+M84                    ; release the motors</code></pre>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 260" role="img" aria-label="Timeline of a print start: heat bed, home, probe, heat nozzle, purge, first layer, then continuing layers, and finally cool-down and park">
+      <path class="d-thin" d="M30 120 H830"/>
+      <g class="t-sm t-b" style="text-anchor:middle">
+        <rect class="f-orange" x="30" y="80" width="100" height="40" rx="8"/><text x="80" y="104">Heat bed</text>
+        <rect class="f-blue" x="136" y="80" width="80" height="40" rx="8"/><text x="176" y="104">G28 home</text>
+        <rect class="f-green" x="222" y="80" width="90" height="40" rx="8"/><text x="267" y="104">G29 mesh</text>
+        <rect class="f-red" x="318" y="80" width="100" height="40" rx="8"/><text x="368" y="104">Heat nozzle</text>
+        <rect class="f-yellow" x="424" y="80" width="80" height="40" rx="8"/><text x="464" y="104">Purge</text>
+        <rect class="f-purple" x="510" y="80" width="150" height="40" rx="8"/><text x="585" y="104">Layers 1…N</text>
+        <rect class="f-teal" x="666" y="80" width="164" height="40" rx="8"/><text x="748" y="104">Heaters off · park</text>
+      </g>
+      <g class="t-xs"><text x="30" y="150">M140 / M190</text><text x="136" y="150">G28</text><text x="222" y="150">G29</text><text x="318" y="150">M104 / M109</text><text x="424" y="150">G1 E…</text><text x="510" y="150">G1 X Y E F</text><text x="666" y="150">M104 S0 · M84</text></g>
+      <text class="t-sm t-m" x="30" y="190">Good start routines heat the bed first (it is slow) and probe the bed with the nozzle at a lower temperature.</text>
+      <text class="t-sm t-m" x="30" y="212">Probing with a hot, oozing nozzle can smear plastic on the bed and corrupt the mesh.</text>
+      <text class="t-sm t-m" x="30" y="234">Each stage is a block of lines you can find in the file and read.</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> Anatomy of a job. Every printer's start sequence follows this skeleton, with extra vendor-specific calibration inserted.</figcaption>
+  </figure>
+
+  <div class="callout tip"><span class="callout-title">Reading E values</span>
+    <p>E is the length of filament pushed, in millimeters of 1.75 mm filament. A rough check: line volume ≈ line width × layer height × length, e.g. 0.42 × 0.2 × 20 mm = 1.68 mm³. Filament cross-section for 1.75 mm is 2.405 mm², so E ≈ 1.68 ÷ 2.405 ≈ 0.70 mm; the sample's 0.66 is in the right range, with differences caused by flow ratio and line-shape assumptions.</p>
+  </div>
+
+  <h3 id="bambu-files">Bambu .gcode.3mf and binary G-code</h3>
+  <p>Bambu Studio does not send a plain text file. It produces a <code>.gcode.3mf</code>, which is a ZIP-compressed 3MF package containing the sliced G-code (<code>Metadata/plate_1.gcode</code> and related files), plate thumbnails, per-plate settings and a checksum used by the printer. You can rename the file to <code>.zip</code> and open it to look at the contents. The G-code inside contains many Bambu-specific commands for calibration, AMS handling, noise and chamber control, so it will not run unchanged on other printers. Prusa printers use a different compact container: <code>.bgcode</code>, a binary G-code format that stores metadata and compressed blocks, and can be converted back to text with Prusa's tools. In both cases the slicer's preview, not the raw file, is the right place to inspect a job.</p>
+  <div class="callout warn"><span class="callout-title">Closed printers: look, don't edit</span>
+    <p>On printers with proprietary firmware (such as Bambu Lab), the start and end sequences, AMS or tool-change blocks, calibration routines and some <code>M</code> commands are tightly coupled to the firmware. Editing them without knowing exactly what each line does can cause collisions, nozzle crashes, failed calibrations or a printer that refuses to run the job. Read freely; change only the customizable fields the slicer offers, in small steps.</p>
+  </div>
+
+  <h2 id="firmware">What firmware does</h2>
+  <p><strong>Firmware</strong> is the software running on the printer's controller board. It reads G-code (from an SD card, USB, or over a network), plans motion, reads temperature sensors, runs the heater control loops, watches for faults, and drives the display. It is the layer between the slicer's intent and the physical machine, and it decides what is possible: input shaping, pressure advance, networking, and safety features all live here.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 380" role="img" aria-label="Layered stack from model to machine: slicer, G-code file, host or cloud, firmware planner, drivers, motors and heaters, sensors feeding back">
+      <g class="t-sm t-b" style="text-anchor:middle">
+        <rect class="f-blue" x="250" y="14" width="360" height="42" rx="8"/><text x="430" y="40">Model + slicer settings (3MF)</text>
+        <rect class="f-green" x="250" y="72" width="360" height="42" rx="8"/><text x="430" y="98">G-code file (text or binary)</text>
+        <rect class="f-yellow" x="250" y="130" width="360" height="42" rx="8"/><text x="430" y="156">Host: web UI · OctoPrint · Moonraker · cloud</text>
+        <rect class="f-orange" x="250" y="188" width="360" height="42" rx="8"/><text x="430" y="214">Firmware: parser · planner · kinematics</text>
+        <rect class="f-purple" x="250" y="246" width="360" height="42" rx="8"/><text x="430" y="272">Drivers + heater outputs (MOSFETs)</text>
+        <rect class="f-red" x="250" y="304" width="360" height="42" rx="8"/><text x="430" y="330">Motors · heaters · fans</text>
+      </g>
+      <g class="d-ink arrow"><path d="M430 56 V72"/><path d="M430 114 V130"/><path d="M430 172 V188"/><path d="M430 230 V246"/><path d="M430 288 V304"/></g>
+      <path class="d-dash arrow" d="M610 325 H700 V209 H614"/>
+      <text class="t-xs" x="712" y="260">Sensors feed back:</text><text class="t-xs" x="712" y="276">thermistors, endstops,</text><text class="t-xs" x="712" y="292">probe, accelerometer</text>
+      <g class="t-xs t-m"><text x="20" y="40">Where you work</text><text x="20" y="156">Where you connect</text><text x="20" y="214">Where the rules live</text><text x="20" y="330">Where heat and motion happen</text></g>
+    </svg>
+    <figcaption><b>Figure 4.</b> The firmware stack. Open-source printers expose the host and firmware layers; closed printers expose mostly the slicer and a vendor app.</figcaption>
+  </figure>
+
+  <h2 id="families">Firmware families</h2>
+  <div class="tabs">
+    <div class="tab" data-title="Marlin">
+      <p><strong>Marlin</strong> is the most widespread open-source firmware, running on 8-bit and 32-bit boards in many budget printers. Features are compiled in: configuration is in <code>Configuration.h</code> and <code>Configuration_adv.h</code>, and changing it means editing source and re-flashing. It supports linear advance (<code>M900</code>), input shaping on newer versions, unified bed leveling and a rich <code>M</code>-code set. Strengths: simple, compatible, runs on cheap hardware. Limits: tuning requires rebuilding; planner throughput on weak boards caps speed.</p>
+    </div>
+    <div class="tab" data-title="Klipper">
+      <p><strong>Klipper</strong> splits the work: a host computer (often a Raspberry Pi or similar) runs the planner and kinematics in Python/C, and the microcontroller only executes precisely timed step schedules. Configuration lives in a text file (<code>printer.cfg</code>) that you edit and apply with a restart, no compiling. It offers pressure advance, input shaper, bed mesh, macros and many accessories. Typical front ends are <strong>Mainsail</strong> and <strong>Fluidd</strong>, talking through <strong>Moonraker</strong>, an API server. Strengths: high speed, deep tuning, scripting. Limits: needs a second computer and some Linux comfort.</p>
+    </div>
+    <div class="tab" data-title="RepRapFirmware / Duet">
+      <p><strong>RepRapFirmware</strong> runs on Duet boards (32-bit, with a built-in web interface and network). Configuration uses G-code files (<code>config.g</code>, <code>homeall.g</code>, <code>bed.g</code>) and macro files you can edit in the browser. Features include dynamic acceleration tuning, input shaping, tool changers and a strong multi-tool model. Strengths: integrated, flexible, polished for tool changers and research use. Limits: hardware is pricier, and the ecosystem is smaller than Marlin or Klipper.</p>
+    </div>
+    <div class="tab" data-title="Prusa (Buddy)">
+      <p>Prusa printers run a Marlin-derived firmware (Buddy on current boards) with many vendor features: crash detection, power-loss recovery, filament sensing, network connect, and binary G-code (<code>.bgcode</code>) support. The source is public, but only Prusa-supplied builds are supported. Strengths: reliable out of the box, tightly integrated with PrusaSlicer profiles. Limits: customization is more constrained than in pure Klipper.</p>
+    </div>
+    <div class="tab" data-title="Bambu (proprietary)">
+      <p>Bambu Lab printers run proprietary, closed-source firmware tightly coupled to Bambu Studio, the Handy app and Bambu's cloud. Many functions (calibration, AMS handling, AI monitoring, motion tuning, noise control) work with little user setup, and updates arrive as signed packages, roughly every few months. Strengths: very low setup effort, fast, consistent. Limits: you cannot swap in your own firmware, deep motion-level changes are not exposed, and some network features rely on vendor services or limited local modes (see <a href="#network-security">network and security</a>). For X2D specifics see <a href="../x2d/settings-and-profiles.html">settings and profiles</a>.</p>
+    </div>
+    <div class="tab" data-title="Creality">
+      <p>Creality ships a range: older models use Marlin variants, while newer models (for example Creality's K-series) ship with Klipper-based firmware and their own front end. Because vendor builds are often customized and may lag upstream, check what your specific model runs, and whether the vendor provides configuration files and update instructions. Community firmware projects exist for popular models, but flashing them carries a risk of voiding warranty or bricking the board.</p>
+    </div>
+  </div>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Family</th><th>Config style</th><th>Tuning depth</th><th>Network</th><th>Open source</th><th>Best for</th></tr></thead>
+    <tbody>
+      <tr><td>Marlin</td><td>Compile + flash</td><td><span class="chip yellow">Medium</span></td><td>Via add-ons</td><td><span class="chip green">Yes</span></td><td>Budget and DIY machines</td></tr>
+      <tr><td>Klipper</td><td>Text file, restart</td><td><span class="chip green">Very high</span></td><td>Moonraker API</td><td><span class="chip green">Yes</span></td><td>Speed and tuning enthusiasts</td></tr>
+      <tr><td>RepRapFirmware</td><td>G-code config files</td><td><span class="chip green">High</span></td><td>Built-in web UI</td><td><span class="chip green">Yes</span></td><td>Tool changers, research</td></tr>
+      <tr><td>Prusa Buddy</td><td>Vendor menus + G-code</td><td><span class="chip yellow">Medium</span></td><td>Prusa Connect, local</td><td><span class="chip yellow">Source available</span></td><td>Reliable appliance use</td></tr>
+      <tr><td>Bambu</td><td>Studio profiles + app</td><td><span class="chip red">Low</span></td><td>Cloud, LAN mode</td><td><span class="chip red">No</span></td><td>Fast, low-effort printing</td></tr>
+      <tr><td>Creality</td><td>Varies by model</td><td><span class="chip yellow">Varies</span></td><td>Vendor cloud / local</td><td><span class="chip yellow">Partly</span></td><td>Budget entry machines</td></tr>
+    </tbody></table></div>
+
+  <h2 id="motion-control">Motion planning and pressure advance</h2>
+  <p>Firmware does not simply move from point to point at the requested feed rate. A <strong>planner</strong> looks ahead at upcoming moves and builds a velocity profile with an acceleration ramp, cruise phase and deceleration ramp, limited by the maximum acceleration and by the allowed speed at each corner (<em>jerk</em> or <em>junction deviation</em>). Short segments, like those on a curve, may never reach the target speed, which is why detailed models print slower than the feed-rate settings suggest.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 340" role="img" aria-label="Speed profile with acceleration, cruise, deceleration and a corner, plus extruder pressure advance adding extra filament during acceleration and pulling back during deceleration">
+      <g transform="translate(20,20)">
+        <rect class="d-surface2" x="0" y="0" width="400" height="300" rx="10"/>
+        <text class="t-sm t-b" x="14" y="24">Planned speed along a path</text>
+        <path class="d-grid" d="M30 60 H380 M30 120 H380 M30 180 H380"/>
+        <path class="d-ink" d="M30 50 V250 H380"/>
+        <path class="k-blue" d="M30 250 L90 90 L190 90 L240 200 L270 200 L330 90 L380 250" style="stroke-width:3"/>
+        <text class="t-xs" x="52" y="170">accel</text><text class="t-xs" x="120" y="80">cruise</text><text class="t-xs" x="188" y="150">decel</text><text class="t-xs" x="226" y="224">corner speed</text>
+        <text class="t-xs" x="320" y="268">time →</text><text class="t-xs" x="4" y="90" transform="rotate(-90 12 150)">speed</text>
+        <text class="t-xs t-m" x="14" y="286">Look-ahead slows for the corner, then accelerates again.</text>
+      </g>
+      <g transform="translate(440,20)">
+        <rect class="d-surface2" x="0" y="0" width="400" height="300" rx="10"/>
+        <text class="t-sm t-b" x="14" y="24">Extruder with pressure advance</text>
+        <path class="d-ink" d="M30 50 V250 H380"/>
+        <path class="d-dash" d="M30 250 L90 90 L190 90 L240 250"/>
+        <path class="k-orange" d="M30 250 L48 50 L90 112 L190 112 L200 140 L240 250" style="stroke-width:3"/>
+        <text class="t-xs" x="52" y="46">extra push</text><text class="t-xs" x="196" y="152">early pull-back</text>
+        <text class="t-xs" x="120" y="102" style="fill:var(--accent-orange, currentColor)">steady feed</text>
+        <text class="t-xs t-m" x="14" y="272">Dashed: plain motion. Solid: filament speed with pressure advance.</text>
+        <text class="t-xs t-m" x="14" y="288">Offsets nozzle pressure lag so corners look sharp.</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 5.</b> Left: the planner shapes speed with acceleration, cruise and corner limits. Right: pressure advance adds a burst of filament during acceleration and relaxes it during deceleration.</figcaption>
+  </figure>
+
+  <h3 id="pressure-advance">Pressure advance (linear advance, flow dynamics)</h3>
+  <p>Molten plastic in the nozzle behaves like a compressible spring. When the extruder speeds up, pressure lags and the line starts thin; when it slows, the stored pressure keeps pushing and you get a bulge at corners. <strong>Pressure advance</strong> models this with a factor <em>K</em> (in seconds): the extruder speed gets a boost proportional to its acceleration. The right K depends on filament, temperature and hardware: direct-drive extruders with short paths typically need small values (around 0.02–0.08 for many filaments), while long Bowden tubes need larger ones (often 0.5 or more). Different firmware use different names and commands:</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Firmware</th><th>Name</th><th>Command</th></tr></thead>
+    <tbody>
+      <tr><td>Marlin</td><td>Linear advance</td><td><code>M900 K0.05</code></td></tr>
+      <tr><td>Klipper</td><td>Pressure advance</td><td><code>SET_PRESSURE_ADVANCE ADVANCE=0.05</code></td></tr>
+      <tr><td>RepRapFirmware</td><td>Pressure advance</td><td><code>M572 D0 S0.05</code></td></tr>
+      <tr><td>Bambu</td><td>Flow dynamics (K, with N for shaping)</td><td>Calibrated in Studio; applied by the printer via <code>M900</code> in the file</td></tr>
+    </tbody></table></div>
+  <div class="callout x2d"><span class="callout-title">X2D note</span>
+    <p>Flow Dynamics Calibration applies to the main nozzle only; the auxiliary nozzle runs conservatively and is limited to roughly 200 mm/s and 1,000 mm/s². See <a href="../x2d/dual-nozzle-printing.html">dual-nozzle printing</a>. Calibration fundamentals are in <a href="../techniques/calibration.html">calibration</a>.</p>
+  </div>
+
+  <h3 id="input-shaping">Input shaping and resonance</h3>
+  <p>Every printer frame and toolhead has resonant frequencies. Rapid direction changes excite them, leaving ripples ("ringing" or "ghosting") after sharp corners. <strong>Input shaping</strong> pre-filters motion commands so they cancel the resonance. An accelerometer (built in on many modern printers, or a small add-on board on Klipper machines) measures the frequency response; the firmware stores a shaper type and frequency for each axis. Gains: you can use higher accelerations with less ringing. The trade-off is slight rounding of fine corners when strong shapers are used, so firmware picks the mildest shaper that works.</p>
+
+  <h3 id="bed-mesh">Bed mesh compensation</h3>
+  <p>No bed is perfectly flat. A probe measures height at a grid of points, and firmware interpolates a surface. While printing, it nudges Z (and sometimes blends it out with height) so the first layer follows the actual surface. Large meshes cost time; many printers cache or limit the area to the print region.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 330" role="img" aria-label="Bed mesh: probe grid with measured deviations, side view of warped bed, and nozzle following the compensated path">
+      <g transform="translate(20,20)">
+        <rect class="d-surface2" x="0" y="0" width="360" height="290" rx="10"/>
+        <text class="t-sm t-b" x="14" y="24">Probe grid (top view)</text>
+        <g class="d-grid"><path d="M60 60 H320 M60 110 H320 M60 160 H320 M60 210 H320 M60 260 H320 M60 60 V260 M125 60 V260 M190 60 V260 M255 60 V260 M320 60 V260"/></g>
+        <g class="f-blue"><circle cx="60" cy="60" r="9"/><circle cx="125" cy="60" r="8"/><circle cx="190" cy="60" r="7"/><circle cx="255" cy="60" r="8"/><circle cx="320" cy="60" r="9"/></g>
+        <g class="f-green"><circle cx="60" cy="110" r="8"/><circle cx="125" cy="110" r="6"/><circle cx="190" cy="110" r="5"/><circle cx="255" cy="110" r="6"/><circle cx="320" cy="110" r="8"/><circle cx="60" cy="160" r="7"/><circle cx="125" cy="160" r="5"/><circle cx="190" cy="160" r="4"/><circle cx="255" cy="160" r="5"/><circle cx="320" cy="160" r="7"/><circle cx="60" cy="210" r="8"/><circle cx="125" cy="210" r="6"/><circle cx="190" cy="210" r="5"/><circle cx="255" cy="210" r="6"/><circle cx="320" cy="210" r="8"/></g>
+        <g class="f-orange"><circle cx="60" cy="260" r="9"/><circle cx="125" cy="260" r="8"/><circle cx="190" cy="260" r="7"/><circle cx="255" cy="260" r="8"/><circle cx="320" cy="260" r="9"/></g>
+        <text class="t-xs t-m" x="14" y="282">Bigger dot = larger deviation (bed higher at the edges here)</text>
+      </g>
+      <g transform="translate(400,20)">
+        <rect class="d-surface2" x="0" y="0" width="440" height="290" rx="10"/>
+        <text class="t-sm t-b" x="14" y="24">Side view (exaggerated)</text>
+        <path class="k-gray" d="M30 150 H410" style="stroke-dasharray:4 4"/>
+        <path class="d-metal" d="M30 120 Q220 190 410 120 L410 140 Q220 210 30 140 Z"/>
+        <path class="k-orange" d="M30 112 Q220 182 410 112" style="stroke-width:3"/>
+        <rect class="d-metal" x="120" y="60" width="30" height="40" rx="4"/><path class="d-metal" d="M120 100 L135 118 L150 100 Z"/>
+        <text class="t-xs" x="30" y="100">Nozzle path follows the surface</text>
+        <text class="t-xs" x="30" y="236">Without compensation: first layer too thin in the middle, too thick at the edges.</text>
+        <text class="t-xs" x="30" y="254">With compensation: Z adjusts by fractions of a millimeter along the way.</text>
+        <text class="t-xs t-m" x="30" y="274">Typical meshes are 5×5 to 10×10 points.</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 6.</b> Bed mesh compensation measures a grid of heights, interpolates the surface and offsets Z during the first layers. It corrects bed flatness, not a loose gantry or a bad Z offset.</figcaption>
+  </figure>
+
+  <h2 id="klipper">Klipper concepts</h2>
+  <p>Klipper is popular with tinkerers because everything is a text file and a few commands. The key building blocks:</p>
+  <ul>
+    <li><strong>printer.cfg</strong>: the main config. Sections such as <code>[stepper_x]</code>, <code>[extruder]</code>, <code>[heater_bed]</code>, <code>[probe]</code>, <code>[bed_mesh]</code>, <code>[input_shaper]</code>. Pin names, rotation distance, limits and sensors are defined here.</li>
+    <li><strong>Macros</strong>: named G-code snippets with Jinja templating, defined in <code>[gcode_macro NAME]</code>. <code>PRINT_START</code> and <code>PRINT_END</code> are the conventional hooks, so the slicer's start G-code only calls them with parameters.</li>
+    <li><strong>Pressure advance</strong>: <code>pressure_advance</code> under <code>[extruder]</code>, adjustable on the fly with <code>SET_PRESSURE_ADVANCE</code>.</li>
+    <li><strong>Input shaper</strong>: <code>[input_shaper]</code> with <code>shaper_freq_x/y</code> and type; measured with <code>SHAPER_CALIBRATE</code> using an accelerometer.</li>
+    <li><strong>Bed mesh</strong>: <code>BED_MESH_CALIBRATE</code> probes and <code>BED_MESH_PROFILE</code> saves or loads named meshes.</li>
+    <li><strong>SAVE_CONFIG</strong>: stores calibration results at the bottom of <code>printer.cfg</code> in an auto-generated block. Do not hand-edit that block.</li>
+  </ul>
+
+<pre><code># printer.cfg excerpt: a minimal PRINT_START macro
+[gcode_macro PRINT_START]
+gcode:
+    {% set BED = params.BED|default(60)|float %}
+    {% set EXTRUDER = params.EXTRUDER|default(210)|float %}
+    M140 S{BED}                  # start heating bed
+    G28                          # home
+    BED_MESH_CALIBRATE           # probe
+    M190 S{BED}                  # wait for bed
+    M109 S{EXTRUDER}             # heat and wait for nozzle
+    G92 E0
+    G1 X10 Y10 Z0.3 F3000
+    G1 X110 Y10 E12 F600         # purge line</code></pre>
+  <p>The slicer's start G-code then becomes one line: <code>PRINT_START BED=[bed_temperature_initial_layer_single] EXTRUDER=[nozzle_temperature_initial_layer]</code> (placeholder names vary by slicer). This keeps hardware logic with the printer, where it belongs, and the slicer profile portable.</p>
+
+  <h2 id="host-software">Host software</h2>
+  <p>A <strong>host</strong> is a program (or computer) that sits between you and the printer: it uploads files, starts and pauses jobs, shows temperatures and a camera view, and records history. The printer's firmware keeps doing the real-time work; the host adds comfort and remote access.</p>
+  <div class="grid cols-2">
+    <div class="card accent-blue"><h3>OctoPrint</h3><p>The classic Python host, often run on a Raspberry Pi connected to the printer by USB. A large plugin ecosystem (bed visualizer, timelapse, failure detection). Best with Marlin-style firmware. Maintain it: keep the server updated and do not expose it directly to the internet.</p></div>
+    <div class="card accent-green"><h3>Mainsail / Fluidd (with Moonraker)</h3><p>Web interfaces for Klipper. Moonraker is the API layer that provides file management, job queue, history, webcam streams, update manager and integrations. Both show macros as buttons and the config in an editor.</p></div>
+    <div class="card accent-orange"><h3>Obico</h3><p>Camera-based failure detection and remote monitoring, available as a hosted service or self-hosted. It works with OctoPrint and Klipper setups and can pause a print if it detects "spaghetti". Check current plans and what data is sent where.</p></div>
+    <div class="card accent-purple"><h3>Repetier-Server and others</h3><p>Repetier-Server manages multiple printers from one host. Other options include vendor tools such as Prusa Connect and Duet Web Control. Pick the one your firmware speaks natively.</p></div>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 330" role="img" aria-label="Typical Klipper network: printer MCU connected by USB to a single-board computer running Klipper, Moonraker and Mainsail, accessed from a browser on the local network, camera attached, remote access only through VPN">
+      <rect class="d-surface2" x="20" y="20" width="820" height="290" rx="12"/>
+      <text class="t-sm t-b" x="34" y="44">Home network</text>
+      <g transform="translate(40,70)">
+        <rect class="f-red" x="0" y="0" width="150" height="90" rx="10"/><text class="t t-b" x="75" y="34" style="text-anchor:middle">Printer MCU</text><text class="t-xs" x="75" y="54" style="text-anchor:middle">steppers · heaters</text><text class="t-xs" x="75" y="70" style="text-anchor:middle">executes step schedule</text>
+      </g>
+      <path class="d-ink arrow" d="M190 115 H250"/><text class="t-xs" x="196" y="104">USB / CAN</text>
+      <g transform="translate(254,70)">
+        <rect class="f-orange" x="0" y="0" width="210" height="90" rx="10"/><text class="t t-b" x="105" y="28" style="text-anchor:middle">Host computer</text><text class="t-xs" x="105" y="48" style="text-anchor:middle">Klipper (planner)</text><text class="t-xs" x="105" y="64" style="text-anchor:middle">Moonraker (API)</text><text class="t-xs" x="105" y="80" style="text-anchor:middle">Mainsail / Fluidd (web UI)</text>
+      </g>
+      <g transform="translate(254,200)">
+        <rect class="f-purple" x="0" y="0" width="210" height="60" rx="10"/><text class="t t-b" x="105" y="26" style="text-anchor:middle">Webcam</text><text class="t-xs" x="105" y="44" style="text-anchor:middle">stream + timelapse</text>
+      </g>
+      <path class="d-ink arrow" d="M359 200 V162"/>
+      <path class="d-ink arrow" d="M468 115 H540"/><text class="t-xs" x="476" y="104">Wi-Fi / LAN</text>
+      <g transform="translate(544,70)">
+        <rect class="f-blue" x="0" y="0" width="140" height="90" rx="10"/><text class="t t-b" x="70" y="34" style="text-anchor:middle">Router</text><text class="t-xs" x="70" y="54" style="text-anchor:middle">firewall · no port</text><text class="t-xs" x="70" y="70" style="text-anchor:middle">forwarding</text>
+      </g>
+      <path class="d-ink arrow" d="M684 115 H720"/>
+      <g transform="translate(724,70)">
+        <rect class="f-green" x="0" y="0" width="100" height="90" rx="10"/><text class="t t-b" x="50" y="34" style="text-anchor:middle">Phone /</text><text class="t t-b" x="50" y="52" style="text-anchor:middle">laptop</text><text class="t-xs" x="50" y="72" style="text-anchor:middle">browser</text>
+      </g>
+      <g transform="translate(544,200)"><rect class="f-yellow" x="0" y="0" width="280" height="60" rx="10"/><text class="t t-b" x="140" y="26" style="text-anchor:middle">Away from home: VPN</text><text class="t-xs" x="140" y="44" style="text-anchor:middle">connect to your router, then use the local address</text></g>
+      <path class="d-dash arrow" d="M614 200 V162"/>
+    </svg>
+    <figcaption><b>Figure 7.</b> A typical self-hosted Klipper setup. Remote access goes through a VPN to your own router rather than opening ports on the internet.</figcaption>
+  </figure>
+
+  <h2 id="network-security">Network, security and privacy</h2>
+  <p>A connected printer is a small computer with a heater and moving parts. Treat it like any other device on your network: limit who can reach it, keep it updated and understand where your data goes. Details below are general; vendors change features, so read their current documentation.</p>
+
+  <h3 id="cloud-lan">Cloud mode vs LAN mode</h3>
+  <div class="grid cols-2">
+    <div class="card accent-blue"><h3>Cloud (vendor service)</h3>
+      <ul><li>Print from anywhere, view camera, get notifications, sync profiles and models.</li>
+      <li>The printer keeps an outbound, authenticated connection to the vendor's servers; jobs and status pass through them.</li>
+      <li>You rely on the vendor's uptime, account security and privacy policy.</li></ul></div>
+    <div class="card accent-green"><h3>LAN mode (local only)</h3>
+      <ul><li>The slicer or app talks directly to the printer on your local network, often using a device-specific <strong>access code</strong> (a short password shown on the printer's screen).</li>
+      <li>Fewer outside dependencies; works if the internet is down.</li>
+      <li>Some vendor features (remote viewing, certain notifications, cloud sync) may be reduced or unavailable. Check the current feature list.</li></ul></div>
+  </div>
+  <div class="callout x2d"><span class="callout-title">X2D note</span>
+    <p>The X2D works with Bambu Studio and the Handy app via Bambu Cloud, and offers a LAN mode for local use. Firmware updates arrive roughly every three months, and the printer's cameras support AI monitoring such as spaghetti and foreign-object detection. Setup steps are in <a href="../x2d/setup-and-first-print.html">setup and first print</a>.</p>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 340" role="img" aria-label="Home network segmentation: internet, router and firewall, trusted network with computers and phones, separate IoT network with printer and cameras, restricted rules between them">
+      <g transform="translate(330,14)"><rect class="f-gray" x="0" y="0" width="200" height="44" rx="22"/><text class="t t-b" x="100" y="28" style="text-anchor:middle">Internet</text></g>
+      <path class="d-ink arrow" d="M430 58 V90"/>
+      <g transform="translate(300,92)"><rect class="f-blue" x="0" y="0" width="260" height="56" rx="10"/><text class="t t-b" x="130" y="24" style="text-anchor:middle">Router / firewall</text><text class="t-xs" x="130" y="42" style="text-anchor:middle">VLANs or guest network · strong admin password</text></g>
+      <path class="d-ink arrow" d="M340 148 L220 196"/><path class="d-ink arrow" d="M520 148 L640 196"/>
+      <g transform="translate(20,198)">
+        <rect class="f-green" x="0" y="0" width="400" height="120" rx="12"/><text class="t t-b" x="14" y="26">Trusted network</text>
+        <text class="t-xs" x="14" y="50">Laptops, phones, NAS with personal files</text>
+        <text class="t-xs" x="14" y="70">Slicer PC / OctoPrint-Mainsail access</text>
+        <text class="t-xs t-m" x="14" y="100">Allowed to start connections to the printer VLAN.</text>
+      </g>
+      <g transform="translate(440,198)">
+        <rect class="f-orange" x="0" y="0" width="400" height="120" rx="12"/><text class="t t-b" x="14" y="26">IoT / guest network</text>
+        <text class="t-xs" x="14" y="50">3D printers, cameras, smart plugs</text>
+        <text class="t-xs" x="14" y="70">Internet access only to what it needs</text>
+        <text class="t-xs t-m" x="14" y="100">Blocked from starting connections to the trusted network.</text>
+      </g>
+      <path class="d-dash arrow" d="M420 258 H440"/><text class="t-xs t-b" x="378" y="190" style="text-anchor:middle">one-way rule</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> Segmenting the network: put printers and cameras on a guest or IoT network, and allow only your trusted devices to reach them, not the other way round.</figcaption>
+  </figure>
+
+  <h3 id="security-basics">Practical security rules</h3>
+  <ul class="checklist">
+    <li>Keep printer firmware, slicer and host software updated. Updates fix security bugs as well as print bugs; skip them only after reading the notes for a known regression.</li>
+    <li>Never forward printer or OctoPrint/Mainsail ports from your router to the internet. Use a VPN into your network instead.</li>
+    <li>Treat access codes, API keys and tokens as passwords: do not paste them into screenshots, forum posts or public config repositories.</li>
+    <li>Use unique, strong passwords on vendor accounts and enable two-factor authentication where offered.</li>
+    <li>Put printers and cameras on a guest or IoT network when your router supports it.</li>
+    <li>Check what the camera and cloud features send and store, and disable features you do not use. Point cameras away from private spaces.</li>
+    <li>Download plugins and macros only from sources you trust, and read what they do: a macro runs with the printer's full authority.</li>
+    <li>Be careful with files from unknown sources: G-code is a program for a machine with a heater. Review unfamiliar G-code before running it.</li>
+  </ul>
+  <div class="callout warn"><span class="callout-title">Unattended heating</span>
+    <p>Remote control is convenient, but a printer is still a heat source. Keep thermal-runaway protection enabled, use a smoke detector in the room, and do not leave long prints unobserved unless you accept the risks. See <a href="../foundations/safety-and-workspace.html">safety and workspace</a>.</p>
+  </div>
+
+  <h2 id="monitoring">Monitoring and timelapse</h2>
+  <p>Cameras let you check a print without walking to the room. A small USB or built-in camera streams video; a host or the printer's own software captures a frame at each layer change for <strong>timelapse</strong> (parking the toolhead briefly gives a smoother, less cluttered movie). Beyond watching, software can run <strong>AI detection</strong> on the images: "spaghetti" (detached prints), foreign objects on the bed, a clean first layer or a blocked nozzle. Treat detection as a safety net, not a guarantee: it misses unusual failures, and false alarms happen. Good practice is to set the response to "pause and notify", not "cancel", so you can decide.</p>
+  <ul>
+    <li><strong>Lighting</strong> matters more than camera resolution: a steady LED beats a better sensor in the dark.</li>
+    <li><strong>Placement</strong>: view the bed from the front or above; avoid fogged enclosure glass.</li>
+    <li><strong>Notifications</strong>: use push messages only for events that matter (done, paused, error) to avoid ignoring them.</li>
+  </ul>
+
+  <h2 id="automation">Automation and integrations</h2>
+  <p>Most hosts and vendor apps expose state (progress, temperatures, errors) through an API, a message feed or webhooks. That makes small automations possible:</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Idea</th><th>How</th><th>Caution</th></tr></thead>
+    <tbody>
+      <tr><td>Notify when a print finishes</td><td>Webhook or push plugin on the host</td><td>Avoid including private info in messages</td></tr>
+      <tr><td>Dashboard in Home Assistant</td><td>Official or community integration reads status (temperature, progress, camera)</td><td>Integrations may stop working after firmware or API changes; read recent issue reports first</td></tr>
+      <tr><td>Turn on enclosure lights or exhaust fan when printing</td><td>Automation triggered by job state</td><td>Do not switch off power to the printer automatically during a job or while the hotend is hot</td></tr>
+      <tr><td>Auto-start a queue</td><td>Klipper/Moonraker job queue, OctoPrint plugins</td><td>Requires a reliable bed-clearing routine; unattended chains increase risk</td></tr>
+      <tr><td>Log filament usage and cost</td><td>Spoolman and similar inventory tools</td><td>Keep inventory in sync with real spools</td></tr>
+    </tbody></table></div>
+  <p>Home Assistant, in particular, is a popular open-source smart-home hub; when you connect a printer to it, keep the local-network rules above in mind and prefer integrations that talk to the printer locally.</p>
+
+  <h2 id="post-processing">G-code post-processing</h2>
+  <p>Slicers can run scripts on the finished G-code, passing the file path as an argument. Typical uses: insert color-change or pause commands at specific layers, embed a thumbnail, rewrite arc commands, add timestamps or compress the file. Scripts are plain programs (often Python) that read the file, modify lines and save it back.</p>
+<pre><code># add_comment.py: a minimal post-processing script
+import sys
+
+path = sys.argv[1]
+with open(path, "r", encoding="utf-8") as f:
+    lines = f.readlines()
+
+out = []
+for line in lines:
+    out.append(line)
+    if line.startswith(";LAYER_CHANGE"):
+        out.append("; layer marker inserted by script\n")
+
+with open(path, "w", encoding="utf-8") as f:
+    f.writelines(out)</code></pre>
+  <div class="callout warn"><span class="callout-title">Scripts run with your privileges</span>
+    <p>A post-processing script is a program running on your computer. Use only scripts you trust or have read, test them on a copy of the file, and keep the original. Closed printers may reject modified <code>.gcode.3mf</code> packages that fail the checksum or signature check; this is normal and not a printer fault.</p>
+  </div>
+
+  <h2 id="custom-gcode">Editing start and end G-code safely</h2>
+  <p>Slicer profiles include <strong>machine start G-code</strong>, <strong>machine end G-code</strong> and optional blocks for layer change, filament change and pause. Editing them lets you add a purge line, call a macro, change the park position, or start a fan. A safe approach:</p>
+  <ol class="steps">
+    <li><strong>Copy the profile</strong> first. Never edit the only copy of a vendor preset.</li>
+    <li><strong>Change one thing at a time</strong> and keep a note of why.</li>
+    <li><strong>Check the preview</strong> and the first lines of the exported file to confirm your edit appears where you expect.</li>
+    <li><strong>Run a dry test</strong> with the nozzle high above the bed, or with the first moves observed closely, with a finger near the stop button.</li>
+    <li><strong>Mind the order</strong>: heat before probing or extruding; home before any absolute move; avoid <code>M109</code> waits that stall the queue longer than needed.</li>
+    <li><strong>Keep safety lines</strong>: do not remove temperature waits, thermal protection commands or the end-of-print heater-off.</li>
+    <li><strong>Use placeholders</strong> (variables) provided by the slicer instead of hard-coded temperatures, so one profile works for all filaments.</li>
+  </ol>
+  <div class="callout danger"><span class="callout-title">Do not edit machine G-code on closed printers blindly</span>
+    <p>On Bambu Lab and other closed printers, start and end G-code contains tuned calibration, vibration, AMS or tool-change and homing routines that depend on the firmware version. Removing or reordering lines can skip safety checks, drag filament, crash the toolhead into the purge or cutting area, or leave the printer in an unknown state. If you must change something, use the slicer's documented customization fields, copy the vendor profile, make tiny changes and test with care. When in doubt, restore the default profile and ask the community or support.</p>
+  </div>
+
+  <h2 id="debug">Reading G-code to debug</h2>
+  <p>When a print behaves unexpectedly, the G-code is the ground truth of what was asked. A few habits pay off:</p>
+  <ul>
+    <li>Search for the layer marker (<code>;LAYER_CHANGE</code>, <code>;Z:</code> or similar) near the failure height and read the lines around it.</li>
+    <li>Check <strong>temperatures and fan</strong>: find the last <code>M104/M109</code> and <code>M106</code> before the problem.</li>
+    <li>Look at <strong>feed rates</strong> (<code>F</code>) of outer walls and bridges. A surprising speed often explains a quality issue.</li>
+    <li>Compare <strong>E per XY distance</strong> on lines that look under- or over-extruded: it should match the line-volume estimate from earlier in this page.</li>
+    <li>Look for <strong>retractions and z-hops</strong> around stringing and blobs; they appear as negative and positive E moves.</li>
+    <li>Use a viewer, such as the slicer preview or a standalone G-code viewer, to scrub the file visually, and read the raw text only for the layers that matter.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 300" role="img" aria-label="Annotated G-code snippet with callouts: layer marker, retraction, z-hop, travel, un-retract, wall extrusion with feature type comment">
+      <rect class="d-surface2" x="20" y="16" width="520" height="268" rx="10"/>
+      <g class="t-mono" style="font-size:13px">
+        <text x="36" y="44">;LAYER_CHANGE</text>
+        <text x="36" y="66">;Z:1.2</text>
+        <text x="36" y="88">G1 E-0.8 F2100</text>
+        <text x="36" y="110">G1 Z1.6 F600</text>
+        <text x="36" y="132">G1 X122.4 Y88.1 F9000</text>
+        <text x="36" y="154">G1 Z1.2 F600</text>
+        <text x="36" y="176">G1 E0.8 F1800</text>
+        <text x="36" y="198">;TYPE:Outer wall</text>
+        <text x="36" y="220">G1 F2400</text>
+        <text x="36" y="242">G1 X130.9 Y88.1 E0.31</text>
+        <text x="36" y="264">G1 X130.9 Y96.5 E0.31</text>
+      </g>
+      <g class="t-xs"><path class="d-dash" d="M230 40 H590"/><text x="560" y="36" style="text-anchor:end"/>
+        <text x="570" y="44">New layer at Z = 1.2 mm</text>
+        <path class="d-dash" d="M230 84 H560"/><text x="570" y="88">Retract 0.8 mm of filament (negative E)</text>
+        <path class="d-dash" d="M230 106 H560"/><text x="570" y="110">Z-hop up 0.4 mm</text>
+        <path class="d-dash" d="M230 128 H560"/><text x="570" y="132">Fast travel (150 mm/s): no E</text>
+        <path class="d-dash" d="M230 150 H560"/><text x="570" y="154">Lower back to layer height</text>
+        <path class="d-dash" d="M230 172 H560"/><text x="570" y="176">Un-retract (prime)</text>
+        <path class="d-dash" d="M230 194 H560"/><text x="570" y="198">Feature comment: outer wall</text>
+        <path class="d-dash" d="M230 216 H560"/><text x="570" y="220">Print speed 40 mm/s</text>
+        <path class="d-dash" d="M230 238 H560"/><text x="570" y="242">Extrude 8.5 mm line, E 0.31</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 9.</b> Reading a few lines of G-code: the features of a layer change, a retract-travel-unretract sequence and the start of an outer wall. Exact commands and comments vary by slicer.</figcaption>
+  </figure>
+
+  <div class="callout trick"><span class="callout-title">A quick sanity test</span>
+    <p>Find a long straight outer-wall line: divide its E value by its XY length. Multiply by the filament cross-section (2.405 mm² for 1.75 mm) to get the extruded cross-section area, and compare with line width × layer height. A match within roughly 10 % means flow settings are as intended.</p>
+  </div>
+
+  <h2 id="quiz">Quick self-check</h2>
+  <div class="quiz"><p class="q">What does <code>M109 S210</code> do that <code>M104 S210</code> does not?</p>
+    <ul class="options"><li>Sets the bed temperature</li><li data-correct>Waits until the nozzle reaches 210 °C before continuing</li><li>Turns the fan on</li></ul>
+    <p class="explain">M104 sets the target and continues; M109 blocks until the temperature is reached.</p></div>
+  <div class="quiz"><p class="q">Which is the safest way to remote-monitor a self-hosted printer from outside your home?</p>
+    <ul class="options"><li>Forward the web UI port on your router</li><li data-correct>Connect to your home network through a VPN</li><li>Share the access code in a group chat</li></ul>
+    <p class="explain">A VPN avoids exposing the printer to the internet.</p></div>
+  <div class="quiz"><p class="q">What problem does pressure advance fix?</p>
+    <ul class="options"><li>Warped bed</li><li data-correct>Under-extrusion on acceleration and bulging corners caused by pressure lag in the nozzle</li><li>Layer shifting from loose belts</li></ul>
+    <p class="explain">It adjusts extruder speed to compensate for nozzle pressure that lags behind motion.</p></div>
+  <div class="quiz"><p class="q">You want to change the start G-code on a closed-firmware printer. What is the best approach?</p>
+    <ul class="options"><li>Delete everything that looks unnecessary</li><li data-correct>Copy the profile, change one documented field at a time, and test carefully</li><li>Paste a start script from another brand</li></ul>
+    <p class="explain">Vendor sequences are tuned to the firmware; small, tested changes reduce the chance of crashes.</p></div>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul>
+    <li>G-code is a plain list of moves and settings; reading it shows exactly what the printer was told to do.</li>
+    <li>Firmware plans motion, controls heaters and adds features such as pressure advance, input shaping and bed mesh; families differ in openness and tuning depth.</li>
+    <li>Klipper moves configuration into editable text files and macros; Bambu trades openness for low effort.</li>
+    <li>Segment your network, keep firmware updated, never expose printers directly to the internet, and guard access codes.</li>
+    <li>Edit start and end G-code in small, tested steps, and treat closed-printer sequences as read-only unless you know exactly what you are doing.</li>
+  </ul>
+  <p>Back to <a href="slicers.html">slicers</a>, <a href="slicer-settings.html#starting-profiles">starting profiles</a> and <a href="files-and-meshes.html">files and meshes</a>. For printer-specific details, see <a href="../x2d/settings-and-profiles.html">X2D settings and profiles</a>, <a href="../techniques/troubleshooting.html">troubleshooting</a> and <a href="../techniques/maintenance.html">maintenance</a>.</p>
+</main>
+</body>
+</html>

@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Level 1 · Beginner exercises · 3D Printing Compendium</title>
+  <meta name="description" content="Fifteen guided beginner exercises for FDM 3D printing: first print, calipers, first layer, loading filament, slicer preview, layer height and infill experiments, a cable clip, supports, safety and a first Tinkercad model.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="exercises/level-1-beginner.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 7 · Practice &amp; exercises</div>
+    <h1>Level 1 · Beginner</h1>
+    <p class="lead">Fifteen small, doable projects that turn "I have a printer" into "I understand what my printer is doing". Each one has a goal, a materials list, steps, success criteria, a hint and a worked solution.</p>
+    <div class="meta"><span class="badge beginner">Beginner</span><span class="badge time">⏱ about 20 hours in total</span><span class="badge time">15 exercises</span></div>
+  </header>
+
+  <div class="progress-summary" data-prefix="L1-" data-total="15" data-label="Level 1 progress"></div>
+
+  <h2>How this level works</h2>
+  <p>Level 1 assumes only that you own (or can use) a working FDM printer and a spool of PLA. You do not need CAD skills, special filament or expensive tools. Every exercise ends with <strong>success criteria</strong> you can tick off, and the tick boxes at the bottom of each exercise are saved in your browser, so your progress bar above fills up as you go. Nothing is uploaded anywhere.</p>
+  <p>Work in order if you are brand new. If you already have a few prints behind you, skim the goals and jump to the ones that teach something you have not tried. Exercises that involve printing say so in the time estimate: a "⏱ 1 h" badge means about an hour of your attention plus any printing time listed under <em>You will need</em>.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 190" role="img" aria-label="Roadmap of the fifteen Level 1 exercises grouped into four stages: set up, observe, experiment, make">
+      <rect class="f-blue" x="10" y="20" width="170" height="120" rx="12"/>
+      <text class="t t-c t-b" x="95" y="46">1 · Set up</text>
+      <text class="t-sm t-c" x="95" y="70">L1-1 first print</text>
+      <text class="t-sm t-c" x="95" y="90">L1-4 printer parts</text>
+      <text class="t-sm t-c" x="95" y="110">L1-5 load filament</text>
+      <text class="t-sm t-c" x="95" y="130">L1-14 safety audit</text>
+      <rect class="f-green" x="210" y="20" width="170" height="120" rx="12"/>
+      <text class="t t-c t-b" x="295" y="46">2 · Observe</text>
+      <text class="t-sm t-c" x="295" y="70">L1-3 first layer</text>
+      <text class="t-sm t-c" x="295" y="90">L1-6 slicer preview</text>
+      <text class="t-sm t-c" x="295" y="110">L1-11 temperature</text>
+      <text class="t-sm t-c" x="295" y="130">L1-13 spool label</text>
+      <rect class="f-orange" x="410" y="20" width="170" height="120" rx="12"/>
+      <text class="t t-c t-b" x="495" y="46">3 · Experiment</text>
+      <text class="t-sm t-c" x="495" y="70">L1-2 calipers + cube</text>
+      <text class="t-sm t-c" x="495" y="90">L1-7 layer height</text>
+      <text class="t-sm t-c" x="495" y="110">L1-8 infill</text>
+      <text class="t-sm t-c" x="495" y="130">L1-10 brim vs none</text>
+      <rect class="f-purple" x="610" y="20" width="160" height="120" rx="12"/>
+      <text class="t t-c t-b" x="690" y="46">4 · Make</text>
+      <text class="t-sm t-c" x="690" y="76">L1-9 cable clip</text>
+      <text class="t-sm t-c" x="690" y="98">L1-12 supports</text>
+      <text class="t-sm t-c" x="690" y="120">L1-15 Tinkercad</text>
+      <path class="d-ink arrow" d="M180 80 H208"/>
+      <path class="d-ink arrow" d="M380 80 H408"/>
+      <path class="d-ink arrow" d="M580 80 H608"/>
+      <text class="t-sm t-c t-m" x="390" y="172">Suggested order is left to right, but numbers within a stage can be done in any order.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> The Level 1 roadmap. Set up the machine, learn to observe, run controlled experiments, then make something useful.</figcaption>
+  </figure>
+
+  <h2>Your starter toolkit</h2>
+  <p>Most exercises use the same few items. Collect them once and keep them next to the printer. Prices are not listed on purpose: a basic version of everything here is inexpensive, and you do not need professional-grade tools at Level 1.</p>
+  <div class="grid cols-3">
+    <div class="card accent-blue"><h3>🔧 Must-have</h3><ul><li>Digital calipers (0.01 mm resolution)</li><li>Flush cutters</li><li>Scraper or spatula (plastic or thin metal)</li><li>Isopropyl alcohol (90 % or more) and a lint-free cloth</li><li>Notebook or phone for photos and notes</li></ul></div>
+    <div class="card accent-green"><h3>👍 Nice-to-have</h3><ul><li>Kitchen scale (0.1 g or better)</li><li>Tweezers and needle-nose pliers</li><li>Deburring tool or hobby knife</li><li>Small steel ruler</li><li>A 2 mm and a 1.5 mm hex key for your printer</li></ul></div>
+    <div class="card accent-orange"><h3>🧵 Consumables</h3><ul><li>1 spool of PLA, any common color (dry!)</li><li>Optional: a second color for experiments</li><li>Painter's tape (for marking and hold-down)</li><li>A small container for failed prints and brims</li></ul></div>
+  </div>
+  <div class="callout danger"><span class="callout-title">Safety first</span><p>The nozzle runs at roughly 200 °C and the heated bed at 55–60 °C even for PLA. Never touch either while the printer is on or still cooling, keep hair and sleeves out of moving parts, and never leave a printer running unattended in a room where you sleep. Exercise <a href="#L1-14">L1-14</a> turns this into a proper audit; read <a href="../foundations/safety-and-workspace.html">Safety &amp; workspace</a> before you start.</p></div>
+
+  <h2>Overview of all fifteen exercises</h2>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>#</th><th>Exercise</th><th>Skill</th><th>Time</th><th>Needs printing?</th></tr></thead>
+    <tbody>
+      <tr><td><a href="#L1-1">L1-1</a></td><td>First print checklist</td><td>Routine &amp; confidence</td><td>1.5 h</td><td><span class="chip green">Yes</span></td></tr>
+      <tr><td><a href="#L1-2">L1-2</a></td><td>Measure a calibration cube</td><td>Measuring accuracy</td><td>45 min</td><td><span class="chip green">Yes</span></td></tr>
+      <tr><td><a href="#L1-3">L1-3</a></td><td>Spot first-layer quality</td><td>Diagnosis</td><td>1 h</td><td><span class="chip green">Yes</span></td></tr>
+      <tr><td><a href="#L1-4">L1-4</a></td><td>Identify printer parts</td><td>Vocabulary</td><td>30 min</td><td><span class="chip blue">No</span></td></tr>
+      <tr><td><a href="#L1-5">L1-5</a></td><td>Load and unload filament</td><td>Material handling</td><td>30 min</td><td><span class="chip blue">No</span></td></tr>
+      <tr><td><a href="#L1-6">L1-6</a></td><td>Read a slicer preview</td><td>Slicing literacy</td><td>45 min</td><td><span class="chip blue">No</span></td></tr>
+      <tr><td><a href="#L1-7">L1-7</a></td><td>Layer height experiment</td><td>Quality vs time</td><td>2 h</td><td><span class="chip green">Yes</span></td></tr>
+      <tr><td><a href="#L1-8">L1-8</a></td><td>Infill experiment</td><td>Strength vs material</td><td>2 h</td><td><span class="chip green">Yes</span></td></tr>
+      <tr><td><a href="#L1-9">L1-9</a></td><td>Print a cable clip</td><td>Practical result</td><td>1.5 h</td><td><span class="chip green">Yes</span></td></tr>
+      <tr><td><a href="#L1-10">L1-10</a></td><td>Brim vs no brim</td><td>Adhesion</td><td>1.5 h</td><td><span class="chip green">Yes</span></td></tr>
+      <tr><td><a href="#L1-11">L1-11</a></td><td>Temperature observation</td><td>Material behavior</td><td>2 h</td><td><span class="chip green">Yes</span></td></tr>
+      <tr><td><a href="#L1-12">L1-12</a></td><td>Remove supports cleanly</td><td>Post-processing</td><td>1.5 h</td><td><span class="chip green">Yes</span></td></tr>
+      <tr><td><a href="#L1-13">L1-13</a></td><td>Read a spool label</td><td>Material knowledge</td><td>20 min</td><td><span class="chip blue">No</span></td></tr>
+      <tr><td><a href="#L1-14">L1-14</a></td><td>Workspace safety audit</td><td>Safety</td><td>45 min</td><td><span class="chip blue">No</span></td></tr>
+      <tr><td><a href="#L1-15">L1-15</a></td><td>First model in Tinkercad</td><td>Design basics</td><td>1 h</td><td><span class="chip green">Optional</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout tip"><span class="callout-title">Keep a print journal</span><p>Write down the date, material, nozzle temperature, layer height, speed and one sentence on how the result looked. After ten exercises you will have your own reference table that is more useful than any generic guide. The practice hub has a <a href="index.html#journal">ready-made journal template</a>.</p></div>
+
+  <h2>🔰 Exercises</h2>
+
+  <section class="exercise" id="L1-1">
+    <header><span class="badge beginner">Level 1 · Easy</span><h3>Exercise 1 — First print checklist</h3><span class="badge time">⏱ 1.5 h (incl. ~40 min print)</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Build a repeatable pre-flight routine and use it to complete one successful, unattended-quality print. Good habits formed now prevent most failed prints later.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>Your printer, set up and connected (see <a href="../foundations/first-print.html">Your first print</a>)</li>
+        <li>1 spool of dry PLA and the printer's default PLA profile</li>
+        <li>Isopropyl alcohol and a lint-free cloth</li>
+        <li>A simple model: the 20 mm <a href="models.html">calibration cube</a> or any small model from your printer's built-in library</li>
+      </ul>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Walk the checklist below once, slowly.</strong> Tick each item physically on the printer, not just in your head.</li>
+        <li><strong>Clean the build plate</strong> with alcohol and let it dry. From now on, avoid touching the printing surface with bare fingers: skin oil is the number-one cause of first-layer failures.</li>
+        <li><strong>Run the printer's start-up calibration</strong> (automatic bed leveling or similar) if the printer offers it.</li>
+        <li><strong>Slice the model</strong> using the default profile for your printer and PLA. Check the estimated time and make sure the model sits flat on the plate.</li>
+        <li><strong>Start the print and stay for the first three layers.</strong> This is where almost all failures begin. Watch for lines that curl, skip or do not stick.</li>
+        <li><strong>Let the plate cool</strong> (or remove the flex plate and flex it gently) before removing the model. Never pry hard with a tool aimed at your hand.</li>
+        <li><strong>Write down</strong> what you did and how it looked in your journal.</li>
+      </ol>
+      <ul class="checklist">
+        <li>Printer is on a stable, level surface with free space around it</li>
+        <li>All shipping locks, foam and tape are removed</li>
+        <li>Build plate is clean and dry; correct plate is selected in the slicer</li>
+        <li>Filament moves freely off the spool (no tangles, spool turns easily)</li>
+        <li>Nozzle is clean (no old plastic hanging from it)</li>
+        <li>Slicer profile matches printer, nozzle size and material</li>
+        <li>Model sits flat on the plate and fits inside the build volume</li>
+        <li>You know where the power switch or emergency stop is</li>
+      </ul>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>The print finished without you intervening</li>
+        <li>The model came off the plate in one piece and with a flat bottom</li>
+        <li>Your journal has an entry with material, temperatures and a note on quality</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>If the first layer lifts at the corners or the line looks thin and does not stick, do not keep watching a failing print. Stop it, wipe the plate with alcohol, rerun the printer's calibration and try again. If it fails twice with a clean plate, jump to <a href="#L1-3">exercise L1-3</a> to learn to read the first layer.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>A good first print has a bottom surface with smooth, evenly spaced lines that touch each other without gaps, straight vertical walls and visible but regular layer lines. A 20 mm cube typically takes 20–45 minutes depending on the profile. Minor stringing or a slightly rough top surface at the default profile is normal. Record the nozzle (around 200–220 °C for most PLA) and bed (55–60 °C) temperatures you saw in the printer screen: they are your baseline for later experiments.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L1-2">
+    <header><span class="badge beginner">Level 1 · Easy</span><h3>Exercise 2 — Measure a calibration cube with calipers</h3><span class="badge time">⏱ 45 min (+ ~30 min print)</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Learn to use calipers correctly and find out how dimensionally accurate your printer already is. You will calculate the error on each axis in millimeters and in percent.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>The XYZ <a href="models.html#cal-cube">calibration cube</a> (<a href="models/calibration_cube.scad">calibration_cube.scad</a>, 20 mm) printed in PLA with default settings</li>
+        <li>Digital calipers; a fresh battery helps</li>
+        <li>Flush cutters or a hobby knife to remove any small blobs and the first-layer "elephant foot" burr</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 700 250" role="img" aria-label="Digital calipers measuring a printed cube across two faces, with the fixed jaw, sliding jaw, beam and display labeled">
+          <rect class="d-metal" x="40" y="40" width="560" height="34" rx="4"/>
+          <path class="d-ink" d="M40 74 V190"/>
+          <rect class="d-metal" x="40" y="40" width="18" height="150" rx="3"/>
+          <rect class="f-blue" x="58" y="120" width="170" height="70" rx="2"/>
+          <text class="t t-c t-b" x="143" y="160">20 mm cube</text>
+          <rect class="d-metal" x="228" y="40" width="18" height="150" rx="3"/>
+          <rect class="d-metal2" x="228" y="40" width="130" height="34" rx="4"/>
+          <rect class="f-yellow" x="252" y="46" width="94" height="22" rx="3"/>
+          <text class="t-sm t-c t-mono" x="299" y="62">20.12</text>
+          <g class="d-grid">
+            <path d="M370 40 v8 M390 40 v8 M410 40 v8 M430 40 v8 M450 40 v8 M470 40 v8 M490 40 v8 M510 40 v8 M530 40 v8 M550 40 v8 M570 40 v8"/>
+          </g>
+          <path class="d-thin" d="M58 205 H228"/>
+          <path class="d-thin" d="M58 199 v12 M228 199 v12"/>
+          <text class="t-sm t-c" x="143" y="226">jaws open exactly to the cube width</text>
+          <text class="t-sm" x="62" y="22">fixed jaw</text>
+          <path class="d-thin arrow" d="M80 26 L50 44"/>
+          <text class="t-sm" x="190" y="22">sliding jaw</text>
+          <path class="d-thin arrow" d="M234 26 L236 42"/>
+          <text class="t-sm" x="420" y="22">beam with scale</text>
+          <path class="d-thin arrow" d="M470 26 L470 40"/>
+          <text class="t-sm" x="560" y="130">Zero the display</text>
+          <text class="t-sm" x="560" y="148">with closed jaws</text>
+          <text class="t-sm" x="560" y="166">before every session.</text>
+          <path class="d-dash k-red" d="M143 190 V120"/>
+        </svg>
+        <figcaption><b>Figure 2.</b> Measure across flat faces at mid-height, with the jaws square to the surface and only light pressure. Pinching harder compresses the plastic and also bends the calipers.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Close the calipers and zero them.</strong> The display must read 0.00 with closed jaws. If not, clean the jaws and press zero.</li>
+        <li><strong>Deburr gently.</strong> Remove any thin ridge at the bottom edge (the first-layer bulge, often called elephant foot) and any blob at the seam. Measure only the true wall, not the burr.</li>
+        <li><strong>Measure each axis three times</strong> at different heights or positions (X: left to right, Y: front to back, Z: bottom to top) and write down all values.</li>
+        <li><strong>Average</strong> the three readings per axis, then compute error = average − 20.00 mm and error % = error / 20 × 100.</li>
+        <li><strong>Compare axes.</strong> Is one axis consistently larger or smaller? Is the Z height within a layer height of nominal?</li>
+      </ol>
+      <div class="table-wrap"><table class="data compact">
+        <thead><tr><th>Axis</th><th>Reading 1</th><th>Reading 2</th><th>Reading 3</th><th>Average</th><th>Error (mm)</th><th>Error (%)</th></tr></thead>
+        <tbody>
+          <tr><td>X</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>Y</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>Z</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        </tbody>
+      </table></div>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>Calipers were zeroed and every value was measured at least three times</li>
+        <li>You calculated the error for X, Y and Z in mm and in percent</li>
+        <li>You can say in one sentence whether your printer is accurate to ±0.2 mm on a 20 mm part</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>If X and Y differ from each other by more than 0.3 mm, check that the belts are tight (pluck them; they should twang, not flap) and that the cube was not rotated or the burr measured by mistake. If all three axes are about 0.1–0.2 mm too large, that is usually over-extrusion and not a calibration error.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>A well-tuned consumer printer usually lands within ±0.1–0.2 mm (0.5–1 %) on a 20 mm cube. Example: X = 20.08, Y = 20.12, Z = 19.96 gives errors of +0.08, +0.12 and −0.04 mm (+0.4 %, +0.6 %, −0.2 %). Z is often slightly short because the first layer is squished into the plate and the top layer is rounded. Remember that holes come out smaller and outside walls slightly larger than modeled, so the same cube tells you which way to compensate when you design functional parts later (see <a href="../design/tolerances-and-fits.html">Tolerances &amp; fits</a>).</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L1-3">
+    <header><span class="badge beginner">Level 1 · Easy</span><h3>Exercise 3 — Spot first-layer quality</h3><span class="badge time">⏱ 1 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Recognize a too-high, correct and too-low first layer by eye and by touch, and fix it using the printer's calibration (Z offset / first-layer squish). Nearly every print quality problem starts here.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>A clean build plate, PLA, and a first-layer test: slice a 100 × 100 × 0.2 mm square (a thin plate in the slicer, or any model with a large flat bottom)</li>
+        <li>A phone camera in macro mode or a magnifier</li>
+        <li>Scraper</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 270" role="img" aria-label="Three cross-sections of the first layer: too high with round gapped lines, correct with flattened touching lines, too low with ridged squashed lines">
+          <rect class="f-yellow" x="10" y="20" width="238" height="26" rx="6"/>
+          <rect class="f-green" x="261" y="20" width="238" height="26" rx="6"/>
+          <rect class="f-red" x="512" y="20" width="238" height="26" rx="6"/>
+          <text class="t t-c t-b" x="129" y="39">Too high</text>
+          <text class="t t-c t-b" x="380" y="39">Correct</text>
+          <text class="t t-c t-b" x="631" y="39">Too low</text>
+          <rect class="d-metal2" x="10" y="150" width="238" height="14"/>
+          <rect class="d-metal2" x="261" y="150" width="238" height="14"/>
+          <rect class="d-metal2" x="512" y="150" width="238" height="14"/>
+          <g class="d-plastic">
+            <circle cx="30" cy="141" r="9"/><circle cx="68" cy="141" r="9"/><circle cx="106" cy="141" r="9"/><circle cx="144" cy="141" r="9"/><circle cx="182" cy="141" r="9"/><circle cx="220" cy="141" r="9"/>
+            <rect x="268" y="142" width="38" height="8" rx="4"/><rect x="306" y="142" width="38" height="8" rx="4"/><rect x="344" y="142" width="38" height="8" rx="4"/><rect x="382" y="142" width="38" height="8" rx="4"/><rect x="420" y="142" width="38" height="8" rx="4"/><rect x="458" y="142" width="38" height="8" rx="4"/>
+            <rect x="520" y="130" width="22" height="20" rx="6"/><rect x="546" y="130" width="22" height="20" rx="6"/><rect x="572" y="130" width="22" height="20" rx="6"/><rect x="598" y="130" width="22" height="20" rx="6"/><rect x="624" y="130" width="22" height="20" rx="6"/><rect x="650" y="130" width="22" height="20" rx="6"/><rect x="676" y="130" width="22" height="20" rx="6"/><rect x="702" y="130" width="22" height="20" rx="6"/>
+          </g>
+          <path class="d-thin" d="M30 80 V126 M110 70 L110 126"/>
+          <text class="t-sm t-c" x="129" y="68">round "noodles",</text>
+          <text class="t-sm t-c" x="129" y="84">gaps between lines</text>
+          <text class="t-sm t-c" x="380" y="68">slightly flattened,</text>
+          <text class="t-sm t-c" x="380" y="84">lines fused, smooth</text>
+          <text class="t-sm t-c" x="631" y="68">ridges, ripples,</text>
+          <text class="t-sm t-c" x="631" y="84">rough, may scratch</text>
+          <text class="t-sm t-c" x="129" y="190">Weak, peels easily</text>
+          <text class="t-sm t-c" x="380" y="190">Strong, easy removal</text>
+          <text class="t-sm t-c" x="631" y="190">Elephant foot, nozzle clogs</text>
+          <text class="t-sm t-c" x="129" y="214">Fix: lower Z offset</text>
+          <text class="t-sm t-c" x="380" y="214">Keep this setting</text>
+          <text class="t-sm t-c" x="631" y="214">Fix: raise Z offset</text>
+          <text class="t-sm t-c t-m" x="380" y="250">Cross-section looking along the line direction; the bed is the gray bar.</text>
+        </svg>
+        <figcaption><b>Figure 3.</b> Three first-layer outcomes. A correct first layer is squished by roughly 20–40 % of its original height so neighboring lines touch.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Print the test square</strong> with the default profile. Watch the nozzle as it lays the first lines.</li>
+        <li><strong>Look at the top side of the printed plate</strong> (it faces the bed): are the lines flat, fused and glossy-smooth like Figure 3 center, or round and spaced?</li>
+        <li><strong>Run your finger and fingernail across the surface.</strong> Ripples or sharp edges mean too low; a rope-like feel means too high.</li>
+        <li><strong>Try the "scrape test":</strong> push a corner with the scraper. If it comes off in a flash with no resistance and no marks, it may be too weak; if it needs a lot of force and leaves residue, it may be too squished.</li>
+        <li><strong>Adjust once.</strong> Change Z offset or first-layer height by a small step (about 0.02–0.05 mm) in the right direction, and reprint. Only change one thing per attempt.</li>
+        <li><strong>Photograph</strong> both results side by side.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>You can name which of the three conditions your first print showed and why</li>
+        <li>A second print, after one small adjustment, shows a visibly better first layer (or you documented why none was needed)</li>
+        <li>Photos of both layers are saved with your journal notes</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Printers with automatic bed calibration usually let you apply a small live Z offset while the first layer prints, which is the fastest way to learn. Move in small steps and wait 10–20 seconds to see the effect on the line currently being drawn. Also check that the plate is clean; dirt can mimic a "too high" problem.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>Typical beginner finding: the first print shows slightly round, separated lines (too high). Lowering Z offset by 0.04 mm makes lines touch and the plate surface looks uniform. If you pass further than needed, you will see the nozzle drag, thin transparent-looking lines and ridges at the sides. The sweet spot is a narrow range; once found, note it in your journal for this plate and material. More background in <a href="../techniques/first-layer-and-adhesion.html">First layer &amp; bed adhesion</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L1-4">
+    <header><span class="badge beginner">Level 1 · Easy</span><h3>Exercise 4 — Identify the parts of your printer</h3><span class="badge time">⏱ 30 min</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Name the ten main parts of an FDM printer and find each one on your own machine. Knowing the vocabulary makes manuals, forums and troubleshooting guides readable.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>Your printer (powered off and cool) and its manual or the <a href="../foundations/printer-anatomy.html">Anatomy of an FDM printer</a> page</li>
+        <li>Paper and pen, or a phone to photograph and annotate each part</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 360" role="img" aria-label="Generic FDM printer drawing with ten numbered parts to identify">
+          <rect class="d-surface2" x="150" y="296" width="340" height="16" rx="3"/>
+          <rect class="d-metal" x="150" y="40" width="12" height="256"/>
+          <rect class="d-metal" x="478" y="40" width="12" height="256"/>
+          <rect class="d-surface" x="150" y="34" width="340" height="8" rx="2"/>
+          <rect class="d-metal2" x="162" y="112" width="316" height="12" rx="3"/>
+          <rect class="f-blue" x="268" y="96" width="76" height="62" rx="6"/>
+          <rect class="d-metal" x="280" y="158" width="52" height="20"/>
+          <path class="d-metal2" d="M294 178 h24 l-12 18 z"/>
+          <rect class="f-purple" x="278" y="62" width="56" height="32" rx="5"/>
+          <rect class="d-surface2" x="190" y="236" width="260" height="16"/>
+          <rect class="d-metal" x="200" y="226" width="240" height="10"/>
+          <rect class="f-green" x="355" y="266" width="86" height="22" rx="4"/>
+          <circle class="d-plastic" cx="620" cy="110" r="62"/>
+          <circle class="d-surface" cx="620" cy="110" r="18"/>
+          <path class="d-plastic2 k-orange" d="M560 100 C 500 40, 400 20, 316 70"/>
+          <path class="d-thin" d="M306 190 V226"/>
+          <!-- numbered markers -->
+          <g class="t-sm t-b">
+            <circle class="s-orange" cx="690" cy="50" r="12"/><text class="t-sm t-c t-b t-w" x="690" y="54">1</text><path class="d-thin" d="M681 58 L660 78"/>
+            <circle class="s-orange" cx="440" cy="40" r="12"/><text class="t-sm t-c t-b t-w" x="440" y="44">2</text><path class="d-thin" d="M430 46 L400 54"/>
+            <circle class="s-orange" cx="370" cy="76" r="12"/><text class="t-sm t-c t-b t-w" x="370" y="80">3</text><path class="d-thin" d="M360 80 L334 78"/>
+            <circle class="s-orange" cx="380" cy="166" r="12"/><text class="t-sm t-c t-b t-w" x="380" y="170">4</text><path class="d-thin" d="M368 168 L332 168"/>
+            <circle class="s-orange" cx="380" cy="204" r="12"/><text class="t-sm t-c t-b t-w" x="380" y="208">5</text><path class="d-thin" d="M368 204 L322 190"/>
+            <circle class="s-orange" cx="90" cy="118" r="12"/><text class="t-sm t-c t-b t-w" x="90" y="122">6</text><path class="d-thin" d="M102 118 L162 118"/>
+            <circle class="s-orange" cx="90" cy="180" r="12"/><text class="t-sm t-c t-b t-w" x="90" y="184">7</text><path class="d-thin" d="M102 180 L150 180"/>
+            <circle class="s-orange" cx="520" cy="228" r="12"/><text class="t-sm t-c t-b t-w" x="520" y="232">8</text><path class="d-thin" d="M508 230 L442 230"/>
+            <circle class="s-orange" cx="520" cy="258" r="12"/><text class="t-sm t-c t-b t-w" x="520" y="262">9</text><path class="d-thin" d="M508 258 L450 246"/>
+            <circle class="s-orange" cx="520" cy="296" r="12"/><text class="t-sm t-c t-b t-w" x="520" y="300">10</text><path class="d-thin" d="M508 292 L442 282"/>
+          </g>
+          <text class="t-sm t-m" x="150" y="344">Generic gantry-style printer, front view. Your machine may look different; look for the same functions.</text>
+        </svg>
+        <figcaption><b>Figure 4.</b> Name the ten numbered parts. The answer key is in the solution box below; try first without it.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Name the parts in Figure 4</strong> from memory or with the anatomy page. Write the number and name in your notes.</li>
+        <li><strong>Find all ten (or their equivalents) on your own printer.</strong> Photograph each and label it. Some printers hide parts inside the toolhead or housing; note "hidden" and where it would be.</li>
+        <li><strong>Trace the filament path</strong> with a finger from the spool to the nozzle tip and note every component it passes.</li>
+        <li><strong>Locate the heat sources and the moving parts.</strong> Mark with a sticky note which parts get hot and which can pinch fingers.</li>
+        <li><strong>Find the emergency exit:</strong> where can you cut power quickly?</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>All ten parts in the figure are named correctly</li>
+        <li>You located the equivalent of every part on your own printer</li>
+        <li>You can describe the filament path from spool to nozzle in one sentence</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Follow the filament: it starts at the spool, passes through a tube or guide, is gripped by gears (the extruder), is melted in the hotend, and leaves through the nozzle onto the build plate. The remaining parts are the structure that moves the nozzle and the platform it prints on.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p><strong>1</strong> filament spool (on a spool holder) · <strong>2</strong> filament path through a PTFE tube or guide (a Bowden tube on some printers) · <strong>3</strong> extruder: motor and drive gears that push filament · <strong>4</strong> hotend heater block with thermistor (temperature sensor) and heater · <strong>5</strong> nozzle · <strong>6</strong> X-axis gantry/rail that carries the toolhead sideways · <strong>7</strong> vertical (Z) rail or lead screw that raises the gantry or lowers the bed · <strong>8</strong> build plate (removable sheet, usually PEI) · <strong>9</strong> heated bed · <strong>10</strong> display or control panel. On a CoreXY machine such as the Bambu X2D the bed moves in Z only while the toolhead moves in X and Y; on a "bed-slinger" the bed moves in Y. The parts are the same, only the motion layout differs. See <a href="../x2d/hardware-tour.html">the X2D hardware tour</a> for a dual-nozzle example.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L1-5">
+    <header><span class="badge beginner">Level 1 · Easy</span><h3>Exercise 5 — Load and unload filament</h3><span class="badge time">⏱ 30 min</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Change filament confidently, without clogs, tangles or burnt fingers. You will do a complete unload–cut–load cycle and learn why a clean 45° tip and a preheated nozzle matter.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>Your printer with two spools of the same material type (or one spool you can unload and reload)</li>
+        <li>Flush cutters</li>
+        <li>Paper towel or a small container for purged filament</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 290" role="img" aria-label="Filament path from spool through guide tube into the extruder gears then into the hotend and out of the nozzle, plus an inset showing a clean 45 degree tip cut">
+          <circle class="d-plastic" cx="90" cy="110" r="64"/>
+          <circle class="d-surface" cx="90" cy="110" r="20"/>
+          <text class="t-sm t-c t-b" x="90" y="208">Spool</text>
+          <path class="d-plastic2 arrow" d="M150 76 C 220 40, 260 40, 330 60 H 395"/>
+          <text class="t-sm" x="205" y="30">Guide / tube</text>
+          <rect class="f-blue" x="395" y="30" width="120" height="96" rx="10"/>
+          <circle class="d-metal" cx="430" cy="78" r="18"/><circle class="d-metal2" cx="478" cy="78" r="18"/>
+          <path class="d-plastic2" d="M395 60 H515 M440 96 H455"/>
+          <text class="t-sm t-c t-b" x="455" y="22">Extruder gears</text>
+          <path class="d-plastic2 arrow" d="M455 96 V150"/>
+          <rect class="f-red" x="425" y="150" width="60" height="44" rx="4"/>
+          <text class="t-sm t-c t-b t-w" x="455" y="176">Hot end</text>
+          <path class="d-metal2" d="M437 194 h36 l-18 26 z"/>
+          <text class="t-sm" x="490" y="214">Nozzle ≈ 200–220 °C (PLA)</text>
+          <rect class="d-metal2" x="380" y="238" width="150" height="10"/>
+          <text class="t-sm t-c" x="455" y="270">Build plate</text>
+          <rect class="f-yellow" x="600" y="40" width="140" height="160" rx="10"/>
+          <text class="t-sm t-c t-b" x="670" y="62">Tip cut</text>
+          <path class="d-plastic2" d="M625 160 V100 L650 78"/>
+          <path class="d-plastic2" d="M650 160 V100"/>
+          <rect class="d-plastic" x="620" y="100" width="34" height="62" rx="2"/>
+          <path class="d-plastic" d="M620 100 L654 78 V100 z"/>
+          <path class="d-thin" d="M690 110 H664"/>
+          <text class="t-sm" x="640" y="188">45° point</text>
+          <text class="t-sm t-c t-m" x="670" y="228">easy to feed, no mushroom</text>
+        </svg>
+        <figcaption><b>Figure 5.</b> Filament path (left) and a properly trimmed tip (right). A pointed tip slides into the extruder entry and the narrow throat without snagging on the edge.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Preheat the nozzle</strong> to the temperature of the filament currently loaded (or the printer's "unload" function does this for you).</li>
+        <li><strong>Unload.</strong> Use the printer's unload function or pull gently while the extruder reverses. Never yank cold filament; if it resists, wait for the nozzle to reach temperature.</li>
+        <li><strong>Inspect the tip.</strong> A thin string or a bulge means the filament cooled in the hotend while retracting; cut it off with the flush cutters at 45°.</li>
+        <li><strong>Secure the loose end</strong> of the old spool in its hole or clip so it does not tangle, and store the spool in a sealed bag.</li>
+        <li><strong>Load the new filament</strong>: straighten the first 10 cm, cut a 45° tip, thread it into the entry point until the gears grab it, then let the printer purge.</li>
+        <li><strong>Watch the purge.</strong> Wait for the color to change completely and the extruded line to be smooth and round. Wipe or remove the blob after it cools.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>Filament was unloaded and loaded with the nozzle at temperature</li>
+        <li>The new color extrudes smoothly with no clicking or grinding from the extruder</li>
+        <li>The spool turns freely and the loose end is secured</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>If the extruder clicks or the gears slip, the nozzle is either too cold or already partly blocked. Check the temperature first. Also verify that the filament is not wrapped around itself on the spool, since a crossed loop can stop feeding in the middle of a print.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>A clean cycle takes five minutes. The old filament comes out with a slim, evenly shaped tip; the new one purges a 5–10 cm length of a continuous round line with no bubbles or stripes. For an automated system like the Bambu AMS, the machine does the cutting and purging itself, but the same rules apply: dry filament, tidy spool, clean tip (see <a href="../x2d/ams-2-pro.html">AMS 2 Pro deep dive</a>). More about drying in <a href="../materials/drying-and-storage.html">Drying &amp; storage</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L1-6">
+    <header><span class="badge beginner">Level 1 · Easy</span><h3>Exercise 6 — Read a slicer preview</h3><span class="badge time">⏱ 45 min</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Use the layer preview in your slicer to predict what the print will look like, where supports are needed and how long and how much material it will take, before you waste any filament.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>A slicer (<a href="../software/slicers.html">Bambu Studio, OrcaSlicer, PrusaSlicer or Cura</a>)</li>
+        <li>Two models: the <a href="models.html#overhang">overhang ladder</a> and any organic model with a curved surface (e.g. a figurine from a model repository)</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 300" role="img" aria-label="Top-down view of a sliced layer showing outer wall, inner wall, infill and a top-surface legend, next to a layer slider">
+          <rect class="d-surface" x="20" y="20" width="360" height="260" rx="10"/>
+          <rect class="k-blue" x="60" y="50" width="280" height="200" rx="16" style="stroke-width:5"/>
+          <rect class="k-green" x="74" y="64" width="252" height="172" rx="10" style="stroke-width:4"/>
+          <g class="k-orange" stroke-width="2">
+            <path d="M92 82 L308 218 M92 112 L278 218 M92 142 L248 218 M92 172 L218 218 M122 82 L308 198 M152 82 L308 178 M182 82 L308 158 M212 82 L308 138 M242 82 L308 118"/>
+            <path d="M308 82 L92 218 M308 112 L122 218 M308 142 L152 218 M308 172 L182 218 M278 82 L92 198 M248 82 L92 178 M218 82 L92 158 M188 82 L92 138 M158 82 L92 118"/>
+          </g>
+          <text class="t-sm t-c t-m" x="200" y="272">Layer 37 of 150 (cut through the model)</text>
+          <rect class="d-surface2" x="400" y="20" width="26" height="260" rx="8"/>
+          <rect class="s-orange" x="400" y="130" width="26" height="150" rx="8"/>
+          <circle class="s-orange" cx="413" cy="130" r="10"/>
+          <text class="t-sm t-b" x="436" y="136">Layer slider</text>
+          <rect class="s-blue" x="470" y="170" width="18" height="12" rx="2"/><text class="t-sm" x="496" y="181">Outer wall</text>
+          <rect class="s-green" x="470" y="192" width="18" height="12" rx="2"/><text class="t-sm" x="496" y="203">Inner wall</text>
+          <rect class="s-orange" x="470" y="214" width="18" height="12" rx="2"/><text class="t-sm" x="496" y="225">Sparse infill</text>
+          <rect class="s-red" x="470" y="236" width="18" height="12" rx="2"/><text class="t-sm" x="496" y="247">Top / bottom surface</text>
+          <rect class="s-purple" x="470" y="258" width="18" height="12" rx="2"/><text class="t-sm" x="496" y="269">Support</text>
+          <text class="t-sm" x="436" y="38">Questions to ask on every preview</text>
+          <text class="t-sm" x="436" y="62">• Is anything printing in mid-air?</text>
+          <text class="t-sm" x="436" y="82">• Where does the seam sit?</text>
+          <text class="t-sm" x="436" y="102">• How much is infill vs walls?</text>
+          <text class="t-sm" x="436" y="122">• Do thin gaps print or vanish?</text>
+          <text class="t-sm t-m" x="436" y="152">Colors differ between slicers; use the legend.</text>
+        </svg>
+        <figcaption><b>Figure 6.</b> A mock layer view. Always scrub the layer slider from bottom to top and read the legend; the colors vary between slicers.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Import and slice</strong> the overhang ladder with supports <em>off</em> and note the estimated time and filament weight.</li>
+        <li><strong>Scrub the layer slider</strong> from first to last layer. Stop at each overhang and look for lines hanging in air.</li>
+        <li><strong>Switch the color scheme</strong> to "line type" (or "feature type") and identify outer wall, inner wall, infill, top/bottom surfaces and, where present, support.</li>
+        <li><strong>Turn supports on</strong> and compare: how much extra time and weight do they add? Which angles trigger supports?</li>
+        <li><strong>Find the seam</strong> on the curved model: where does each layer start and end?</li>
+        <li><strong>Check estimated values</strong> (time, weight) for three settings: 0.12 mm, 0.2 mm and 0.28 mm layer height and note them.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>You can name every feature color in your slicer's legend</li>
+        <li>You identified the angle at which supports first appear</li>
+        <li>You noted time and weight at three layer heights and can explain the pattern</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Overhang angles are normally measured from vertical: 0° is a wall, 90° is a flat ceiling. Many slicers add supports beyond about 45–55° by default, but a well-cooled PLA print can often manage 60° without. Compare what the slicer wants with what your printer can really do after you print the ladder in <a href="level-2-intermediate.html#L2-5">exercise L2-5</a>.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>Typical results for the overhang ladder: without supports, the 30°–50° wedges look clean in the preview, while 70° and 80° show lines floating above empty space (the preview may highlight them). With supports on, the slicer adds supports below the steepest wedges and the estimate grows by a few minutes and a few grams. Moving from 0.12 to 0.28 mm layers typically cuts time by more than half with the same model. Key idea: the preview tells you <em>what the printer will try</em>; it does not tell you whether the plastic will hold. Read <a href="../software/slicer-settings.html">Slicer settings explained</a> for the settings behind each feature.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L1-7">
+    <header><span class="badge beginner">Level 1 · Easy</span><h3>Exercise 7 — Layer height experiment</h3><span class="badge time">⏱ 2 h (mostly printing)</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>See and measure how layer height changes surface quality and print time. You will print the same small model at three layer heights and make an evidence-based choice for different jobs.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>One small model with a smooth curve and a slope, e.g. a 30 mm sphere-top cylinder, a small vase or the calibration cube with a 45° chamfer</li>
+        <li>PLA (same spool for all prints), calipers, a phone camera, a stopwatch or the slicer's time estimate</li>
+        <li>About 20–30 g of filament for all three prints</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 270" role="img" aria-label="A 45 degree slope printed with three layer heights, showing fine stair-stepping at 0.08 mm, medium at 0.2 mm and coarse at 0.32 mm">
+          <path class="d-plastic" d="M20 200 h15 v-11.7 h15 v-11.7 h15 v-11.7 h15 v-11.7 h15 v-11.7 h15 v-11.7 h15 v-11.7 h15 v-11.7 h15 v-11.7 h15 v-11.7 h15 v-11.7 h15 v-11.7 V200 z"/>
+          <path class="d-plastic" d="M280 200 h36 v-28 h36 v-28 h36 v-28 h36 v-28 h36 v-28 V200 z"/>
+          <path class="d-plastic" d="M520 200 h60 v-46.7 h60 v-46.7 h60 v-46.7 V200 z"/>
+          <text class="t t-c t-b" x="110" y="30">0.08 mm</text>
+          <text class="t t-c t-b" x="370" y="30">0.20 mm</text>
+          <text class="t t-c t-b" x="610" y="30">0.32 mm</text>
+          <text class="t-sm t-c" x="110" y="222">Smooth slope, very slow</text>
+          <text class="t-sm t-c" x="370" y="222">Good compromise</text>
+          <text class="t-sm t-c" x="610" y="222">Visible steps, fast</text>
+          <text class="t-sm t-c" x="110" y="246">≈ 100 % time (baseline ×)</text>
+          <text class="t-sm t-c" x="370" y="246">≈ 40–45 % of the time</text>
+          <text class="t-sm t-c" x="610" y="246">≈ 28–35 % of the time</text>
+          <text class="t-sm t-c t-m" x="380" y="264">Steps exaggerated; time is the typical trend for the same model, not exact.</text>
+        </svg>
+        <figcaption><b>Figure 7.</b> The same 45° slope at three layer heights. Fine layers cost time but hide the stair-stepping, especially on shallow slopes and curved tops.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Slice three versions</strong> with 0.12 mm, 0.20 mm and 0.28 mm layer height. Everything else (temperature, speed, infill) stays identical. Note the estimated times and filament weights.</li>
+        <li><strong>Print all three</strong> on the same plate session; label each with a pen on the underside.</li>
+        <li><strong>Compare surfaces</strong> under the same light and distance, and take a photo of each from the same angle with a coin for scale.</li>
+        <li><strong>Measure actual print time</strong> from the printer's report and compare with the slicer estimate.</li>
+        <li><strong>Decide</strong> which layer height you would use for (a) a visible figurine, (b) a drawer organizer, (c) a quick prototype.</li>
+      </ol>
+      <div class="bars"><div class="bars-title">Typical relative print time for the same model</div>
+        <div class="bar red"><span>0.12 mm</span><i style="--v:100%"></i><em>baseline</em></div>
+        <div class="bar yellow"><span>0.20 mm</span><i style="--v:62%"></i><em>≈ 60–65 %</em></div>
+        <div class="bar green"><span>0.28 mm</span><i style="--v:48%"></i><em>≈ 45–50 %</em></div>
+      </div>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>Three prints with only layer height changed, labeled and photographed</li>
+        <li>A table of estimated vs real time and weight</li>
+        <li>A written choice of layer height for three different jobs, with one-line reasons</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Layer height has a ceiling set by your nozzle: stay between about 25 % and 75 % of the nozzle diameter (0.1–0.3 mm for a 0.4 mm nozzle). Time does not scale perfectly with layer count because acceleration, travel and cooling add fixed overhead per layer.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>Example outcome for a 30 mm figure: 0.12 mm takes 2 h 10 min, 0.20 mm takes 1 h 20 min and 0.28 mm takes 1 h. Layer lines are hard to see at 0.12 mm and obvious at 0.28 mm on the shoulder, while vertical walls look similar in all three. Recommended choices: figurine at 0.12 mm (or 0.16 mm), organizer at 0.20 mm, prototype at 0.28 mm. Layer height also affects strength: thicker layers are usually bonded slightly less per unit of material, so a stronger part is not always a coarser one. See <a href="../software/slicer-settings.html">Slicer settings explained</a> and <a href="../techniques/speed-cooling-quality.html">Speed, cooling &amp; quality</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L1-8">
+    <header><span class="badge beginner">Level 1 · Easy</span><h3>Exercise 8 — Infill experiment</h3><span class="badge time">⏱ 2 h (mostly printing)</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Find out how much infill you really need. You will print identical bars at different infill densities, weigh them, time them and test how much load they take.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>A kitchen scale and calipers</li>
+        <li>A bar model: 100 × 15 × 10 mm (any CAD, or a rectangular prism in the slicer)</li>
+        <li>PLA, about 40 g for four bars; a rigid support at two ends (two books), and a water bottle or backpack with weights for the optional load test</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 250" role="img" aria-label="Four infill patterns shown as squares: lines, grid, triangles and gyroid">
+          <g>
+            <rect class="d-surface" x="20" y="30" width="150" height="150" rx="6"/>
+            <path class="k-orange" stroke-width="3" d="M40 50 V160 M64 50 V160 M88 50 V160 M112 50 V160 M136 50 V160 M160 50 V160" transform="translate(-10 0)"/>
+            <text class="t t-c t-b" x="95" y="205">Lines (rectilinear)</text>
+            <text class="t-sm t-c" x="95" y="226">simple, fast, directional</text>
+          </g>
+          <g>
+            <rect class="d-surface" x="200" y="30" width="150" height="150" rx="6"/>
+            <path class="k-blue" stroke-width="3" d="M220 50 V160 M244 50 V160 M268 50 V160 M292 50 V160 M316 50 V160 M340 50 V160 M215 62 H345 M215 86 H345 M215 110 H345 M215 134 H345 M215 158 H345" transform="translate(-10 0)"/>
+            <text class="t t-c t-b" x="275" y="205">Grid</text>
+            <text class="t-sm t-c" x="275" y="226">crossing lines, stiff but noisy</text>
+          </g>
+          <g>
+            <rect class="d-surface" x="380" y="30" width="150" height="150" rx="6"/>
+            <path class="k-green" stroke-width="3" d="M395 175 L520 50 M395 145 L490 50 M395 115 L460 50 M395 85 L430 50 M425 175 L520 80 M455 175 L520 110 M485 175 L520 140 M395 175 L395 50 M425 175 L425 50 M455 175 L455 50 M485 175 L485 50 M515 175 L515 50"/>
+            <text class="t t-c t-b" x="455" y="205">Triangles / cubic</text>
+            <text class="t-sm t-c" x="455" y="226">strong in all directions</text>
+          </g>
+          <g>
+            <rect class="d-surface" x="560" y="30" width="150" height="150" rx="6"/>
+            <path class="k-purple" stroke-width="3" fill="none" d="M575 60 C 600 30, 620 90, 645 60 S 690 30, 700 60 M575 100 C 600 70, 620 130, 645 100 S 690 70, 700 100 M575 140 C 600 110, 620 170, 645 140 S 690 110, 700 140"/>
+            <text class="t t-c t-b" x="635" y="205">Gyroid</text>
+            <text class="t-sm t-c" x="635" y="226">smooth, isotropic, popular</text>
+          </g>
+        </svg>
+        <figcaption><b>Figure 8.</b> Four common infill families (simplified). Pattern matters less than density at Level 1; walls carry most of the load in typical parts.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Slice four bars</strong> with the same wall count (3), same top/bottom layers (4–5) and densities of 5 %, 15 %, 30 % and 60 % in the same pattern (gyroid or cubic).</li>
+        <li><strong>Print</strong>, label each bar with its infill percent and weigh them after cooling.</li>
+        <li><strong>Record</strong> slicer-estimated time and weight vs measured weight.</li>
+        <li><strong>Flex test.</strong> Hold a bar at both ends and bend gently; rank stiffness from 1 (floppy) to 4 (rigid). Do not apply enough force to hurt your hands.</li>
+        <li><strong>Optional load test.</strong> Support each bar on two books 80 mm apart and hang a bag of known weight at the center. Record the weight at which it visibly sags 2 mm or breaks. Add weight in small steps and keep your face away from the bar.</li>
+        <li><strong>Plot</strong> weight vs infill % and stiffness vs infill %.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>Four bars printed with only infill density changed</li>
+        <li>Weights and times recorded in a table</li>
+        <li>You can state at which infill the extra strength per gram drops off</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Increasing walls from 2 to 4 often adds more stiffness than raising infill from 20 % to 50 %. If your results do not follow the pattern, check that you changed only one parameter and that all bars printed at the same orientation.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <div class="table-wrap"><table class="data compact">
+          <thead><tr><th>Infill</th><th>Weight (typical)</th><th>Time</th><th>Stiffness rank</th></tr></thead>
+          <tbody>
+            <tr><td>5 %</td><td>≈ 9 g</td><td>≈ 25 min</td><td>1</td></tr>
+            <tr><td>15 %</td><td>≈ 11 g</td><td>≈ 28 min</td><td>2</td></tr>
+            <tr><td>30 %</td><td>≈ 14 g</td><td>≈ 34 min</td><td>3</td></tr>
+            <tr><td>60 %</td><td>≈ 20 g</td><td>≈ 47 min</td><td>4</td></tr>
+          </tbody>
+        </table></div>
+        <p>These numbers are illustrative for a 100 × 15 × 10 mm PLA bar; yours will differ, but the shape of the curve should match: from 5 % to 15 % the weight barely changes, while stiffness changes noticeably. Beyond about 30–40 % each extra gram adds little. For most household parts, 15–25 % infill with 3–4 walls is the sweet spot. Read more in <a href="../design/strength-and-orientation.html">Strength &amp; orientation</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L1-9">
+    <header><span class="badge beginner">Level 1 · Easy</span><h3>Exercise 9 — Print a simple practical part: a cable clip</h3><span class="badge time">⏱ 1.5 h (incl. ~25 min print)</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Go from a measurement on your desk to a useful printed object that fits. You will adapt one dimension of a parametric design, print it and test whether it holds your cable.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>A cable (phone charger, USB cable, mouse cable) and calipers</li>
+        <li><a href="models/cable_clip.scad">cable_clip.scad</a> (needs the free <a href="../software/cad-modeling.html">OpenSCAD</a>). No OpenSCAD? Re-create the clip in Tinkercad (exercise <a href="#L1-15">L1-15</a>) or download any cable clip from a model repository.</li>
+        <li>PLA, two small screws (M3 or 3 mm wood screws) or double-sided foam tape</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 270" role="img" aria-label="Top view of a C-shaped cable clip with a flat foot, with cable diameter, wall thickness, opening width, foot width and screw holes dimensioned">
+          <rect class="d-plastic" x="56" y="121" width="288" height="19" rx="2"/>
+          <path class="k-orange" style="stroke-width:19" d="M214.5 73.2 A30.5 30.5 0 1 1 185.5 73.2"/>
+          <circle class="d-dash k-blue" cx="200" cy="100" r="17"/>
+          <text class="t-sm t-c t-b" x="200" y="104">cable</text>
+          <path class="d-dash k-red" d="M96 114 V146 M304 114 V146"/>
+          <text class="t-sm t-c" x="96" y="162">screw</text>
+          <text class="t-sm t-c" x="304" y="162">screw</text>
+          <path class="d-thin arrow arrow-start" d="M56 190 H344"/>
+          <text class="t-sm t-c" x="200" y="208">foot 36 mm</text>
+          <path class="d-thin arrow arrow-start" d="M185 40 H215"/>
+          <text class="t-sm t-c" x="200" y="32">opening 3.6 mm</text>
+          <path class="d-thin" d="M240 100 H430"/>
+          <text class="t-sm" x="440" y="96">Inner Ø = cable Ø + 0.3 mm</text>
+          <path class="d-thin" d="M236 128 H430"/>
+          <text class="t-sm" x="440" y="132">Wall 2.4 mm (about 6 perimeters of 0.4 mm)</text>
+          <path class="d-thin" d="M200 62 L430 62"/>
+          <text class="t-sm" x="440" y="62">Opening smaller than cable → snap-in grip</text>
+          <text class="t-sm" x="440" y="168">Print flat: the ring axis is vertical,</text>
+          <text class="t-sm" x="440" y="186">so no supports are needed.</text>
+          <text class="t-sm t-m" x="56" y="248">Top view of cable_clip.scad with default parameters (cable Ø 5 mm).</text>
+        </svg>
+        <figcaption><b>Figure 9.</b> Anatomy of the cable clip. Three numbers control the fit: inner diameter, opening width and wall thickness.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Measure the cable</strong> in two directions (cables are often slightly oval) with calipers. Write down the larger value.</li>
+        <li><strong>Set <code>cable_d</code></strong> in the file to that value. Keep <code>fit = 0.3</code> and set <code>opening</code> to about 70–75 % of the cable diameter.</li>
+        <li><strong>Export an STL</strong> (F6 to render, then F7) or save a 3MF and slice with 3 walls and 15–20 % infill. Place the foot on the plate; no supports.</li>
+        <li><strong>Print and test.</strong> Press the cable in: it should snap in with a small click and stay, but not need a tool.</li>
+        <li><strong>Fix if needed.</strong> Too tight: raise <code>fit</code> by 0.1 or widen the opening by 0.5. Too loose: lower <code>fit</code> or narrow the opening. Reprint (it takes only a few minutes).</li>
+        <li><strong>Mount it</strong> with two screws or foam tape and use it for a week; note any cracks.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>The cable snaps in and stays in place when you pull sideways gently</li>
+        <li>The clip does not crack when the cable is inserted or removed</li>
+        <li>You wrote down the final <code>cable_d</code>, <code>fit</code> and <code>opening</code> values</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Bending forces act across layer lines if the clip is printed standing up, which is why it is designed to print flat: the layers then run around the ring and the C-shape flexes without splitting. If your clip cracks at the opening, add one more wall or choose PETG, which is tougher than PLA.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>For a 4.2 mm USB cable: <code>cable_d = 4.2</code>, <code>fit = 0.3</code>, <code>opening = 3.0</code>. Typical result: a first print that is slightly tight (printed holes shrink a little), solved by <code>fit = 0.4</code>. Final clip fits and holds a cable that weighs a few grams per meter. This is your first iteration loop: measure → design → print → test → adjust. Real engineering parts follow the same loop, only with more tolerances; read <a href="../design/tolerances-and-fits.html">Tolerances &amp; fits</a> when you are ready.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L1-10">
+    <header><span class="badge beginner">Level 1 · Easy</span><h3>Exercise 10 — Brim vs no brim</h3><span class="badge time">⏱ 1.5 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Learn what a brim does and when it pays off. You will print a tall, narrow part twice, once with and once without a brim, and compare stability and clean-up effort.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>A tall, thin model with a small footprint: a 12 × 12 × 50 mm column, or a tall figure on a small base</li>
+        <li>PLA, a clean plate, a scraper and a hobby knife</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 260" role="img" aria-label="Side view of a tall part with and without a brim, and top view of a brim ring around the part footprint">
+          <rect class="d-metal2" x="20" y="220" width="320" height="10"/>
+          <rect class="d-plastic" x="70" y="80" width="30" height="140" rx="2"/>
+          <path class="d-thin arrow" d="M96 60 L120 60"/>
+          <text class="t-sm" x="130" y="64">tilting force</text>
+          <text class="t t-c t-b" x="85" y="40">No brim</text>
+          <path class="d-dash k-red" d="M70 220 q-6 -2 -12 -8"/>
+          <text class="t-sm" x="35" y="252">small contact area → can pop off</text>
+          <rect class="d-plastic" x="230" y="80" width="30" height="140" rx="2"/>
+          <rect class="d-plastic2" x="205" y="214" width="80" height="6"/>
+          <text class="t t-c t-b" x="245" y="40">With brim</text>
+          <text class="t-sm" x="190" y="252">brim widens the contact patch</text>
+          <rect class="d-surface" x="400" y="30" width="340" height="200" rx="10"/>
+          <rect class="d-plastic2" x="520" y="95" width="100" height="70" rx="4"/>
+          <rect class="d-plastic" x="540" y="110" width="60" height="40" rx="3"/>
+          <path class="d-thin arrow" d="M440 90 L520 110"/>
+          <text class="t-sm" x="410" y="84">brim lines</text>
+          <path class="d-thin arrow" d="M440 200 L545 148"/>
+          <text class="t-sm" x="410" y="216">part footprint</text>
+          <path class="d-thin arrow arrow-start" d="M520 76 H540"/>
+          <text class="t-sm" x="548" y="74">width 5 mm</text>
+          <text class="t-sm t-m" x="570" y="205">Top view</text>
+        </svg>
+        <figcaption><b>Figure 10.</b> A brim is a flat, one-layer collar around the part that increases bed contact and resists tipping or corner lift.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Slice the column twice</strong>: brim type "none", then "outer brim" of 5 mm width. Keep every other setting the same.</li>
+        <li><strong>Print both</strong> one after another on the same area of the plate. Watch for the first 10 layers: does the unbrimmed column wobble?</li>
+        <li><strong>Test adhesion</strong> after cooling: push each column sideways at the top with one finger. Which one moves?</li>
+        <li><strong>Remove the brim</strong> with your fingers or a knife held away from your body. Does the brim leave a rough edge? Note the time it took.</li>
+        <li><strong>Repeat with a flat wide part</strong> such as a 60 × 60 × 2 mm plate. Is the brim needed there?</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>Both columns were printed with identical settings except the brim</li>
+        <li>You compared adhesion and removal effort and wrote down your finding</li>
+        <li>You can list three situations where you would add a brim</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>PLA on a clean textured plate often sticks without a brim even for tall parts. If your unbrimmed column prints fine, make the challenge harder: use a 6 × 6 mm base or a plate that has seen a few finger touches, and notice how quickly adhesion changes.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>A typical outcome is that both columns finish, but the unbrimmed one detaches from the plate with a light push or shows corner lift on the first layers, while the brimmed one stays put. Use a brim when: the footprint is small compared to the height, sharp corners lift (especially in ABS/ASA/PETG), or the material shrinks (nylon, ABS). Skip it when it would add cleanup on a visible edge. A brim of 3–5 mm (about 8–12 lines) is a typical start. See <a href="../techniques/first-layer-and-adhesion.html">First layer &amp; bed adhesion</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L1-11">
+    <header><span class="badge beginner">Level 1 · Easy</span><h3>Exercise 11 — Temperature observation</h3><span class="badge time">⏱ 2 h (mostly printing)</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>See how nozzle temperature changes the look and quality of the same filament, and choose a good starting temperature for a new spool. At Level 1 this is purely observational; <a href="level-2-intermediate.html#L2-1">exercise L2-1</a> turns it into a measured calibration.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>The <a href="models.html#temp-tower">temperature tower</a> (<a href="models/temp_tower.scad">temp_tower.scad</a>), or the temperature calibration tower built into your slicer</li>
+        <li>A spool of PLA with its recommended range printed on the label (see <a href="#L1-13">L1-13</a>)</li>
+        <li>A good light and a phone for macro photos</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 300" role="img" aria-label="Temperature tower with seven tiers from 220 down to 190 degrees and a scale of what to observe: stringing and gloss at high temperatures, weak layers and rough surface at low temperatures">
+          <rect class="d-metal2" x="40" y="260" width="170" height="10"/>
+          <g class="f-orange">
+            <rect x="60" y="230" width="130" height="30"/>
+            <rect x="60" y="200" width="130" height="30"/>
+            <rect x="60" y="170" width="130" height="30"/>
+            <rect x="60" y="140" width="130" height="30"/>
+            <rect x="60" y="110" width="130" height="30"/>
+            <rect x="60" y="80" width="130" height="30"/>
+            <rect x="60" y="50" width="130" height="30"/>
+          </g>
+          <g class="t-sm t-c t-b">
+            <text x="125" y="250">220</text><text x="125" y="220">215</text><text x="125" y="190">210</text><text x="125" y="160">205</text><text x="125" y="130">200</text><text x="125" y="100">195</text><text x="125" y="70">190</text>
+          </g>
+          <path class="d-ink arrow" d="M240 250 V52"/>
+          <text class="t-sm" x="250" y="260">hotter (220 °C)</text>
+          <text class="t-sm" x="250" y="46">cooler (190 °C)</text>
+          <rect class="f-red" x="400" y="40" width="340" height="62" rx="8"/>
+          <text class="t-sm t-b" x="412" y="62">Too hot (top of the range)</text>
+          <text class="t-sm" x="412" y="80">glossy, strings, blobs, drooping bridges, softer corners</text>
+          <rect class="f-green" x="400" y="112" width="340" height="62" rx="8"/>
+          <text class="t-sm t-b" x="412" y="134">Sweet spot (middle)</text>
+          <text class="t-sm" x="412" y="152">clean bridges, little stringing, layers bonded, even sheen</text>
+          <rect class="f-blue" x="400" y="184" width="340" height="62" rx="8"/>
+          <text class="t-sm t-b" x="412" y="206">Too cold (bottom of the range)</text>
+          <text class="t-sm" x="412" y="224">matte and rough, weak layers, gaps, clicking extruder</text>
+          <text class="t-sm t-m" x="400" y="276">Example for PLA; your filament label gives the actual range.</text>
+        </svg>
+        <figcaption><b>Figure 11.</b> The temperature tower makes the effect of heat visible. This example prints hottest at the bottom and coolest at the top, matching <code>temp_tower.scad</code>.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Prepare the tower</strong> with your slicer. In the OpenSCAD version set <code>start_temp</code> and <code>step</code> to cover the label range (PLA: 220 to 190 °C in steps of 5). Insert a temperature change at each tier boundary using your slicer's custom G-code at layer change or its built-in calibration tool.</li>
+        <li><strong>Print the tower</strong> at your normal speed and with fan on.</li>
+        <li><strong>Examine each tier</strong>: bridge underside, overhang fin underside, surface gloss, strings in the opening, and how easily the tier breaks when you bend it off (do this last).</li>
+        <li><strong>Score each tier</strong> from 1 to 5 in a table for stringing, bridge quality, overhang quality, surface and layer bonding.</li>
+        <li><strong>Pick your temperature</strong> for this spool and write it on the spool or in your journal.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>A tower was printed with at least five distinct temperature tiers</li>
+        <li>Each tier is scored in a table and the best temperature is chosen</li>
+        <li>You can explain in one sentence why higher temperature increases stringing</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Look at bridges first. Hot plastic stays soft longer and sags; cold plastic leaves frayed lines. The best tier often shows the straightest and flattest bridge underside. Judge stringing on the same tier by looking between the pillars, not just on the surface.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>Typical PLA result: 220 °C shows glossy walls and strings across the opening; 190 °C looks dull with gaps between layers and the tier breaks cleanly along a layer line; the best looks around 205–210 °C. The difference between neighboring tiers is small, so compare tiers that are two or three steps apart. If every tier looks poor, the filament may be wet (popping, bubbles, rough texture); read <a href="../materials/drying-and-storage.html">Drying &amp; storage</a>. If you use Bambu filament with its RFID tag, the default profile is already tuned; the tower then simply confirms it.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L1-12">
+    <header><span class="badge beginner">Level 1 · Easy</span><h3>Exercise 12 — Remove supports cleanly</h3><span class="badge time">⏱ 1.5 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Print a part that needs supports and remove them without damaging the surface. You will compare standard and tree supports and see how the support-to-model gap decides how clean the underside is.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>A model with an overhang, e.g. a letter "T", a mushroom or the <a href="models.html#overhang">overhang ladder</a> (steep wedges)</li>
+        <li>PLA, flush cutters, needle-nose pliers, a hobby knife, a deburring tool, safety glasses</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 270" role="img" aria-label="Cross-section of a T-shaped part with normal supports and a small interface gap, next to the same part with tree supports touching in fewer places">
+          <rect class="d-metal2" x="20" y="230" width="340" height="10"/>
+          <rect class="d-plastic" x="140" y="60" width="40" height="170"/>
+          <rect class="d-plastic" x="70" y="60" width="180" height="34"/>
+          <g class="k-purple" stroke-width="2">
+            <path d="M80 98 V230 M92 98 V230 M104 98 V230 M116 98 V230 M128 98 V230 M190 98 V230 M202 98 V230 M214 98 V230 M226 98 V230 M238 98 V230"/>
+          </g>
+          <path class="d-thin arrow" d="M300 140 L240 100"/>
+          <text class="t-sm" x="255" y="150">gap 0.2 mm</text>
+          <text class="t t-c t-b" x="150" y="40">Normal supports</text>
+          <rect class="d-metal2" x="400" y="230" width="340" height="10"/>
+          <rect class="d-plastic" x="520" y="60" width="40" height="170"/>
+          <rect class="d-plastic" x="450" y="60" width="180" height="34"/>
+          <g class="k-purple" stroke-width="3">
+            <path d="M470 230 L470 190 L470 98 M470 190 L490 98 M610 230 L610 190 L610 98 M610 190 L590 98"/>
+          </g>
+          <text class="t t-c t-b" x="540" y="40">Tree supports</text>
+          <text class="t-sm t-c" x="190" y="262">more contact, easy to remove in large areas</text>
+          <text class="t-sm t-c" x="560" y="262">fewer contact points, smaller scars</text>
+        </svg>
+        <figcaption><b>Figure 12.</b> A support is only attached to the part through a thin interface. A small gap (typically about one layer) makes it peel off; no gap would fuse it to the model.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Print version A</strong> with normal (grid) supports and the slicer defaults for the support gap.</li>
+        <li><strong>Print version B</strong> with tree or organic supports, again at default settings.</li>
+        <li><strong>Remove supports</strong> wearing safety glasses. Start at the thinnest point, wiggle gently and pull away from the part. Use flush cutters for stubborn islands, aimed away from the model.</li>
+        <li><strong>Clean up</strong> the contact surface with a deburring tool or fine sandpaper (220 grit and up).</li>
+        <li><strong>Compare</strong> the two undersides, the time spent removing, and the filament used for support (from the slicer).</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>Both versions were printed and the supports removed without breaking the model</li>
+        <li>You compared surface quality, removal time and extra material</li>
+        <li>You know which type you prefer for a visible versus a hidden underside</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Warm supports release more easily and the surface scuffs less. A hair dryer for 10–20 seconds on a PLA part softens residue; never overheat PLA, which starts to deform around 55–60 °C. Support removal also depends on orientation: whenever you can rotate the model so that fewer surfaces need support, do it.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>Typical findings: normal supports come off as a few big pieces and leave a regular rough texture; tree supports use 30–60 % less material, come off in thin branches and leave isolated dots that sand away quickly, but they may break during printing if the model is large. A gap that is too small makes supports fuse to the model; one that is too large leaves a droopy underside. If the first support layers print poorly, the support interface may be too sparse. Deeper material in <a href="../techniques/supports-bridges-overhangs.html">Supports, bridges &amp; overhangs</a>. On a Bambu X2D the aux nozzle can print supports in a different material for an even cleaner release.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L1-13">
+    <header><span class="badge beginner">Level 1 · Easy</span><h3>Exercise 13 — Read a spool label</h3><span class="badge time">⏱ 20 min</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Extract every piece of useful information from a filament label, verify the diameter with calipers and estimate how many meters you hold. Good labels tell you the right temperatures and whether the filament needs drying.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>Two or three spools (different brands or materials are best) or their labels and boxes</li>
+        <li>Calipers, a kitchen scale and a calculator (or the <a href="../tools/calculators.html">calculators page</a>)</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 300" role="img" aria-label="Annotated spool label showing material, diameter tolerance, net weight, temperature ranges, drying instructions and lot number">
+          <rect class="d-surface" x="20" y="20" width="360" height="260" rx="12"/>
+          <text class="t t-b" x="40" y="54">BRAND  PLA+</text>
+          <text class="t-sm" x="40" y="78">Color: Signal Orange</text>
+          <text class="t-sm" x="40" y="104">Ø 1.75 mm ± 0.02 · Net 1 kg</text>
+          <text class="t-sm" x="40" y="128">Nozzle 190–230 °C · Bed 45–65 °C</text>
+          <text class="t-sm" x="40" y="152">Speed ≤ 300 mm/s · Fan on</text>
+          <text class="t-sm" x="40" y="176">Dry: 55 °C 8 h · Keep sealed</text>
+          <text class="t-sm" x="40" y="200">Lot 24-0731-B · Made in …</text>
+          <rect class="d-solid" x="40" y="214" width="130" height="38"/>
+          <text class="t-sm t-m" x="46" y="270">[barcode / QR / RFID tag]</text>
+          <g class="t-sm">
+            <path class="d-thin arrow" d="M410 50 L330 50"/><text x="420" y="54">1 Material and variant</text>
+            <path class="d-thin arrow" d="M410 100 L360 100"/><text x="420" y="104">2 Diameter + tolerance</text>
+            <path class="d-thin arrow" d="M410 126 L380 126"/><text x="420" y="130">3 Print temperatures</text>
+            <path class="d-thin arrow" d="M410 150 L330 150"/><text x="420" y="154">4 Speed and cooling hints</text>
+            <path class="d-thin arrow" d="M410 176 L330 176"/><text x="420" y="180">5 Drying temperature and time</text>
+            <path class="d-thin arrow" d="M410 200 L330 200"/><text x="420" y="204">6 Lot number (track problems)</text>
+            <path class="d-thin arrow" d="M410 232 L180 232"/><text x="420" y="236">7 Code for the printer / app</text>
+          </g>
+          <text class="t-sm t-m" x="420" y="272">The label above is fictional and shows typical content.</text>
+        </svg>
+        <figcaption><b>Figure 13.</b> What a good label tells you. Ranges are given because they depend on printer, speed and color.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Fill in the table</strong> below for each spool: material, color, diameter, net weight, nozzle range, bed range, drying recommendation, lot number.</li>
+        <li><strong>Measure the diameter</strong> with calipers at five points along 1 m of filament and rotate the filament 90° at each point. Note the spread.</li>
+        <li><strong>Compute the length</strong>: for 1.75 mm PLA (density ≈ 1.24 g/cm³) 1 kg is roughly 330 m, i.e. about 3 g per meter. Check the formula: length = mass / (density × π × (d/2)²).</li>
+        <li><strong>Compare spools:</strong> do the nozzle ranges agree with what you chose in L1-11? Which label gives drying advice and which does not?</li>
+      </ol>
+      <div class="table-wrap"><table class="data compact">
+        <thead><tr><th>Spool</th><th>Material</th><th>Ø label</th><th>Ø measured (min–max)</th><th>Nozzle °C</th><th>Bed °C</th><th>Dry</th></tr></thead>
+        <tbody><tr><td>A</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>B</td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody>
+      </table></div>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>The table is filled in for at least two spools</li>
+        <li>Diameter was measured at five or more points and the spread is below ±0.05 mm (or you noted if not)</li>
+        <li>You calculated the filament length of one spool and compared with the printed claim</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Weigh the empty spool core (it is often 150–250 g) if you want to know how much filament remains in a used spool. Net weight on the label does not include the spool.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>Worked example: 1 kg of 1.75 mm PLA: cross-section = π × 0.0875² cm² ≈ 0.0241 cm²; mass per meter = 0.0241 cm² × 100 cm × 1.24 g/cm³ ≈ 2.98 g, so 1000 g ≈ 335 m. For PETG (≈ 1.27 g/cm³) it is ≈ 327 m; for ABS (≈ 1.04 g/cm³) ≈ 400 m. A spread below ±0.03 mm is very good; 0.05 mm is acceptable. Larger variation can cause under- or over-extrusion in certain regions of the spool. See <a href="../materials/overview.html">Filament overview &amp; comparison</a> for density and temperature tables.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L1-14">
+    <header><span class="badge beginner">Level 1 · Easy</span><h3>Exercise 14 — Workspace safety audit</h3><span class="badge time">⏱ 45 min</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Inspect your printing area for fire, burn, fume, electrical and mechanical risks and fix the three most important ones. A safe workspace is not a luxury: unattended hot machines and plastic dust are real hazards.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>Your printer area, a phone for photos and a pen</li>
+        <li>The <a href="../foundations/safety-and-workspace.html">Safety &amp; workspace</a> page for reference</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 320" role="img" aria-label="Floor plan of a workspace with printer table, window, smoke detector, fire extinguisher, power strip, door and clear zone around the printer">
+          <rect class="d-surface" x="20" y="20" width="480" height="280" rx="6"/>
+          <rect class="f-blue" x="40" y="22" width="120" height="8"/>
+          <text class="t-sm" x="46" y="52">Window (ventilation)</text>
+          <rect class="f-yellow" x="380" y="296" width="100" height="8"/>
+          <text class="t-sm" x="378" y="288">Door</text>
+          <rect class="d-surface2" x="170" y="100" width="170" height="110" rx="6"/>
+          <rect class="d-metal" x="205" y="115" width="100" height="80" rx="6"/>
+          <text class="t-sm t-c t-b" x="255" y="160">Printer</text>
+          <text class="t-sm t-c" x="255" y="120" dy="-12">Stable, non-flammable table</text>
+          <rect class="d-dash k-green" x="150" y="80" width="210" height="150" rx="10" fill="none"/>
+          <text class="t-sm t-c" x="255" y="248">30 cm clear zone</text>
+          <circle class="s-red" cx="440" cy="60" r="12"/><text class="t-sm t-c t-b t-w" x="440" y="64">!</text>
+          <text class="t-sm" x="380" y="92">Smoke detector</text>
+          <rect class="s-red" x="450" y="240" width="20" height="36" rx="4"/>
+          <text class="t-sm" x="394" y="262">Extinguisher</text>
+          <rect class="s-yellow" x="60" y="240" width="60" height="14" rx="3"/>
+          <text class="t-sm" x="60" y="272">Power strip with switch</text>
+          <rect class="d-solid" x="60" y="130" width="70" height="30" rx="4"/>
+          <text class="t-sm" x="60" y="178">Filament storage</text>
+          <g class="t-sm">
+            <rect class="s-green" x="520" y="30" width="14" height="14" rx="3"/><text x="544" y="42">Good</text>
+            <text x="520" y="76" class="t-b">Check each item:</text>
+            <text x="520" y="100">☐ Smoke detector in room</text>
+            <text x="520" y="122">☐ Fire extinguisher or blanket</text>
+            <text x="520" y="144">☐ Printer on hard, flat table</text>
+            <text x="520" y="166">☐ Nothing flammable within 30 cm</text>
+            <text x="520" y="188">☐ Window or fan for fresh air</text>
+            <text x="520" y="210">☐ Power strip, no daisy chains</text>
+            <text x="520" y="232">☐ No printing while asleep</text>
+            <text x="520" y="254">☐ Tools stored safely</text>
+          </g>
+        </svg>
+        <figcaption><b>Figure 14.</b> A simple layout with the safety elements that matter most. Adapt it to your room; the principle is a clear zone and detection and escape routes.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Photograph your setup</strong> from two angles.</li>
+        <li><strong>Walk through the checklist</strong> in Figure 14 and score each item: 0 (not present), 1 (partly), 2 (fine).</li>
+        <li><strong>Check the electrics.</strong> Is the power cable intact, plugged in firmly and not under tension or covered? Is the printer connected to a wall outlet or a quality power strip with an approved plug, not a chain of adapters?</li>
+        <li><strong>Check the air.</strong> PLA smells mildly and emits ultrafine particles; ABS, ASA and nylon emit more. Where does the air go? Is there a window or filter?</li>
+        <li><strong>Plan three fixes</strong> in order of risk, and do at least one today.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>All eight items are scored with a note</li>
+        <li>At least one fix is implemented and photographed</li>
+        <li>You know who to call or what to do if a hotend or heater fails</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>The highest risks are almost always the same: no smoke detector in the room, flammable material near the printer, unattended long prints and poor ventilation with ABS or other engineering plastics. A smoke detector costs a few dollars; a switchable power strip lets you cut power with one hand.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>A score of 12 or more out of 16 is a solid start. Typical fixes: move the printer off a cardboard-covered shelf, add a smoke detector in the same room, store spare filament in a container, label the power strip "printer", and write on the wall which materials you may print indoors without extra ventilation. Many modern printers (including enclosed ones with filters) reduce but do not remove the need for good air exchange. The X2D, for example, has an integrated filter and exhaust option, see <a href="../x2d/overview.html">X2D overview</a>. Never leave a fire to burn: if something ignites, power off at the switch, close the lid and leave the room if smoke persists.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L1-15">
+    <header><span class="badge beginner">Level 1 · Easy</span><h3>Exercise 15 — Your first model in Tinkercad</h3><span class="badge time">⏱ 1 h (+ ~30 min print)</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Design a printable key-tag from scratch in a free, browser-based CAD tool. You will combine solid and hole shapes, add text, export a file and slice it, taking one idea all the way from head to printed object.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>A free account at <a href="https://www.tinkercad.com">tinkercad.com</a> (browser-based, no installation)</li>
+        <li>Your slicer and printer, PLA</li>
+        <li>Optional: calipers to check the final size</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 240" role="img" aria-label="Three steps for the key tag: rounded rectangle, then a hole shape added near one end, then text added and everything grouped">
+          <rect class="d-surface" x="20" y="20" width="220" height="150" rx="10"/>
+          <rect class="d-plastic" x="40" y="70" width="180" height="50" rx="12"/>
+          <text class="t-sm t-c t-b" x="130" y="150">1 Box 40 × 20 × 3 mm</text>
+          <rect class="d-surface" x="270" y="20" width="220" height="150" rx="10"/>
+          <rect class="d-plastic" x="290" y="70" width="180" height="50" rx="12"/>
+          <circle class="d-dash k-red" cx="318" cy="95" r="11" fill="none"/>
+          <text class="t-sm t-c t-b" x="380" y="150">2 Add a hole shape</text>
+          <rect class="d-surface" x="520" y="20" width="220" height="150" rx="10"/>
+          <rect class="d-plastic" x="540" y="70" width="180" height="50" rx="12"/>
+          <circle class="d-surface" cx="568" cy="95" r="9"/>
+          <text class="t t-c t-b" x="650" y="102">NAME</text>
+          <text class="t-sm t-c t-b" x="630" y="150">3 Text + Group</text>
+          <path class="d-ink arrow" d="M240 95 H268"/>
+          <path class="d-ink arrow" d="M490 95 H518"/>
+          <text class="t-sm t-c t-m" x="380" y="206">Sizes and steps in Tinkercad's workplane; the hole shape becomes a real hole after Group.</text>
+        </svg>
+        <figcaption><b>Figure 15.</b> The key-tag workflow. The "hole" shape subtracts from solids when you group them, which is the basic CAD idea behind almost every printed part.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Create a new design</strong> and drag a Box onto the workplane. Resize it to 40 × 20 × 3 mm (click the box, then type values in the handles).</li>
+        <li><strong>Round the corners.</strong> Use the Box's "Radius" setting or add a rounded shape and group.</li>
+        <li><strong>Add a hole.</strong> Drag a Cylinder, set it to "Hole" in the Inspector, 5 mm diameter and 10 mm height, and place it 5 mm from the left end, centered. Check from the top view.</li>
+        <li><strong>Add text.</strong> Drag the Text shape, type your name (max ~8 characters), set height to 1 mm and place it on top of the box so it overlaps. Choose a bold font for strength.</li>
+        <li><strong>Group everything</strong> (Ctrl+G). The hole should now cut through the box and the text sits on top.</li>
+        <li><strong>Export</strong> as STL or 3MF and slice. Print flat with the text up, 0.2 mm layers, 3 walls, and 20 % infill.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>The design has a through-hole, text and rounded corners</li>
+        <li>The tag printed and the hole fits a key ring (about 4–5 mm)</li>
+        <li>You can explain the difference between a solid shape and a hole shape in one sentence</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>If the text does not appear in the slicer preview, it probably floats above or is not touching the box: the text should overlap the box by a small amount, at least 0.2 mm. A raised text of 1 mm height is plenty; very small letters (smaller than 5 mm) get muddy with a 0.4 mm nozzle. The <a href="models.html#text-label">text label test model</a> shows what your printer can read.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>A good result: 40 × 20 × 3 mm base with 1 mm raised text, a 5 mm hole with the nearest edge ≥ 4 mm from the border, so the key ring does not tear through. Check the minimum wall around the hole: 4 mm of material around the hole in PLA is robust; 2 mm is fragile. After printing, measure with calipers: the hole should be about 0.2 mm smaller than designed, so a 5 mm hole may come out at 4.8 mm. If you want to go further, move on to parametric design with OpenSCAD (<a href="../design/parametric-cad-workflow.html">Parametric CAD workflow</a>) and to the Level 2 box exercise <a href="level-2-intermediate.html#L2-7">L2-7</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <h2>Key takeaways</h2>
+  <ul>
+    <li>Most print quality depends on the <strong>first layer</strong>, clean plates and dry filament; learn to read them early.</li>
+    <li>Change <strong>one variable at a time</strong> and write down results: your own data beats generic advice.</li>
+    <li>Layer height trades <strong>time for smoothness</strong>; infill beyond ~25 % rarely pays for itself.</li>
+    <li>Supports, brims and temperature are <strong>tools</strong>, not defaults: use them when the part needs them.</li>
+    <li>Safety is part of printing: detect, ventilate and never leave hot machines unobserved.</li>
+  </ul>
+  <div class="grid cols-3">
+    <a class="card accent-blue" href="level-2-intermediate.html"><span class="ico">🔧</span><h3>Next: Level 2</h3><p>Calibrate temperature, retraction and flow, design parametric parts.</p></a>
+    <a class="card accent-green" href="quizzes.html"><span class="ico">🧠</span><h3>Quizzes</h3><p>Test the basics with instant feedback.</p></a>
+    <a class="card accent-orange" href="models.html"><span class="ico">📐</span><h3>Test models</h3><p>Calibration cube, temperature tower and more as OpenSCAD files.</p></a>
+  </div>
+</main>
+</body>
+</html>

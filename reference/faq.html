@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FAQ · 3D Printing Compendium</title>
+  <meta name="description" content="More than 90 searchable questions and answers about 3D printing: getting started, materials, slicing, print quality, mechanics, design, safety, buying, the Bambu Lab X2D and AMS 2 Pro, multi-color printing, post-processing and costs.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+  <style>
+    .faq-tools { position: sticky; top: var(--header-h); z-index: 6; background: var(--bg); padding: 10px 0 8px; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
+    .faq-search { width: 100%; box-sizing: border-box; padding: 10px 14px; font-size: 16px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); }
+    .faq-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 4px; }
+    .faq-chip { border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); border-radius: 999px; padding: 4px 12px; font-size: 13px; cursor: pointer; font-family: inherit; }
+    .faq-chip b { color: var(--muted); font-weight: 600; margin-left: 4px; }
+    .faq-chip.on { background: var(--brand); border-color: var(--brand); color: #fff; }
+    .faq-chip.on b { color: #fff; }
+    .faq-actions { display: flex; gap: 10px; align-items: center; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
+    .faq-actions button { border: 0; background: none; color: var(--link); cursor: pointer; font-size: 13px; padding: 0; font-family: inherit; }
+    .faq-empty { display: none; padding: 18px; border: 1px dashed var(--line); border-radius: 10px; text-align: center; color: var(--muted); }
+    .faq-topic.faq-hidden, details.faq-hidden { display: none; }
+    details.accordion .faq-a p:first-child { margin-top: 2px; }
+    mark.faq-hit { background: var(--yellow-s); color: inherit; padding: 0 2px; border-radius: 3px; }
+  </style>
+</head>
+<body data-page="reference/faq.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 9 · Reference</div>
+    <h1>Frequently asked questions</h1>
+    <p class="lead">Short, honest answers to the questions that newcomers and experienced makers ask again and again, grouped by topic, searchable, and linked to the full guides when you want the deep version.</p>
+    <div class="meta"><span class="badge beginner">All levels</span><span class="badge x2d">Includes X2D + AMS 2 Pro</span><span class="badge time">⏱ Browse as needed</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">How to use this page</span>
+    <ul>
+      <li>Type a keyword (for example <em>stringing</em>, <em>PETG</em>, <em>aux nozzle</em>) in the search box, or tap a topic chip to narrow the list.</li>
+      <li>Click a question to open the answer. Answers are deliberately short; follow the links for the full explanation.</li>
+      <li>Numbers are typical starting points, not guarantees. Always check your material maker's datasheet and your printer's official documentation.</li>
+    </ul>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 200" role="img" aria-label="Six-stage journey from learning to sharing, with the FAQ topics that belong to each stage">
+      <rect class="f-blue" x="12" y="30" width="124" height="70" rx="10"/>
+      <text class="t t-c t-b" x="74" y="58">1 · Learn</text>
+      <text class="t-xs t-c" x="74" y="78">the basics</text>
+      <path class="d-ink arrow" d="M138 65 H154"/>
+      <rect class="f-purple" x="156" y="30" width="124" height="70" rx="10"/>
+      <text class="t t-c t-b" x="218" y="58">2 · Choose</text>
+      <text class="t-xs t-c" x="218" y="78">a printer</text>
+      <path class="d-ink arrow" d="M282 65 H298"/>
+      <rect class="f-green" x="300" y="30" width="124" height="70" rx="10"/>
+      <text class="t t-c t-b" x="362" y="58">3 · Pick</text>
+      <text class="t-xs t-c" x="362" y="78">a material</text>
+      <path class="d-ink arrow" d="M426 65 H442"/>
+      <rect class="f-teal" x="444" y="30" width="124" height="70" rx="10"/>
+      <text class="t t-c t-b" x="506" y="58">4 · Slice</text>
+      <text class="t-xs t-c" x="506" y="78">and design</text>
+      <path class="d-ink arrow" d="M570 65 H586"/>
+      <rect class="f-orange" x="588" y="30" width="124" height="70" rx="10"/>
+      <text class="t t-c t-b" x="650" y="58">5 · Print</text>
+      <text class="t-xs t-c" x="650" y="78">and fix</text>
+      <path class="d-ink arrow" d="M714 65 H730"/>
+      <rect class="f-pink" x="732" y="30" width="124" height="70" rx="10"/>
+      <text class="t t-c t-b" x="794" y="58">6 · Finish</text>
+      <text class="t-xs t-c" x="794" y="78">and share</text>
+      <text class="t-xs t-c" x="74" y="124">Getting started</text>
+      <text class="t-xs t-c" x="74" y="140">Safety</text>
+      <text class="t-xs t-c" x="218" y="124">Buying</text>
+      <text class="t-xs t-c" x="218" y="140">X2D &amp; AMS 2 Pro</text>
+      <text class="t-xs t-c" x="362" y="124">Materials</text>
+      <text class="t-xs t-c" x="362" y="140">Costs</text>
+      <text class="t-xs t-c" x="506" y="124">Slicing</text>
+      <text class="t-xs t-c" x="506" y="140">Design · Multi-color</text>
+      <text class="t-xs t-c" x="650" y="124">Quality</text>
+      <text class="t-xs t-c" x="650" y="140">Mechanical</text>
+      <text class="t-xs t-c" x="794" y="124">Post-processing</text>
+      <text class="t-xs t-c" x="794" y="140">Business</text>
+      <path class="d-dash" d="M12 165 H856"/>
+      <text class="t-sm t-m" x="12" y="186">Most people loop between stages 3 to 5 many times. That is normal: every print teaches you something.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> The maker's journey and where each FAQ topic fits.</figcaption>
+  </figure>
+
+  <div class="faq-tools" id="faq-tools">
+    <input class="faq-search" id="faq-q" type="search" placeholder="Search questions and answers…" aria-label="Search the FAQ" autocomplete="off">
+    <div class="faq-chips" id="faq-chips">
+      <button class="faq-chip on" data-topic="all">All<b></b></button>
+      <button class="faq-chip" data-topic="start">🚀 Getting started<b></b></button>
+      <button class="faq-chip" data-topic="materials">🧵 Materials<b></b></button>
+      <button class="faq-chip" data-topic="slicing">💻 Slicing<b></b></button>
+      <button class="faq-chip" data-topic="quality">🔍 Quality<b></b></button>
+      <button class="faq-chip" data-topic="mechanical">⚙️ Mechanical<b></b></button>
+      <button class="faq-chip" data-topic="design">📐 Design<b></b></button>
+      <button class="faq-chip" data-topic="safety">🦺 Safety<b></b></button>
+      <button class="faq-chip" data-topic="buying">🛒 Buying<b></b></button>
+      <button class="faq-chip" data-topic="x2d">🖨️ X2D &amp; AMS 2 Pro<b></b></button>
+      <button class="faq-chip" data-topic="color">🎨 Multi-color<b></b></button>
+      <button class="faq-chip" data-topic="post">🧽 Post-processing<b></b></button>
+      <button class="faq-chip" data-topic="business">💰 Costs &amp; business<b></b></button>
+    </div>
+    <div class="faq-actions"><span id="faq-count" aria-live="polite"></span><button type="button" id="faq-open">Expand all</button><button type="button" id="faq-close">Collapse all</button><button type="button" id="faq-reset">Reset filters</button></div>
+  </div>
+  <div class="faq-empty" id="faq-empty">No question matches your search. Try a shorter keyword, or use the <a href="glossary.html">glossary</a> and the site search (press <kbd>/</kbd>).</div>
+
+  <section class="faq-topic" data-topic="start">
+  <h2 id="t-start">🚀 Getting started</h2>
+
+  <details class="accordion"><summary>What is 3D printing, in one paragraph?</summary><div class="faq-a">
+    <p>3D printing (additive manufacturing) builds an object by adding material layer by layer from a digital model, instead of cutting it out of a block. The most common hobby type is FDM (fused deposition modeling): a hot nozzle melts plastic filament and draws each layer on a bed. Resin printers cure liquid with light, and industrial machines sinter powder or melt metal. See <a href="../foundations/what-is-3d-printing.html">What is 3D printing?</a> and <a href="../foundations/printing-processes.html">Printing processes compared</a>.</p></div></details>
+
+  <details class="accordion"><summary>Do I need CAD skills to start?</summary><div class="faq-a">
+    <p>No. Millions of ready-made models can be downloaded and printed as they are, and slicers let you scale, cut and combine them. CAD becomes useful when you want a custom bracket, a replacement part or a fitting that does not exist yet. Start with a beginner-friendly tool and move on later; see <a href="../software/cad-modeling.html">CAD &amp; modeling software</a>.</p></div></details>
+
+  <details class="accordion"><summary>What do I need besides the printer?</summary><div class="faq-a">
+    <p>Filament, a slicer, a flush cutter, a scraper or spatula, a small hex key set, a pair of calipers (they pay for themselves quickly), isopropyl alcohol for the build plate, and a dry place to store spools. Gloves and eye protection are good for post-processing. A realistic list by budget tier is on the <a href="resources.html#shopping">resources page</a>.</p></div></details>
+
+  <details class="accordion"><summary>How much does it cost to get started?</summary><div class="faq-a">
+    <p>Entry-level printers cost a few hundred dollars; capable enclosed, multi-color machines cost roughly four to six times more, and prices change often. Budget an extra 10-20% for filament, spare nozzles, a plate and tools. Running costs are small: a kilogram of common PLA costs around the price of a pizza, and typical parts use a few dozen grams. See <a href="economics-and-ethics.html">Economics, licensing &amp; sustainability</a>.</p></div></details>
+
+  <details class="accordion"><summary>How long does a print take?</summary><div class="faq-a">
+    <p>A small part (a clip, a coin-sized token) can finish in 10-30 minutes. A phone stand is usually 1-3 hours, a helmet or a large enclosure can take a day or more. Time scales roughly with volume of plastic and inversely with layer height: halving the layer height roughly doubles the time. The slicer's estimate is usually within about 10-20% on a well-tuned printer.</p></div></details>
+
+  <details class="accordion"><summary>Which file formats do printers use?</summary><div class="faq-a">
+    <p>You download or export a mesh (<code>STL</code>, <code>3MF</code>, <code>OBJ</code>) or a CAD solid (<code>STEP</code>), the slicer turns it into G-code, and the printer runs the G-code. <code>3MF</code> is preferable to <code>STL</code> because it carries units, colors and slicer settings. Details in <a href="../software/files-and-meshes.html">File formats &amp; mesh repair</a>.</p></div></details>
+
+  <details class="accordion"><summary>Where can I find models to print?</summary><div class="faq-a">
+    <p>Large public repositories exist, run by printer makers, open communities and commercial designers. Check the license on every model before selling prints. A curated list is in <a href="resources.html#repositories">Resources</a>, and licensing basics are in <a href="economics-and-ethics.html#ip">Economics &amp; ethics</a>.</p></div></details>
+
+  <details class="accordion"><summary>What should my first print be?</summary><div class="faq-a">
+    <p>Choose something small, flat-bottomed and useful: a cable clip, a coaster, a simple box. A calibration cube is fine but boring; a small boat-shaped torture test is good once the basics work. Use the manufacturer's recommended PLA and the stock profile. Walk through it in <a href="../foundations/first-print.html">Your first print</a>.</p></div></details>
+
+  <details class="accordion"><summary>Is FDM or resin better for a beginner?</summary><div class="faq-a">
+    <p>FDM is the safer, cheaper, lower-mess starting point and covers most functional work. Resin gives much finer detail for miniatures and jewelry, but needs gloves, ventilation, washing, curing and careful disposal. Many people run both eventually. See <a href="../foundations/printing-processes.html">Printing processes compared</a>.</p></div></details>
+
+  <details class="accordion"><summary>How steep is the learning curve today?</summary><div class="faq-a">
+    <p>Much gentler than a decade ago. Modern enclosed machines with auto-leveling and good default profiles produce good prints on day one. Mastering materials, tolerances and design for printing still takes months of practice, which is why this compendium has levelled <a href="../exercises/index.html">exercises</a>.</p></div></details>
+
+  <details class="accordion"><summary>What does "slicing" mean and why can't I just press print on an STL?</summary><div class="faq-a">
+    <p>The printer needs instructions, not a shape. The slicer cuts the model into layers and plans every extrusion path, speed, temperature and fan setting. Some printers appear to print "directly" because a cloud service or an app runs the slicer for you. Read <a href="../software/slicers.html">Slicers compared</a>.</p></div></details>
+
+  </section>
+
+  <section class="faq-topic" data-topic="materials">
+  <h2 id="t-materials">🧵 Materials</h2>
+
+  <details class="accordion"><summary>PLA, PETG, ABS: which should I use?</summary><div class="faq-a">
+    <p>PLA is the easiest and stiffest, ideal for display and indoor parts. PETG is tougher and handles more heat and moisture; it strings more. ABS and ASA resist heat (roughly 90-100 °C) and are good for functional parts but warp and need an enclosure and ventilation. When in doubt, begin with PLA and move on when you hit a concrete limit. The full comparison is in <a href="../materials/overview.html">Filament overview</a> and the <a href="../tools/material-picker.html">material picker</a>.</p></div></details>
+
+  <details class="accordion"><summary>Do I really have to dry filament?</summary><div class="faq-a">
+    <p>Most filament absorbs moisture from air. Wet plastic pops and hisses, leaves strings and rough surfaces and weakens parts. Nylon, TPU, PVA and PETG are most sensitive; PLA often tolerates a long time. Dry spools before they misbehave, store them sealed with desiccant, and follow the temperature on the manufacturer's label. See <a href="../materials/drying-and-storage.html">Drying &amp; storage</a>.</p></div></details>
+
+  <details class="accordion"><summary>How do I know filament is wet?</summary><div class="faq-a">
+    <p>Typical signs: crackling or popping at the nozzle, steam or bubbles, fine hairs between features, a dull or rough surface and brittle filament that snaps when bent. If a fresh sealed spool prints perfectly and the same spool prints badly after weeks on the shelf, moisture is the first suspect.</p></div></details>
+
+  <details class="accordion"><summary>Is PLA food safe?</summary><div class="faq-a">
+    <p>The polymer itself may be safe, but a printed part usually is not, for three reasons: additives and colorants in the filament, a brass nozzle that may carry trace metals, and the porous layer lines that harbor bacteria and cannot be sanitized well. Use printed parts for dry, short-term contact at most (cookie cutters, for example), line them with a food-grade barrier, and treat them as single-use. Never use them for long-term food storage or hot liquids. Rules differ between countries; this is not legal advice.</p></div></details>
+
+  <details class="accordion"><summary>Can I leave PLA in a hot car or outdoors?</summary><div class="faq-a">
+    <p>Standard PLA softens around 55-60 °C. A parked car's interior in sun can easily pass that, so parts sag. Use PETG for moderate heat and ASA for sun and weather. Annealed or heat-resistant PLA grades exist, but test them first. See the temperature ladder in Figure 2.</p></div></details>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 340" role="img" aria-label="Horizontal temperature ladder showing typical softening ranges of PLA, PETG, ABS, ASA, PC and carbon fiber nylon against reference lines for a hot parked car, X2D maximum chamber temperature and boiling water">
+      <text class="t t-b" x="14" y="22">Typical softening / heat-resistance range (°C, approximate)</text>
+      <path class="d-dash k-blue" d="M366 34 V268"/>
+      <path class="d-dash k-red" d="M384 34 V268"/>
+      <path class="d-dash k-gray" d="M510 34 V268"/>
+      <text class="t-xs c-blue" x="362" y="304" style="text-anchor:end">hot car 60+</text>
+      <text class="t-xs c-red" x="388" y="316">X2D chamber max 65</text>
+      <text class="t-xs c-gray" x="514" y="304">boiling water 100</text>
+      <text class="t t-r" x="140" y="62">PLA</text><rect class="s-green" x="330" y="46" width="36" height="22" rx="5"/><text class="t-sm" x="374" y="62">50-60</text>
+      <text class="t t-r" x="140" y="100">PETG</text><rect class="s-teal" x="384" y="84" width="54" height="22" rx="5"/><text class="t-sm" x="446" y="100">65-80</text>
+      <text class="t t-r" x="140" y="138">ABS</text><rect class="s-orange" x="474" y="122" width="54" height="22" rx="5"/><text class="t-sm" x="536" y="138">90-105</text>
+      <text class="t t-r" x="140" y="176">ASA</text><rect class="s-yellow" x="474" y="160" width="54" height="22" rx="5"/><text class="t-sm" x="536" y="176">90-105</text>
+      <text class="t t-r" x="140" y="214">PC</text><rect class="s-purple" x="546" y="198" width="108" height="22" rx="5"/><text class="t-sm" x="662" y="214">110-140</text>
+      <text class="t t-r" x="140" y="252">PA-CF</text><rect class="s-red" x="654" y="236" width="144" height="22" rx="5"/><text class="t-sm t-r" x="650" y="252">140+</text>
+      <path class="d-ink" d="M150 270 H800"/>
+      <path class="d-ink" d="M150 266 V274 M330 266 V274 M510 266 V274 M690 266 V274 M798 266 V274"/>
+      <text class="t-xs t-c" x="150" y="286">0</text><text class="t-xs t-c" x="330" y="286">50</text><text class="t-xs t-c" x="510" y="286">100</text><text class="t-xs t-c" x="690" y="286">150</text><text class="t-xs t-c" x="798" y="286">180</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> Approximate heat resistance of common filament families. Real values depend on brand, additives, print orientation and annealing; always read the datasheet. The marker lines show everyday temperatures that parts must survive.</figcaption>
+  </figure>
+
+  <details class="accordion"><summary>Which filament is the strongest?</summary><div class="faq-a">
+    <p>"Strong" has several meanings. PLA is stiff but brittle; PETG, nylon and PC are tough (they bend before breaking); fiber-filled nylons and PC blends are stiff and heat-resistant. The orientation of layers usually matters more than the material: parts are weakest between layers. Read <a href="../design/strength-and-orientation.html">Strength &amp; orientation</a> before reaching for exotic filament.</p></div></details>
+
+  <details class="accordion"><summary>What are carbon-fiber or glass-fiber filaments and do they need a special nozzle?</summary><div class="faq-a">
+    <p>These are plastics with short chopped fibers that increase stiffness and reduce warping. The fibers are abrasive and wear a brass nozzle within hours to days of printing, so use a hardened-steel or similar wear-resistant nozzle. They are stiff but not magically strong between layers. See <a href="../materials/engineering-plastics.html">Engineering plastics</a>.</p></div></details>
+
+  <details class="accordion"><summary>Is TPU hard to print?</summary><div class="faq-a">
+    <p>Harder than PLA but very doable. Print slowly, keep the filament path short and well supported, dry the spool, and use less retraction. Softer grades (lower Shore A hardness) are harder than firm ones. See <a href="../materials/flexibles-and-specialty.html">Flexibles &amp; specialty filaments</a> and, for the X2D, <a href="../x2d/tpu-and-flexibles.html">TPU &amp; flexibles on X2D</a>.</p></div></details>
+
+  <details class="accordion"><summary>Why is ABS or ASA warping and cracking?</summary><div class="faq-a">
+    <p>These plastics shrink noticeably as they cool. When one layer cools faster than the one below it, the part curls off the bed or splits between layers. Fixes: enclosed warm chamber, no drafts, low part-cooling fan, a wide brim, a clean textured plate and rounded corners in the design. See <a href="../techniques/first-layer-and-adhesion.html">First layer &amp; bed adhesion</a>.</p></div></details>
+
+  <details class="accordion"><summary>Does silk, matte or "rainbow" filament print differently?</summary><div class="faq-a">
+    <p>Yes. Silk PLAs often have a slightly different melt behavior, can be weaker between layers and may need a higher temperature and slower speed for good gloss. Matte and filled filaments can be more abrasive and clog thin nozzles. Start with the maker's recommended temperatures and test a small print first.</p></div></details>
+
+  <details class="accordion"><summary>Can I mix brands or colors of the same material?</summary><div class="faq-a">
+    <p>Yes, within a print you can, but profiles differ. Different brands of "PLA" can need 10-20 °C different nozzle temperatures and have different flow behavior. In multi-color prints choose filaments that share a similar temperature window, otherwise purging gets messy. See <a href="../techniques/multi-color-and-multi-material.html">Multi-color &amp; multi-material</a>.</p></div></details>
+
+  <details class="accordion"><summary>How long does filament last?</summary><div class="faq-a">
+    <p>Stored dry and dark, most common filaments stay usable for years. The issue is moisture rather than age. Very old PLA can become brittle, and moisture-sensitive types should not be left open. Label spools with open dates.</p></div></details>
+
+  <details class="accordion"><summary>Why is the diameter 1.75 mm, and can I use 2.85 mm or 3 mm?</summary><div class="faq-a">
+    <p>1.75 mm is the de facto standard for modern consumer printers, because it melts faster and bends easily. Older machines use 2.85/3 mm filament. Your printer's extruder and hotend determine which is possible; never force a different diameter.</p></div></details>
+
+  </section>
+
+  <section class="faq-topic" data-topic="slicing">
+  <h2 id="t-slicing">💻 Slicing</h2>
+
+  <details class="accordion"><summary>Which layer height should I choose?</summary><div class="faq-a">
+    <p>With a 0.4 mm nozzle the sweet spot is usually 0.16-0.20 mm for appearance and 0.20-0.28 mm for speed and strength. A rule of thumb is 25-75% of the nozzle diameter. Thinner layers hide steps on curves but multiply print time. See <a href="../software/slicer-settings.html">Slicer settings explained</a>.</p></div></details>
+
+  <details class="accordion"><summary>How much infill do I need?</summary><div class="faq-a">
+    <p>Less than you think. For decorative parts 5-15% is enough. For functional parts 15-30% is typical, and increasing wall count (3-5 walls) adds far more strength per gram than going from 20% to 60% infill. Gyroid and similar patterns give good all-round stiffness. Fully solid parts are rarely worth the time.</p></div></details>
+
+  <details class="accordion"><summary>Walls, top layers, bottom layers: how many?</summary><div class="faq-a">
+    <p>Start with 2-3 walls for display parts and 3-5 for functional ones. Top shells need enough layers to bridge over infill: about 0.8-1.2 mm of total thickness is typical, so 4-6 layers at 0.2 mm. Bottom shells are usually slightly thinner. Open top surfaces with pillowing mean more top layers or more infill.</p></div></details>
+
+  <details class="accordion"><summary>When do I need supports?</summary><div class="faq-a">
+    <p>Surfaces steeper than roughly 45-60° from vertical (depending on cooling and material) and large unsupported bridges need support. Prefer re-orienting the part, splitting it or adding a chamfer first. If you need support, tree supports use less material and leave smaller scars. Details in <a href="../techniques/supports-bridges-overhangs.html">Supports, bridges &amp; overhangs</a>.</p></div></details>
+
+  <details class="accordion"><summary>Brim, skirt, raft: what is the difference?</summary><div class="faq-a">
+    <p>A skirt is a loop printed around the part (primes the nozzle, no adhesion help). A brim is a flat ring attached to the part's first layer, which widens the contact area and fights warping. A raft is a printed platform under the part, used for poor bed adhesion or uneven surfaces and it leaves a rough bottom face.</p></div></details>
+
+  <details class="accordion"><summary>What print speed should I use?</summary><div class="faq-a">
+    <p>Speed is limited by how fast your hotend can melt plastic (volumetric flow, mm³/s), by acceleration and by cooling. Modern machines print fast, but quality surfaces and small details still look better at moderate outer-wall speeds and low acceleration. Never trust a headline speed; check the print. See <a href="../techniques/speed-cooling-quality.html">Speed, cooling &amp; quality</a>.</p></div></details>
+
+  <details class="accordion"><summary>What is the "seam" and how do I hide it?</summary><div class="faq-a">
+    <p>Every closed wall loop must start and end somewhere, and that point is a small vertical line called the seam. Place it in a concave corner or at the back (aligned or "nearest" in the slicer), or use scarf seams where supported. On round parts it will always show somewhat.</p></div></details>
+
+  <details class="accordion"><summary>What is flow ratio, and what is pressure advance (flow dynamics)?</summary><div class="faq-a">
+    <p>Flow ratio scales how much plastic is extruded; a small tweak (0.95-1.05) fixes consistently over- or under-extruded walls. Pressure advance (called Flow Dynamics on Bambu printers) compensates for the delay between extruder motion and nozzle pressure, giving sharper corners without bulges. Both are covered in <a href="../techniques/calibration.html">the calibration playbook</a>.</p></div></details>
+
+  <details class="accordion"><summary>Why is the print time estimate wrong?</summary><div class="faq-a">
+    <p>Slicers model acceleration, jerk and speed limits, but they cannot know about firmware quirks, filament changes, heating times or pauses. Estimates are best treated as a plan; many machines are within about 10-20%, and prints with lots of tiny moves or color changes differ more.</p></div></details>
+
+  <details class="accordion"><summary>Which slicer should I use?</summary><div class="faq-a">
+    <p>Use the one made for your printer first (for Bambu Lab printers, Bambu Studio or its community cousin OrcaSlicer). Both are excellent, free and share the same lineage. PrusaSlicer and Cura are also fine. See the comparison in <a href="../software/slicers.html">Slicers compared</a>.</p></div></details>
+
+  <details class="accordion"><summary>Why do I get "floating regions" or "unprintable" warnings?</summary><div class="faq-a">
+    <p>The slicer detected material with nothing beneath it, usually a model that is not placed flat or a floating island. Lay the model on its flattest face, add supports, or fix the mesh with a repair tool. See <a href="../software/files-and-meshes.html">mesh repair</a>.</p></div></details>
+
+  </section>
+
+  <section class="faq-topic" data-topic="quality">
+  <h2 id="t-quality">🔍 Print quality &amp; failures</h2>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 380" role="img" aria-label="Decision tree: when a print goes wrong, classify the failure as first-layer, surface, structure or mid-print failure and see the first checks for each">
+      <rect class="f-red" x="320" y="10" width="220" height="40" rx="10"/>
+      <text class="t t-c t-b" x="430" y="35">The print went wrong</text>
+      <path class="d-ink" d="M430 50 V70 M107 70 H752 M107 70 V96 M322 70 V96 M537 70 V96 M752 70 V96"/>
+      <rect class="f-blue" x="10" y="96" width="195" height="56" rx="10"/>
+      <text class="t-sm t-b t-c" x="107" y="120">Failed in the</text><text class="t-sm t-b t-c" x="107" y="137">first layers?</text>
+      <rect class="f-yellow" x="225" y="96" width="195" height="56" rx="10"/>
+      <text class="t-sm t-b t-c" x="322" y="120">Surface blemishes:</text><text class="t-sm t-b t-c" x="322" y="137">strings, blobs, rough?</text>
+      <rect class="f-purple" x="440" y="96" width="195" height="56" rx="10"/>
+      <text class="t-sm t-b t-c" x="537" y="120">Shape or strength:</text><text class="t-sm t-b t-c" x="537" y="137">warp, splits, size?</text>
+      <rect class="f-orange" x="655" y="96" width="195" height="56" rx="10"/>
+      <text class="t-sm t-b t-c" x="752" y="120">Stopped mid-print</text><text class="t-sm t-b t-c" x="752" y="137">or spaghetti?</text>
+      <path class="d-ink arrow" d="M107 152 V176 M322 152 V176 M537 152 V176 M752 152 V176"/>
+      <rect class="d-surface" x="10" y="178" width="195" height="170" rx="10"/>
+      <rect class="d-surface" x="225" y="178" width="195" height="170" rx="10"/>
+      <rect class="d-surface" x="440" y="178" width="195" height="170" rx="10"/>
+      <rect class="d-surface" x="655" y="178" width="195" height="170" rx="10"/>
+      <text class="t-sm" x="20" y="204">• Clean the plate</text><text class="t-sm" x="20" y="228">• Re-run auto Z offset</text><text class="t-sm" x="20" y="252">• Match bed temperature</text><text class="t-sm" x="20" y="276">• Slow the first layer</text><text class="t-sm" x="20" y="300">• Check plate is seated</text><text class="t-sm t-m" x="20" y="332">Guide: first-layer page</text>
+      <text class="t-sm" x="235" y="204">• Dry the filament</text><text class="t-sm" x="235" y="228">• Lower nozzle temp 5-10 °C</text><text class="t-sm" x="235" y="252">• Tune retraction / flow dyn.</text><text class="t-sm" x="235" y="276">• Check cooling fans</text><text class="t-sm" x="235" y="300">• Clean or replace nozzle</text><text class="t-sm t-m" x="235" y="332">Guide: troubleshooting</text>
+      <text class="t-sm" x="450" y="204">• Warping: enclose + brim</text><text class="t-sm" x="450" y="228">• Splits: warmer, less fan</text><text class="t-sm" x="450" y="252">• Wrong size: flow, shrinkage</text><text class="t-sm" x="450" y="276">• Layer shifts: belts, speed</text><text class="t-sm" x="450" y="300">• Tighten loose screws</text><text class="t-sm t-m" x="450" y="332">Guide: calibration</text>
+      <text class="t-sm" x="665" y="204">• Clog or tangled spool</text><text class="t-sm" x="665" y="228">• Part detached from bed</text><text class="t-sm" x="665" y="252">• Support or bridge failed</text><text class="t-sm" x="665" y="276">• Runout / path jam</text><text class="t-sm" x="665" y="300">• Power or network drop</text><text class="t-sm t-m" x="665" y="332">Guide: maintenance</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> First-response triage. Decide which of the four families the failure belongs to, then work through that column from top to bottom, changing one thing at a time.</figcaption>
+  </figure>
+
+  <details class="accordion"><summary>My first layer will not stick. What should I check?</summary><div class="faq-a">
+    <p>In order: clean the plate with soap and water or isopropyl alcohol, re-run the printer's auto-calibration (Z offset), confirm the bed temperature for the material, slow down the first layer and avoid touching the surface with bare fingers. If the print sticks on one corner only, the plate may not be seated or the bed is out of level. See <a href="../techniques/first-layer-and-adhesion.html">First layer &amp; bed adhesion</a>.</p></div></details>
+
+  <details class="accordion"><summary>How do I stop stringing (hairs between parts)?</summary><div class="faq-a">
+    <p>Dry the filament first; wet filament is the number-one cause. Then lower the nozzle temperature by 5-10 °C, increase retraction distance a little, enable wipe or "avoid crossing walls" and print a retraction test. Strings are cosmetic and usually removed with a heat gun or by hand.</p></div></details>
+
+  <details class="accordion"><summary>Why are there blobs or zits on my outer wall?</summary><div class="faq-a">
+    <p>Most are the seam: the start and stop of each loop. Tuning pressure advance, relocating the seam, using scarf seams and slightly reducing temperature all help. Random blobs across the surface point to wet filament or a partly clogged nozzle.</p></div></details>
+
+  <details class="accordion"><summary>What is "elephant foot" and how do I fix it?</summary><div class="faq-a">
+    <p>The first layers squash outward and bulge at the bottom edge because of heat from the bed and too much squish. Reduce the Z offset a bit, lower the bed temperature by 5 °C after the first layers, or enable elephant-foot compensation in the slicer.</p></div></details>
+
+  <details class="accordion"><summary>My print has layer shifts. What causes that?</summary><div class="faq-a">
+    <p>Usually a mechanical issue: a collision with a curled-up section, loose belt or pulley, blocked motion or excessive speed and acceleration. Stop the print, look for the layer where it happened and check for a bump or obstacle. See <a href="../techniques/maintenance.html">Maintenance schedule</a>.</p></div></details>
+
+  <details class="accordion"><summary>Why does the surface show ripples or ghosting around features?</summary><div class="faq-a">
+    <p>Vibration of the toolhead or bed leaves echoes ("ringing") after sharp corners. Lower the acceleration, enable input shaping or vibration compensation (most modern machines run it automatically), check that the printer stands on a stable surface and avoid heavy things on the same table.</p></div></details>
+
+  <details class="accordion"><summary>The extruder clicks or the print looks gappy. Is it a clog?</summary><div class="faq-a">
+    <p>Clicking means the extruder cannot push as fast as needed: a clogged or partly blocked nozzle, too low temperature, too high speed or volumetric flow, a tangled spool, or wet filament. Try a cold pull, lower the flow demand, check the spool and the path, and replace the nozzle if it is worn.</p></div></details>
+
+  <details class="accordion"><summary>Why are my overhangs drooping or curling up?</summary><div class="faq-a">
+    <p>Plastic cools too slowly under overhangs. Increase part-cooling fan, lower temperature slightly, slow down on overhangs, and use supports or re-orient the model. Curling edges that catch the nozzle can cause layer shifts, so check early layers.</p></div></details>
+
+  <details class="accordion"><summary>My holes are too small and my parts are the wrong size. Why?</summary><div class="faq-a">
+    <p>Printed holes come out smaller than modeled because plastic sags inward and polygons approximate circles. Rather than scaling the whole model, design clearances (0.2-0.4 mm typical for moving fits) and print a tolerance test. See <a href="../design/tolerances-and-fits.html">Tolerances &amp; fits</a>.</p></div></details>
+
+  <details class="accordion"><summary>Can I trust AI failure detection and cameras?</summary><div class="faq-a">
+    <p>They reduce risk but are not a safety system. They catch common failures such as spaghetti, but can miss slow or unusual ones. Never rely on a camera alone to protect the house; see <a href="../foundations/safety-and-workspace.html">Safety &amp; workspace</a> for the fire-safety essentials.</p></div></details>
+
+  <details class="accordion"><summary>Where can I see pictures of defects?</summary><div class="faq-a">
+    <p>The <a href="../techniques/troubleshooting.html">Troubleshooting gallery</a> shows annotated defects and fixes, and the <a href="cheat-sheets.html">cheat sheets</a> have a printable diagnosis table.</p></div></details>
+
+  </section>
+
+  <section class="faq-topic" data-topic="mechanical">
+  <h2 id="t-mechanical">⚙️ Mechanical, maintenance &amp; firmware</h2>
+
+  <details class="accordion"><summary>How often should I maintain my printer?</summary><div class="faq-a">
+    <p>A light routine goes a long way: wipe the plate and clean the nozzle area each few prints, clean rails or lubricate them roughly every few hundred print hours (follow the maker's interval), check belts and screws monthly, and replace the nozzle when quality drops. A full schedule is in <a href="../techniques/maintenance.html">Maintenance schedule</a>.</p></div></details>
+
+  <details class="accordion"><summary>How often should I change the nozzle?</summary><div class="faq-a">
+    <p>Brass nozzles last for hundreds of hours with ordinary filament, but wear quickly with abrasive filaments. Replace when you see inconsistent extrusion, worn orifice or persistent clogs. Hardened steel lasts much longer but conducts heat less well, so it may need a few degrees more.</p></div></details>
+
+  <details class="accordion"><summary>What is a cold pull and when do I use it?</summary><div class="faq-a">
+    <p>A cold pull cleans a partial clog: heat the nozzle, push filament through, let it cool to a lower temperature, then pull the plug out with debris attached. Follow your printer's documentation because some hotends should not be disassembled or abused. Repeat until the pulled tip is clean.</p></div></details>
+
+  <details class="accordion"><summary>What does input shaping or vibration compensation do?</summary><div class="faq-a">
+    <p>The printer measures its natural resonance frequencies and filters motion commands so the frame does not ring. The effect is cleaner corners at higher accelerations. Some printers calibrate it automatically; on others you run an accelerometer test. See <a href="../techniques/speed-cooling-quality.html">Speed, cooling &amp; quality</a>.</p></div></details>
+
+  <details class="accordion"><summary>Do I need to level the bed manually?</summary><div class="faq-a">
+    <p>Many current printers probe the bed automatically and compensate with a mesh. You still need a good Z offset (nozzle height on the first layer) and a clean plate. On manual machines use the paper or feeler-gauge method while the bed is heated.</p></div></details>
+
+  <details class="accordion"><summary>Marlin, Klipper or vendor firmware?</summary><div class="faq-a">
+    <p>Vendor firmware (like Bambu's) is the simplest and best integrated; Klipper offers speed, tunability and a thriving community on supported hardware; Marlin is a common, reliable base on many budget machines. Changing firmware on a vendor machine can void warranty and features. See <a href="../software/gcode-and-firmware.html">G-code, firmware &amp; ecosystem</a>.</p></div></details>
+
+  <details class="accordion"><summary>What upgrades are worth it first?</summary><div class="faq-a">
+    <p>Usually a better build plate, spare nozzles, a filament dryer and an enclosure if you will print ABS/ASA. Upgrading parts of a printer you have not yet pushed to its limits rarely helps. Fix your slicer settings and calibration first.</p></div></details>
+
+  <details class="accordion"><summary>Why is my printer loud?</summary><div class="faq-a">
+    <p>Fans (part cooling, hotend, chamber) and fast stepper motion dominate the noise. Most enclosed machines have a quiet mode that limits speeds and acceleration. Rubber feet, a solid table and no contact with walls reduce vibration noise.</p></div></details>
+
+  <details class="accordion"><summary>How much electricity does a printer use?</summary><div class="faq-a">
+    <p>Heated beds and hotends draw most power while heating; a printer then averages well under its peak rating. An enclosed machine may average roughly 100-200 W over a long print, so a ten-hour print is about 1-2 kWh. See the worked examples in <a href="economics-and-ethics.html#cost-model">Economics &amp; ethics</a>.</p></div></details>
+
+  </section>
+
+  <section class="faq-topic" data-topic="design">
+  <h2 id="t-design">📐 Design for printing</h2>
+
+  <details class="accordion"><summary>What is the minimum wall thickness?</summary><div class="faq-a">
+    <p>As a guide, a single wall is about one nozzle width (0.4-0.5 mm). Make functional walls at least 1.2-2 mm (3-5 perimeters), thicker around screws and load points. Thin tall walls wobble during printing.</p></div></details>
+
+  <details class="accordion"><summary>What clearance do I need between moving or fitting parts?</summary><div class="faq-a">
+    <p>Roughly 0.1-0.2 mm for tight press fits, 0.2-0.3 mm for sliding fits and 0.3-0.5 mm for loose or print-in-place parts, depending on printer and material. Print a tolerance test coupon on your own machine to find your numbers. See <a href="../design/tolerances-and-fits.html">Tolerances &amp; fits</a>.</p></div></details>
+
+  <details class="accordion"><summary>How should I orient a part for strength?</summary><div class="faq-a">
+    <p>Layers are the weak plane: a part is much stronger along the layer lines than across them. Orient so loads pull along the layers, not between them, and avoid thin features whose axis is vertical. See <a href="../design/strength-and-orientation.html">Strength &amp; orientation</a>.</p></div></details>
+
+  <details class="accordion"><summary>Can I print threads and screws?</summary><div class="faq-a">
+    <p>Large coarse threads (jar lids, clamp screws) print fine. Small metric threads are fragile; better to design a hole for a metal screw or a heat-set insert. See <a href="../design/joints-and-fasteners.html">Joints &amp; fasteners</a>.</p></div></details>
+
+  <details class="accordion"><summary>How long a bridge can I print?</summary><div class="faq-a">
+    <p>With good cooling, bridges of 20-50 mm are usually fine, and shorter is better. Beyond that, add a support or redesign with an arch or chamfer. Bridging quality depends heavily on fan, speed and temperature.</p></div></details>
+
+  <details class="accordion"><summary>What is print-in-place?</summary><div class="faq-a">
+    <p>An assembly printed in one go with built-in clearances, such as hinges, chains or gears. It works when clearances are properly designed and the first layer is not squished. See <a href="../design/design-patterns.html">Design patterns &amp; recipes</a>.</p></div></details>
+
+  <details class="accordion"><summary>How small can text or details be?</summary><div class="faq-a">
+    <p>With a 0.4 mm nozzle, raised text should have strokes of at least about 0.8 mm and a height of 0.6-1 mm; engraved text needs wider grooves than raised text. Smaller nozzles allow finer details.</p></div></details>
+
+  <details class="accordion"><summary>Which CAD approach should I learn: parametric or mesh?</summary><div class="faq-a">
+    <p>Parametric CAD (sketch, extrude, constrain) is best for functional parts because you can change a dimension and everything updates. Mesh and sculpting tools suit organic art. See the <a href="../design/parametric-cad-workflow.html">parametric CAD workflow</a>.</p></div></details>
+
+  <details class="accordion"><summary>How do I make parts that print without supports?</summary><div class="faq-a">
+    <p>Add 45° chamfers instead of horizontal ceilings, split the part along a flat plane, use teardrop-shaped horizontal holes, and orient the largest flat face on the bed. See <a href="../design/principles.html">Design principles</a>.</p></div></details>
+
+  </section>
+
+  <section class="faq-topic" data-topic="safety">
+  <h2 id="t-safety">🦺 Safety</h2>
+
+  <details class="accordion"><summary>Are 3D printer fumes dangerous?</summary><div class="faq-a">
+    <p>Heating plastic emits ultrafine particles and volatile compounds. PLA is relatively mild, ABS and ASA emit styrene and other irritants, and nylon, PC and some composites need special care. Print in a ventilated room, preferably with an enclosure and filtration, and do not sleep next to a printer. Research is ongoing, so use cautious habits. See <a href="../foundations/safety-and-workspace.html">Safety &amp; workspace</a>.</p></div></details>
+
+  <details class="accordion"><summary>Can a printer start a fire?</summary><div class="faq-a">
+    <p>It is rare but real: a loose heater wire, a damaged thermistor or a bad power connector can overheat. Use a printer with thermal-runaway protection, check connectors regularly, keep flammables away, install a smoke detector nearby and consider a fire extinguisher. Avoid printing while the house is empty or while you sleep.</p></div></details>
+
+  <details class="accordion"><summary>Is it safe to leave a print running overnight?</summary><div class="faq-a">
+    <p>Many people do, but it is your risk decision. Reduce it: use a reputable, certified machine, keep the area clear, use a smoke alarm, check wiring, and never run an unattended printer that you modified heavily. Prefer printing during the day for new or experimental setups.</p></div></details>
+
+  <details class="accordion"><summary>Do I need a carbon or HEPA filter?</summary><div class="faq-a">
+    <p>A filter helps capture particles and some odors, but does not remove every gas. Filters should be replaced on schedule and do not replace ventilation for ABS/ASA. Printers with built-in filtration (such as the X2D's three-stage system) are a plus, not a license to ignore ventilation.</p></div></details>
+
+  <details class="accordion"><summary>Are there risks from hot parts and moving mechanics?</summary><div class="faq-a">
+    <p>Yes: nozzles reach 200-300 °C, beds 60-110 °C. Let the machine cool, never reach into a moving toolhead, tie back loose hair and sleeves and keep children and pets away. Fresh printed parts out of a hot chamber can burn.</p></div></details>
+
+  <details class="accordion"><summary>What about resin safety?</summary><div class="faq-a">
+    <p>Liquid resin is a skin sensitizer and irritant. Wear nitrile gloves and eye protection, ventilate, never pour uncured resin down a drain and cure waste fully before disposal. If you are unsure, start with FDM.</p></div></details>
+
+  <details class="accordion"><summary>Is it safe to print for children's toys?</summary><div class="faq-a">
+    <p>Printed toys can break into small parts, have sharp edges and rough, hard-to-clean surfaces. Toy-safety rules apply to products you sell. Design robustly, avoid small detachable parts for young children, and see the legal notes in <a href="economics-and-ethics.html#standards">Economics &amp; ethics</a>.</p></div></details>
+
+  </section>
+
+  <section class="faq-topic" data-topic="buying">
+  <h2 id="t-buying">🛒 Buying a printer</h2>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 330" role="img" aria-label="Decision tree for choosing a printer: what do you print, do you need an enclosure, do you want multi-color, and what budget tier to look at">
+      <rect class="f-orange" x="320" y="8" width="220" height="40" rx="10"/>
+      <text class="t t-c t-b" x="430" y="33">What will you print?</text>
+      <path class="d-ink" d="M430 48 V66 M150 66 H710 M150 66 V90 M430 66 V90 M710 66 V90"/>
+      <rect class="f-blue" x="30" y="90" width="240" height="56" rx="10"/>
+      <text class="t-sm t-b t-c" x="150" y="114">Toys, decor, models,</text><text class="t-sm t-b t-c" x="150" y="131">PLA only</text>
+      <rect class="f-green" x="310" y="90" width="240" height="56" rx="10"/>
+      <text class="t-sm t-b t-c" x="430" y="114">Functional parts,</text><text class="t-sm t-b t-c" x="430" y="131">PETG, some ABS/ASA</text>
+      <rect class="f-red" x="590" y="90" width="240" height="56" rx="10"/>
+      <text class="t-sm t-b t-c" x="710" y="114">Engineering parts,</text><text class="t-sm t-b t-c" x="710" y="131">PA, PC, CF, high heat</text>
+      <path class="d-ink arrow" d="M150 146 V172 M430 146 V172 M710 146 V172"/>
+      <rect class="d-surface" x="30" y="174" width="240" height="96" rx="10"/>
+      <text class="t-sm" x="42" y="198">• Open-frame is fine</text><text class="t-sm" x="42" y="218">• Auto-leveling saves time</text><text class="t-sm" x="42" y="238">• Add multi-color only if</text><text class="t-sm" x="42" y="256">  you will really use it</text>
+      <rect class="d-surface" x="310" y="174" width="240" height="96" rx="10"/>
+      <text class="t-sm" x="322" y="198">• Enclosed machine helps</text><text class="t-sm" x="322" y="218">• Hardened nozzle option</text><text class="t-sm" x="322" y="238">• Filament dryer + AMS-style</text><text class="t-sm" x="322" y="256">  feeder is convenient</text>
+      <rect class="d-surface" x="590" y="174" width="240" height="96" rx="10"/>
+      <text class="t-sm" x="602" y="198">• Actively heated chamber</text><text class="t-sm" x="602" y="218">• Hardened nozzle, 300 °C+</text><text class="t-sm" x="602" y="238">• Filtration and drying</text><text class="t-sm" x="602" y="256">• Larger budget needed</text>
+      <rect class="d-surface2" x="30" y="284" width="800" height="36" rx="8"/>
+      <text class="t-sm t-c" x="430" y="307">Always weigh: support and spares, community size, software openness, size, noise, warranty.</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> A simple way to narrow the field. Decide what you will print first; the printer class follows from the materials.</figcaption>
+  </figure>
+
+  <details class="accordion"><summary>Which printer should I buy?</summary><div class="faq-a">
+    <p>Pick by what you want to print, your budget and the ecosystem. For most beginners an enclosed or open-frame CoreXY or bed-slinger from an established brand with active community and parts support works well. Read <a href="../foundations/buying-guide.html">Choosing a printer</a> and avoid unknown no-name machines.</p></div></details>
+
+  <details class="accordion"><summary>Do I need an enclosure?</summary><div class="faq-a">
+    <p>Not for PLA or PETG, but for ABS, ASA, nylon, PC and carbon-fiber composites it greatly reduces warping and fume spread. An enclosure also hushes noise and keeps drafts and pets away.</p></div></details>
+
+  <details class="accordion"><summary>Is a kit or an assembled printer better?</summary><div class="faq-a">
+    <p>Assembled is best for beginners who want to print. Kits are rewarding if you enjoy building and understanding the machine, but assembly errors are a common source of problems.</p></div></details>
+
+  <details class="accordion"><summary>Should I buy a used printer?</summary><div class="faq-a">
+    <p>Possible and often a bargain, if you can inspect it running, check for worn nozzles and bed, firmware support, and that spare parts are still sold. Ask for a test print and its print hours.</p></div></details>
+
+  <details class="accordion"><summary>How big a build volume do I need?</summary><div class="faq-a">
+    <p>Around 250 mm cubes cover most parts; larger prints are possible by splitting models into pieces and gluing them. Bigger machines cost more, use more energy and take longer to heat; do not buy size you will rarely use.</p></div></details>
+
+  <details class="accordion"><summary>Are open ecosystems better than closed ones?</summary><div class="faq-a">
+    <p>Open firmware gives control and repairability; closed ecosystems often give polish and reliability. Check whether the printer works offline (local network mode), which slicers it supports, and the repair and parts policy before buying.</p></div></details>
+
+  <details class="accordion"><summary>Is multi-color worth the extra money?</summary><div class="faq-a">
+    <p>If you will print colorful figurines, signs or multi-material supports, yes. If you mostly print single-color parts, a single-material machine is cheaper and wastes no purge. See <a href="../techniques/multi-color-and-multi-material.html">Multi-color &amp; multi-material</a>.</p></div></details>
+
+  </section>
+
+  <section class="faq-topic" data-topic="x2d">
+  <h2 id="t-x2d">🖨️ Bambu X2D &amp; AMS 2 Pro</h2>
+  <p>Facts in this section follow Bambu Lab's public documentation (<a href="https://wiki.bambulab.com">wiki.bambulab.com</a>). Firmware changes roughly every few months, so check the wiki for the current state. This site is unofficial.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 330" role="img" aria-label="Schematic of the X2D filament paths: AMS 2 Pro feeds a buffer, one PTFE tube goes to the left main nozzle and the auxiliary extruder on the rear panel feeds the right auxiliary nozzle through a second PTFE tube">
+      <rect class="f-purple" x="14" y="14" width="200" height="64" rx="10"/>
+      <text class="t t-c t-b" x="114" y="42">AMS 2 Pro</text><text class="t-sm t-c" x="114" y="62">4 slots · dryer up to 65 °C</text>
+      <path class="d-ink arrow" d="M216 46 H238"/>
+      <rect class="f-gray" x="240" y="20" width="130" height="52" rx="10"/>
+      <text class="t t-c t-b" x="305" y="43">Buffer</text><text class="t-xs t-c" x="305" y="60">2 × 6-pin ports on top</text>
+      <path class="d-ink arrow" d="M372 46 H558"/>
+      <text class="t-xs t-m" x="400" y="38">filament to aux extruder</text>
+      <rect class="f-orange" x="560" y="14" width="280" height="64" rx="10"/>
+      <text class="t t-c t-b" x="700" y="42">Auxiliary extruder</text><text class="t-sm t-c" x="700" y="62">stepper · rear panel top</text>
+      <path class="k-gray" d="M305 72 C305 120 360 110 360 150" style="stroke-width:4"/>
+      <text class="t-xs t-m" x="196" y="120">PTFE tube to main nozzle</text>
+      <path class="k-orange" d="M700 78 C700 120 520 100 500 150" style="stroke-width:4"/>
+      <text class="t-xs t-m" x="612" y="124">PTFE tube to aux nozzle</text>
+      <rect class="d-surface2" x="300" y="150" width="260" height="84" rx="12"/>
+      <text class="t-sm t-b t-c" x="365" y="176">Main extruder</text><text class="t-xs t-c" x="365" y="192">servo, inside</text><text class="t-xs t-c" x="365" y="206">the toolhead</text>
+      <text class="t-sm t-b t-c" x="495" y="176">Nozzle swap</text><text class="t-xs t-c" x="495" y="192">gear-and-trigger</text><text class="t-xs t-c" x="495" y="206">mechanism</text>
+      <path class="d-thin" d="M430 156 V228"/>
+      <path class="d-metal" d="M345 234 L385 234 L371 262 L359 262 Z"/>
+      <path class="d-metal" d="M475 234 L515 234 L501 262 L489 262 Z"/>
+      <text class="t-sm t-b t-c" x="365" y="282">Main nozzle (left)</text>
+      <text class="t-sm t-b t-c" x="495" y="282">Aux nozzle (right)</text>
+      <rect class="d-metal2" x="230" y="296" width="400" height="12" rx="3"/>
+      <text class="t-xs t-m" x="230" y="324">256 × 256 mm build plate (heated)</text>
+      <text class="t-sm t-b" x="672" y="226">Print area (X × Y × Z)</text>
+      <text class="t-sm" x="672" y="248">Main nozzle: 256×256×260</text>
+      <text class="t-sm" x="672" y="268">Aux nozzle: 235.5×256×256</text>
+      <text class="t-sm" x="672" y="288">Both nozzles: 235.5×256×256</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> Simplified X2D filament paths (not to scale). The main extruder sits in the toolhead; the auxiliary extruder is remote and pushes filament through a PTFE tube. Dimensions in mm, from Bambu Lab's documentation.</figcaption>
+  </figure>
+
+  <details class="accordion"><summary>What is the Bambu Lab X2D?</summary><div class="faq-a">
+    <p>An enclosed CoreXY printer with <strong>two nozzles</strong> (left main, right auxiliary), an actively heated chamber up to 65 °C, nozzle temperatures up to 300 °C and support for AMS 2 Pro filament systems. Overview and comparison: <a href="../x2d/overview.html">X2D overview &amp; specs</a>; tour: <a href="../x2d/hardware-tour.html">Hardware tour</a>.</p></div></details>
+
+  <details class="accordion"><summary>What is the build volume?</summary><div class="faq-a">
+    <p>With the main (left) nozzle you can use 256 × 256 × 260 mm. The auxiliary (right) nozzle alone reaches 235.5 × 256 × 256 mm, and the area shared by both nozzles is also 235.5 × 256 × 256 mm. See <a href="../x2d/dual-nozzle-printing.html">Dual-nozzle printing</a>.</p></div></details>
+
+  <details class="accordion"><summary>What is the difference between the main and the auxiliary nozzle?</summary><div class="faq-a">
+    <p>The main extruder sits in the toolhead with a closed-loop servo motor, giving fast, precise flow control and automatic flow calibration. The auxiliary extruder is a stepper motor mounted on the rear panel and feeds the right nozzle through a PTFE tube, which suits supports and a second color but limits speed. Official limits for the aux extruder are 200 mm/s print speed and about 1000 mm/s² acceleration.</p></div></details>
+
+  <details class="accordion"><summary>Why would I want two nozzles?</summary><div class="faq-a">
+    <p>Two nozzles let you print a second color or material without purging everything, print supports in a different material for clean interfaces, and switch faster between filaments, which reduces waste. See <a href="../x2d/dual-nozzle-printing.html">Dual-nozzle printing</a> and <a href="../x2d/recipes.html">Project recipes</a>.</p></div></details>
+
+  <details class="accordion"><summary>How do the nozzles switch?</summary><div class="faq-a">
+    <p>A mechanical gear-and-trigger mechanism in the toolhead raises one nozzle and lowers the other with no extra motor, which keeps the toolhead light. Bambu Lab states it has been tested for over a million switch cycles.</p></div></details>
+
+  <details class="accordion"><summary>What filaments should I run on the auxiliary nozzle?</summary><div class="faq-a">
+    <p>Bambu Lab recommends its own filaments (especially PLA) on the aux nozzle and lists several types as "print with caution". For the exact table, which depends on nozzle size and filament type, see <a href="../x2d/filament-compatibility.html">Filament compatibility</a>. Use the main nozzle for TPU.</p></div></details>
+
+  <details class="accordion"><summary>Does flow dynamics calibration work on both nozzles?</summary><div class="faq-a">
+    <p>The main nozzle supports automatic dynamic flow calibration. The aux nozzle can be calibrated manually in Bambu Studio. Because the aux path is long, it needs much longer retraction and a considerably larger flow-dynamics K value than the main nozzle. See <a href="../x2d/settings-and-profiles.html">Bambu Studio settings &amp; profiles</a>.</p></div></details>
+
+  <details class="accordion"><summary>Can I use different nozzle diameters on the two sides?</summary><div class="faq-a">
+    <p>At the time of the documentation used for this site, dual-nozzle printing requires the same nozzle size on both sides; future support would be announced in firmware notes. The hotends are structurally identical and interchangeable between sides.</p></div></details>
+
+  <details class="accordion"><summary>What does the AMS 2 Pro add over the original AMS?</summary><div class="faq-a">
+    <p>Active drying (two heater modules up to 65 °C), humidity and temperature sensing, sealed lid, controlled air vents, and two RFID coils. Each of its four slots has its own feeder. The original AMS works with the X2D for multi-color but has no drying; AMS lite is not supported. Details in <a href="../x2d/ams-2-pro.html">AMS 2 Pro deep dive</a>.</p></div></details>
+
+  <details class="accordion"><summary>How many AMS units can I connect?</summary><div class="faq-a">
+    <p>Bambu documents up to four AMS 2 Pro and eight AMS HT units on a single-hotend setup, and a maximum of 25 colors on dual hotends with the full configuration. The buffer offers two 6-pin ports, but one is for the exhaust fan, so units are daisy-chained. For three or more units a 4-in-1 PTFE adapter (FAZ013-N) is needed. Drying several AMS 2 Pro units needs an official power adapter for the extra units.</p></div></details>
+
+  <details class="accordion"><summary>Why does the desiccant change color?</summary><div class="faq-a">
+    <p>The silica gel in the AMS 2 Pro contains an indicator that changes from yellow toward purple as it saturates with moisture. Replace or regenerate it according to Bambu's maintenance guide, and keep the lid seal and air vents clean and unobstructed.</p></div></details>
+
+  <details class="accordion"><summary>Can I use third-party filament in the AMS 2 Pro?</summary><div class="faq-a">
+    <p>Yes in principle; the RFID coils only read Bambu Lab tags, so for other filament you set type and color by hand and avoid very soft, brittle or sticky spools. Follow Bambu's compatibility lists, use spools that turn freely, and feed very soft or fragile filament (such as softer TPU) from an external spool instead.</p></div></details>
+
+  <details class="accordion"><summary>How loud is it, how much power does it use, and how big is it?</summary><div class="faq-a">
+    <p>Under 50 dB in silent mode at 1 m. Maximum power is around 1600 W (230 V version) during heating, and Bambu quotes roughly 250 W steady-state for PLA and about 550 W for PC at 25 °C ambient. The printer measures 392 × 406 × 478 mm and weighs about 16 kg; leave generous clearance around the exhaust, purge chute and top for AMS units.</p></div></details>
+
+  <details class="accordion"><summary>What is the chamber filtration?</summary><div class="faq-a">
+    <p>A three-stage filter (G3 pre-filter, H12 HEPA and activated carbon) captures particles and many VOCs. For low-temperature filaments the air is exhausted through the filter kit; for high-temperature filaments the printer recirculates and filters air inside the chamber. An exhaust pipe accessory can vent fumes outdoors. See <a href="../foundations/safety-and-workspace.html">Safety &amp; workspace</a>.</p></div></details>
+
+  <details class="accordion"><summary>What intelligent detection features exist?</summary><div class="faq-a">
+    <p>A live-view camera and a toolhead camera support spaghetti, foreign-object, nozzle-clumping, part-displacement and purge-chute pile-up detection, plus build plate type and alignment recognition. Sensors detect filament runout, tangles, door opening and chamber temperature. It supports safer operation but never replaces supervision.</p></div></details>
+
+  <details class="accordion"><summary>Can I upgrade my X1C to an X2D, or use my old plates?</summary><div class="faq-a">
+    <p>X1 printers are not upgradable to X2D. The X2D accepts the current 256 × 256 mm Bambu plates but does not recognize first-generation plates (you can disable plate detection). It has no wired Ethernet but supports dual-band Wi-Fi.</p></div></details>
+
+  <details class="accordion"><summary>How do I print TPU on the X2D?</summary><div class="faq-a">
+    <p>Use the main nozzle, dry the spool, print slowly and follow Bambu's TPU guide (external spool, or the optional feed-assist module). See <a href="../x2d/tpu-and-flexibles.html">TPU &amp; flexibles on X2D</a>.</p></div></details>
+
+  <details class="accordion"><summary>Where do I learn the first-print routine, maintenance and engineering workflows?</summary><div class="faq-a">
+    <p>Start with <a href="../x2d/setup-and-first-print.html">Set-up &amp; first print</a>, then <a href="../x2d/maintenance-and-troubleshooting.html">Maintenance &amp; troubleshooting</a>, and <a href="../x2d/engineering-and-chamber.html">Engineering materials &amp; chamber</a> for ABS, ASA, PA and PC. Practice with the <a href="../exercises/x2d-challenges.html">X2D challenges</a>.</p></div></details>
+
+  </section>
+
+  <section class="faq-topic" data-topic="color">
+  <h2 id="t-color">🎨 Multi-color &amp; multi-material</h2>
+
+  <details class="accordion"><summary>How does multi-color printing work on a single-nozzle printer?</summary><div class="faq-a">
+    <p>A feeder system (like an AMS) unloads one filament, loads the next and purges the old color out of the nozzle into a purge tower or chute. Each change costs time and some plastic. See <a href="../techniques/multi-color-and-multi-material.html">Multi-color &amp; multi-material</a>.</p></div></details>
+
+  <details class="accordion"><summary>Why does multi-color waste so much filament?</summary><div class="faq-a">
+    <p>Every change flushes leftover color out of the nozzle; dark-to-light changes need far more purge than light-to-dark. Waste grows with the number of changes, so fewer layers with color changes, larger flush-volume tuning and smart object ordering help.</p></div></details>
+
+  <details class="accordion"><summary>How can I reduce purge waste?</summary><div class="faq-a">
+    <p>Reduce flush volumes after testing, design models with fewer color transitions per layer, use a smaller prime tower, print colors in light-to-dark order, group objects so that changes are shared, and where available use a second nozzle for part of the colors. Purged "poop" can be recycled or used in fill-in prints.</p></div></details>
+
+  <details class="accordion"><summary>Can I print multi-color without an AMS?</summary><div class="faq-a">
+    <p>Yes: pause at specified layers and swap filament manually (a color-change command), which suits layer-based colors like signs or lithophane-style plates. It is slow but costs nothing extra.</p></div></details>
+
+  <details class="accordion"><summary>What is the difference between a feeder (AMS), a tool changer and dual nozzles?</summary><div class="faq-a">
+    <p>A feeder swaps filament in one nozzle (purging). A tool changer swaps whole toolheads, so less purging but higher complexity. Dual nozzles (like the X2D) swap between two nozzles. The more independent hot paths you have, the less purge, at a cost in complexity. See <a href="../x2d/dual-nozzle-printing.html">Dual-nozzle printing</a>.</p></div></details>
+
+  <details class="accordion"><summary>Can I print different materials (PLA + TPU or PLA + support) together?</summary><div class="faq-a">
+    <p>If the materials stick to each other and have compatible temperature windows. Support materials are designed to bond weakly. Check compatibility lists and test small pieces.</p></div></details>
+
+  <details class="accordion"><summary>What is a flush volume matrix?</summary><div class="faq-a">
+    <p>A table in the slicer defining how much plastic to purge for each from-to color pair. Defaults are conservative; once you have tested, you can reduce values for similar colors and keep large ones for dark-to-light changes. Edit it in Bambu Studio's flushing settings; see <a href="../x2d/settings-and-profiles.html">Bambu Studio settings &amp; profiles</a>.</p></div></details>
+
+  <details class="accordion"><summary>Is painting an alternative to multi-color printing?</summary><div class="faq-a">
+    <p>Yes. Painting a single-color print with primer and acrylics costs almost no filament and can look better on detailed miniatures. See <a href="../techniques/post-processing.html">Post-processing</a>.</p></div></details>
+
+  </section>
+
+  <section class="faq-topic" data-topic="post">
+  <h2 id="t-post">🧽 Post-processing</h2>
+
+  <details class="accordion"><summary>How do I sand and smooth prints?</summary><div class="faq-a">
+    <p>Work through grits (for example 120, 220, 400 and higher) on a flat or flexible backing, wet-sand to reduce dust, and prime to find defects. Do not overheat while sanding: PLA gums up. Wear a dust mask when sanding dry. See <a href="../techniques/post-processing.html">Post-processing</a>.</p></div></details>
+
+  <details class="accordion"><summary>Can I smooth PLA with chemicals?</summary><div class="faq-a">
+    <p>ABS can be vapor-smoothed with acetone (flammable and hazardous: use outdoors or with proper ventilation). PLA is not soluble in common household solvents; use sanding, filler primer or epoxy coating instead. Some solvents for other plastics are toxic; follow safety data sheets.</p></div></details>
+
+  <details class="accordion"><summary>What glue works for 3D prints?</summary><div class="faq-a">
+    <p>Cyanoacrylate (super glue) for PLA and PETG, two-part epoxy for gap-filling and strength, plastic cement or solvent welding for ABS/ASA. Roughen surfaces, add alignment pins and keep glue gaps small.</p></div></details>
+
+  <details class="accordion"><summary>How do I paint a print?</summary><div class="faq-a">
+    <p>Clean, sand lightly, apply a filler primer in thin coats, sand again, then thin layers of acrylic or spray paint, and finish with clear coat. Test paint on a hidden spot because some paints react with plastics.</p></div></details>
+
+  <details class="accordion"><summary>What is annealing and when does it help?</summary><div class="faq-a">
+    <p>Heating a part below its melting point but above the glass transition lets the polymer crystallize, increasing heat resistance and sometimes strength. Parts shrink or warp a bit, so only do it for parts that tolerate dimension changes, with the right material grade, and test first.</p></div></details>
+
+  <details class="accordion"><summary>How do I remove support marks?</summary><div class="faq-a">
+    <p>Use support interface settings with a small Z gap, tree supports, pliers and a deburring tool, then sand. Dissolvable or specially designed support filaments leave better surfaces, and a second nozzle makes them practical.</p></div></details>
+
+  <details class="accordion"><summary>How do I add threaded metal inserts?</summary><div class="faq-a">
+    <p>Heat-set inserts are pressed into a slightly undersized hole with a soldering iron tip at a suitable temperature, slowly and straight. Design hole diameter and depth for the specific insert. See <a href="../design/joints-and-fasteners.html">Joints &amp; fasteners</a>.</p></div></details>
+
+  </section>
+
+  <section class="faq-topic" data-topic="business">
+  <h2 id="t-business">💰 Costs &amp; business</h2>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 250" role="img" aria-label="Illustrative stacked bar showing how the cost of a 120 gram, six hour PLA print divides into material, electricity, machine wear, maintenance and failed prints">
+      <text class="t t-b" x="30" y="26">Illustrative cost of one 120 g, 6 h PLA print (total ≈ $6.35)</text>
+      <rect class="s-orange" x="30" y="46" width="302" height="46"/>
+      <rect class="s-yellow" x="332" y="46" width="22" height="46"/>
+      <rect class="s-blue" x="354" y="46" width="378" height="46"/>
+      <rect class="s-purple" x="732" y="46" width="38" height="46"/>
+      <rect class="s-red" x="770" y="46" width="59" height="46"/>
+      <text class="t t-w t-c t-b" x="181" y="74">Filament  38%</text>
+      <text class="t t-w t-c t-b" x="543" y="74">Machine amortization  47%</text>
+      <path class="d-thin" d="M343 92 V120 M751 92 V120 M799 92 V120"/>
+      <rect class="s-orange" x="30" y="136" width="14" height="14"/><text class="t-sm" x="52" y="148">Filament: $20/kg × 0.12 kg = $2.40</text>
+      <rect class="s-yellow" x="30" y="160" width="14" height="14"/><text class="t-sm" x="52" y="172">Electricity: 0.9 kWh × $0.20 = $0.18 (3%)</text>
+      <rect class="s-blue" x="430" y="136" width="14" height="14"/><text class="t-sm" x="452" y="148">Machine: $1,000 ÷ 2,000 h × 6 h = $3.00</text>
+      <rect class="s-purple" x="430" y="160" width="14" height="14"/><text class="t-sm" x="452" y="172">Wear and maintenance: about $0.30 (5%)</text>
+      <rect class="s-red" x="30" y="184" width="14" height="14"/><text class="t-sm" x="52" y="196">Failed prints: 8% allowance ≈ $0.47 (7%)</text>
+      <text class="t-sm t-m" x="30" y="228">Your numbers will differ. Labor and post-processing are excluded (hobby time is often valued at zero).</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> The surprise for most people: filament is not the biggest cost once you include the machine. Use the <a href="../tools/calculators.html">calculators</a> and the worked examples in <a href="economics-and-ethics.html#cost-model">Economics &amp; ethics</a> with your own numbers.</figcaption>
+  </figure>
+
+  <details class="accordion"><summary>How much does a typical print cost?</summary><div class="faq-a">
+    <p>Material cost is roughly the weight in grams times the price per gram (a $20 spool of 1 kg is $0.02 per gram). A 50 g part costs about $1 in filament; electricity is usually a few cents to tens of cents. Add machine wear, failures and your time for a realistic number.</p></div></details>
+
+  <details class="accordion"><summary>Is it cheaper to print or to buy?</summary><div class="faq-a">
+    <p>For custom, rare or low-volume items, printing usually wins. For mass-produced simple items (screws, standard brackets), buying is cheaper and often better. The decision tree is in <a href="economics-and-ethics.html#print-vs-buy">Economics &amp; ethics</a>.</p></div></details>
+
+  <details class="accordion"><summary>Can I make money selling prints?</summary><div class="faq-a">
+    <p>Some people do, but margins are thin where competition is intense. Success comes from design, niche products, quality and service rather than from selling generic downloads. Check license terms, taxes and consumer-law obligations first. See <a href="applications.html#business">Applications: business realities</a>.</p></div></details>
+
+  <details class="accordion"><summary>Can I sell prints of models I downloaded?</summary><div class="faq-a">
+    <p>Only if the license permits commercial use. Many models are non-commercial (Creative Commons NC) or require permission, attribution or a paid commercial license. Not legal advice; see <a href="economics-and-ethics.html#ip">Intellectual property</a>.</p></div></details>
+
+  <details class="accordion"><summary>How should I price prints for sale?</summary><div class="faq-a">
+    <p>Add material, machine time, failures, packaging, platform fees, taxes and labor, then compare with market prices. A common starting heuristic is a multiple of material plus machine-time costs. See <a href="economics-and-ethics.html#pricing">Pricing prints</a>.</p></div></details>
+
+  <details class="accordion"><summary>Is it legal to print weapons or weapon parts?</summary><div class="faq-a">
+    <p>Laws vary widely by country and region, and in many places manufacturing firearms or restricted parts is illegal or tightly regulated. Do not print weapons or weapon parts unless you are legally authorized and know the law. Platforms ban such models. See <a href="economics-and-ethics.html#weapons">Dangerous objects policy</a>.</p></div></details>
+
+  <details class="accordion"><summary>Can I print safety-critical parts such as helmets, brake parts or climbing gear?</summary><div class="faq-a">
+    <p>No, not as certified replacements. Printed parts have anisotropic, variable strength; protective equipment and anything where failure could injure someone needs certified, tested components. See <a href="economics-and-ethics.html#safety-critical">Safety-critical parts</a>.</p></div></details>
+
+  <details class="accordion"><summary>What is the environmental impact of 3D printing?</summary><div class="faq-a">
+    <p>Printers use modest electricity, but waste (supports, failures, purge) and plastics from fossil sources are an issue. PLA is bio-based but typically not home-compostable. Reduce failures, choose durable designs, and recycle where programs exist. See <a href="economics-and-ethics.html#environment">Environmental impact</a>.</p></div></details>
+
+  <details class="accordion"><summary>Where do I go to learn more and ask for help?</summary><div class="faq-a">
+    <p>Start with <a href="resources.html">Resources &amp; communities</a> for official wikis and forums, the <a href="glossary.html">glossary</a> for terms, and <a href="../start-here.html">How to use this compendium</a> for learning paths. If you find a mistake on this site, see <a href="resources.html#contribute">how to contribute corrections</a>.</p></div></details>
+
+  </section>
+
+  <script>
+    document.addEventListener("c3d:ready", function () {
+      var q = document.getElementById("faq-q");
+      var chips = Array.prototype.slice.call(document.querySelectorAll(".faq-chip"));
+      var sections = Array.prototype.slice.call(document.querySelectorAll(".faq-topic"));
+      var all = Array.prototype.slice.call(document.querySelectorAll(".faq-topic details.accordion"));
+      var count = document.getElementById("faq-count");
+      var empty = document.getElementById("faq-empty");
+      var topic = "all";
+      all.forEach(function (d) { d._text = d.textContent.toLowerCase(); });
+      chips.forEach(function (c) {
+        var t = c.getAttribute("data-topic");
+        var n = t === "all" ? all.length : document.querySelectorAll('.faq-topic[data-topic="' + t + '"] details.accordion').length;
+        c.querySelector("b").textContent = n;
+      });
+      function apply() {
+        var terms = q.value.toLowerCase().split(/\s+/).filter(Boolean);
+        var shown = 0;
+        sections.forEach(function (s) {
+          var inTopic = topic === "all" || s.getAttribute("data-topic") === topic;
+          var any = 0;
+          Array.prototype.forEach.call(s.querySelectorAll("details.accordion"), function (d) {
+            var ok = inTopic && terms.every(function (t) { return d._text.indexOf(t) !== -1; });
+            d.classList.toggle("faq-hidden", !ok);
+            if (ok) { any++; if (terms.length && terms.join("").length > 2) d.open = true; }
+          });
+          s.classList.toggle("faq-hidden", any === 0);
+          shown += any;
+        });
+        count.textContent = shown + " of " + all.length + " questions shown";
+        empty.style.display = shown ? "none" : "block";
+      }
+      chips.forEach(function (c) {
+        c.addEventListener("click", function () {
+          topic = c.getAttribute("data-topic");
+          chips.forEach(function (x) { x.classList.toggle("on", x === c); });
+          apply();
+        });
+      });
+      q.addEventListener("input", apply);
+      document.getElementById("faq-open").addEventListener("click", function () { all.forEach(function (d) { if (!d.classList.contains("faq-hidden")) d.open = true; }); });
+      document.getElementById("faq-close").addEventListener("click", function () { all.forEach(function (d) { d.open = false; }); });
+      document.getElementById("faq-reset").addEventListener("click", function () {
+        q.value = ""; topic = "all";
+        chips.forEach(function (x) { x.classList.toggle("on", x.getAttribute("data-topic") === "all"); });
+        all.forEach(function (d) { d.open = false; });
+        apply();
+      });
+      var h = location.hash.replace("#", "");
+      if (h.indexOf("q=") === 0) { q.value = decodeURIComponent(h.slice(2)); }
+      apply();
+    });
+  </script>
+
+</main>
+</body>
+</html>

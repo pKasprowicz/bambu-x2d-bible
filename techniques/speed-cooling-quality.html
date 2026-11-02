@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Speed, cooling &amp; quality · 3D Printing Compendium</title>
+  <meta name="description" content="How print speed, volumetric flow, acceleration, input shaping, pressure advance and cooling shape quality and strength, with math, tables, diagrams and diagnosis guides.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="techniques/speed-cooling-quality.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 4 · Techniques</div>
+    <h1>Speed, cooling &amp; quality</h1>
+    <p class="lead">Print faster without ruining the part. Understand what really limits speed (flow, acceleration, vibration, cooling), how to tune each limit, and how to diagnose the surface when something goes wrong.</p>
+    <div class="meta"><span class="badge intermediate">Intermediate</span><span class="badge time">⏱ 40 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <p>The speed–quality–strength trade-off, the volumetric flow equation and typical limits, acceleration and jerk, ringing and input shaping, pressure advance, how to cool each material, temperature towers, high-speed habits, noise, layer-height presets, adaptive layers, belt and vibration care, VFA and Z-banding, and a table of sensible speeds for each feature.</p></div>
+
+  <h2 id="triangle">🔰 The speed – quality – strength triangle</h2>
+  <p>Every 3D printing profile is a compromise between three goals. You can push hard on two of them, but the third pays the price.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 340" role="img" aria-label="Triangle with Speed at the top, Quality at bottom left and Strength at bottom right, with the compromises written along each edge">
+      <polygon class="f-orange" points="390,50 150,280 630,280" opacity="0.55"/>
+      <polygon class="d-ink" points="390,50 150,280 630,280" fill="none"/>
+      <text class="t-lg t-c" x="390" y="34">SPEED</text>
+      <text class="t-lg t-r" x="138" y="292">QUALITY</text>
+      <text class="t-lg" x="642" y="292">STRENGTH</text>
+      <text class="t-sm t-r" x="262" y="148">Fast + pretty</text>
+      <text class="t-sm t-r" x="262" y="165">thin walls, low infill</text>
+      <text class="t-sm t-r" x="262" y="182">= weaker part</text>
+      <text class="t-sm" x="518" y="148">Fast + strong</text>
+      <text class="t-sm" x="518" y="165">thick layers, many walls</text>
+      <text class="t-sm" x="518" y="182">= visible layer lines</text>
+      <text class="t-sm t-c" x="390" y="310">Pretty + strong: slow, thin layers, many walls = long print time</text>
+      <circle class="s-orange" cx="390" cy="215" r="6"/>
+      <text class="t-sm t-c" x="390" y="238">standard profile</text>
+      <circle class="s-blue" cx="390" cy="104" r="5"/>
+      <text class="t-xs" x="400" y="108">draft / prototypes</text>
+      <circle class="s-purple" cx="200" cy="258" r="5"/>
+      <text class="t-xs" x="210" y="252">miniatures</text>
+      <circle class="s-green" cx="578" cy="258" r="5"/>
+      <text class="t-xs t-r" x="568" y="252">brackets, tools</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> Pick the corner that matters for the job and balance the other two. A decorative figurine lives near Quality; a load-bearing bracket near Strength; a quick fit test near Speed.</figcaption>
+  </figure>
+  <p>Fast printers have shifted the whole triangle outward: a modern machine does in an hour what an older machine did in four. But the physics is unchanged, and understanding <em>which limit you are hitting</em> is the skill that separates tuned printers from lucky ones. There are four independent limits:</p>
+  <ol class="steps">
+    <li><strong>Melting limit (volumetric flow)</strong>The hotend can only melt a certain volume of plastic per second.</li>
+    <li><strong>Motion limit (acceleration &amp; vibration)</strong>The frame and belts ring when the toolhead changes direction; fast corners smear.</li>
+    <li><strong>Pressure limit (extrusion dynamics)</strong>The filament in the nozzle is compressible; flow lags commands, which bulges corners.</li>
+    <li><strong>Cooling limit</strong>The plastic must solidify before the next layer lands on it, especially for small details and overhangs.</li>
+  </ol>
+
+  <h2 id="flow">Volumetric flow: the hidden speed limit</h2>
+  <h3>🔰 What is volumetric flow?</h3>
+  <p>Speed in mm/s sounds like the natural speed measure, but the hotend does not care how fast the nozzle <em>moves</em>; it cares how much plastic it must melt per second. A thin, narrow line at 300 mm/s may need less melting than a thick, wide line at 100 mm/s. That quantity is the <strong>volumetric flow rate</strong>, measured in mm³/s:</p>
+  <div class="callout fact"><span class="callout-title">The key formula</span>
+    <p><strong>Flow (mm³/s) = line width × layer height × speed.</strong> Example: 0.42 mm × 0.20 mm × 150 mm/s = 12.6 mm³/s. To find the fastest speed a hotend allows, rearrange: <strong>speed = max flow ÷ (width × height)</strong>.</p></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 290" role="img" aria-label="Filament enters a heater block, melts, and exits the nozzle as a rectangular line with width, height and speed; flow equals width times height times speed">
+      <rect class="d-plastic" x="60" y="20" width="26" height="80"/>
+      <text class="t-sm" x="94" y="52">filament 1.75 mm</text>
+      <rect class="d-metal" x="30" y="100" width="86" height="90" rx="6"/>
+      <rect class="d-hot" x="50" y="104" width="46" height="62" opacity="0.8"/>
+      <text class="t-sm t-c" x="73" y="136">melt</text>
+      <text class="t-sm t-c" x="73" y="150">zone</text>
+      <polygon class="d-metal2" points="48,190 98,190 86,220 60,220"/>
+      <rect class="d-metal2" x="20" y="232" width="340" height="12"/>
+      <rect class="d-plastic" x="110" y="214" width="120" height="18" rx="7"/>
+      <path class="d-mute arrow" d="M240 224 H300"/>
+      <text class="t-sm" x="304" y="228">travel speed v</text>
+      <path class="d-thin arrow arrow-start" d="M110 264 H230"/>
+      <text class="t-sm t-c" x="170" y="280">line length per second</text>
+      <rect class="f-blue" x="420" y="30" width="330" height="120" rx="10"/>
+      <text class="t t-b" x="440" y="58">Line cross-section</text>
+      <rect class="d-plastic" x="470" y="80" width="120" height="30" rx="12"/>
+      <path class="d-thin arrow arrow-start" d="M470 124 H590"/>
+      <text class="t-sm t-c" x="530" y="140">width w (0.4–0.6 mm)</text>
+      <path class="d-thin arrow arrow-start" d="M606 80 V110"/>
+      <text class="t-sm" x="612" y="100">h</text>
+      <text class="t-sm" x="640" y="82">height h</text>
+      <text class="t-sm" x="640" y="98">0.08–0.28 mm</text>
+      <rect class="f-orange" x="420" y="170" width="330" height="100" rx="10"/>
+      <text class="t t-c t-b" x="585" y="198">Q = w × h × v</text>
+      <text class="t-sm t-c" x="585" y="222">0.42 × 0.20 × 150 = 12.6 mm³/s</text>
+      <text class="t-sm t-c" x="585" y="242">Filament feed = Q ÷ 2.405 mm² ≈ 5.2 mm/s</text>
+      <text class="t-sm t-c" x="585" y="260">(1.75 mm filament cross-section)</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> The hotend melts a volume per second. Wider or thicker lines raise the flow at the same speed, so thick layers hit the flow limit at much lower travel speeds than thin layers.</figcaption>
+  </figure>
+
+  <h3>Maximum flow by hotend and material</h3>
+  <p>Every hotend has a flow ceiling, set by heater power, melt-zone length and nozzle geometry. When you exceed it, the extruder cannot push the plastic through; you see under-extrusion, matte rough lines, skipped steps or the extruder clicking. Typical ranges for a 0.4 mm nozzle follow. Treat them as <strong>starting points, not guarantees</strong> and measure your own (see <a href="calibration.html#max-flow">max volumetric speed test</a>).</p>
+  <div class="table-wrap"><table class="data"><thead><tr><th>Hotend class</th><th>PLA</th><th>PETG</th><th>ABS / ASA</th><th>PA / PC</th><th>TPU</th></tr></thead><tbody>
+    <tr><td><strong>Basic, long-melt-zone hotend</strong> (older/budget printers)</td><td>8–12</td><td>6–10</td><td>7–11</td><td>5–9</td><td>2–4</td></tr>
+    <tr><td><strong>Modern standard hotend</strong></td><td>15–25</td><td>10–16</td><td>12–20</td><td>8–14</td><td>3–8</td></tr>
+    <tr><td><strong>High-flow / high-power hotend</strong></td><td>25–40</td><td>14–25</td><td>18–30</td><td>12–20</td><td>5–10</td></tr>
+  </tbody></table></div>
+  <p class="t-sm">Values in mm³/s. Actual limits vary with brand, nozzle temperature, line width and how well the filament is dried.</p>
+  <div class="bars"><div class="bars-title">Typical maximum flow (mm³/s) for a modern standard hotend</div>
+    <div class="bar green"><span>PLA</span><i style="--v:62%"></i><em>15–25</em></div>
+    <div class="bar blue"><span>PETG</span><i style="--v:40%"></i><em>10–16</em></div>
+    <div class="bar red"><span>ABS / ASA</span><i style="--v:50%"></i><em>12–20</em></div>
+    <div class="bar purple"><span>PA / PC</span><i style="--v:35%"></i><em>8–14</em></div>
+    <div class="bar yellow"><span>TPU</span><i style="--v:20%"></i><em>3–8</em></div>
+  </div>
+
+  <h3>🔧 What speed does a flow limit allow?</h3>
+  <p>Assume a 0.42 mm line and 15 mm³/s limit. The fastest sustainable print speed by layer height:</p>
+  <div class="table-wrap"><table class="data compact"><thead><tr><th>Layer height</th><th>Area w × h</th><th>Max speed at 15 mm³/s</th><th>At 25 mm³/s</th></tr></thead><tbody>
+    <tr><td>0.08 mm</td><td>0.034 mm²</td><td>≈ 446 mm/s</td><td>≈ 744 mm/s</td></tr>
+    <tr><td>0.12 mm</td><td>0.050 mm²</td><td>≈ 298 mm/s</td><td>≈ 496 mm/s</td></tr>
+    <tr><td>0.16 mm</td><td>0.067 mm²</td><td>≈ 223 mm/s</td><td>≈ 372 mm/s</td></tr>
+    <tr><td>0.20 mm</td><td>0.084 mm²</td><td>≈ 179 mm/s</td><td>≈ 298 mm/s</td></tr>
+    <tr><td>0.28 mm</td><td>0.118 mm²</td><td>≈ 128 mm/s</td><td>≈ 213 mm/s</td></tr>
+  </tbody></table></div>
+  <p>The values are theoretical top speeds on straight lines; real walls are short, so <em>acceleration</em> (next section) is usually the true limiter. But for infill and long walls, flow rules.</p>
+  <div class="callout tip"><span class="callout-title">Practical rule</span>
+    <p>Set the filament's <strong>max volumetric speed</strong> in your slicer to a tested value (about 80–90 % of the failure point). The slicer then slows lines automatically when a thick, wide line would exceed it, so you can leave your speed settings high and let the flow cap protect quality.</p></div>
+  <div class="callout warn"><span class="callout-title">Common mistake</span>
+    <p>Setting a sky-high speed and wondering why the part looks under-extruded. The printer might simply be asked to melt 40 mm³/s through a 15 mm³/s hotend. Compute flow (width × height × speed) before blaming the filament.</p></div>
+
+  <h3>🚀 Raising the flow limit</h3>
+  <ul>
+    <li><strong>Raise nozzle temperature</strong> by 10–20 °C: hotter plastic flows easier and melts faster. Compensate with stronger cooling.</li>
+    <li><strong>Use a high-flow hotend or a longer melt zone</strong> (volcano-style, dual heater, ceramic/high-power heater).</li>
+    <li><strong>Use a bigger nozzle</strong> (0.6 mm): the same speed gives 2–2.5× the flow, at the cost of fine detail.</li>
+    <li><strong>Dry the filament.</strong> Wet filament boils in the nozzle, steam bubbles reduce throughput and quality; see <a href="../materials/drying-and-storage.html">drying &amp; storage</a>.</li>
+    <li><strong>Use a good extruder.</strong> Strong dual-gear direct-drive extruders keep grip at high pressure. See <a href="../foundations/printer-anatomy.html">printer anatomy</a>.</li>
+  </ul>
+  <div class="callout x2d"><span class="callout-title">Bambu X2D</span>
+    <p>The X2D's main (left) nozzle uses a direct-drive servo extruder, while the auxiliary (right) nozzle is fed by a stepper-driven extruder at the rear and has lower speed and acceleration limits (around 200 mm/s and ~1,000 mm/s² per Bambu's documentation). In practice this means choosing your speed per nozzle: the aux nozzle is for supports and secondary materials, not for race-pace infill. See <a href="../x2d/dual-nozzle-printing.html">dual-nozzle printing</a>.</p></div>
+
+  <h2 id="accel">Acceleration and jerk</h2>
+  <h3>🔰 Why top speed is not the whole story</h3>
+  <p><strong>Acceleration</strong> (mm/s²) is how quickly the toolhead changes speed. A part is full of corners, short walls and travel moves, so the toolhead is constantly speeding up and slowing down. With acceleration <em>a</em>, the time to reach speed <em>v</em> is <em>v / a</em> and the distance needed is <em>v² / (2a)</em>. At 200 mm/s and 5,000 mm/s², it takes 0.04 s and 4 mm; at 500 mm/s and 10,000 mm/s², 0.05 s and 12.5 mm. If a wall is shorter than twice that distance, the toolhead never reaches the set speed.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 290" role="img" aria-label="Velocity versus time graph with trapezoidal profile, smoothed S-curve profile and a short move that never reaches top speed">
+      <path class="d-ink" d="M50 240 H360 M50 240 V30"/>
+      <text class="t-sm" x="48" y="22">speed</text>
+      <text class="t-sm t-r" x="362" y="262">time</text>
+      <path class="k-orange" d="M60 240 L130 80 H260 L330 240"/>
+      <path class="k-blue" d="M60 240 C90 240 110 80 140 80 H250 C280 80 300 240 330 240" stroke-dasharray="6 4"/>
+      <path class="d-mute" d="M50 80 H360"/>
+      <text class="t-sm" x="60" y="72">top speed</text>
+      <text class="t-sm c-orange t-c" x="86" y="140">slope =</text>
+      <text class="t-sm c-orange t-c" x="86" y="155">accel.</text>
+      <text class="t-sm t-c" x="195" y="110">area = distance</text>
+      <text class="t-sm c-blue" x="200" y="212">dashed: smoothed (jerk-limited)</text>
+      <path class="d-ink" d="M440 240 H740 M440 240 V30"/>
+      <text class="t-sm" x="438" y="22">speed</text>
+      <path class="d-mute" d="M440 80 H740"/>
+      <text class="t-sm" x="450" y="72">target speed</text>
+      <path class="k-orange" d="M460 240 L520 100 L580 240"/>
+      <path class="k-orange" d="M620 240 L670 130 L720 240"/>
+      <text class="t-sm t-c" x="520" y="262">short move</text>
+      <text class="t-sm t-c" x="670" y="262">shorter</text>
+      <text class="t-sm t-c" x="590" y="40">Short moves never reach target speed.</text>
+      <text class="t-sm t-c" x="590" y="56">Acceleration, not speed, sets the pace.</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> Left: a trapezoidal speed profile (ramp up, cruise, ramp down). Right: when a move is too short, the toolhead never reaches the set speed, so raising speed changes nothing while raising acceleration speeds up the print.</figcaption>
+  </figure>
+
+  <h3>Jerk and junction deviation</h3>
+  <p><strong>Jerk</strong> (older firmware) was the instant speed change allowed at a corner without slowing to a stop. <strong>Junction deviation</strong> (newer firmware, e.g. Marlin 2, Klipper) calculates corner speed from how sharp the corner is and how much deviation from the ideal corner is tolerated. Both allow smoother continuous motion; too high values cause corner shake and ringing, too low values make small details print slowly. With bicycle-like "square corner velocity" settings in Klipper, 5–8 mm/s is a common start; Bambu firmware manages these internally, but the printer's motion limits appear in the slicer profile as acceleration settings.</p>
+
+  <h3>Acceleration per feature</h3>
+  <p>Modern slicers let you set different accelerations for outer walls, inner walls, infill, top surfaces, first layer and travel. A common strategy:</p>
+  <div class="table-wrap"><table class="data compact"><thead><tr><th>Feature</th><th>Typical acceleration (mm/s²)</th><th>Why</th></tr></thead><tbody>
+    <tr><td>Outer wall</td><td>1,000–5,000</td><td>Lower acceleration reduces ringing on the visible surface.</td></tr>
+    <tr><td>Inner walls</td><td>3,000–10,000</td><td>Hidden; speed matters more than finish.</td></tr>
+    <tr><td>Sparse infill</td><td>5,000–15,000</td><td>Fast, forgiving, mostly long lines.</td></tr>
+    <tr><td>Top surface</td><td>1,000–3,000</td><td>Visible, needs consistent extrusion.</td></tr>
+    <tr><td>First layer</td><td>500–2,000</td><td>Gentle for adhesion and accuracy.</td></tr>
+    <tr><td>Travel</td><td>10,000–20,000+</td><td>No plastic being laid; limited by frame stability and noise.</td></tr>
+  </tbody></table></div>
+  <p class="t-sm">Numbers are for typical high-speed CoreXY printers. Older machines may be limited to 500–3,000 mm/s². Check your own printer's limits and test, do not copy blindly.</p>
+
+  <h2 id="ringing">Ringing, ghosting and input shaping</h2>
+  <h3>🔰 What ringing looks like</h3>
+  <p><strong>Ringing</strong> (also called <strong>ghosting</strong> or <strong>echoing</strong>) shows up as ripples on a wall after a sharp corner or a small feature like a hole or lettering. The toolhead changes direction abruptly, the frame and belts flex like a spring and then oscillate for a few cycles, leaving a decaying wave in the print.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 320" role="img" aria-label="Left: top view of a corner with decaying ripples on the wall after the corner. Right: frequency graph showing a resonance peak and a reduced peak after input shaping is applied">
+      <text class="t t-b" x="20" y="24">Ringing at a corner (top view)</text>
+      <rect class="d-surface" x="40" y="50" width="110" height="170"/>
+      <path class="k-orange" d="M150 80 H170 Q176 86 182 80 Q188 74 194 80 Q200 85 206 80 Q211 76 216 80 Q220 83 224 80 Q227 78 230 80 H350"/>
+      <path class="k-orange" d="M150 220 H350"/>
+      <rect class="d-plastic" x="40" y="50" width="110" height="30"/>
+      <text class="t-sm t-c" x="95" y="70">part</text>
+      <path class="d-mute arrow" d="M200 130 L200 92"/>
+      <text class="t-sm" x="210" y="130">decaying ripples</text>
+      <text class="t-sm" x="210" y="147">repeat every λ = v ÷ f</text>
+      <path class="d-mute arrow" d="M90 36 H140"/>
+      <text class="t-sm" x="20" y="262">Ripple spacing λ = speed ÷ resonance frequency.</text>
+      <text class="t-sm" x="20" y="280">Example: 100 mm/s ÷ 50 Hz = 2 mm between ripples.</text>
+      <text class="t-sm" x="20" y="298">Faster printing = wider ripple spacing, same frequency.</text>
+      <text class="t t-b" x="420" y="24">Resonance and input shaping</text>
+      <path class="d-ink" d="M430 230 H750 M430 230 V50"/>
+      <text class="t-sm" x="428" y="42">vibration</text>
+      <text class="t-sm t-r" x="752" y="250">frequency (Hz)</text>
+      <path class="k-red" d="M440 226 C480 226 510 220 540 160 C555 90 565 60 575 60 C585 60 595 90 610 160 C640 220 670 226 740 226"/>
+      <path class="k-green" d="M440 227 C480 227 510 224 540 200 C555 170 565 160 575 160 C585 160 595 170 610 200 C640 224 670 227 740 227" stroke-dasharray="6 4"/>
+      <text class="t-sm c-red" x="590" y="70">without shaping</text>
+      <text class="t-sm c-green" x="590" y="152">with shaping</text>
+      <text class="t-sm t-c" x="575" y="248">≈ 30–80 Hz</text>
+      <text class="t-sm" x="430" y="274">The printer measures the resonance, then</text>
+      <text class="t-sm" x="430" y="291">shapes commands so they cancel it.</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> Ringing is a vibration at the machine's resonance frequency that leaves a wave in the wall. Input shaping reduces the excitation at that frequency so acceleration can be raised without ripples.</figcaption>
+  </figure>
+
+  <h3>🔧 How input shaping works</h3>
+  <p>If you strike a bell, it rings at its natural frequency. If you tap it again exactly half a cycle later, the second tap cancels part of the first ring. <strong>Input shaping</strong> does the same with motion commands: each acceleration move is split into two or three smaller moves, timed so the vibration they excite cancels. The printer needs to know the resonance frequency (typically measured with an accelerometer while sweeping the toolhead) and chooses a shaper type: a mild one cancels well but needs little extra time; a stronger one cancels a wider range of frequencies at the cost of rounding corners slightly.</p>
+  <ul>
+    <li><strong>Resonance measurement:</strong> accelerometers (on Klipper machines) or built-in sensors (on Bambu machines) measure it automatically. On the X2D the printer performs vibration compensation as part of calibration; a separate optional Vision Encoder is available for motion-accuracy calibration.</li>
+    <li><strong>What shapers cannot fix:</strong> loose belts, wobbly frames, bad bearings, heavy toolheads on flexing gantries, and printing on an unstable table. Shaping hides these problems; it does not cure them.</li>
+    <li><strong>Re-calibrate</strong> after changing the toolhead, moving the printer, changing belt tension, or if ringing returns. See <a href="calibration.html#input-shaping">calibration: input shaping</a>.</li>
+  </ul>
+  <div class="callout trick"><span class="callout-title">Ringing test</span>
+    <p>Print a tall tower with a sharp corner and small text on the side. Raise acceleration in steps along the height (for example 2,000 → 10,000 mm/s²). Pick the highest acceleration where ripples stay invisible, then set outer-wall acceleration to about 80 % of that.</p></div>
+
+  <h2 id="pressure-advance">Pressure advance and flow dynamics</h2>
+  <h3>🔧 The problem: plastic is springy</h3>
+  <p>Molten plastic in the nozzle is compressed by the extruder. Pushing harder (to extrude faster) raises pressure and makes the plastic flow faster, but not instantly. So when the toolhead accelerates out of a corner, extrusion lags: the line starts thin. When it decelerates into a corner, pressure remains and plastic keeps oozing: the corner bulges. The result is rounded, blobby corners, thin starts to lines and uneven wall thickness.</p>
+  <p><strong>Pressure advance</strong> (Klipper, Marlin "linear advance") predicts this lag and pushes <em>extra</em> filament during acceleration and pulls it back during deceleration. Bambu Studio calls its version <strong>Flow Dynamics</strong> (and the calibration is "Flow Dynamics Calibration"); they all rely on a single tunable value, usually called <strong>K</strong> or the <strong>advance length</strong>, specific to each filament, nozzle and hotend.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 300" role="img" aria-label="Three square test outlines: without pressure advance corners bulge, with correct pressure advance corners are sharp, with too much pressure advance corners have gaps">
+      <text class="t t-c t-b" x="130" y="22">No pressure advance</text>
+      <path class="k-orange" style="stroke-width:10;stroke-linejoin:round" d="M60 60 H200 V160 H60 Z"/>
+      <circle class="s-orange" cx="60" cy="60" r="10"/><circle class="s-orange" cx="200" cy="60" r="10"/>
+      <circle class="s-orange" cx="200" cy="160" r="10"/><circle class="s-orange" cx="60" cy="160" r="10"/>
+      <text class="t-sm t-c c-red" x="130" y="200">Bulging, rounded corners</text>
+      <text class="t-sm t-c" x="130" y="217">Lines thin at start, thick at end</text>
+      <text class="t t-c t-b" x="390" y="22">Correct value</text>
+      <path class="k-orange" style="stroke-width:10;stroke-linejoin:miter" d="M320 60 H460 V160 H320 Z"/>
+      <text class="t-sm t-c c-green" x="390" y="200">Sharp corners</text>
+      <text class="t-sm t-c" x="390" y="217">Even line width</text>
+      <text class="t t-c t-b" x="650" y="22">Too much</text>
+      <path class="k-orange" style="stroke-width:10;stroke-linecap:butt" d="M595 60 H705 M720 75 V145 M705 160 H595 M580 145 V75"/>
+      <text class="t-sm t-c c-orange" x="650" y="200">Gaps / dents at corners</text>
+      <text class="t-sm t-c" x="650" y="217">Under-extruded after corners</text>
+      <text class="t-sm t-c" x="390" y="262">Top-down view of a test square, outer wall only. Real defects are 0.1–0.3 mm in size, so look closely or use a macro lens.</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> Corner shape tells you whether pressure advance is correct. Calibrate K with a test pattern; see <a href="calibration.html#pressure-advance">calibration playbook</a>.</figcaption>
+  </figure>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 320" role="img" aria-label="Two stacked time graphs: toolhead speed and extruder feed rate; without pressure advance the feed follows speed, with pressure advance it overshoots during acceleration and undershoots during deceleration">
+      <text class="t t-b" x="20" y="22">Toolhead speed</text>
+      <path class="d-ink" d="M50 120 H740 M50 120 V30"/>
+      <path class="k-blue" d="M60 118 L150 50 H260 L350 118 M420 118 L510 50 H620 L710 118"/>
+      <text class="t t-b" x="20" y="152">Extruder feed: without vs with pressure advance</text>
+      <path class="d-ink" d="M50 290 H740 M50 290 V160"/>
+      <path class="d-dash" d="M60 288 L150 200 H260 L350 288 M420 288 L510 200 H620 L710 288"/>
+      <path class="k-green" d="M60 288 L100 176 L150 196 H260 L290 230 L330 276 L350 288 M420 288 L460 176 L510 196 H620 L650 230 L690 276 L710 288"/>
+      <text class="t-sm c-green" x="62" y="168">extra push during accel</text>
+      <text class="t-sm c-green" x="270" y="254">pull back during decel</text>
+      <text class="t-sm t-m" x="270" y="188">dashed: plain feed</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> Pressure advance modifies the extruder feed in anticipation of speed changes: a little more at the start of acceleration, a little less (even a short retract) at the start of deceleration.</figcaption>
+  </figure>
+
+  <ul>
+    <li><strong>Typical K values</strong> differ wildly with firmware scale and hardware: direct-drive hotends need small values, long Bowden tubes need much larger ones. Do not copy numbers from another printer's forum post.</li>
+    <li><strong>One value per filament:</strong> store it in the filament profile. Silk, TPU, CF-filled and wet filaments behave differently.</li>
+    <li><strong>Flow dynamics on the X2D:</strong> Bambu's Flow Dynamics Calibration applies to the <em>main</em> nozzle only; the auxiliary nozzle needs a much larger K because of its longer filament path. See <a href="../x2d/settings-and-profiles.html">Bambu Studio settings &amp; profiles</a>.</li>
+    <li><strong>It interacts with flow ratio:</strong> calibrate pressure advance first at a moderate speed, then flow ratio; re-check if either changes a lot.</li>
+  </ul>
+
+  <h2 id="cooling">Cooling</h2>
+  <h3>🔰 Why cooling matters</h3>
+  <p>Plastic is only printable while soft. Once laid down it should solidify quickly so that it keeps its shape. If a layer is still soft when the next one arrives, details sag and overhangs droop. If the layer is too cold when the next one arrives, the layers bond weakly and may delaminate. Cooling is the tool that balances these two outcomes.</p>
+
+  <h3>Fans and airflow paths</h3>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 340" role="img" aria-label="Top-down schematic of a printer chamber with part cooling fan blowing on the nozzle, an auxiliary fan moving air across the part and a chamber fan exhausting hot air, with legend">
+      <rect class="d-surface" x="30" y="30" width="400" height="280" rx="10"/>
+      <rect class="d-metal" x="110" y="110" width="240" height="180" rx="6"/>
+      <text class="t-sm t-c" x="230" y="278">heated bed</text>
+      <rect class="d-plastic" x="190" y="170" width="80" height="60" rx="6"/>
+      <text class="t-sm t-c" x="230" y="205">part</text>
+      <rect class="d-metal2" x="205" y="120" width="50" height="34" rx="6"/>
+      <circle class="d-hot" cx="230" cy="154" r="6"/>
+      <text class="t-xs t-c" x="230" y="108">toolhead</text>
+      <path class="k-blue arrow" d="M207 128 Q190 150 208 168"/>
+      <path class="k-blue arrow" d="M253 128 Q270 150 252 168"/>
+      <rect class="f-teal" x="60" y="60" width="60" height="26" rx="6"/>
+      <text class="t-xs t-c" x="90" y="77">aux fan</text>
+      <path class="k-teal arrow" d="M120 78 Q170 100 190 160"/>
+      <rect class="f-purple" x="340" y="38" width="80" height="26" rx="6"/>
+      <text class="t-xs t-c" x="380" y="55">chamber fan</text>
+      <path class="k-purple arrow" d="M410 80 L428 80"/>
+      <path class="k-purple arrow" d="M300 140 Q340 110 360 80"/>
+      <text class="t-xs t-c" x="230" y="326">Top view, stylized. Layout differs between printers.</text>
+      <rect class="f-blue" x="470" y="40" width="280" height="76" rx="10"/>
+      <text class="t t-b" x="486" y="64">Part cooling fan</text>
+      <text class="t-sm" x="486" y="82">On the toolhead; blows on the freshly</text>
+      <text class="t-sm" x="486" y="98">printed line. Main control of overhangs.</text>
+      <rect class="f-teal" x="470" y="130" width="280" height="76" rx="10"/>
+      <text class="t t-b" x="486" y="154">Auxiliary (side/rear) fan</text>
+      <text class="t-sm" x="486" y="172">Moves chamber air across the part for</text>
+      <text class="t-sm" x="486" y="188">extra, even cooling (typically for PLA).</text>
+      <rect class="f-purple" x="470" y="220" width="280" height="90" rx="10"/>
+      <text class="t t-b" x="486" y="244">Chamber fan / vents</text>
+      <text class="t-sm" x="486" y="262">Exchanges warm chamber air for cool or</text>
+      <text class="t-sm" x="486" y="278">recirculates through a filter. Open it</text>
+      <text class="t-sm" x="486" y="294">for PLA, closed for ABS/ASA/PA/PC.</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> Three airflow sources. The part fan cools the extruded line instantly; the auxiliary fan and chamber airflow control the overall air temperature around the print.</figcaption>
+  </figure>
+  <div class="callout x2d"><span class="callout-title">Bambu X2D</span>
+    <p>The X2D has an actively heated chamber (up to 65 °C) for engineering plastics and dual-intake cooling that can flush the chamber with cool air for materials such as PLA. The slicer's chamber-temperature and auxiliary-fan settings in each filament profile decide how the printer uses them: closed and hot for ABS/ASA/PA/PC, open and cool for PLA/PETG. See <a href="../x2d/engineering-and-chamber.html">engineering materials &amp; chamber</a>.</p></div>
+
+  <h3>Cooling strategy by material</h3>
+  <div class="table-wrap"><table class="data"><thead><tr><th>Material</th><th>Part fan (typical)</th><th>Chamber / ambient</th><th>Why</th></tr></thead><tbody>
+    <tr><td><strong>PLA</strong></td><td>80–100 % (0 % for layer 1–2)</td><td>Open or cool; avoid heat-soaked chamber above ~40 °C</td><td>Needs fast solidification for overhangs and fine details; low shrinkage.</td></tr>
+    <tr><td><strong>PETG</strong></td><td>30–60 %; lower for strength</td><td>Open or lightly warm</td><td>Too much cooling weakens layers and causes layer splits; too little droops. Use bridge/overhang fan boost.</td></tr>
+    <tr><td><strong>ABS / ASA</strong></td><td>0–30 %</td><td>Warm closed chamber (40–65 °C)</td><td>Cooling increases shrink stress and warping; strong layer bonds need warmth.</td></tr>
+    <tr><td><strong>PA (nylon)</strong></td><td>0–40 %</td><td>Warm closed, dry filament</td><td>Layers bond best warm; strong cooling gives brittle prints.</td></tr>
+    <tr><td><strong>PC</strong></td><td>0–20 %</td><td>Hot closed chamber</td><td>Very high shrink; needs warmth.</td></tr>
+    <tr><td><strong>TPU</strong></td><td>30–100 %</td><td>Open</td><td>Soft strands string and sag; cooling sets them. Print slowly.</td></tr>
+    <tr><td><strong>PVA / BVOH</strong></td><td>50–100 %</td><td>Dry environment</td><td>Heat-sensitive; cool so they do not ooze into the model.</td></tr>
+  </tbody></table></div>
+  <p class="t-sm">Percent = PWM duty; actual airflow depends on fan and duct. Check your filament's profile and adjust in 10 % steps.</p>
+
+  <h3>Minimum layer time</h3>
+  <p>A tiny layer (the tip of a spire, a thin pin) is finished in a second or two, so the nozzle returns to the same spot before the plastic has cooled and the part melts into a blob. The <strong>minimum layer time</strong> setting slows the print so that each layer takes at least N seconds: typically 5–15 s for PLA and 8–20 s for PETG. The slicer reduces speed down to a minimum, increases fan, and may lift the nozzle away. For very small parts, printing several copies at once provides built-in cooling time.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 300" role="img" aria-label="Left: graph of effective print speed versus layer perimeter length, slowed for short layers by the minimum layer time. Right: graph with layer strength decreasing and overhang quality increasing as fan speed increases, with material sweet spots marked">
+      <text class="t t-b" x="20" y="22">Effective speed vs layer size</text>
+      <path class="d-ink" d="M50 250 H360 M50 250 V40"/>
+      <text class="t-sm" x="48" y="34">speed</text>
+      <text class="t-sm t-r" x="362" y="270">layer length (mm)</text>
+      <path class="k-orange" d="M52 248 L170 90 H350"/>
+      <path class="d-mute" d="M50 90 H360"/>
+      <text class="t-sm" x="60" y="82">max speed</text>
+      <text class="t-sm" x="62" y="200">slowed by</text>
+      <text class="t-sm" x="62" y="216">min layer time</text>
+      <text class="t-sm" x="215" y="120">limited by speed/flow</text>
+      <text class="t t-b" x="410" y="22">Fan speed trade-off</text>
+      <path class="d-ink" d="M440 250 H740 M440 250 V40"/>
+      <text class="t-sm t-r" x="742" y="270">fan speed (%)</text>
+      <path class="k-red" d="M442 70 C520 80 600 140 738 210"/>
+      <path class="k-blue" d="M442 210 C520 190 600 110 738 70"/>
+      <text class="t-sm c-red" x="450" y="62">layer strength</text>
+      <text class="t-sm c-blue" x="640" y="62">overhang / detail</text>
+      <rect class="f-orange" x="440" y="256" width="60" height="10" opacity="0.8"/>
+      <rect class="f-yellow" x="520" y="256" width="100" height="10" opacity="0.8"/>
+      <rect class="f-green" x="660" y="256" width="80" height="10" opacity="0.8"/>
+      <text class="t-xs t-c" x="470" y="288">ABS</text>
+      <text class="t-xs t-c" x="570" y="288">PETG</text>
+      <text class="t-xs t-c" x="700" y="288">PLA</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> Left: small layers are slowed so they have time to cool. Right: more fan improves details but weakens the bond between layers, which is why the sweet spot depends on the material.</figcaption>
+  </figure>
+
+  <div class="callout fact"><span class="callout-title">Cooling vs layer adhesion</span>
+    <p>Layers bond when polymer chains from the new strand diffuse across the interface into the layer below. That happens only while the interface stays above the glass-transition temperature, which for PLA is around 55–60 °C, for PETG around 80 °C, and for ABS around 105 °C. Strong cooling cuts that diffusion time to a fraction of a second and can reduce layer strength noticeably. It is the reason functional PETG and ABS parts are printed with little fan and why warm chambers help.</p></div>
+
+  <h3>Bridge and overhang fan boosts</h3>
+  <p>Most slicers let you set a separate fan speed for bridges and overhangs (for example 100 % for bridges, with 40 % elsewhere in PETG). Always enable it for materials that need low fan for strength. You can also have the fan ramp up over 3–5 layers instead of switching on abruptly, and add "full fan below layer time X seconds" for small features. More in <a href="supports-bridges-overhangs.html#bridges">bridges</a>.</p>
+
+  <h2 id="temp-tower">Temperature towers</h2>
+  <p>Every filament roll has a "best" nozzle temperature, but the label gives only a range (for example PLA 190–230 °C). The right value depends on your printer, nozzle, speed and the individual filament. A <strong>temperature tower</strong> prints a stack of sections, each at a different temperature, so you can compare them in one print.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 360" role="img" aria-label="A temperature tower of seven sections from 230 down to 190 degrees Celsius with notes on what to look for in each section">
+      <rect class="d-metal2" x="60" y="332" width="200" height="12"/>
+      <g>
+        <rect class="f-red" x="80" y="288" width="160" height="42"/><rect class="d-surface" x="130" y="298" width="60" height="32"/><text class="t t-b" x="270" y="314">190 °C</text>
+        <rect class="f-orange" x="80" y="246" width="160" height="42"/><rect class="d-surface" x="130" y="256" width="60" height="32"/><text class="t t-b" x="270" y="272">195 °C</text>
+        <rect class="f-yellow" x="80" y="204" width="160" height="42"/><rect class="d-surface" x="130" y="214" width="60" height="32"/><text class="t t-b" x="270" y="230">200 °C</text>
+        <rect class="f-green" x="80" y="162" width="160" height="42"/><rect class="d-surface" x="130" y="172" width="60" height="32"/><text class="t t-b" x="270" y="188">205 °C</text>
+        <rect class="f-teal" x="80" y="120" width="160" height="42"/><rect class="d-surface" x="130" y="130" width="60" height="32"/><text class="t t-b" x="270" y="146">210 °C</text>
+        <rect class="f-blue" x="80" y="78" width="160" height="42"/><rect class="d-surface" x="130" y="88" width="60" height="32"/><text class="t t-b" x="270" y="104">215 °C</text>
+        <rect class="f-purple" x="80" y="36" width="160" height="42"/><rect class="d-surface" x="130" y="46" width="60" height="32"/><text class="t t-b" x="270" y="62">220 °C</text>
+      </g>
+      <text class="t-sm" x="340" y="64">Too hot: strings, drooping bridges, blobby overhangs, matte-to-glossy shifts</text>
+      <text class="t-sm" x="340" y="146">Look for: clean bridge, sharp edges, little stringing, gloss</text>
+      <text class="t-sm" x="340" y="188">Strong layer bond (snap test)</text>
+      <text class="t-sm" x="340" y="272">Too cold: weak layers, rough lines, under-extrusion</text>
+      <text class="t-sm t-m" x="340" y="330">Example PLA tower (cut-out = bridge test). Start the tower at the hot end.</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> A temperature tower for PLA. Each section holds a gap for a bridge and an overhang or tab. Read the tower from the bottom (cold) to the top (hot) or the reverse, depending on your slicer.</figcaption>
+  </figure>
+  <ol class="steps">
+    <li><strong>Choose the range</strong>Start 10–15 °C below and 20–30 °C above the manufacturer's recommended middle, in 5 °C steps (PLA 190–230, PETG 220–250, ABS/ASA 230–260).</li>
+    <li><strong>Print at normal speed</strong>Use the profile you plan to use. Speed changes the optimum temperature; fast printing needs hotter plastic.</li>
+    <li><strong>Evaluate each section</strong>Bridge sag, overhang curl, stringing, surface gloss, corner sharpness and layer adhesion (try snapping a section: it should flex or break unevenly, not shear cleanly between layers).</li>
+    <li><strong>Pick the lowest good temperature</strong>Choose the coolest section that still has good layer bonding and clean extrusion, then add 0–5 °C for margin when printing fast.</li>
+    <li><strong>Record it</strong>Save it in the filament profile and in your <a href="calibration.html#log">calibration log</a>.</li>
+  </ol>
+  <div class="callout trick"><span class="callout-title">Trick</span>
+    <p>Temperature affects flow: raising it makes plastic flow more easily, so re-check flow ratio and pressure advance after a large change (more than 10–15 °C) in nozzle temperature.</p></div>
+
+  <h2 id="high-speed">High-speed printing practices</h2>
+  <h3>🚀 What changes when you go fast</h3>
+  <p>Modern enclosed printers routinely print 200–500 mm/s on straight walls. Getting there reliably is not only about raising numbers. Several things have to line up:</p>
+  <ul class="checklist">
+    <li><strong>Dry filament.</strong> Moisture turns to steam in the nozzle; at high flow rates the bubbles show up as rough, hazy surfaces and weak lines. See <a href="../materials/drying-and-storage.html">drying &amp; storage</a>.</li>
+    <li><strong>Hotter nozzle.</strong> Plastic must absorb more heat per second. Add 10–30 °C over the slow-speed value, or use a high-flow hotend/nozzle.</li>
+    <li><strong>Calibrated max volumetric speed</strong> for each filament. Do not trust a number someone posted online (<a href="calibration.html#max-flow">procedure</a>).</li>
+    <li><strong>Input shaping and pressure advance</strong> calibrated, with both revisited after major speed changes.</li>
+    <li><strong>Rigid, tight machine.</strong> Loose belts, wobbling tables and light frames amplify ringing.</li>
+    <li><strong>Lower acceleration on outer walls</strong> and on detailed features; use high acceleration only on infill and travel.</li>
+    <li><strong>Strong cooling</strong> for PLA; at speed the layer time is shorter, so cooling must be stronger or the print will soften.</li>
+    <li><strong>Reliable adhesion and part stability.</strong> A tall, narrow part is a lever: a fast print can knock it over.</li>
+  </ul>
+  <div class="callout warn"><span class="callout-title">Do not chase the headline number</span>
+    <p>Speed claims on a printer's box are maximums for specific test models with specific filament. For typical parts, the time saved by going from 250 mm/s to 400 mm/s on outer walls is small, because acceleration, travel and small features dominate. Quality at a reasonable speed beats a ruined surface at maximum.</p></div>
+
+  <h2 id="noise">Noise versus speed</h2>
+  <p>Noise comes from fans, motors, and vibrations in the frame. Rapid accelerations and resonant frequencies are the loudest. Practical tips:</p>
+  <ul>
+    <li>Use a "silent" or "quiet" mode when printing overnight: it lowers speed and acceleration, and often reduces fan speed.</li>
+    <li>Lower acceleration reduces noise more than lowering top speed does, because the motors and frame suffer most during speed changes.</li>
+    <li>Put the printer on a heavy, solid surface with vibration-damping feet. A wobbly table amplifies noise and ringing.</li>
+    <li>Enclosures absorb some noise; closed doors help.</li>
+    <li>Grinding or rattling sounds that were not there before suggest wear (see <a href="maintenance.html">maintenance</a>), not speed.</li>
+  </ul>
+
+  <h2 id="presets">Quality presets vs print time</h2>
+  <p>Layer height is the biggest single lever on print time, because print time scales almost inversely with layer height for the same walls and infill. The bars below show approximate relative time for the same medium-sized part (0.20 mm = 100 %). Real results depend on geometry, but the pattern holds.</p>
+  <div class="bars" role="img" aria-label="Relative print time by layer height">
+    <div class="bars-title">Relative print time (0.20 mm = 100 %)</div>
+    <div class="bar red"><span>0.08 mm (ultra fine)</span><i style="--v:100%"></i><em>~250 %</em></div>
+    <div class="bar purple"><span>0.12 mm (fine)</span><i style="--v:68%"></i><em>~170 %</em></div>
+    <div class="bar blue"><span>0.16 mm (optimal)</span><i style="--v:50%"></i><em>~125 %</em></div>
+    <div class="bar teal"><span>0.20 mm (standard)</span><i style="--v:40%"></i><em>100 %</em></div>
+    <div class="bar green"><span>0.28 mm (draft)</span><i style="--v:28%"></i><em>~70 %</em></div>
+  </div>
+  <p>Choose the preset by purpose, not by habit: prototypes and large functional parts print at 0.20–0.28 mm, display pieces with curved surfaces at 0.12–0.16 mm, and miniatures at 0.08–0.12 mm. Smaller layers hide stair-stepping on slopes, but do almost nothing for vertical walls, which look the same at any layer height.</p>
+
+  <h2 id="adaptive">Adaptive layer height</h2>
+  <h3>🔧 Fine where it matters, fast where it does not</h3>
+  <p>Stair-stepping is visible mainly on shallow slopes (domes, the tops of curved shapes). Vertical walls look the same at 0.08 mm and 0.28 mm. <strong>Adaptive (variable) layer height</strong> lets the slicer use thick layers on vertical sections and thin layers where the surface is nearly flat. You get close to fine-layer quality in much less time.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 300" role="img" aria-label="Left: dome printed with uniform layers shows large steps near the top. Right: dome with adaptive layers uses thin layers at the top and thick layers at the sides">
+      <text class="t t-c t-b" x="200" y="22">Uniform 0.28 mm</text>
+      <path class="d-mute" d="M60 260 A140 220 0 0 1 340 260"/>
+      <path class="d-plastic" d="M60 260 V232 H72 V204 H88 V176 H106 V148 H132 V120 H170 V92 H230 V120 H268 V148 H294 V176 H312 V204 H328 V232 H340 V260 Z"/>
+      <text class="t-sm t-c" x="200" y="282">Big steps near the top</text>
+      <text class="t t-c t-b" x="580" y="22">Adaptive 0.08–0.28 mm</text>
+      <path class="d-mute" d="M440 260 A140 220 0 0 1 720 260"/>
+      <path class="d-plastic" d="M440 260 V232 H448 V204 H462 V176 H480 V148 H498 V128 H518 V112 H540 V102 H560 V96 H600 V102 H620 V112 H642 V128 H662 V148 H680 V176 H698 V204 H712 V232 H720 V260 Z"/>
+      <text class="t-sm t-c" x="580" y="282">Thin layers where the slope is shallow</text>
+    </svg>
+    <figcaption><b>Figure 10.</b> Layer height varies with the surface slope. Steps shrink exactly where the eye notices them.</figcaption>
+  </figure>
+  <ul>
+    <li>Enable it in the slicer and set a min and max (for example 0.08–0.28 mm with a 0.4 mm nozzle; the maximum should not exceed about 75 % of the nozzle diameter).</li>
+    <li>Use the "smooth" slider or a manual height-range modifier to apply extra detail only on selected zones, such as a face on a bust.</li>
+    <li>Adaptive heights change the thickness of every layer, so cooling, flow and temperature need margins; thin layers need a little less flow rate, thick ones a lot more.</li>
+    <li>Do not combine with sections that must match another part's layer lines (mating threads, interlocking parts).</li>
+  </ul>
+
+  <h2 id="belts">Belts, frame and vibrations</h2>
+  <p>Printing quality sits on the mechanical foundation. A printer with loose belts, play in the bed or a wobbly frame cannot be rescued by software. The main points:</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 320" role="img" aria-label="Top view of a CoreXY belt path with two motors, idlers and the toolhead; below it a tension indicator showing too loose, correct and too tight belt pitch tone">
+      <rect class="d-surface" x="40" y="30" width="360" height="260" rx="6"/>
+      <circle class="d-metal" cx="70" cy="60" r="14"/><circle class="d-metal" cx="370" cy="60" r="14"/>
+      <circle class="d-metal" cx="70" cy="260" r="14"/><circle class="d-metal" cx="370" cy="260" r="14"/>
+      <text class="t-xs t-c" x="70" y="64">A</text><text class="t-xs t-c" x="370" y="64">B</text>
+      <path class="k-blue" d="M70 46 H370 M70 74 H280 L220 160"/>
+      <path class="k-red" d="M370 74 H340 L160 160 L100 260 M70 246 H370"/>
+      <rect class="d-metal2" x="190" y="140" width="60" height="40" rx="6"/>
+      <text class="t-xs t-c" x="220" y="164">toolhead</text>
+      <text class="t-sm t-c" x="220" y="312">Stylized CoreXY: two belts cross over, both motors move the toolhead</text>
+      <rect class="f-blue" x="450" y="40" width="300" height="64" rx="10"/>
+      <text class="t t-b" x="466" y="64">Too loose</text><text class="t-sm" x="466" y="84">Low tone, backlash, ghosting, wavy lines</text>
+      <rect class="f-green" x="450" y="120" width="300" height="64" rx="10"/>
+      <text class="t t-b" x="466" y="144">Right</text><text class="t-sm" x="466" y="164">Clear tone; symmetrical belts; no slack</text>
+      <rect class="f-red" x="450" y="200" width="300" height="64" rx="10"/>
+      <text class="t t-b" x="466" y="224">Too tight</text><text class="t-sm" x="466" y="244">Bearing wear, motor stress, banding</text>
+    </svg>
+    <figcaption><b>Figure 11.</b> Belt paths and tension. Many printers have a tension procedure or a sound or app-based measurement; follow the manufacturer's method.</figcaption>
+  </figure>
+  <ul>
+    <li><strong>Belt tension:</strong> Equal on both belts of a CoreXY machine. Pluck the belt: it should hum with a clear, equal tone on each side.</li>
+    <li><strong>Pulley set screws and eccentric nuts:</strong> Check them twice a year; a loose pulley causes sudden layer shifts.</li>
+    <li><strong>Linear rails and rods:</strong> Keep them clean and lightly lubricated per the manufacturer; dry rails cause rough motion and noise.</li>
+    <li><strong>Frame:</strong> Square, tight bolts, standing on a firm surface. Do not store anything on top of a printer that vibrates.</li>
+    <li><strong>Spool and cable drag:</strong> A heavy spool jerking the filament is a hidden source of artifacts, especially for filaments that stick on the spool edge.</li>
+  </ul>
+
+  <h2 id="vfa">VFA and Z-banding</h2>
+  <p>Two kinds of regular surface bands are often confused.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 280" role="img" aria-label="Left: Z-banding from lead-screw wobble shows irregular wide bands at a repeating period. Right: VFA fine regular vertical artifacts from stepper motor resonance shows tight evenly spaced ripples">
+      <text class="t t-c t-b" x="200" y="22">Z-banding (coarse)</text>
+      <rect class="d-plastic" x="130" y="40" width="140" height="200"/>
+      <path class="k-orange" d="M130 70 H270 M130 108 H270 M130 144 H270 M130 184 H270 M130 218 H270" style="stroke-width:3"/>
+      <path class="d-ink arrow" d="M290 70 V108"/><text class="t-sm" x="300" y="94">period = lead-screw pitch (mm)</text>
+      <text class="t-sm t-c" x="200" y="262">Irregular horizontal bands, same period</text>
+      <text class="t t-c t-b" x="580" y="22">VFA (fine ripples)</text>
+      <rect class="d-plastic" x="510" y="40" width="140" height="200"/>
+      <path class="k-orange" d="M510 52 H650 M510 62 H650 M510 72 H650 M510 82 H650 M510 92 H650 M510 102 H650 M510 112 H650 M510 122 H650 M510 132 H650 M510 142 H650 M510 152 H650 M510 162 H650 M510 172 H650 M510 182 H650 M510 192 H650 M510 202 H650 M510 212 H650 M510 222 H650" style="stroke-width:1"/>
+      <text class="t-sm t-c" x="580" y="262">Very fine regular bands; speed dependent</text>
+    </svg>
+    <figcaption><b>Figure 12.</b> Z-banding repeats with the Z screw; VFA appears as a fine pattern that changes with print speed.</figcaption>
+  </figure>
+  <h3>Z-banding</h3>
+  <p>A bent or poorly aligned lead screw, a wobbling coupler or an uneven Z motor step pulls the layer positions slightly off the ideal. The bands repeat every full turn or every fraction of a turn of the Z screw (for example every 2 or 4 mm on common designs). Fixes: straighten or replace the screw, align the coupler, adjust the Z-nut (or the antiwobble mechanism), and clean and lubricate the lead screw. Choosing layer heights that are exact multiples of the motor's full step distance on some machines (for example 0.04 mm multiples on a typical 0.4 mm lead-screw pitch) also avoids microstepping errors.</p>
+  <h3>VFA (vertical fine artifacts)</h3>
+  <p>VFA appear as very fine ripples tied to motor steps, belt teeth and resonances; they change with print speed. Fixes: tune belt tension, change the outer-wall speed by 10–20 % (the pattern often disappears at some speeds), reduce the acceleration, check the motor current and use a different stepper interpolation or driver mode if your firmware exposes it. A different speed is the quickest test.</p>
+
+  <h2 id="top-surface">Diagnosing top surface issues</h2>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 260" role="img" aria-label="Three cross-sections of top surfaces: pillowing with a sunken area between ribs, ideal flat top, and over-extruded rough top with ridges">
+      <text class="t t-c t-b" x="140" y="22">Pillowing</text>
+      <rect class="d-plastic" x="40" y="100" width="200" height="14"/>
+      <path class="d-plastic" d="M40 100 Q70 82 100 100 Q130 82 160 100 Q190 82 220 100 L240 100 V114 H40 Z"/>
+      <rect class="d-surface" x="100" y="114" width="8" height="90"/><rect class="d-surface" x="160" y="114" width="8" height="90"/><rect class="d-surface" x="220" y="114" width="8" height="90"/>
+      <path class="d-ink" d="M40 204 H240"/>
+      <text class="t-sm t-c" x="140" y="232">Too few top layers, too much fan lag</text>
+      <text class="t t-c t-b" x="390" y="22">Good</text>
+      <rect class="d-plastic" x="290" y="100" width="200" height="14"/>
+      <rect class="d-surface" x="310" y="114" width="8" height="90"/><rect class="d-surface" x="370" y="114" width="8" height="90"/><rect class="d-surface" x="430" y="114" width="8" height="90"/>
+      <path class="d-ink" d="M290 204 H490"/>
+      <text class="t-sm t-c" x="390" y="232">Flat, closed top</text>
+      <text class="t t-c t-b" x="640" y="22">Over-extrusion</text>
+      <path class="d-plastic" d="M540 114 V104 Q555 84 570 100 Q585 80 600 100 Q615 82 630 100 Q645 80 660 100 Q675 82 690 100 V114 Z"/>
+      <rect class="d-surface" x="550" y="114" width="8" height="90"/><rect class="d-surface" x="610" y="114" width="8" height="90"/><rect class="d-surface" x="670" y="114" width="8" height="90"/>
+      <path class="d-ink" d="M540 204 H700"/>
+      <text class="t-sm t-c" x="640" y="232">Ridges, scars, rough top</text>
+    </svg>
+    <figcaption><b>Figure 13.</b> Top-surface cross-sections. Pillowing occurs when the top layer spans sparse infill and sinks into the gaps between the ribs.</figcaption>
+  </figure>
+  <div class="table-wrap"><table class="data"><thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead><tbody>
+    <tr><td>Holes or sunken areas on the top</td><td>Pillowing: too few top layers or too little infill support</td><td>Increase top layers (0.8–1.2 mm thick total), raise infill density or choose gyroid/grid, cool more</td></tr>
+    <tr><td>Ridged or scratchy top</td><td>Over-extrusion, nozzle dragging, high temperature</td><td>Lower the flow ratio by 1–3 %, enable ironing, avoid z-hop clicks, lower temperature</td></tr>
+    <tr><td>Gaps between top lines</td><td>Under-extrusion or too little overlap</td><td>Check flow and pressure advance, enable the top-surface density option, raise flow</td></tr>
+    <tr><td>Wavy or glossy-matte stripes</td><td>Inconsistent speed or cooling, temperature</td><td>Slow the top surface to 60–100 mm/s, use 0.6–0.8 mm line width on the top, fix fan</td></tr>
+    <tr><td>Top surface cracks or curls</td><td>Warping from a hot top plus strong cooling</td><td>Slow cooling at the end of the layer; raise the top-layer fan only for PLA</td></tr>
+    <tr><td>Scars from travel moves</td><td>The nozzle drags on the freshly printed top</td><td>Enable z-hop or "avoid crossing walls"; use wipe on retract</td></tr>
+  </tbody></table></div>
+  <div class="callout tip"><span class="callout-title">Ironing</span>
+    <p>Ironing moves the nozzle across the top surface again with very low flow (5–15 % of normal) to smooth it. Use it for flat tops that will be seen or touched; it adds time, so reserve it for the final pass on important parts.</p></div>
+
+  <h2 id="features">Speed for features: starting point table</h2>
+  <p>Values below are conservative starting points for a modern enclosed direct-drive printer printing PLA with a 0.4 mm nozzle. Scale up or down with your calibrated max flow and acceleration. Treat them as a starting point to test, not a guarantee.</p>
+  <div class="table-wrap"><table class="data"><thead><tr><th>Feature</th><th>Speed (mm/s)</th><th>Acceleration (mm/s²)</th><th>Why</th></tr></thead><tbody>
+    <tr><td>First layer</td><td>30–60</td><td>500–2000</td><td>Adhesion and squish need slow, steady lines.</td></tr>
+    <tr><td>Outer wall</td><td>60–200</td><td>2000–5000</td><td>Surface quality; slow gives sharp edges.</td></tr>
+    <tr><td>Inner wall</td><td>120–300</td><td>4000–10000</td><td>Hidden; flow-limited; strength.</td></tr>
+    <tr><td>Sparse infill</td><td>150–350</td><td>6000–10000</td><td>Hidden; mostly flow-limited.</td></tr>
+    <tr><td>Top surface</td><td>60–150</td><td>2000–5000</td><td>Smoothness and clean lines.</td></tr>
+    <tr><td>Overhangs / bridges</td><td>20–80</td><td>1000–3000</td><td>Need time to cool; avoid sag.</td></tr>
+    <tr><td>Small perimeters (under 10 mm)</td><td>30–60 % of normal</td><td>—</td><td>Short lines never reach full speed; slow-down avoids vibration.</td></tr>
+    <tr><td>Travel</td><td>300–500+</td><td>10000+</td><td>No plastic; only vibration and noise limit it.</td></tr>
+    <tr><td>TPU</td><td>20–40</td><td>500–2000</td><td>Soft filament compresses; low flow limit.</td></tr>
+  </tbody></table></div>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul class="checklist">
+    <li>Speed, quality and strength compete; choose the corner of the triangle that matches the part.</li>
+    <li>Volumetric flow (mm³/s = line width × layer height × speed) is the true speed limit. Calibrate max flow for each filament.</li>
+    <li>Acceleration matters more than top speed for both time and ringing. Input shaping and pressure advance let you go faster without paying with quality.</li>
+    <li>Cooling is a balance: more fan sharpens overhangs but weakens layers; engineering plastics want warmth.</li>
+    <li>Temperature towers find the cool end of the good range; re-check flow after large changes.</li>
+    <li>Layer height is the biggest time lever, and adaptive layers give fine surfaces for less time.</li>
+    <li>Mechanical condition (belts, frame, screws) underlies every result; software cannot hide a loose machine.</li>
+    <li>Z-banding repeats with the screw; VFA changes with speed. Diagnose by testing a different speed.</li>
+  </ul>
+
+  <h2 id="related">Related pages</h2>
+  <div class="grid cols-3">
+    <a class="card" href="calibration.html"><h3>Calibration playbook</h3><p>Step-by-step tests for flow, pressure advance and max speed.</p></a>
+    <a class="card" href="troubleshooting.html"><h3>Troubleshooting gallery</h3><p>Illustrated defects and fixes.</p></a>
+    <a class="card" href="../exercises/level-2-intermediate.html"><h3>Level 2 exercises</h3><p>Practice tuning speed and cooling.</p></a>
+  </div>
+</main>
+</body>
+</html>

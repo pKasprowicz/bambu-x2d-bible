@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Applications &amp; project ideas · 3D Printing Compendium</title>
+  <meta name="description" content="What 3D printing is used for: prototyping, functional parts, jigs, repairs, tabletop, cosplay, education, medical, aerospace, robotics, jewelry casting, construction and space, with materials, considerations, 60+ project ideas, case studies, business realities and an outlook.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+  <style>
+    .app-card { display: grid; grid-template-columns: 84px 1fr; gap: 16px; padding: 16px 18px; margin: 16px 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
+    .app-card h3 { margin-top: 0; }
+    .app-ico { width: 72px; height: 72px; padding: 6px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--line); }
+    .app-facts { list-style: none; padding: 0; margin: .5em 0 0; }
+    .app-facts li { margin: .35em 0; padding-left: 0; }
+    .app-facts b { display: inline-block; min-width: 96px; color: var(--brand-ink); }
+    .app-note { font-size: 13.5px; color: var(--muted); margin-top: .4em; }
+    .app-lists ul { margin-top: .3em; }
+    @media (max-width: 640px) { .app-card { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body data-page="reference/applications.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 9 · Reference</div>
+    <h1>Applications &amp; project ideas</h1>
+    <p class="lead">3D printing is a manufacturing method, not a single product, so its uses are as varied as the people who own printers. This page tours twenty application areas with their real-world constraints, then gives you more than sixty project ideas by skill level, a few worked scenarios and an honest look at selling prints and where the technology may go.</p>
+    <div class="meta"><span class="badge beginner">Beginner</span><span class="badge intermediate">Intermediate</span><span class="badge time">⏱ 35 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <ul>
+      <li>Where 3D printing beats traditional manufacturing and where it does not.</li>
+      <li>For twenty application areas: what matters in practice, which materials usually fit, and what to watch when printing.</li>
+      <li>Over sixty project ideas ordered by difficulty, plus how to turn a hobby into small-scale income without illusions.</li>
+      <li>How to read industry news about the technology with healthy skepticism.</li>
+    </ul>
+  </div>
+
+  <!-- Icon sprite: every application icon is defined once and reused below -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="ic-proto" viewBox="0 0 64 64"><path class="k-blue" d="M12 22 L32 12 L52 22 V44 L32 54 L12 44 Z M12 22 L32 32 L52 22 M32 32 V54"/><path class="k-orange" d="M44 8 L56 20" style="stroke-width:3"/></symbol>
+    <symbol id="ic-func" viewBox="0 0 64 64"><circle class="k-orange" cx="32" cy="32" r="18" style="stroke-dasharray:7 4;stroke-width:5"/><circle class="k-orange" cx="32" cy="32" r="13"/><circle class="k-orange" cx="32" cy="32" r="5"/></symbol>
+    <symbol id="ic-jig" viewBox="0 0 64 64"><rect class="k-teal" x="10" y="32" width="44" height="22" rx="3"/><rect class="k-teal" x="24" y="38" width="16" height="10" rx="2"/><path class="k-teal arrow" d="M32 6 V30"/></symbol>
+    <symbol id="ic-repair" viewBox="0 0 64 64"><path class="k-green" d="M14 52 L34 32" style="stroke-width:5"/><circle class="k-green" cx="42" cy="22" r="11"/><path class="k-green" d="M48 12 L42 22 L52 26"/></symbol>
+    <symbol id="ic-tabletop" viewBox="0 0 64 64"><rect class="k-purple" x="12" y="12" width="40" height="40" rx="8"/><circle class="c-purple" cx="24" cy="24" r="3"/><circle class="c-purple" cx="40" cy="24" r="3"/><circle class="c-purple" cx="32" cy="32" r="3"/><circle class="c-purple" cx="24" cy="40" r="3"/><circle class="c-purple" cx="40" cy="40" r="3"/></symbol>
+    <symbol id="ic-cosplay" viewBox="0 0 64 64"><path class="k-pink" d="M12 38 C12 14 52 14 52 38 V50 H42 V42 H22 V50 H12 Z"/><path class="k-pink" d="M20 32 H44 L40 38 H24 Z"/></symbol>
+    <symbol id="ic-edu" viewBox="0 0 64 64"><path class="k-blue" d="M6 26 L32 13 L58 26 L32 39 Z"/><path class="k-blue" d="M16 32 V44 C24 52 40 52 48 44 V32 M58 26 V42"/></symbol>
+    <symbol id="ic-art" viewBox="0 0 64 64"><path class="k-pink" d="M24 10 H40 C38 20 46 26 46 38 C46 49 40 55 32 55 C24 55 18 49 18 38 C18 26 26 20 24 10 Z"/><path class="k-pink" d="M22 34 C28 38 36 30 42 34"/></symbol>
+    <symbol id="ic-arch" viewBox="0 0 64 64"><path class="k-gray" d="M8 54 H56 M14 54 V26 L32 12 L50 26 V54 M26 54 V38 H38 V54"/><path class="k-gray" d="M20 30 H26 M38 30 H44"/></symbol>
+    <symbol id="ic-medical" viewBox="0 0 64 64"><path class="k-red" d="M25 10 H39 V25 H54 V39 H39 V54 H25 V39 H10 V25 H25 Z"/></symbol>
+    <symbol id="ic-aero" viewBox="0 0 64 64"><path class="k-blue" d="M32 6 L37 26 L58 38 V43 L37 38 L35 52 L42 57 V59 L32 56 L22 59 V57 L29 52 L27 38 L6 43 V38 L27 26 Z"/></symbol>
+    <symbol id="ic-consumer" viewBox="0 0 64 64"><rect class="k-orange" x="12" y="26" width="40" height="28" rx="3"/><path class="k-orange" d="M22 26 C22 8 42 8 42 26"/><path class="k-orange" d="M26 38 H38"/></symbol>
+    <symbol id="ic-robot" viewBox="0 0 64 64"><rect class="k-teal" x="14" y="20" width="36" height="28" rx="6"/><circle class="c-teal" cx="25" cy="34" r="4"/><circle class="c-teal" cx="39" cy="34" r="4"/><path class="k-teal" d="M32 20 V10 M28 10 H36 M20 48 V56 M44 48 V56"/></symbol>
+    <symbol id="ic-enclosure" viewBox="0 0 64 64"><rect class="k-gray" x="8" y="16" width="48" height="34" rx="4"/><rect class="k-gray" x="14" y="24" width="12" height="8" rx="1"/><circle class="k-gray" cx="42" cy="28" r="4"/><circle class="c-gray" cx="14" cy="22" r="1.6"/><circle class="c-gray" cx="50" cy="44" r="1.6"/><path class="k-gray" d="M14 42 H36"/></symbol>
+    <symbol id="ic-rc" viewBox="0 0 64 64"><path class="k-red" d="M6 42 L12 30 H34 L44 38 H58 V46 H6 Z"/><circle class="k-red" cx="19" cy="47" r="6"/><circle class="k-red" cx="46" cy="47" r="6"/></symbol>
+    <symbol id="ic-agri" viewBox="0 0 64 64"><path class="k-green" d="M32 56 V28 M32 38 C18 38 12 30 12 18 C26 18 32 26 32 38 M32 30 C32 20 38 12 52 12 C52 24 44 30 32 30"/><path class="k-green" d="M16 56 H48"/></symbol>
+    <symbol id="ic-jewelry" viewBox="0 0 64 64"><path class="k-purple" d="M18 20 H46 L56 32 L32 56 L8 32 Z M8 32 H56 M24 20 L32 56 M40 20 L32 56 M32 20 L24 32 M32 20 L40 32"/></symbol>
+    <symbol id="ic-food" viewBox="0 0 64 64"><circle class="k-yellow" cx="32" cy="34" r="20"/><circle class="k-yellow" cx="32" cy="34" r="12"/><path class="k-yellow" d="M32 8 V12"/></symbol>
+    <symbol id="ic-construction" viewBox="0 0 64 64"><path class="k-orange" d="M8 54 H56 M10 54 V42 H30 V54 M30 54 V42 H54 V54 M20 42 V30 H44 V42 M30 30 V18 H54 V30 M8 18 H30"/></symbol>
+    <symbol id="ic-space" viewBox="0 0 64 64"><path class="k-teal" d="M32 6 C43 16 45 30 41 44 H23 C19 30 21 16 32 6 Z M23 44 L14 54 L24 51 M41 44 L50 54 L40 51 M32 46 V58"/><circle class="k-teal" cx="32" cy="24" r="5"/></symbol>
+  </svg>
+
+  <h2 id="why">Why people print: the sweet spot</h2>
+  <h3>🔰 Beginner · What 3D printing is good at</h3>
+  <p>Every manufacturing method has a sweet spot. Injection molding makes a million identical parts cheaply but needs an expensive steel tool first. CNC machining makes precise metal parts but wastes material. 3D printing needs no tooling, so the cost of the <em>first</em> part and the <em>hundredth different</em> part is almost the same. That gives it four main strengths:</p>
+  <ul>
+    <li><strong>Customization:</strong> every part can be different at no extra setup cost (a handle that fits your hand, a bracket for your odd wall).</li>
+    <li><strong>Complexity:</strong> internal channels, lattices and merged assemblies cost no more than simple blocks, within the limits of the process.</li>
+    <li><strong>Speed to first part:</strong> from idea to object in hours, which makes iteration cheap.</li>
+    <li><strong>Distributed production:</strong> a printer in a school, a shop or a remote station can make what is needed on site.</li>
+  </ul>
+  <p>Its weaknesses are equally real: slow production, material properties that vary with orientation, rougher surfaces than molded parts, limited material choice at consumer level, and cost per part that does not fall much with volume. Good applications use the strengths and avoid the weaknesses.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 330" role="img" aria-label="Qualitative chart of cost per part versus quantity: 3D printing is nearly flat while injection molding starts very high because of tooling and falls with volume, crossing at a break-even point">
+      <path class="d-ink" d="M80 20 V290 H820"/>
+      <text class="t-sm t-m" x="14" y="150" transform="rotate(-90 14 150)" style="text-anchor:middle">cost per part</text>
+      <text class="t-sm t-m" x="450" y="318" style="text-anchor:middle">quantity (logarithmic: 1 · 10 · 100 · 1,000 · 10,000+)</text>
+      <path class="k-blue" d="M90 112 H800" style="stroke-width:3"/>
+      <path class="k-orange" d="M90 30 C250 60 400 220 800 255" style="stroke-width:3"/>
+      <circle class="s-red" cx="294" cy="112" r="6"/>
+      <path class="d-dash" d="M294 118 V290"/>
+      <rect class="f-blue" x="110" y="130" width="160" height="56" rx="8"/>
+      <text class="t-sm t-b t-c" x="190" y="152">3D printing wins</text><text class="t-xs t-c" x="190" y="170">custom, low volume, fast</text>
+      <rect class="f-orange" x="520" y="130" width="190" height="56" rx="8"/>
+      <text class="t-sm t-b t-c" x="615" y="152">Molding / machining wins</text><text class="t-xs t-c" x="615" y="170">high volume, simple shapes</text>
+      <text class="t-sm c-blue t-b" x="610" y="100">3D printing: nearly flat</text>
+      <text class="t-sm c-orange t-b" x="120" y="44">Tooled process: tooling cost spread over parts</text>
+      <text class="t-sm c-red t-b" x="304" y="276">break-even (depends on part)</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> The core economic logic, drawn qualitatively (not real data). Where the break-even sits depends on part size, material, tooling cost and whether the shape can be molded at all, but the shape of the curves explains why printing dominates prototypes and one-offs.</figcaption>
+  </figure>
+
+  <h3>🔧 Intermediate · Risk and responsibility</h3>
+  <p>Not all applications carry the same consequences if a part fails. A printed desk-tidy that cracks is a nuisance; a printed bicycle part that cracks can injure someone. Before choosing material and settings, decide which zone your project lives in. This decides how much testing, documentation and professional involvement is appropriate.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 300" role="img" aria-label="Three zones from low to high consequence of failure with example applications, the highest zone being regulated or certified work">
+      <path class="d-ink arrow" d="M20 26 H840"/>
+      <text class="t-sm t-m" x="20" y="18">consequence of a failure grows →</text>
+      <rect class="f-green" x="14" y="40" width="270" height="236" rx="12"/>
+      <text class="t t-b t-c" x="149" y="66">Low consequence</text>
+      <text class="t-sm" x="30" y="94">• Decor, art, desk toys</text><text class="t-sm" x="30" y="116">• Tabletop and miniatures</text><text class="t-sm" x="30" y="138">• Cosplay and props</text><text class="t-sm" x="30" y="160">• Organizers, hobby models</text><text class="t-sm" x="30" y="182">• Teaching models</text><text class="t-sm" x="30" y="204">• Prototypes for looks</text>
+      <text class="t-sm t-m" x="30" y="252">Iterate freely, share widely.</text>
+      <rect class="f-yellow" x="296" y="40" width="270" height="236" rx="12"/>
+      <text class="t t-b t-c" x="431" y="66">Moderate consequence</text>
+      <text class="t-sm" x="312" y="94">• Household repairs</text><text class="t-sm" x="312" y="116">• Jigs, fixtures, tool holders</text><text class="t-sm" x="312" y="138">• Electronics enclosures</text><text class="t-sm" x="312" y="160">• RC, robotics, drones</text><text class="t-sm" x="312" y="182">• Garden and outdoor parts</text><text class="t-sm" x="312" y="204">• Small-batch products</text>
+      <text class="t-sm t-m" x="312" y="252">Test to failure, add margin.</text>
+      <rect class="f-red" x="578" y="40" width="268" height="236" rx="12"/>
+      <text class="t t-b t-c" x="712" y="66">High / regulated</text>
+      <text class="t-sm" x="594" y="94">• Medical and dental devices</text><text class="t-sm" x="594" y="116">• Aerospace and automotive</text><text class="t-sm" x="594" y="138">• Protective equipment</text><text class="t-sm" x="594" y="160">• Food-contact products</text><text class="t-sm" x="594" y="182">• Structural construction</text><text class="t-sm" x="594" y="204">• Child products for sale</text>
+      <text class="t-sm t-m" x="594" y="252">Needs certified process and law.</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> Risk zones. Most hobby printing sits in the green and yellow zones. The red zone is professional territory: standards, traceability and regulators apply, and a home printer alone is not enough.</figcaption>
+  </figure>
+
+  <div class="callout warn"><span class="callout-title">Read this before the medical, aerospace and food sections</span>
+    <p>This page gives general overviews of regulated fields so you understand how the technology is used. It does not describe how to make medical devices, flight hardware, safety equipment or food-contact products, and it is not professional or legal advice. Where a failure could hurt someone, use certified parts.</p></div>
+
+  <h2 id="areas">Twenty application areas</h2>
+  <p>Each block below gives the idea, then three short notes: <b>Consider</b> (real-world constraints), <b>Materials</b> (typical choices, see <a href="../materials/overview.html">Filament overview</a>) and <b>Printing</b> (what to watch while slicing and printing). Material names are starting points; always check temperature and chemical exposure of the actual use.</p>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Area</th><th>Typical volume</th><th>Typical stakes</th><th>Usual materials</th></tr></thead>
+    <tbody>
+      <tr><td>Prototyping</td><td>1-20</td><td><span class="chip green">Low</span></td><td>PLA, PETG, resin</td></tr>
+      <tr><td>Functional parts</td><td>1-100</td><td><span class="chip yellow">Medium</span></td><td>PETG, ABS/ASA, nylon</td></tr>
+      <tr><td>Jigs &amp; fixtures</td><td>1-10</td><td><span class="chip yellow">Medium</span></td><td>PLA, PETG, nylon-CF</td></tr>
+      <tr><td>Household repair</td><td>1</td><td><span class="chip yellow">Medium</span></td><td>PETG, ASA, TPU</td></tr>
+      <tr><td>Tabletop &amp; miniatures</td><td>10-500</td><td><span class="chip green">Low</span></td><td>Resin, PLA</td></tr>
+      <tr><td>Cosplay &amp; props</td><td>1-5</td><td><span class="chip green">Low</span></td><td>PLA, PETG, TPU</td></tr>
+      <tr><td>Education</td><td>1-30</td><td><span class="chip green">Low</span></td><td>PLA</td></tr>
+      <tr><td>Medical &amp; dental</td><td>varies</td><td><span class="chip red">High</span></td><td>certified resins, powders, metals</td></tr>
+      <tr><td>Aerospace &amp; automotive</td><td>varies</td><td><span class="chip red">High</span></td><td>industrial polymers, metals</td></tr>
+      <tr><td>Consumer products</td><td>10-10,000</td><td><span class="chip yellow">Medium</span></td><td>PLA, PETG, nylon</td></tr>
+      <tr><td>Construction</td><td>large</td><td><span class="chip red">High</span></td><td>cement mixes, clay, polymer</td></tr>
+    </tbody></table></div>
+
+  <h3 id="app-proto">Application groups 1-10</h3>
+
+  <article class="app-card" id="proto">
+    <svg class="app-ico" viewBox="0 0 64 64" role="img" aria-label="Wireframe cube with pencil icon"><use href="#ic-proto"/></svg>
+    <div><h3>1 · Prototyping and product development</h3>
+    <p>The original killer application. Designers print form models to judge size and ergonomics, fit models to check how parts assemble, and functional prototypes to test mechanisms before ordering tooling. A prototype that costs a few dollars and an afternoon lets you fail early, when mistakes are cheap.</p>
+    <ul class="app-facts">
+      <li><b>Consider:</b> A printed prototype is not the final part: properties and surface differ. Say what question each prototype answers (looks, fit, function) and design the test around it.</li>
+      <li><b>Materials:</b> PLA for form and fit, PETG or ABS/ASA for moderately loaded function, resin for fine detail, flexible TPU for seals and grips.</li>
+      <li><b>Printing:</b> Print fast and coarse (0.28 mm layers, low infill) while iterating; switch to a finer, slower profile only for the final review model.</li>
+    </ul></div>
+  </article>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 300" role="img" aria-label="Iteration loop with four stages design, print, test and revise, running in hours to days per loop">
+      <rect class="f-blue" x="60" y="40" width="200" height="70" rx="12"/>
+      <text class="t t-b t-c" x="160" y="70">1 · Design</text><text class="t-sm t-c" x="160" y="92">sketch, CAD, parameters</text>
+      <rect class="f-orange" x="600" y="40" width="200" height="70" rx="12"/>
+      <text class="t t-b t-c" x="700" y="70">2 · Print</text><text class="t-sm t-c" x="700" y="92">coarse and fast profile</text>
+      <rect class="f-green" x="600" y="190" width="200" height="70" rx="12"/>
+      <text class="t t-b t-c" x="700" y="220">3 · Test</text><text class="t-sm t-c" x="700" y="242">fit, load, use in real life</text>
+      <rect class="f-purple" x="60" y="190" width="200" height="70" rx="12"/>
+      <text class="t t-b t-c" x="160" y="220">4 · Revise</text><text class="t-sm t-c" x="160" y="242">change one thing, note why</text>
+      <path class="d-ink arrow" d="M262 75 H598"/>
+      <path class="d-ink arrow" d="M700 112 V188"/>
+      <path class="d-ink arrow" d="M598 225 H262"/>
+      <path class="d-ink arrow" d="M160 188 V112"/>
+      <text class="t t-c t-b" x="430" y="150">One loop</text>
+      <text class="t-sm t-c" x="430" y="172">typically hours to a day</text>
+      <text class="t-sm t-c t-m" x="430" y="192">for small parts</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> The rapid-prototyping loop. The skill is not printing; it is changing one variable per loop and writing down what you learned, so that the fifth version is better for a reason.</figcaption>
+  </figure>
+
+  <article class="app-card" id="functional">
+    <svg class="app-ico" viewBox="0 0 64 64" role="img" aria-label="Gear icon"><use href="#ic-func"/></svg>
+    <div><h3>2 · Functional end-use parts</h3>
+    <p>Brackets, clips, knobs, covers, gears, drone mounts and machine guards: parts that do a job in daily use. Printing shines for odd shapes, small quantities and replacement of discontinued parts.</p>
+    <ul class="app-facts">
+      <li><b>Consider:</b> Loads, temperature, chemicals and UV decide the material. Parts are weakest between layers, so plan load direction (see <a href="../design/strength-and-orientation.html">Strength &amp; orientation</a>). Add generous fillets and wall thickness.</li>
+      <li><b>Materials:</b> PETG and ASA for general use, nylon and nylon composites for wear and toughness, PC blends for heat, TPU for damping.</li>
+      <li><b>Printing:</b> More walls (3-5) before more infill, dry the filament, print slower for strength-critical parts and test one before making ten.</li>
+    </ul></div>
+  </article>
+
+  <article class="app-card" id="jigs">
+    <svg class="app-ico" viewBox="0 0 64 64" role="img" aria-label="Jig block with drill arrow icon"><use href="#ic-jig"/></svg>
+    <div><h3>3 · Jigs, fixtures and workshop helpers</h3>
+    <p>A jig guides a tool (drill, saw, router), a fixture holds a workpiece. Printed ones are typically made the same day, shaped exactly for your part. Workshops also print tool organizers, dust-port adapters, clamps, soft jaws, calibration gauges and assembly aids.</p>
+    <ul class="app-facts">
+      <li><b>Consider:</b> A jig must be accurate where it locates the workpiece. Measure the real part, not its drawing, and leave clearance for tolerance. Heat from friction can soften PLA.</li>
+      <li><b>Materials:</b> PLA and PETG for light duty, nylon with carbon fiber for stiffness and wear, metal bushings where a drill bit passes.</li>
+      <li><b>Printing:</b> Use more perimeters than infill, print locating faces flat on the bed for accuracy and print a quick test jig on soft scrap first.</li>
+    </ul></div>
+  </article>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 340" role="img" aria-label="Cross-section of a printed drill jig: a printed body holds the workpiece, a guide hole with metal bushing steers the drill bit, stops locate the part">
+      <path class="d-grid" d="M20 296 H840"/>
+      <rect class="d-plastic" x="240" y="170" width="380" height="126" rx="6"/>
+      <rect class="d-metal" x="300" y="216" width="260" height="80" rx="3"/>
+      <text class="t t-c t-b" x="430" y="262">Workpiece</text>
+      <rect class="d-plastic2" x="240" y="140" width="380" height="30" rx="4"/>
+      <rect class="d-surface" x="406" y="140" width="48" height="30"/>
+      <rect class="d-metal2" x="404" y="140" width="6" height="30"/><rect class="d-metal2" x="450" y="140" width="6" height="30"/>
+      <path class="d-metal" d="M424 20 H436 V138 L430 150 L424 138 Z"/>
+      <path class="d-ink arrow" d="M492 40 V110"/>
+      <rect class="d-plastic" x="284" y="196" width="16" height="50" rx="2"/>
+      <rect class="d-plastic" x="560" y="196" width="16" height="50" rx="2"/>
+      <path class="d-thin" d="M430 150 V216 M426 216 H434" style="stroke-dasharray:3 3"/>
+      <text class="t-sm" x="640" y="40">Drill bit</text><path class="d-thin" d="M638 36 L440 40"/>
+      <text class="t-sm" x="640" y="100">Printed top plate</text><path class="d-thin" d="M638 96 L560 150"/>
+      <text class="t-sm" x="640" y="130">Metal bushing in guide hole</text><path class="d-thin" d="M638 126 L458 150"/>
+      <text class="t-sm" x="640" y="200">Printed body with locating stops</text><path class="d-thin" d="M638 196 L580 214"/>
+      <text class="t-sm" x="30" y="214">Locating stop</text><path class="d-thin" d="M120 210 L284 218"/>
+      <text class="t-sm" x="30" y="330">Print the body so the locating faces lie flat on the bed (good accuracy).</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> A printed drill jig in section. The bushing protects the plastic from wear, and the stops put the workpiece in the same place every time, so ten parts come out identical.</figcaption>
+  </figure>
+
+  <article class="app-card" id="repair">
+    <svg class="app-ico" viewBox="0 0 64 64" role="img" aria-label="Wrench icon"><use href="#ic-repair"/></svg>
+    <div><h3>4 · Household repairs and replacement parts</h3>
+    <p>Appliance knobs, drawer rails, curtain-rod brackets, battery covers, shower fittings and toy parts: the long tail of broken plastic nobody sells separately. Repairing instead of replacing saves money and waste (see <a href="economics-and-ethics.html#right-to-repair">right to repair</a>).</p>
+    <ul class="app-facts">
+      <li><b>Consider:</b> Copy the original geometry with calipers; photos with a ruler are a good start. Heat, water and soap decide the material. Never print safety parts of gas, mains-voltage or pressure systems.</li>
+      <li><b>Materials:</b> PETG for wet areas, ASA for sunlight, TPU for gaskets and feet, nylon for gears and hinges.</li>
+      <li><b>Printing:</b> Print a draft in cheap PLA to check the fit, then print the final in the proper material.</li>
+    </ul></div>
+  </article>
+
+  <article class="app-card" id="tabletop">
+    <svg class="app-ico" viewBox="0 0 64 64" role="img" aria-label="Die icon"><use href="#ic-tabletop"/></svg>
+    <div><h3>5 · Tabletop gaming and miniatures</h3>
+    <p>Terrain, dungeon tiles, dice towers, tokens and character miniatures are among the most popular uses. Resin printers give fine detail for figures; FDM is great for terrain and large pieces.</p>
+    <ul class="app-facts">
+      <li><b>Consider:</b> Detail scale matters: a 28 mm figure needs resin or a very fine FDM nozzle. Licenses: many figure designers allow personal use only.</li>
+      <li><b>Materials:</b> Standard or tough resins for miniatures, PLA for terrain, matte PLA for easy painting.</li>
+      <li><b>Printing:</b> Orient figures at a tilt so supports touch non-critical faces. Prime and paint for a finished look (see <a href="../techniques/post-processing.html">Post-processing</a>).</li>
+    </ul></div>
+  </article>
+
+  <article class="app-card" id="cosplay">
+    <svg class="app-ico" viewBox="0 0 64 64" role="img" aria-label="Helmet icon"><use href="#ic-cosplay"/></svg>
+    <div><h3>6 · Cosplay, costumes and props</h3>
+    <p>Helmets, armor plates, masks, wings, blasters and film props. Large pieces are printed in segments, glued, filled, sanded, primed and painted. The craft is mostly post-processing.</p>
+    <ul class="app-facts">
+      <li><b>Consider:</b> Weight, comfort and heat; leave breathing and vision room; edges must be safe in crowds. Event rules often forbid realistic weapons.</li>
+      <li><b>Materials:</b> PLA is easy to sand and glue; PETG for pieces that may sit in a hot car; TPU for flexible straps and edges.</li>
+      <li><b>Printing:</b> Use thin walls and low infill to save weight and time, split along natural seams and add alignment keys to every joint.</li>
+    </ul></div>
+  </article>
+
+  <article class="app-card" id="education">
+    <svg class="app-ico" viewBox="0 0 64 64" role="img" aria-label="Graduation cap icon"><use href="#ic-edu"/></svg>
+    <div><h3>7 · Education</h3>
+    <p>Schools use printers to make molecules, fossils, geometry solids, history artifacts, relief maps, tactile models for visually impaired students and student engineering projects. Printing turns abstract ideas into things students can hold.</p>
+    <ul class="app-facts">
+      <li><b>Consider:</b> Safety supervision, ventilation, noise, and queue time with many students. Pre-sliced files and robust, enclosed machines help in classrooms.</li>
+      <li><b>Materials:</b> PLA almost exclusively; it is mild, cheap and predictable.</li>
+      <li><b>Printing:</b> Print small, quick models (under an hour) so every student gets results during a lesson; use brims on tall items.</li>
+    </ul></div>
+  </article>
+
+  <article class="app-card" id="art">
+    <svg class="app-ico" viewBox="0 0 64 64" role="img" aria-label="Vase icon"><use href="#ic-art"/></svg>
+    <div><h3>8 · Art, design and decor</h3>
+    <p>Vases, lamps, sculpture, generative designs and lithophanes. Printing allows geometry that can only be made additively, such as lattices, twisted forms and Voronoi shapes. Vase mode (a single continuous spiral wall) gives quick, elegant objects.</p>
+    <ul class="app-facts">
+      <li><b>Consider:</b> The visible layer lines are part of the aesthetic; decide whether to embrace or hide them. Lighting through thin walls reveals defects and can also create beauty.</li>
+      <li><b>Materials:</b> Silk and matte PLA, translucent filaments, marble or wood-fill effects.</li>
+      <li><b>Printing:</b> Tune cooling, slow down outer walls and calibrate flow for consistent surface; consider variable layer height on curves (<a href="../techniques/advanced-techniques.html">Advanced techniques</a>).</li>
+    </ul></div>
+  </article>
+
+  <article class="app-card" id="architecture">
+    <svg class="app-ico" viewBox="0 0 64 64" role="img" aria-label="Building icon"><use href="#ic-arch"/></svg>
+    <div><h3>9 · Architecture models and scale models</h3>
+    <p>Architects and model-makers print massing models, terrain, façade studies and detailed scale models of buildings, vehicles and trains. Printing is faster than cutting card and carries complex geometry well.</p>
+    <ul class="app-facts">
+      <li><b>Consider:</b> Models are often large: split into sections with joints, plan assembly order and keep a consistent scale.</li>
+      <li><b>Materials:</b> PLA for fast concept models, resin for detailed small models, white or neutral colors for presentation.</li>
+      <li><b>Printing:</b> Thin walls and fine details need a smaller nozzle and slower speed; optimize orientation to avoid supports on visible faces.</li>
+    </ul></div>
+  </article>
+
+  <article class="app-card" id="medical">
+    <svg class="app-ico" viewBox="0 0 64 64" role="img" aria-label="Medical cross icon"><use href="#ic-medical"/></svg>
+    <div><h3>10 · Medical and dental (overview, regulated)</h3>
+    <p>Hospitals and specialized companies use 3D printing for anatomical models for surgical planning and teaching, patient-specific guides, dental models, aligner molds, hearing-aid shells and orthopedic implants made in certified processes. Prosthetic and assistive devices are also an active community area, often with volunteer designs for non-critical use.</p>
+    <ul class="app-facts">
+      <li><b>Consider:</b> Anything that touches the body, sustains load inside it or influences treatment decisions is a regulated medical device in most jurisdictions. It needs validated materials, processes, cleaning and traceability. A consumer printer is not a validated process.</li>
+      <li><b>Materials:</b> Biocompatible resins, polymers, powders and metals certified for medical use; for non-critical teaching models, ordinary PLA or resin.</li>
+      <li><b>Printing:</b> For hobby use: anatomical models for learning, ergonomic grips, desk-side assistive tools and cosmetic covers. Do not make implants, dental appliances worn in the mouth or devices that replace a clinician's judgment.</li>
+    </ul>
+    <p class="app-note">See <a href="economics-and-ethics.html#accessibility">accessibility &amp; assistive devices</a> for responsible community work.</p></div>
+  </article>
+
+  <article class="app-card" id="aerospace">
+    <svg class="app-ico" viewBox="0 0 64 64" role="img" aria-label="Aircraft icon"><use href="#ic-aero"/></svg>
+    <div><h3>11 · Aerospace, automotive and motorsport</h3>
+    <p>Industry uses printing for prototypes, tooling, jigs and, in certified processes, end-use parts such as lightweight brackets and complex ducts, often in metal or high-performance polymers. Motorsport teams print wind-tunnel models, ducts and one-off fittings. Hobbyists print car-interior trim, dashboards mounts, model parts and intake bits for non-critical use.</p>
+    <ul class="app-facts">
+      <li><b>Consider:</b> Flight and road-safety parts require qualified materials, process control and inspection. Engine bays and sun-heated interiors exceed the limits of PLA and PETG.</li>
+      <li><b>Materials:</b> ASA and ABS for interior trim, PC and fiber-filled nylons for heat, industrial powders and metals in certified production.</li>
+      <li><b>Printing:</b> Test in the real temperature, vibration and chemical environment. Do not print brake, steering, suspension, seat-belt or airbag-related parts.</li>
+    </ul></div>
+  </article>
+
+  <article class="app-card" id="consumer">
+    <svg class="app-ico" viewBox="0 0 64 64" role="img" aria-label="Gift bag icon"><use href="#ic-consumer"/></svg>
+    <div><h3>12 · Consumer products and mass customization</h3>
+    <p>Personalized phone cases, name signs, ergonomic grips, eyewear frames, insoles, sports gear, keychains and gifts. Companies use printing to customize at scale, for example shoe midsoles and helmet liners, with industrial machines and controlled processes.</p>
+    <ul class="app-facts">
+      <li><b>Consider:</b> Consumer law requires safe products; selling items for children, food or wearables adds obligations. Quality consistency matters more than peak quality.</li>
+      <li><b>Materials:</b> PLA and PETG for gifts and decor, TPU for wearable items, nylon for tough items.</li>
+      <li><b>Printing:</b> Build repeatable profiles and keep a log; prefer designs that print well without supports and tolerate small variations.</li>
+    </ul></div>
+  </article>
+
+  <article class="app-card" id="robotics">
+    <svg class="app-ico" viewBox="0 0 64 64" role="img" aria-label="Robot head icon"><use href="#ic-robot"/></svg>
+    <div><h3>13 · Robotics and drones</h3>
+    <p>Chassis, grippers, brackets, camera gimbals, wheels and sensor mounts. Printing is perfect for robotics because designs change constantly and weight matters. Students and competition teams rely on it heavily.</p>
+    <ul class="app-facts">
+      <li><b>Consider:</b> Vibration, impact and battery heat. Drone and flying parts must be light and strong; failures can injure people. Keep motors and batteries mounted with margin.</li>
+      <li><b>Materials:</b> PETG and nylon for toughness, carbon-fiber nylon for stiffness, TPU for vibration dampers and bumpers.</li>
+      <li><b>Printing:</b> Use inserts for screws, orient layers along load paths and design replaceable sacrificial parts that break instead of the motor mount.</li>
+    </ul></div>
+  </article>
+
+  <article class="app-card" id="enclosures">
+    <svg class="app-ico" viewBox="0 0 64 64" role="img" aria-label="Electronics enclosure icon"><use href="#ic-enclosure"/></svg>
+    <div><h3>14 · Electronics enclosures and smart-home gadgets</h3>
+    <p>Cases for single-board computers, sensor housings, switch plates, wall mounts and cable management. Makers design a box around a circuit board in minutes.</p>
+    <ul class="app-facts">
+      <li><b>Consider:</b> Heat from electronics, ventilation openings, mains-voltage safety (use proper insulating and certified enclosures there), flame retardancy and access for service.</li>
+      <li><b>Materials:</b> PETG for general use, ASA outdoors, flame-retardant grades where required, PLA for low-voltage indoor boxes.</li>
+      <li><b>Printing:</b> Use screw bosses with heat-set inserts, snap fits with generous clearance and print lids flat. See <a href="../design/design-patterns.html">Design patterns &amp; recipes</a>.</li>
+    </ul></div>
+  </article>
+
+  <article class="app-card" id="rc">
+    <svg class="app-ico" viewBox="0 0 64 64" role="img" aria-label="RC car icon"><use href="#ic-rc"/></svg>
+    <div><h3>15 · RC, hobby vehicles and models</h3>
+    <p>Bodies, bumpers, mounts, wheels, RC planes (with lightweight foaming filaments or thin-walled designs), model trains, and spares for out-of-production kits.</p>
+    <ul class="app-facts">
+      <li><b>Consider:</b> Crashes are the test. Design to absorb impacts and to be reprinted quickly. Weight is critical for aircraft.</li>
+      <li><b>Materials:</b> PETG, nylon and TPU for crash survival; lightweight PLA grades for models; ASA for sun-exposed vehicles.</li>
+      <li><b>Printing:</b> Fewer, thicker walls with lower infill; use fillets at stress points and print in the orientation that keeps layers away from impact lines.</li>
+    </ul></div>
+  </article>
+
+  <article class="app-card" id="agriculture">
+    <svg class="app-ico" viewBox="0 0 64 64" role="img" aria-label="Sprouting plant icon"><use href="#ic-agri"/></svg>
+    <div><h3>16 · Agriculture, garden and outdoor</h3>
+    <p>Seed trays, plant labels, irrigation fittings, drip adapters, bird feeders, beekeeping tools, hose clips and custom tool handles. Farmers and gardeners often print the small part that stops a machine.</p>
+    <ul class="app-facts">
+      <li><b>Consider:</b> UV, rain, frost and chemicals degrade plastics. Parts in contact with food crops or drinking water should be made of suitable materials and not assumed safe.</li>
+      <li><b>Materials:</b> ASA and PETG outdoors, TPU for seals; avoid PLA in sun and heat.</li>
+      <li><b>Printing:</b> Thick walls and 100% overlap at threads; add UV-stable colors (black and gray often last longer than bright pigments).</li>
+    </ul></div>
+  </article>
+
+  <article class="app-card" id="jewelry">
+    <svg class="app-ico" viewBox="0 0 64 64" role="img" aria-label="Gem icon"><use href="#ic-jewelry"/></svg>
+    <div><h3>17 · Fashion, jewelry and casting</h3>
+    <p>Designers print wearable pieces directly in flexible plastics and use printed patterns for casting. In investment casting a printed pattern (wax-like castable resin) is encased in plaster, burned out, and metal fills the cavity. Direct metal printing of jewelry is also done by service bureaus.</p>
+    <ul class="app-facts">
+      <li><b>Consider:</b> Metal casting involves molten metal, hot furnaces and fumes and is a professional or well-trained activity. Skin contact with resin or nickel-containing alloys can cause allergic reactions.</li>
+      <li><b>Materials:</b> Castable resins for patterns, TPU or nylon for wearables, standard resin for prototypes.</li>
+      <li><b>Printing:</b> Very fine layers and careful support placement; high-resolution resin printers dominate this niche.</li>
+    </ul></div>
+  </article>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 260" role="img" aria-label="Lost-pattern casting flow: design the master, print a castable pattern, invest in plaster, burn out the pattern, cast metal and finish">
+      <rect class="f-blue" x="10" y="40" width="124" height="76" rx="10"/><text class="t t-b t-c" x="72" y="70">1 · Design</text><text class="t-xs t-c" x="72" y="90">3D model with</text><text class="t-xs t-c" x="72" y="104">sprues and shrink</text>
+      <rect class="f-orange" x="154" y="40" width="124" height="76" rx="10"/><text class="t t-b t-c" x="216" y="70">2 · Print</text><text class="t-xs t-c" x="216" y="90">castable resin</text><text class="t-xs t-c" x="216" y="104">pattern</text>
+      <rect class="f-yellow" x="298" y="40" width="124" height="76" rx="10"/><text class="t t-b t-c" x="360" y="70">3 · Invest</text><text class="t-xs t-c" x="360" y="90">pattern in plaster</text><text class="t-xs t-c" x="360" y="104">flask</text>
+      <rect class="f-red" x="442" y="40" width="124" height="76" rx="10"/><text class="t t-b t-c" x="504" y="70">4 · Burn out</text><text class="t-xs t-c" x="504" y="90">kiln removes</text><text class="t-xs t-c" x="504" y="104">the pattern</text>
+      <rect class="f-purple" x="586" y="40" width="124" height="76" rx="10"/><text class="t t-b t-c" x="648" y="70">5 · Cast</text><text class="t-xs t-c" x="648" y="90">metal fills the</text><text class="t-xs t-c" x="648" y="104">empty cavity</text>
+      <rect class="f-green" x="730" y="40" width="120" height="76" rx="10"/><text class="t t-b t-c" x="790" y="70">6 · Finish</text><text class="t-xs t-c" x="790" y="90">cut sprues,</text><text class="t-xs t-c" x="790" y="104">polish, set</text>
+      <path class="d-ink arrow" d="M136 78 H152"/><path class="d-ink arrow" d="M280 78 H296"/><path class="d-ink arrow" d="M424 78 H440"/><path class="d-ink arrow" d="M568 78 H584"/><path class="d-ink arrow" d="M712 78 H728"/>
+      <rect class="d-surface2" x="10" y="144" width="840" height="96" rx="10"/>
+      <text class="t-sm t-b" x="26" y="168">Why it matters</text>
+      <text class="t-sm" x="26" y="190">Printing removes the hand-carved wax step, so a customer's design can be turned into metal quickly.</text>
+      <text class="t-sm" x="26" y="210">Steps 4 and 5 involve a hot kiln and molten metal: leave them to trained people with proper equipment.</text>
+      <text class="t-sm t-m" x="26" y="230">Resin and burn-out fumes need ventilation; always follow the resin maker's burn-out schedule.</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> The lost-pattern workflow used for jewelry and small metal parts. The 3D printer replaces only step 2; the foundry steps remain traditional craft.</figcaption>
+  </figure>
+
+  <article class="app-card" id="food">
+    <svg class="app-ico" viewBox="0 0 64 64" role="img" aria-label="Plate icon"><use href="#ic-food"/></svg>
+    <div><h3>18 · Food (overview)</h3>
+    <p>Two very different things share this heading. Food-printing machines extrude edible pastes such as chocolate, dough or puree for decoration and personalized treats, and they use food-grade hardware. The other use is printed kitchen helpers: cookie cutters, stamps, molds for casting silicone, and organizers.</p>
+    <ul class="app-facts">
+      <li><b>Consider:</b> Ordinary filament prints are porous and hard to clean, and may contain non-food additives. Keep contact short and dry; use a food-safe sleeve, or print a mold and cast food-grade silicone from it.</li>
+      <li><b>Materials:</b> Materials certified by the manufacturer for food contact, used with a dedicated stainless nozzle, are the minimum for any serious attempt. Rules vary by country.</li>
+      <li><b>Printing:</b> Smooth surfaces, no deep crevices, single-use or rinse-and-replace habits. Not legal advice.</li>
+    </ul></div>
+  </article>
+
+  <article class="app-card" id="construction">
+    <svg class="app-ico" viewBox="0 0 64 64" role="img" aria-label="Brick wall icon"><use href="#ic-construction"/></svg>
+    <div><h3>19 · Construction</h3>
+    <p>Large gantry or robotic-arm printers extrude cement-based mixtures, clay or earth to build walls, pavilions, planters and pilot houses. Compared with hobby printing, the principles are the same: layers, toolpaths and material flow, scaled up. Projects have demonstrated building shells, while the technology and its codes are still maturing.</p>
+    <ul class="app-facts">
+      <li><b>Consider:</b> Structural engineering, building codes, curing, reinforcement and weather matter far more than print speed. Treat claims about cost and speed as project-specific.</li>
+      <li><b>Materials:</b> Specialized cementitious mixes, clay, sometimes recycled polymers.</li>
+      <li><b>Printing:</b> At desk scale, you can explore this with a clay extruder, miniature wall models and architectural planter prints.</li>
+    </ul></div>
+  </article>
+
+  <article class="app-card" id="space">
+    <svg class="app-ico" viewBox="0 0 64 64" role="img" aria-label="Rocket icon"><use href="#ic-space"/></svg>
+    <div><h3>20 · Space and extreme environments</h3>
+    <p>Space agencies and companies have used printing for rocket engine parts, satellite brackets and experiments aboard the International Space Station, where printing spare tools avoids shipping everything from Earth. Research also looks at using local material (such as regolith) for future bases. Similar thinking applies on remote expeditions and polar stations.</p>
+    <ul class="app-facts">
+      <li><b>Consider:</b> Vacuum, radiation and temperature swings stress polymers; flight hardware requires qualification. Much space printing is research or demonstration.</li>
+      <li><b>Materials:</b> High-performance polymers and metals in industry; PLA-like materials in low-risk demos.</li>
+      <li><b>Printing:</b> A good classroom topic: design a part that can be printed and assembled by an astronaut with minimal tools.</li>
+    </ul></div>
+  </article>
+
+  <h3>Which material for which application?</h3>
+  <p>A quick glance at the usual fits. Dots are generalizations: the ring means "possible with care or specific grades". Verify with a datasheet and a test.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 400" role="img" aria-label="Matrix of seven material families against six requirement columns, with filled dots for good fit and rings for possible fit">
+      <text class="t-sm t-b t-c" x="236" y="26">Display</text><text class="t-sm t-b t-c" x="236" y="42">and art</text>
+      <text class="t-sm t-b t-c" x="350" y="26">Jigs and</text><text class="t-sm t-b t-c" x="350" y="42">fixtures</text>
+      <text class="t-sm t-b t-c" x="464" y="26">Outdoor</text><text class="t-sm t-b t-c" x="464" y="42">and UV</text>
+      <text class="t-sm t-b t-c" x="578" y="26">Warm</text><text class="t-sm t-b t-c" x="578" y="42">(over 70 °C)</text>
+      <text class="t-sm t-b t-c" x="692" y="26">Flexible</text><text class="t-sm t-b t-c" x="692" y="42">and seals</text>
+      <text class="t-sm t-b t-c" x="806" y="26">Wear and</text><text class="t-sm t-b t-c" x="806" y="42">sliding</text>
+      <path class="d-grid" d="M20 60 H846 M20 108 H846 M20 156 H846 M20 204 H846 M20 252 H846 M20 300 H846 M20 348 H846"/>
+      <text class="t t-b" x="24" y="90">PLA</text>
+      <text class="t t-b" x="24" y="138">PETG</text>
+      <text class="t t-b" x="24" y="186">ABS / ASA</text>
+      <text class="t t-b" x="24" y="234">Nylon (PA)</text>
+      <text class="t t-b" x="24" y="282">PC</text>
+      <text class="t t-b" x="24" y="330">TPU</text>
+      <text class="t t-b" x="24" y="372">PA-CF / PET-CF</text>
+      <!-- PLA -->
+      <circle class="s-green" cx="236" cy="84" r="9"/><circle class="s-green" cx="350" cy="84" r="9"/>
+      <!-- PETG -->
+      <circle class="k-yellow" cx="236" cy="132" r="9"/><circle class="s-green" cx="350" cy="132" r="9"/><circle class="k-yellow" cx="464" cy="132" r="9"/><circle class="k-yellow" cx="806" cy="132" r="9"/>
+      <!-- ABS ASA -->
+      <circle class="k-yellow" cx="236" cy="180" r="9"/><circle class="k-yellow" cx="350" cy="180" r="9"/><circle class="s-green" cx="464" cy="180" r="9"/><circle class="s-green" cx="578" cy="180" r="9"/><circle class="k-yellow" cx="806" cy="180" r="9"/>
+      <!-- PA -->
+      <circle class="k-yellow" cx="350" cy="228" r="9"/><circle class="k-yellow" cx="464" cy="228" r="9"/><circle class="k-yellow" cx="578" cy="228" r="9"/><circle class="s-green" cx="806" cy="228" r="9"/>
+      <!-- PC -->
+      <circle class="k-yellow" cx="350" cy="276" r="9"/><circle class="k-yellow" cx="464" cy="276" r="9"/><circle class="s-green" cx="578" cy="276" r="9"/><circle class="k-yellow" cx="806" cy="276" r="9"/>
+      <!-- TPU -->
+      <circle class="k-yellow" cx="236" cy="324" r="9"/><circle class="k-yellow" cx="464" cy="324" r="9"/><circle class="s-green" cx="692" cy="324" r="9"/><circle class="k-yellow" cx="806" cy="324" r="9"/>
+      <circle class="s-green" cx="350" cy="366" r="9"/><circle class="k-yellow" cx="464" cy="366" r="9"/><circle class="s-green" cx="578" cy="366" r="9"/><circle class="s-green" cx="806" cy="366" r="9"/>
+    </svg>
+    <figcaption><b>Figure 6.</b> Material-to-application cheat grid. Filled green dot: usually a good fit. Yellow ring: possible depending on grade, design and conditions. Empty: usually a poor fit. Always confirm with the datasheet and a real test.</figcaption>
+  </figure>
+
+  <h2 id="projects">Project ideas by level</h2>
+  <p>Pick one project at your level and finish it, rather than starting five. Each list is ordered roughly from easiest to hardest. Tick the ones you have completed; your ticks are saved in this browser. The <a href="../exercises/index.html">practice hub</a> has guided exercises with success criteria for the same skills.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 300" role="img" aria-label="Three-step staircase of project levels: beginner download and print, intermediate measure and design, advanced engineer and test, with the skills gained at each step">
+      <path class="d-grid" d="M20 270 H840"/>
+      <rect class="f-green" x="30" y="190" width="250" height="80" rx="6"/>
+      <text class="t t-b t-c" x="155" y="214">🔰 Beginner</text><text class="t-sm t-c" x="155" y="236">download, scale, print</text><text class="t-sm t-c" x="155" y="254">PLA, one color</text>
+      <rect class="f-yellow" x="300" y="130" width="250" height="140" rx="6"/>
+      <text class="t t-b t-c" x="425" y="154">🔧 Intermediate</text><text class="t-sm t-c" x="425" y="176">measure, model, fit</text><text class="t-sm t-c" x="425" y="194">tolerances, PETG/ASA, inserts</text><text class="t-sm t-c" x="425" y="212">snap fits, multi-color</text>
+      <rect class="f-red" x="570" y="70" width="250" height="200" rx="6"/>
+      <text class="t t-b t-c" x="695" y="94">🚀 Advanced</text><text class="t-sm t-c" x="695" y="116">engineer, test, iterate</text><text class="t-sm t-c" x="695" y="134">parametric CAD, load tests</text><text class="t-sm t-c" x="695" y="152">engineering materials</text><text class="t-sm t-c" x="695" y="170">casting, mechanisms</text>
+      <path class="d-ink arrow" d="M60 170 L160 140 L300 100 L440 60 L560 30" style="stroke-dasharray:6 5"/>
+      <text class="t-sm t-m" x="580" y="24">your skills grow</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> The three project tiers. Each step adds one new skill rather than all at once: moving from downloading to designing, then from designing to engineering.</figcaption>
+  </figure>
+
+  <div class="app-lists">
+  <h3>🔰 Beginner: 18 ideas (download, print, learn)</h3>
+  <ul class="checklist">
+    <li>Cable clips and a desk cable organizer</li>
+    <li>Phone or tablet stand</li>
+    <li>Custom coasters with a simple logo or text</li>
+    <li>Name tag or luggage tag (flat, one color)</li>
+    <li>Plant labels and a small planter with drainage hole</li>
+    <li>Under-desk headphone hook</li>
+    <li>Pen and pencil holder</li>
+    <li>Small storage box with a friction lid</li>
+    <li>Wall hooks and key hanger</li>
+    <li>Bag clips for food bags (keep them away from food contact)</li>
+    <li>Large-thread bottle cap or jar lid for a craft jar</li>
+    <li>Print-in-place flexible toy animal</li>
+    <li>Flat letter sign in two layers</li>
+    <li>Dice tray and dice tower</li>
+    <li>Simple lamp shade in vase mode (use an LED, not a hot bulb)</li>
+    <li>Tolerance test set: print it, measure it, write down your numbers</li>
+    <li>Filament spool guide or spool-end clips</li>
+    <li>Playdough stencil or cutter set for kids' craft (not for food)</li>
+  </ul>
+
+  <h3>🔧 Intermediate: 18 ideas (measure, model, fit)</h3>
+  <ul class="checklist">
+    <li>Parametric box with a snap-fit lid</li>
+    <li>Drawer organizer sized to your actual drawer</li>
+    <li>Modular storage bins on a grid system (for example the community Gridfinity standard)</li>
+    <li>Case for a single-board computer with ventilation and screw bosses</li>
+    <li>Replacement knob with a D-shaped or knurled shaft hole</li>
+    <li>Camera or action-cam mount with a tripod thread insert</li>
+    <li>Hinged box with a print-in-place hinge</li>
+    <li>Gear set or a small planetary gear demo</li>
+    <li>Custom threaded jar and lid</li>
+    <li>Headphone stand with a weighted base</li>
+    <li>Cosplay helmet printed in sections, glued and finished</li>
+    <li>Articulated multi-part dragon or toy</li>
+    <li>Strain relief or cable chain with TPU parts</li>
+    <li>Lithophane lamp or night light</li>
+    <li>Mounting bracket for a specific appliance (measure it, then test fit with a draft)</li>
+    <li>Bicycle light or phone mount (non-structural, test it)</li>
+    <li>Irrigation or garden fitting in ASA</li>
+    <li>Multi-color logo keychain using an AMS</li>
+  </ul>
+
+  <h3>🚀 Advanced: 18 ideas (engineer, test, iterate)</h3>
+  <ul class="checklist">
+    <li>Print-in-place gearbox with measured clearances</li>
+    <li>Small robot arm or camera slider</li>
+    <li>Rover or quadruped robot chassis</li>
+    <li>Small hobby quadcopter frame (fly over soft ground; test bench first)</li>
+    <li>Master pattern for casting silicone parts</li>
+    <li>Castable pattern for jewelry, cast by a professional foundry</li>
+    <li>Heat-resistant enclosure in ASA or PC for warm electronics</li>
+    <li>Compliant (flexure) mechanism such as a gripper</li>
+    <li>Topology-inspired bracket tested to failure against a conventional design</li>
+    <li>Low-pressure water manifold for an aquarium or hobby cooling loop (pressure-test with care)</li>
+    <li>Your own parametric part library in OpenSCAD or CadQuery</li>
+    <li>Modular desk system with rails and accessories</li>
+    <li>Large model segmented into more than ten parts with alignment keys</li>
+    <li>Vacuum-forming mold or composite lay-up mold</li>
+    <li>Tunable whistle, ocarina or acoustic horn</li>
+    <li>Optical mount or lens adapter with sub-millimeter alignment</li>
+    <li>Multi-material soft gripper (rigid plus TPU)</li>
+    <li>Fixture family for a workshop: one parametric jig for many part sizes</li>
+  </ul>
+
+  <h3>🖨️ X2D and AMS 2 Pro showcase: 8 ideas</h3>
+  <p>These exploit the dual nozzle and the multi-filament feeder. See <a href="../x2d/dual-nozzle-printing.html">Dual-nozzle printing</a> and <a href="../x2d/recipes.html">Project recipes</a>.</p>
+  <ul class="checklist">
+    <li>Rigid grip with a soft handle: a main-nozzle part with a second material zone</li>
+    <li>Model with a different support material so interfaces peel clean</li>
+    <li>Two-material hinge: stiff leaves, flexible joint (check the filament compatibility table first)</li>
+    <li>Multi-color figurine with a flush-volume matrix you tuned yourself</li>
+    <li>Engineering bracket in ABS or ASA printed in a warm chamber</li>
+    <li>Large multi-color logo to test how many colors your setup can handle</li>
+    <li>Same part in ten colors in one plate to learn purge behavior</li>
+    <li>Production-style batch: 20 identical parts with a time and filament log</li>
+  </ul>
+  </div>
+
+  <h2 id="cases">Mini case studies</h2>
+  <p>These are composite scenarios based on typical situations, not reports of specific people or measurements. The point is the reasoning.</p>
+
+  <div class="grid cols-2">
+    <div class="card accent-green"><h3>🔧 The broken dishwasher clip</h3>
+      <p><b>Problem:</b> a small plastic clip that holds a rack wheel snapped; the maker sells only the whole rack.</p>
+      <p><b>Approach:</b> measure the broken parts with calipers, model the clip with the snap tab thicker, print a quick draft in PLA to check fit, then print in PETG because of heat and moisture, with the layers running along the length of the tab.</p>
+      <p><b>Lesson:</b> a draft in cheap material catches measurement errors; the final material is chosen for the environment.</p></div>
+    <div class="card accent-teal"><h3>📏 The repeating drill error</h3>
+      <p><b>Problem:</b> a small workshop drills the same hole pattern in 40 plates and misplaces some.</p>
+      <p><b>Approach:</b> a jig with locating stops and steel bushings, printed in PETG with extra walls; the first one is tested on scrap.</p>
+      <p><b>Lesson:</b> the value is repeatability, not strength. A printed jig is cheaper than a machined one and can be revised in an afternoon.</p></div>
+    <div class="card accent-pink"><h3>🪖 The twelve-part helmet</h3>
+      <p><b>Problem:</b> a cosplay helmet is bigger than the build plate.</p>
+      <p><b>Approach:</b> split into segments along design lines, add alignment keys and glue surfaces, print with few walls and low infill to save weight, then glue, fill, sand, prime and paint.</p>
+      <p><b>Lesson:</b> printing is the first 30% of the work; plan time for finishing.</p></div>
+    <div class="card accent-blue"><h3>🏫 The classroom queue</h3>
+      <p><b>Problem:</b> twenty-four students, 45 minutes, a few printers.</p>
+      <p><b>Approach:</b> pre-sliced small models under an hour, a sign-up queue, students customize one parameter (name, size), prints run between lessons and a teacher checks the first layer.</p>
+      <p><b>Lesson:</b> constrain the project so every student gets a result and so failures cost little.</p></div>
+    <div class="card accent-orange"><h3>🏷️ The name-sign side business</h3>
+      <p><b>Problem:</b> a maker wants income from personalized desk signs.</p>
+      <p><b>Approach:</b> own templates (no downloaded designs), a fixed set of colors, a pricing sheet that includes failures and packaging, orders batched onto full plates.</p>
+      <p><b>Lesson:</b> a narrow product and a repeatable process matter more than printer speed. Income stays modest and time-intensive.</p></div>
+  </div>
+
+  <h2 id="business">Business and side-hustle realities</h2>
+  <h3>🔰 Beginner · Can I make money?</h3>
+  <p>Yes, some people do, but the honest picture is modest. Printers are cheap, so competition is intense, platform fees and shipping take a share, failures eat margin, and your hours are rarely counted. Successful small businesses usually have one of these edges: a niche they understand deeply, their own designs, local customers who value speed and service, or business customers who need repairs and prototypes. Treat the first year as paid learning.</p>
+
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th>Route</th><th>How it works</th><th>Strengths</th><th>Watch out for</th></tr></thead>
+    <tbody>
+      <tr><td>Your own designs, sold as prints</td><td>Marketplace shop or own site</td><td>No licensing issues, brand identity</td><td>Fees, photography, returns, saturation</td></tr>
+      <tr><td>Selling design files</td><td>Digital downloads, licensing</td><td>No stock, scales</td><td>Piracy, small income per file, support emails</td></tr>
+      <tr><td>Local custom jobs</td><td>Repairs, parts, signs, props</td><td>Less competition, higher price per hour</td><td>Quoting, liability for functional parts</td></tr>
+      <tr><td>Business-to-business</td><td>Prototypes, jigs, small batches</td><td>Repeat customers, professional work</td><td>Contracts, tolerances, invoices, deadlines</td></tr>
+      <tr><td>Markets and fairs</td><td>Stock of popular items</td><td>Direct feedback</td><td>Stock risk, table fees, time</td></tr>
+      <tr><td>Teaching and content</td><td>Workshops, tutorials</td><td>Skills compound</td><td>Slow start, requires audience</td></tr>
+    </tbody></table></div>
+
+  <h3>🔧 Intermediate · Print-on-demand</h3>
+  <p>Print-on-demand means you print only after an order arrives, so you hold no finished stock. Customers accept a lead time of a few days, and you may offer personalization (name, color, size) that mass producers cannot. The trade-offs: delivery speed, a printer tied up per order, and a hard limit on volume. Many small shops combine both: a few best-sellers in stock and personalized items on demand.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 300" role="img" aria-label="Order fulfillment flow for print-on-demand and small print farms: order, queue and slice, print, quality check and post-process, pack and ship, with a feedback loop from failures and returns back to settings">
+      <rect class="f-blue" x="10" y="50" width="140" height="80" rx="10"/><text class="t t-b t-c" x="80" y="82">1 · Order</text><text class="t-xs t-c" x="80" y="102">options, address,</text><text class="t-xs t-c" x="80" y="116">deadline</text>
+      <rect class="f-purple" x="170" y="50" width="140" height="80" rx="10"/><text class="t t-b t-c" x="240" y="82">2 · Queue</text><text class="t-xs t-c" x="240" y="102">batch by material,</text><text class="t-xs t-c" x="240" y="116">slice, fill plates</text>
+      <rect class="f-orange" x="330" y="50" width="140" height="80" rx="10"/><text class="t t-b t-c" x="400" y="82">3 · Print</text><text class="t-xs t-c" x="400" y="102">check first layer,</text><text class="t-xs t-c" x="400" y="116">monitor remotely</text>
+      <rect class="f-yellow" x="490" y="50" width="160" height="80" rx="10"/><text class="t t-b t-c" x="570" y="82">4 · Finish + QC</text><text class="t-xs t-c" x="570" y="102">remove supports,</text><text class="t-xs t-c" x="570" y="116">inspect, label</text>
+      <rect class="f-green" x="670" y="50" width="180" height="80" rx="10"/><text class="t t-b t-c" x="760" y="82">5 · Pack and ship</text><text class="t-xs t-c" x="760" y="102">protect, document,</text><text class="t-xs t-c" x="760" y="116">track, invoice</text>
+      <path class="d-ink arrow" d="M152 90 H168"/><path class="d-ink arrow" d="M312 90 H328"/><path class="d-ink arrow" d="M472 90 H488"/><path class="d-ink arrow" d="M652 90 H668"/>
+      <path class="d-dash k-red arrow" d="M570 132 V200 H240 V140"/>
+      <text class="t-sm c-red t-b" x="260" y="194">Feedback loop: failures, returns and complaints change the settings, the design or the quote</text>
+      <rect class="d-surface2" x="10" y="226" width="840" height="60" rx="10"/>
+      <text class="t-sm" x="26" y="250">Typical bottlenecks: print time, finishing labor, packaging, customer messages.</text>
+      <text class="t-sm" x="26" y="272">The slowest step decides capacity, and it is often not the printer.</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> From order to doorstep. Whether you run one printer or a shelf of them, writing the flow down reveals where hours disappear.</figcaption>
+  </figure>
+
+  <h3>🚀 Advanced · Print farm basics</h3>
+  <p>A print farm is simply several printers run as a production line. It pays only if the work is repeatable and orders are steady.</p>
+  <ul>
+    <li><strong>Standardize.</strong> Use the same printer model, nozzle size, plates and a small set of filaments, so settings and spare parts are shared.</li>
+    <li><strong>Reduce touch time.</strong> Plates that release cleanly, pre-sliced project files, labeled bins and a clear shelf system keep each plate change under a couple of minutes.</li>
+    <li><strong>Plan for failures.</strong> Expect some percentage of failed plates; track it and attack the biggest cause first (usually adhesion, moisture or clogs).</li>
+    <li><strong>Maintain on a schedule.</strong> A farm turns a hobby maintenance interval into a monthly task. See <a href="../techniques/maintenance.html">Maintenance schedule</a>.</li>
+    <li><strong>Safety.</strong> Several heated machines in one room multiply fire and fume risk. Use smoke detection, a clear floor, ventilation and a sensible power layout, and check your insurance and local rules.</li>
+    <li><strong>Know the numbers.</strong> Machine amortization, electricity, labor and packaging belong in the price. See <a href="economics-and-ethics.html#farm-economics">farm economics</a>.</li>
+  </ul>
+
+  <div class="callout warn"><span class="callout-title">Business basics you cannot skip</span>
+    <p>Check the license of every model you sell (<a href="economics-and-ethics.html#ip">licenses and IP</a>), local registration and tax obligations, consumer-protection rules and liability for functional parts. Do not sell safety-critical items, children's products, food-contact products or regulated items without understanding the legal requirements. This is general information, not legal advice.</p></div>
+
+  <h2 id="trends">Industry trends and outlook (with caveats)</h2>
+  <p>Technology news swings between breathless promises and gloomy dismissals. A cooler way to read it: most technologies follow an adoption pattern of early excitement, disappointment and then quiet, practical use. 3D printing has been through that cycle once as a consumer story ("a factory in every home") and now finds steady footing in specific, practical roles.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 320" role="img" aria-label="Generic technology adoption curve: early trigger, peak of expectations, disillusionment trough, gradual recovery and a productive plateau">
+      <path class="d-ink" d="M50 20 V280 H830"/>
+      <text class="t-sm t-m" x="20" y="150" transform="rotate(-90 20 150)" style="text-anchor:middle">expectations / visibility</text>
+      <text class="t-sm t-m" x="440" y="306" style="text-anchor:middle">time →</text>
+      <path class="k-orange" d="M60 260 C120 260 150 50 230 50 C310 50 330 230 420 235 C520 240 560 140 820 130" style="stroke-width:3.5"/>
+      <circle class="s-orange" cx="230" cy="50" r="6"/><circle class="s-orange" cx="420" cy="235" r="6"/>
+      <text class="t-sm t-b" x="250" y="44">Peak of hype</text>
+      <text class="t-xs" x="250" y="60">promises outrun reality</text>
+      <text class="t-sm t-b" x="436" y="252">Disillusion</text>
+      <text class="t-xs" x="436" y="268">limits become clear</text>
+      <text class="t-sm t-b" x="80" y="240">Early triggers</text>
+      <text class="t-sm t-b" x="600" y="112">Practical use</text>
+      <text class="t-xs" x="600" y="128">niches where it truly wins</text>
+      <text class="t-xs t-m" x="60" y="40">A generic pattern, not data. Individual uses of 3D printing sit at different points on it.</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> A generic adoption pattern, drawn to help you judge announcements, not to forecast. Where a given application sits on the curve is debatable, so treat any such placement as opinion.</figcaption>
+  </figure>
+
+  <h3>Trends that appear robust</h3>
+  <ul>
+    <li><strong>Printers keep getting easier.</strong> Auto-calibration, cameras with failure detection, enclosed chambers and good default profiles have moved printing from a tinkering hobby toward an appliance for many users.</li>
+    <li><strong>Multi-material and multi-color are mainstream.</strong> Feeder systems, dual nozzles and tool changers compete to reduce purge waste (see <a href="../techniques/multi-color-and-multi-material.html">Multi-color &amp; multi-material</a>).</li>
+    <li><strong>Speed is rising.</strong> Faster motion systems and higher-flow hotends shorten prints, but physics (cooling, material flow) limits the gains.</li>
+    <li><strong>Open and closed ecosystems coexist.</strong> Some users prefer integrated, vendor-supported printers, others open firmware and parts. Both survive.</li>
+    <li><strong>Industrial use favors tooling, spares and customization</strong> more than replacing mass production. Certified end-use parts exist in specific fields.</li>
+    <li><strong>Sustainability and rules draw attention.</strong> Waste reduction, recycling and regulation of dangerous printed objects are growing topics.</li>
+  </ul>
+
+  <h3>Open questions</h3>
+  <ul>
+    <li>How far will AI-assisted design and generative tools help non-experts create printable, correct parts?</li>
+    <li>Will recycled and bio-based materials reach the consistency makers expect?</li>
+    <li>How will platforms and lawmakers balance open sharing with misuse concerns?</li>
+    <li>Will home printing become a normal appliance or stay a hobby?</li>
+  </ul>
+
+  <div class="callout info"><span class="callout-title">How to read the news</span>
+    <p>Look for who benefits from the claim, whether numbers come with a method, whether it was a one-off demonstration or a repeatable process, and whether independent users confirm it. More in <a href="resources.html#evaluate">how to evaluate information online</a>.</p></div>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul>
+    <li>3D printing wins on customization, complexity and speed to first part, not on cost per part at volume.</li>
+    <li>Match the material and the testing to the consequence of failure; leave regulated work to certified processes.</li>
+    <li>Prototypes, jigs, repairs and enclosures are the most reliable hobby applications.</li>
+    <li>Start with a project at your level, finish it and write down what you learned.</li>
+    <li>A side business needs a narrow offer, honest costing, license compliance and patience.</li>
+    <li>Read technology claims with healthy skepticism; the useful uses are often quiet ones.</li>
+  </ul>
+  <p>Next: <a href="economics-and-ethics.html">Economics, licensing &amp; sustainability</a> for the money, law and environmental side, <a href="resources.html">Resources &amp; communities</a> for where to find designs and help, and the <a href="../exercises/index.html">practice hub</a> for guided exercises.</p>
+
+</main>
+</body>
+</html>

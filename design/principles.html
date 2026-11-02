@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Design principles (DfAM) · 3D Printing Compendium</title>
+  <meta name="description" content="Design for Additive Manufacturing: the ten golden rules, wall thickness, minimum features, overhangs, bridges, holes, fillets, orientation and a design review checklist for 0.4 mm FDM printers.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+  <style>
+    .dfam-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 640px) { .dfam-pair { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body data-page="design/principles.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 5 · Design for printing</div>
+    <h1>Design principles (DfAM)</h1>
+    <p class="lead">A part that looks perfect on screen can still fail on the bed. Learn the handful of physical rules behind every FDM print and design parts that print first time, strong, and without a forest of supports.</p>
+    <div class="meta"><span class="badge beginner">Beginner → Intermediate</span><span class="badge time">⏱ 35 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <p>How to think like an additive manufacturing designer: choose wall thicknesses that match the extrusion width, respect minimum feature sizes, keep overhangs under control, orient parts on purpose, and review a design with a checklist before you press “Print”. All numbers assume a <b>0.4 mm nozzle</b>, <b>0.2 mm layers</b> and a typical FDM printer such as the Bambu Lab X2D; scale them for other nozzles with the table further down.</p></div>
+
+  <h2 id="mindset">🔰 The DfAM mindset</h2>
+  <p><b>Design for Additive Manufacturing (DfAM)</b> means shaping a part around the way a machine actually builds it. A CNC mill removes material with a spinning tool, an injection mold fills a cavity, and an FDM printer <em>draws a stack of thin plastic lines, one layer on top of another</em>. Every rule in this chapter is a consequence of that one sentence.</p>
+  <p>FDM gives you real freedoms: internal cavities, organic shapes, part consolidation, no tooling cost, one-off geometry at the same price as the tenth copy. It also imposes constraints that traditional manufacturing does not have: nothing can be printed in mid-air, layer-to-layer bonds are weaker than the plastic itself, the smallest feature is limited by a nozzle opening of 0.4 mm, and the first layer must sit flat on a plate.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 300" role="img" aria-label="Cross-section of a printed wall showing the nozzle, extruded lines, layer height and line width">
+      <rect class="d-surface2" x="40" y="250" width="640" height="14" rx="3"/>
+      <text class="t-xs t-m" x="48" y="282">Build plate</text>
+      <!-- stacked extrusion lines: 3 columns x 6 layers -->
+      <g>
+        <rect class="d-plastic" x="250" y="226" width="54" height="24" rx="10"/><rect class="d-plastic" x="304" y="226" width="54" height="24" rx="10"/><rect class="d-plastic" x="358" y="226" width="54" height="24" rx="10"/>
+        <rect class="d-plastic" x="250" y="202" width="54" height="24" rx="10"/><rect class="d-plastic" x="304" y="202" width="54" height="24" rx="10"/><rect class="d-plastic" x="358" y="202" width="54" height="24" rx="10"/>
+        <rect class="d-plastic" x="250" y="178" width="54" height="24" rx="10"/><rect class="d-plastic" x="304" y="178" width="54" height="24" rx="10"/><rect class="d-plastic" x="358" y="178" width="54" height="24" rx="10"/>
+        <rect class="d-plastic" x="250" y="154" width="54" height="24" rx="10"/><rect class="d-plastic" x="304" y="154" width="54" height="24" rx="10"/><rect class="d-plastic" x="358" y="154" width="54" height="24" rx="10"/>
+        <rect class="d-plastic" x="250" y="130" width="54" height="24" rx="10"/><rect class="d-plastic" x="304" y="130" width="54" height="24" rx="10"/>
+      </g>
+      <!-- nozzle -->
+      <path class="d-metal" d="M356 40 H410 V90 L396 118 H370 L356 90 Z"/>
+      <rect class="d-plastic" x="372" y="118" width="22" height="10" rx="3"/>
+      <text class="t-sm t-c" x="383" y="68">Nozzle</text>
+      <text class="t-xs t-m t-c" x="383" y="84">0.4 mm orifice</text>
+      <!-- width dim -->
+      <path class="d-thin arrow arrow-start" d="M250 118 H304"/>
+      <text class="t-sm" x="226" y="112">line width ≈ 0.45 mm</text>
+      <!-- layer height dim -->
+      <path class="d-thin arrow arrow-start" d="M432 226 V250"/>
+      <text class="t-sm" x="440" y="242">layer height 0.2 mm</text>
+      <path class="d-thin" d="M412 238 H432"/>
+      <!-- wall bracket -->
+      <path class="d-thin arrow arrow-start" d="M250 266 H412"/>
+      <text class="t-sm t-c" x="331" y="296">3 lines = 1.35 mm wall</text>
+      <!-- legend -->
+      <rect class="f-blue" x="520" y="120" width="170" height="86" rx="10"/>
+      <text class="t-sm t-b" x="534" y="142">Remember</text>
+      <text class="t-xs" x="534" y="162">Lines are rounded, not square.</text>
+      <text class="t-xs" x="534" y="178">Walls are built from whole lines,</text>
+      <text class="t-xs" x="534" y="194">so size them in line multiples.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> A wall is a stack of round-edged extrusion lines. Layer height is the vertical step, line width the horizontal one. Every DfAM rule starts from these two numbers.</figcaption>
+  </figure>
+
+  <h3>The three kinds of constraint</h3>
+  <ul>
+    <li><b>Geometric</b> – overhangs, bridges, minimum feature size, and the need for a flat contact face (this chapter).</li>
+    <li><b>Mechanical</b> – the part is anisotropic: strong along the lines, weaker between layers (see <a href="strength-and-orientation.html">Strength &amp; orientation</a>).</li>
+    <li><b>Dimensional</b> – plastic shrinks and squishes, so a 10.00 mm hole prints as 9.7 mm (see <a href="tolerances-and-fits.html">Tolerances &amp; fits</a>).</li>
+  </ul>
+
+  <h2 id="golden-rules">🏆 The 10 golden rules</h2>
+  <p>If you only remember ten sentences from this site, make them these. Each rule is expanded in its own section below.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 440" role="img" aria-label="Ten golden rules of design for FDM printing as a grid of numbered tiles">
+      <g class="t">
+        <rect class="f-blue" x="10" y="10" width="136" height="100" rx="10"/><text class="t t-b" x="22" y="34">1 · Flat base</text><text class="t-xs" x="22" y="54">Give every part a large</text><text class="t-xs" x="22" y="68">flat face for the bed.</text><text class="t-xs" x="22" y="90">Chamfer its edge 0.5 mm.</text>
+        <rect class="f-green" x="150" y="10" width="136" height="100" rx="10"/><text class="t t-b" x="162" y="34">2 · 45° rule</text><text class="t-xs" x="162" y="54">Overhangs steeper than</text><text class="t-xs" x="162" y="68">45° from vertical print</text><text class="t-xs" x="162" y="90">cleanly without support.</text>
+        <rect class="f-orange" x="290" y="10" width="136" height="100" rx="10"/><text class="t t-b" x="302" y="34">3 · Line multiples</text><text class="t-xs" x="302" y="54">Walls = n × 0.45 mm:</text><text class="t-xs" x="302" y="68">0.9 / 1.35 / 1.8 mm.</text><text class="t-xs" x="302" y="90">Avoid in-between values.</text>
+        <rect class="f-purple" x="430" y="10" width="136" height="100" rx="10"/><text class="t t-b" x="442" y="34">4 · Orient on purpose</text><text class="t-xs" x="442" y="54">Lines are strong, layers</text><text class="t-xs" x="442" y="68">are weak. Never load</text><text class="t-xs" x="442" y="90">layer joints in tension.</text>
+        <rect class="f-teal" x="570" y="10" width="140" height="100" rx="10"/><text class="t t-b" x="582" y="34">5 · Fillet the inside</text><text class="t-xs" x="582" y="54">Inner corners r ≥ 1 mm,</text><text class="t-xs" x="582" y="68">chamfer outer edges</text><text class="t-xs" x="582" y="90">on the build plate side.</text>
+        <rect class="f-red" x="10" y="120" width="136" height="100" rx="10"/><text class="t t-b" x="22" y="144">6 · Bridge short</text><text class="t-xs" x="22" y="164">Keep unsupported spans</text><text class="t-xs" x="22" y="178">under 10–15 mm; 30 mm</text><text class="t-xs" x="22" y="200">is the practical ceiling.</text>
+        <rect class="f-yellow" x="150" y="120" width="136" height="100" rx="10"/><text class="t t-b" x="162" y="144">7 · Holes grow in</text><text class="t-xs" x="162" y="164">Holes print 0.1–0.3 mm</text><text class="t-xs" x="162" y="178">small. Design 0.2 mm</text><text class="t-xs" x="162" y="200">clearance, then test.</text>
+        <rect class="f-pink" x="290" y="120" width="136" height="100" rx="10"/><text class="t t-b" x="302" y="144">8 · Think thick</text><text class="t-xs" x="302" y="164">Tall, thin posts snap.</text><text class="t-xs" x="302" y="178">Keep height ≤ 5× width</text><text class="t-xs" x="302" y="200">or add ribs and fillets.</text>
+        <rect class="f-gray" x="430" y="120" width="136" height="100" rx="10"/><text class="t t-b" x="442" y="144">9 · Split smartly</text><text class="t-xs" x="442" y="164">Cut awkward shapes into</text><text class="t-xs" x="442" y="178">flat-bottomed pieces with</text><text class="t-xs" x="442" y="200">alignment features.</text>
+        <rect class="f-blue" x="570" y="120" width="140" height="100" rx="10"/><text class="t t-b" x="582" y="144">10 · Test small</text><text class="t-xs" x="582" y="164">Print a 20 mm slice of</text><text class="t-xs" x="582" y="178">the critical feature first,</text><text class="t-xs" x="582" y="200">then the whole part.</text>
+      </g>
+      <rect class="d-surface" x="10" y="238" width="700" height="190" rx="12"/>
+      <text class="t t-b" x="26" y="264">How the rules relate</text>
+      <path class="d-ink arrow" d="M120 330 H210"/><path class="d-ink arrow" d="M330 330 H420"/><path class="d-ink arrow" d="M540 330 H630"/>
+      <rect class="f-blue" x="26" y="296" width="94" height="68" rx="8"/><text class="t-sm t-c t-b" x="73" y="326">Function</text><text class="t-xs t-c" x="73" y="344">what must it do?</text>
+      <rect class="f-orange" x="214" y="296" width="116" height="68" rx="8"/><text class="t-sm t-c t-b" x="272" y="326">Orientation</text><text class="t-xs t-c" x="272" y="344">rules 1, 4, 9</text>
+      <rect class="f-green" x="424" y="296" width="116" height="68" rx="8"/><text class="t-sm t-c t-b" x="482" y="326">Geometry</text><text class="t-xs t-c" x="482" y="344">rules 2, 3, 5, 6, 8</text>
+      <rect class="f-purple" x="634" y="296" width="70" height="68" rx="8"/><text class="t-sm t-c t-b" x="669" y="326">Test</text><text class="t-xs t-c" x="669" y="344">7, 10</text>
+      <text class="t-xs t-m" x="26" y="394">Decide the function first, pick an orientation that serves it, shape the geometry to print in that orientation, then verify with a small test.</text>
+      <text class="t-xs t-m" x="26" y="412">If the geometry fights the orientation, change one of them, not the printer settings.</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> The ten golden rules and the order in which to apply them: function → orientation → geometry → test.</figcaption>
+  </figure>
+
+  <ol class="steps">
+    <li><strong>Give the part a flat base.</strong> A large flat face on the plate is the most important adhesion and accuracy feature you can design in. Round or pointed bottoms need a flat cut or a raft.</li>
+    <li><strong>Respect the 45° rule.</strong> Surfaces leaning outward by up to about 45° from vertical print well. Between 45° and 60° the underside gets rough; beyond about 60° you need support or a redesign.</li>
+    <li><strong>Make walls multiples of the line width.</strong> With 0.45 mm lines use 0.9, 1.35, 1.8 or 2.25 mm walls so the slicer fills them with whole lines instead of tiny gap-fill slivers.</li>
+    <li><strong>Orient for strength.</strong> The layer interface is the weak link. Arrange parts so that loads run <em>along</em> the layers, not across them.</li>
+    <li><strong>Add fillets inside, chamfers at the bed.</strong> Inner radii spread stress; a 0.4–0.6 mm chamfer on the first-layer edge hides elephant foot.</li>
+    <li><strong>Keep bridges short.</strong> A bridge is plastic stretched through air. Under about 10 mm it is almost always fine; 30 mm is typically the upper limit with tuned cooling.</li>
+    <li><strong>Plan for holes to shrink.</strong> Round holes come out 0.1–0.3 mm too small. Model them oversize and verify with a test coupon.</li>
+    <li><strong>Avoid thin, tall features.</strong> The nozzle pushes and vibrates them. Keep height to width at or below 5 : 1, taper them, or brace them.</li>
+    <li><strong>Split instead of supporting.</strong> Two flat-bottomed halves with dowels usually beat one part full of support scars.</li>
+    <li><strong>Test small first.</strong> A 10-minute slice of the tricky region saves a 10-hour failure.</li>
+  </ol>
+
+  <h2 id="walls">🔰 Wall thickness: think in line widths</h2>
+  <p>The slicer fills the volume of your model with <b>perimeters</b> (outlines) and <b>infill</b>. A wall is built from whole perimeter lines. Each line is about <b>0.42–0.45 mm</b> wide for a 0.4 mm nozzle (the extruded bead is slightly wider than the opening because it is squished against the layer below). A wall that is a whole multiple of that width is filled with clean, continuous lines; a wall that is not will show gaps, over-extrusion bulges or noisy zig-zag “gap fill” strokes.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 270" role="img" aria-label="Top-down view of wall sections: a 1.0 mm wall with leftover gap versus 0.9 mm and 1.35 mm walls made of whole lines">
+      <g>
+        <text class="t t-b t-c" x="130" y="24">✗ 1.0 mm wall</text>
+        <rect class="d-plastic" x="76" y="50" width="54" height="120" rx="14"/><rect class="d-plastic" x="130" y="50" width="54" height="120" rx="14"/>
+        <rect class="f-red" x="184" y="50" width="12" height="120" rx="4"/>
+        <path class="d-thin arrow arrow-start" d="M76 190 H196"/>
+        <text class="t-sm t-c" x="136" y="212">2 lines + 0.1 mm remainder</text>
+        <text class="t-xs t-m t-c" x="136" y="232">slicer squeezes, gaps or adds a sliver</text>
+      </g>
+      <g>
+        <text class="t t-b t-c" x="360" y="24">✓ 0.9 mm wall</text>
+        <rect class="d-plastic" x="306" y="50" width="54" height="120" rx="14"/><rect class="d-plastic" x="360" y="50" width="54" height="120" rx="14"/>
+        <path class="d-thin arrow arrow-start" d="M306 190 H414"/>
+        <text class="t-sm t-c" x="360" y="212">2 × 0.45 mm</text>
+        <text class="t-xs t-m t-c" x="360" y="232">minimum for non-structural walls</text>
+      </g>
+      <g>
+        <text class="t t-b t-c" x="580" y="24">✓ 1.35 mm wall</text>
+        <rect class="d-plastic" x="499" y="50" width="54" height="120" rx="14"/><rect class="d-plastic" x="553" y="50" width="54" height="120" rx="14"/><rect class="d-plastic" x="607" y="50" width="54" height="120" rx="14"/>
+        <path class="d-thin arrow arrow-start" d="M499 190 H661"/>
+        <text class="t-sm t-c" x="580" y="212">3 × 0.45 mm</text>
+        <text class="t-xs t-m t-c" x="580" y="232">good all-round structural wall</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 3.</b> Top-down slices through a wall. Whole-line walls fill cleanly; a 1.0 mm wall leaves a remainder the slicer must improvise on. Modern slicers (Bambu Studio, OrcaSlicer) vary line width on the fly, which hides the issue, but whole multiples still give the strongest and most predictable result.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Perimeters</th><th>Wall thickness (0.45 mm lines)</th><th>Typical use</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>0.45 mm</td><td>Vase mode, decorative shells, thin lids. Fragile.</td></tr>
+      <tr><td>2</td><td>0.9 mm</td><td>Light covers, organizers, miniatures. Practical minimum.</td></tr>
+      <tr><td>3</td><td>1.35 mm</td><td>General functional parts, enclosures.</td></tr>
+      <tr><td>4</td><td>1.8 mm</td><td>Snap-fit hooks, screw bosses, brackets.</td></tr>
+      <tr><td>5–6</td><td>2.25–2.7 mm</td><td>Highly loaded parts, threads, pressure-bearing walls.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout tip"><span class="callout-title">Rule of thumb</span>
+    <p>For a structural part, set the slicer to <b>3–4 walls</b> and design walls at <b>1.35–1.8 mm</b>. Beyond about six walls extra strength comes mainly from infill and geometry, not from more perimeters (see <a href="strength-and-orientation.html">Strength &amp; orientation</a>).</p></div>
+
+  <div class="callout fact"><span class="callout-title">Why it works</span>
+    <p>Each perimeter is bonded to its neighbors <em>sideways</em> while the previous layer is still warm, and to the layer below, so the outer 2–3 lines carry most bending and torsion loads. Stiffness of a thin wall grows with the cube of its thickness, so going from 0.9 mm to 1.35 mm roughly triples bending stiffness (1.5³ ≈ 3.4).</p></div>
+
+  <h2 id="min-features">🔰 Minimum feature sizes</h2>
+  <p>A feature smaller than the line width simply cannot exist, and a feature only slightly larger is unreliable. The table lists realistic minimums for a 0.4 mm nozzle with 0.2 mm layers. “Reliable” means it prints correctly almost every time; “possible” means it needs tuning or luck.</p>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Feature</th><th>Possible</th><th>Reliable</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Free-standing wall (thickness)</td><td>0.45 mm</td><td>0.9 mm+</td><td>Single-line walls are weak sideways.</td></tr>
+      <tr><td>Round pin (diameter)</td><td>1.0 mm</td><td>2.0 mm+</td><td>Height ≤ 5 × diameter, add a fillet at the base.</td></tr>
+      <tr><td>Rib (thickness)</td><td>0.45 mm</td><td>0.9–1.2 mm</td><td>Height ≤ 4 × thickness unless it connects two walls.</td></tr>
+      <tr><td>Gap between two walls</td><td>0.4 mm</td><td>0.6–0.8 mm</td><td>Narrower gaps fuse. For moving parts see <a href="tolerances-and-fits.html">clearances</a>.</td></tr>
+      <tr><td>Slot width</td><td>0.8 mm</td><td>1.2 mm+</td><td>Corners come out rounded with r ≈ 0.2 mm.</td></tr>
+      <tr><td>Through hole (diameter)</td><td>0.8 mm</td><td>2.0 mm+</td><td>Printed small, drill out for precision.</td></tr>
+      <tr><td>Embossed text stroke</td><td>0.6 mm</td><td>0.8–1.2 mm</td><td>Letter height ≥ 6 mm; relief 0.4–0.6 mm.</td></tr>
+      <tr><td>Engraved text stroke</td><td>0.8 mm</td><td>1.0 mm+</td><td>Depth 0.4–0.6 mm; wider than embossed.</td></tr>
+      <tr><td>Detail height step</td><td>0.1 mm</td><td>0.2 mm (one layer)</td><td>Make Z features multiples of layer height.</td></tr>
+      <tr><td>Bridge span</td><td>50 mm+ (tuned)</td><td>≤ 15 mm</td><td>See <a href="#bridging">bridging</a>.</td></tr>
+    </tbody>
+  </table></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 300" role="img" aria-label="Minimum feature sizes for a pin, rib, gap and slot, shown with good and bad examples and dimensions in millimeters">
+      <g>
+        <text class="t t-b t-c" x="90" y="22">Pin</text>
+        <rect class="f-red" x="40" y="60" width="14" height="110" rx="3"/><text class="t-xs t-c" x="47" y="190">0.8 mm</text><text class="t-xs t-c c-red t-b" x="47" y="205">✗ snaps</text>
+        <rect class="f-green" x="110" y="115" width="40" height="55" rx="3"/><rect class="f-green" x="100" y="160" width="60" height="10" rx="2"/><text class="t-xs t-c" x="130" y="190">≥ 2 mm</text><text class="t-xs t-c c-green t-b" x="130" y="205">✓ h ≤ 5 d</text>
+        <rect class="d-surface2" x="30" y="170" width="140" height="8"/>
+      </g>
+      <g>
+        <text class="t t-b t-c" x="270" y="22">Rib</text>
+        <rect class="d-surface2" x="200" y="170" width="140" height="8"/>
+        <rect class="f-red" x="226" y="62" width="6" height="108"/><text class="t-xs t-c" x="229" y="190">0.3 mm</text><text class="t-xs t-c c-red t-b" x="229" y="205">✗ too thin</text>
+        <path class="f-green" d="M292 170 V120 H302 V170 Z"/><path class="f-green" d="M286 170 Q292 164 292 154 M308 170 Q302 164 302 154" /><text class="t-xs t-c" x="297" y="190">1.0 mm</text><text class="t-xs t-c c-green t-b" x="297" y="205">✓ ≥ 2 lines</text>
+      </g>
+      <g>
+        <text class="t t-b t-c" x="450" y="22">Gap between walls</text>
+        <rect class="f-red" x="370" y="70" width="40" height="100"/><rect class="f-red" x="413" y="70" width="40" height="100"/><text class="t-xs t-c" x="411" y="190">0.2 mm</text><text class="t-xs t-c c-red t-b" x="411" y="205">✗ fuses</text>
+        <rect class="f-green" x="470" y="70" width="40" height="100"/><rect class="f-green" x="520" y="70" width="40" height="100"/><text class="t-xs t-c" x="515" y="190">0.8 mm</text><text class="t-xs t-c c-green t-b" x="515" y="205">✓ separate</text>
+      </g>
+      <g>
+        <text class="t t-b t-c" x="650" y="22">Slot</text>
+        <rect class="f-red" x="585" y="70" width="20" height="100"/><rect class="d-surface" x="607" y="70" width="4" height="100"/><rect class="f-red" x="613" y="70" width="20" height="100"/><text class="t-xs t-c" x="609" y="190">0.4 mm</text><text class="t-xs t-c c-red t-b" x="609" y="205">✗ closes</text>
+        <rect class="f-green" x="646" y="70" width="18" height="100"/><rect class="f-green" x="680" y="70" width="18" height="100"/><text class="t-xs t-c" x="672" y="190">1.2 mm</text><text class="t-xs t-c c-green t-b" x="672" y="205">✓ opens</text>
+      </g>
+      <rect class="f-yellow" x="30" y="228" width="660" height="56" rx="10"/>
+      <text class="t-sm t-b" x="46" y="250">Memory aid for a 0.4 mm nozzle</text>
+      <text class="t-xs" x="46" y="268">Positive features (walls, ribs, pins): at least 2 lines ≈ 0.9 mm.  Negative features (gaps, slots, holes): at least 3 lines ≈ 1.2 mm.</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> Minimum features. Left of each pair is too small, right is reliable. Gaps and slots are less forgiving than walls because extruded plastic bulges slightly into empty space.</figcaption>
+  </figure>
+
+  <h2 id="overhangs">🔰 Overhangs and chamfers</h2>
+  <p>An <b>overhang</b> is any surface that leans out over empty space instead of resting on the layer below. Each new layer is shifted sideways by a small step relative to the one below; as long as the shift is smaller than about half a line width, the new line still rests mostly on solid plastic. Geometry says: shift per layer = layer height × tan(angle from vertical). At 0.2 mm layers and 45°, each layer steps 0.2 mm – half of a 0.45 mm line is still supported. At 60° the step is 0.35 mm, and at 75° it is 0.75 mm, so most of the line hangs in air.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 320" role="img" aria-label="Overhang angle ladder from 0 to 80 degrees showing good, fair, poor and needs support zones">
+      <rect class="d-surface" x="20" y="20" width="680" height="280" rx="12"/>
+      <!-- angle fans -->
+      <path class="d-thin" d="M60 270 H330"/>
+      <path class="k-green" d="M120 270 L120 70"/>
+      <path class="k-green" d="M120 270 L220 97"/>
+      <path class="k-yellow" d="M120 270 L261 129"/>
+      <path class="k-orange" d="M120 270 L293 170"/>
+      <path class="k-red" d="M120 270 L313 218"/>
+      <text class="t-sm c-green t-b" x="108" y="62">0°</text>
+      <text class="t-sm c-green t-b" x="224" y="94">30°</text>
+      <text class="t-sm t-b" x="265" y="126" style="fill:var(--yellow)">45°</text>
+      <text class="t-sm c-orange t-b" x="297" y="166">60°</text>
+      <text class="t-sm c-red t-b" x="317" y="216">75°</text>
+      <text class="t-xs t-m" x="60" y="292">angle measured from vertical</text>
+      <!-- zones table -->
+      <rect class="f-green" x="360" y="40" width="320" height="52" rx="8"/><text class="t-sm t-b" x="374" y="62">0–45° · Good</text><text class="t-xs" x="374" y="80">Clean surface, no support, no tuning.</text>
+      <rect class="f-yellow" x="360" y="100" width="320" height="52" rx="8"/><text class="t-sm t-b" x="374" y="122">45–60° · Fair</text><text class="t-xs" x="374" y="140">Rougher underside; needs strong part cooling.</text>
+      <rect class="f-orange" x="360" y="160" width="320" height="52" rx="8"/><text class="t-sm t-b" x="374" y="182">60–70° · Poor</text><text class="t-xs" x="374" y="200">Droop and curl; only small, short overhangs.</text>
+      <rect class="f-red" x="360" y="220" width="320" height="64" rx="8"/><text class="t-sm t-b" x="374" y="242">70–90° · Needs support</text><text class="t-xs" x="374" y="260">Horizontal underside: redesign (chamfer, split)</text><text class="t-xs" x="374" y="274">or use support material.</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> Overhang angle zones, measured from vertical. Real limits depend on layer height, cooling, filament and speed; PLA with strong cooling tolerates the most, ABS and ASA the least.</figcaption>
+  </figure>
+
+  <h3>Chamfer instead of a horizontal ceiling</h3>
+  <p>The easiest way to remove supports is to replace a horizontal ceiling with a 45° <b>chamfer</b> (a flat bevel). A hole in a vertical wall becomes a teardrop or a diamond, a horizontal shelf becomes a sloped shelf, a rectangular pocket gets a pyramid-shaped roof. You trade a sharper looking edge for a part that prints cleanly.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 280" role="img" aria-label="Three ways to avoid support under an overhang: chamfer, fillet and stepped ledge compared with a flat ceiling">
+      <g>
+        <text class="t t-b t-c" x="100" y="24">✗ Flat ceiling</text>
+        <path class="d-plastic" d="M30 60 H80 V190 H30 Z"/><path class="d-plastic" d="M30 60 H170 V90 H30 Z"/>
+        <path class="d-dash" d="M80 90 V190 M80 190 H170 M170 90 V190" style="stroke:var(--red)"/>
+        <text class="t-xs c-red t-b t-c" x="125" y="145">support</text>
+        <text class="t-xs t-c" x="100" y="220">90° underside</text>
+        <text class="t-xs t-c t-m" x="100" y="238">sagging, scarring</text>
+      </g>
+      <g>
+        <text class="t t-b t-c" x="270" y="24">✓ 45° chamfer</text>
+        <path class="d-plastic" d="M200 60 H250 V190 H200 Z"/>        <path class="d-plastic" d="M200 60 H340 V90 H250 Z"/>
+                <path class="d-plastic" d="M250 90 H340 L250 180 Z"/>
+        <text class="t-xs t-c" x="300" y="220">45° underside</text>
+        <text class="t-xs t-c c-green t-b" x="300" y="238">no support needed</text>
+      </g>
+      <g>
+        <text class="t t-b t-c" x="450" y="24">✓ Stepped ledge</text>
+        <path class="d-plastic" d="M380 60 H430 V190 H380 Z"/>
+        <path class="d-plastic" d="M430 60 H520 V74 H430 Z"/><path class="d-plastic" d="M430 74 H505 V88 H430 Z"/><path class="d-plastic" d="M430 88 H490 V102 H430 Z"/>
+        <text class="t-xs t-c" x="480" y="220">0.5 mm step per layer pair</text>
+        <text class="t-xs t-c c-green t-b" x="480" y="238">corbelled overhang</text>
+      </g>
+      <g>
+        <text class="t t-b t-c" x="630" y="24">✓ Split part</text>
+        <path class="d-plastic" d="M570 60 H620 V190 H570 Z"/>
+        <path class="d-plastic" d="M630 172 H710 V190 H630 Z"/>
+        <path class="d-dash" d="M625 205 H715"/>
+        <text class="t-xs t-c" x="640" y="222">print the shelf as its own</text>
+        <text class="t-xs t-c" x="640" y="238">flat plate, then pin and glue</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 6.</b> Four ways to avoid support under an overhang: replace the flat ceiling with a 45° chamfer, climb in small steps (corbelling), or split the part so each piece has its own flat face.</figcaption>
+  </figure>
+
+  <div class="callout trick"><span class="callout-title">Corbelling trick</span>
+    <p>For a stepped overhang, move each layer outward by no more than <b>0.2 mm × the layer height ratio</b>: at 0.2 mm layers, steps of 0.2–0.3 mm per layer print reliably (≈ 45°–55°). A ledge that grows 2 mm outward can therefore be built with 8–10 layers of staircase and no support at all.</p></div>
+
+<h2 id="bridging">🔰 Bridging limits and minimum bridging span</h2>
+  <p>A <b>bridge</b> is a horizontal run of plastic stretched between two supported points. The printer extrudes a thin string, stretches it while it is still molten, and relies on cooling air to freeze it before it sags. Short bridges look almost perfect; long ones droop, and very long ones collapse into spaghetti.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 290" role="img" aria-label="Three bridges of 10, 30 and 60 millimeters drawn to the same scale, with increasing sag">
+      <rect class="d-surface2" x="10" y="200" width="680" height="12" rx="3"/>
+      <g>
+        <rect class="d-plastic" x="10" y="100" width="40" height="100"/><rect class="d-plastic" x="90" y="100" width="40" height="100"/>
+        <path class="d-plastic" d="M50 100 L90 100 L90 106 L50 106 Z"/>
+        <text class="t t-b t-c" x="70" y="48">10 mm</text><text class="t-xs t-c c-green t-b" x="70" y="66">✓ flat, clean</text>
+        <path class="d-thin arrow arrow-start" d="M50 150 H90"/>
+      </g>
+      <g>
+        <rect class="d-plastic" x="150" y="100" width="40" height="100"/><rect class="d-plastic" x="310" y="100" width="40" height="100"/>
+        <path class="d-plastic" d="M190 100 Q250 116 310 100 L310 106 Q250 124 190 106 Z"/>
+        <text class="t t-b t-c" x="250" y="48">30 mm</text><text class="t-xs t-c t-b" x="250" y="66" style="fill:var(--yellow)">~ sags 0.3–0.6 mm</text>
+        <path class="d-thin arrow arrow-start" d="M190 150 H310"/>
+      </g>
+      <g>
+        <rect class="d-plastic" x="370" y="100" width="40" height="100"/><rect class="d-plastic" x="650" y="100" width="40" height="100"/>
+        <path class="d-plastic" d="M410 100 Q530 190 650 100 L650 106 Q530 196 410 106 Z"/>
+        <text class="t t-b t-c" x="530" y="48">60 mm</text><text class="t-xs t-c c-red t-b" x="530" y="66">✗ collapses, needs support</text>
+      </g>
+      <text class="t-xs t-m" x="20" y="238">Drawn at the same horizontal scale (1 mm ≈ 4 px). Sag is exaggerated about 3× for legibility.</text>
+      <text class="t-xs t-m" x="20" y="256">Bridging quality depends on cooling, speed, filament and bridge flow: PLA is the easiest, PETG and nylon droop earlier.</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> Bridge span versus sag. Up to 10–15 mm is routine; 30 mm needs tuned bridge speed and fan; beyond 40–50 mm plan for support or a redesign.</figcaption>
+  </figure>
+
+  <div class="bars"><div class="bars-title">Typical bridge reliability by material (max span before obvious sag, mm, indicative)</div>
+    <div class="bar green"><span>PLA</span><i style="--v:60%"></i><em>30–60 mm</em></div>
+    <div class="bar blue"><span>PETG</span><i style="--v:35%"></i><em>15–30 mm</em></div>
+    <div class="bar red"><span>ABS / ASA</span><i style="--v:30%"></i><em>15–25 mm</em></div>
+    <div class="bar purple"><span>Nylon (PA)</span><i style="--v:25%"></i><em>10–20 mm</em></div>
+    <div class="bar teal"><span>TPU</span><i style="--v:20%"></i><em>5–15 mm</em></div></div>
+
+  <ul>
+    <li><b>Design rule:</b> keep bridges ≤ 10 mm if function matters, ≤ 30 mm if only appearance matters.</li>
+    <li><b>Bridge direction:</b> the slicer lays bridge strands along the shortest direction, anchored on both ends. A long rectangular opening bridges its <em>short</em> side.</li>
+    <li><b>Two-layer bridges:</b> the first bridge layer is rough underneath; the second one fills the gaps. Do not count on the underside being smooth.</li>
+    <li><b>Shorten it:</b> add a central pillar and remove it later, or taper the opening into a diamond so no span exceeds 8–10 mm (see holes below).</li>
+  </ul>
+
+  <div class="callout x2d"><span class="callout-title">X2D note</span>
+    <p>Strong part cooling and an active chamber make PLA bridging on the X2D very good, but at high chamber temperature (ABS/ASA/PA at 50–65 °C) bridges and steep overhangs sag more. Design for shorter spans when printing hot-chamber materials, or print the supports with the auxiliary nozzle (see <a href="../x2d/dual-nozzle-printing.html">Dual-nozzle printing</a>).</p></div>
+
+  <h2 id="holes">🔧 Hole orientation and shape</h2>
+  <p>Holes behave differently depending on their axis. A <b>vertical hole</b> (axis along Z) is a stack of circles; each layer rests on the one below, so it prints almost perfectly round, only slightly undersize. A <b>horizontal hole</b> (axis along X or Y) has a ceiling made of unsupported arc; the top of the circle is a near-horizontal overhang and sags into a flat or egg-shaped top.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 260" role="img" aria-label="Four versions of a horizontal hole: circle, teardrop, diamond and circle with sacrificial bridge, showing which prints without support">
+      <g>
+        <rect class="d-plastic" x="20" y="40" width="140" height="140" rx="4"/>
+        <circle class="d-surface" cx="90" cy="110" r="30"/>
+        <path class="d-dash" d="M60 80 Q90 62 120 80" style="stroke:var(--red)"/>
+        <text class="t-sm t-c t-b" x="90" y="30">Round</text>
+        <text class="t-xs t-c c-red t-b" x="90" y="200">✗ ceiling droops</text><text class="t-xs t-c t-m" x="90" y="216">flat/egg-shaped top</text>
+      </g>
+      <g>
+        <rect class="d-plastic" x="190" y="40" width="140" height="140" rx="4"/>
+        <path class="d-surface" d="M238.8 88.8 A30 30 0 1 0 281.2 88.8 L260 67.6 Z"/>
+        <text class="t-sm t-c t-b" x="260" y="30">Teardrop</text>
+        <text class="t-xs t-c c-green t-b" x="260" y="200">✓ 45° roof</text><text class="t-xs t-c t-m" x="260" y="216">keeps the round bottom</text>
+      </g>
+      <g>
+        <rect class="d-plastic" x="360" y="40" width="140" height="140" rx="4"/>
+        <path class="d-surface" d="M430 74 L466 110 L430 146 L394 110 Z"/>
+        <text class="t-sm t-c t-b" x="430" y="30">Diamond</text>
+        <text class="t-xs t-c c-green t-b" x="430" y="200">✓ prints anywhere</text><text class="t-xs t-c t-m" x="430" y="216">top and bottom are 45°</text>
+      </g>
+      <g>
+        <rect class="d-plastic" x="530" y="40" width="170" height="140" rx="4"/>
+        <circle class="d-surface" cx="615" cy="110" r="30"/>
+        <path class="f-red" d="M585 83 H645 V87 H585 Z"/>
+        <text class="t-sm t-c t-b" x="615" y="30">Round + sacrificial layer</text>
+        <text class="t-xs t-c c-green t-b" x="615" y="200">✓ round after clean-up</text><text class="t-xs t-c t-m" x="615" y="216">one 0.2 mm bridge, cut out</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 8.</b> Horizontal holes. Teardrop and diamond shapes remove the horizontal ceiling; a one-layer sacrificial bridge keeps the hole truly round after a quick pass with a knife or drill.</figcaption>
+  </figure>
+
+  <p>Choosing the shape: use a <b>teardrop</b> for pins and shafts when the exact top of the hole does not matter, and a <b>diamond</b> if the hole could also be printed upside-down or you want symmetrical clearance. For bearing seats and precision bores, print the hole vertical (axis along Z), use a sacrificial layer, or print slightly small and ream. Size rules and the 0.1–0.3 mm shrink compensation are covered in <a href="tolerances-and-fits.html#holes">Tolerances &amp; fits</a>.</p>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Hole axis</th><th>Round quality</th><th>Support needed?</th><th>Best practice</th></tr></thead>
+    <tbody>
+      <tr><td>Vertical (Z)</td><td><span class="chip green">Best</span></td><td>No</td><td>Model +0.2 mm for slip fit; chamfer 0.4 mm at entry.</td></tr>
+      <tr><td>Horizontal, ≤ 4 mm</td><td><span class="chip yellow">OK</span></td><td>No</td><td>Small arcs bridge fine; teardrop anyway.</td></tr>
+      <tr><td>Horizontal, 4–10 mm</td><td><span class="chip yellow">Droopy top</span></td><td>Usually no</td><td>Teardrop or diamond.</td></tr>
+      <tr><td>Horizontal, &gt; 10 mm</td><td><span class="chip red">Poor top</span></td><td>Yes or reshape</td><td>Teardrop, sacrificial layer, or print upright.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="fillets">🔧 Fillets versus chamfers</h2>
+  <p>A <b>fillet</b> is a rounded edge or corner; a <b>chamfer</b> is a flat bevel. Both remove the stress-raising sharp edge of a perfect corner, but they behave differently under a printer’s rules:</p>
+  <ul>
+    <li><b>Inside corners</b> (where two walls meet) should be <b>filleted</b>, radius ≥ 1 mm for brackets (more for loaded parts). The curve spreads stress and gives layers a smoother path.</li>
+    <li><b>Edges that touch the bed</b> should be <b>chamfered</b> 0.4–0.6 mm. A fillet at the bottom starts as a horizontal overhang in the first layers.</li>
+    <li><b>Edges on the top</b> can be either. Fillets feel nicer, chamfers print more cleanly and reduce stair-stepping on shallow curves.</li>
+    <li><b>Edges at the top of an overhang</b> (the “ceiling” of a pocket) should be <b>chamfered at 45°</b>.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 280" role="img" aria-label="Fillet and chamfer placement: inside corners filleted, bed-side edge chamfered, ceiling chamfered at 45 degrees">
+      <rect class="d-surface" x="20" y="20" width="330" height="240" rx="10"/>
+      <text class="t t-b" x="36" y="46">Bracket cross-section: where to put what</text>
+      <path class="d-plastic" d="M76 226 L82 220 V92 H112 V176 Q112 196 132 196 H300 V220 L294 226 Z"/>
+      <circle class="k-teal" cx="112" cy="196" r="22" style="stroke-dasharray:4 4"/>
+      <path class="d-thin arrow" d="M175 150 L130 188"/>
+      <text class="t-sm c-teal t-b" x="178" y="146">Inside corner: fillet r ≥ 1–3 mm</text>
+      <path class="d-thin arrow" d="M240 250 L282 228"/>
+      <text class="t-sm c-orange t-b" x="190" y="262">Bed edge: chamfer 0.5 mm</text>
+      <path class="d-thin arrow" d="M96 80 L96 90"/>
+      <text class="t-sm c-blue t-b" x="60" y="76">Top edge: small fillet or chamfer</text>
+      <!-- right panel -->
+      <rect class="d-surface" x="370" y="20" width="330" height="240" rx="10"/>
+      <text class="t t-b" x="386" y="46">Why a bottom fillet fails</text>
+      <g>
+        <path class="d-plastic" d="M440 208 Q420 208 420 188 V120 H530 V188 Q530 208 510 208 Z"/>
+        <text class="t-sm t-c t-b" x="475" y="108">Fillet at bed</text>
+        <rect class="d-surface2" x="410" y="210" width="130" height="8" rx="2"/>
+        <text class="t-xs t-c" x="475" y="236">first layers are barely supported</text>
+      </g>
+      <g>
+        <path class="d-plastic" d="M580 208 L570 198 V120 H680 V198 L670 208 Z"/>
+        <text class="t-sm t-c t-b" x="625" y="108">Chamfer at bed</text>
+        <rect class="d-surface2" x="560" y="210" width="130" height="8" rx="2"/>
+        <text class="t-xs t-c" x="625" y="236">each layer shifts ≤ 0.2 mm</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 9.</b> Left: put fillets inside corners and chamfers on bed-side edges. Right: a chamfer is a 45° overhang and prints clean; a fillet starts at 90° and rounds out only gradually.</figcaption>
+  </figure>
+
+  <h2 id="bottom-top">🔰 Bottom and top face design, elephant foot</h2>
+  <p>The <b>first layer</b> is pressed hard into the plate so it sticks. That squish makes the first one or two layers bulge outward by about 0.1–0.3 mm, a defect known as <b>elephant foot</b>. It matters most where parts must fit together or into slots. The cure is a small <b>chamfer</b> on the bed-side edge: 0.4–0.6 mm × 45° is enough for most parts, and you can add it to the model as a feature instead of fiddling with slicer compensation.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 290" role="img" aria-label="Elephant foot on a plain wall, a chamfered wall without bulge, and the skin layers of a printed block with infill inside">
+      <g>
+        <text class="t t-b t-c" x="125" y="26">✗ Sharp bottom edge</text>
+        <path class="d-plastic" d="M90 60 V190 Q84 196 80 200 H170 Q166 196 160 190 V60 Z"/>
+        <rect class="d-surface2" x="40" y="200" width="170" height="10" rx="2"/>
+        <path class="d-thin arrow" d="M200 170 L168 196"/>
+        <text class="t-xs" x="140" y="236">+0.1–0.3 mm bulge</text>
+        <text class="t-xs t-m" x="140" y="252">slot fits too tight</text>
+      </g>
+      <g>
+        <text class="t t-b t-c" x="360" y="26">✓ 0.5 mm chamfer</text>
+        <path class="d-plastic" d="M325 60 V193 L331 199 H389 L395 193 V60 Z"/>
+        <rect class="d-surface2" x="275" y="200" width="170" height="10" rx="2"/>
+        <path class="d-thin arrow" d="M440 170 L400 195"/>
+        <text class="t-xs" x="345" y="236">foot hides inside chamfer</text>
+        <text class="t-xs t-m" x="345" y="252">vertical wall stays true</text>
+      </g>
+      <g>
+        <text class="t t-b t-c" x="598" y="26">Skins and infill</text>
+        <rect class="d-surface" x="520" y="60" width="150" height="140"/>
+        <rect class="f-blue" x="520" y="60" width="150" height="20"/>
+        <rect class="f-blue" x="520" y="180" width="150" height="20"/>
+        <path class="d-dash" d="M540 90 V170 M560 90 V170 M580 90 V170 M600 90 V170 M620 90 V170 M640 90 V170 M660 90 V170"/>
+        <text class="t-xs c-blue t-b" x="526" y="74">top skin ≥ 0.8–1.0 mm</text>
+        <text class="t-xs c-blue t-b" x="526" y="194">bottom skin ≥ 0.6–0.8 mm</text>
+        <text class="t-xs t-c" x="595" y="236">infill is hidden under 4–5</text>
+        <text class="t-xs t-c" x="595" y="252">solid top layers</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 10.</b> Left and center: elephant foot and the chamfer that hides it. Right: top and bottom skins cover the sparse infill; top skin thickness controls how well a flat top closes over a given infill density.</figcaption>
+  </figure>
+
+  <ul>
+    <li><b>Top surfaces</b> need 4–5 solid layers (0.8–1.0 mm) to bridge the gaps of sparse infill. Design flat roofs at least that thick; thinner roofs show infill pattern through the skin (“pillowing”).</li>
+    <li><b>Large flat bottoms</b> tend to warp upwards at the corners, especially in ABS, ASA, nylon and PC. Round the corners (r ≥ 5 mm), avoid long thin rectangles on the bed, and see <a href="../techniques/first-layer-and-adhesion.html">First layer &amp; adhesion</a>.</li>
+    <li><b>Bottom decoration:</b> text or logos on the bed face print cleanly because the plate texture is the surface. Make them 0.4–0.6 mm deep and rely on the plate for contrast.</li>
+    <li><b>Layer-height multiples:</b> make heights and floor thicknesses a multiple of the layer height (1.0 mm = 5 × 0.2 mm). Otherwise the slicer rounds, and your “1.0 mm” floor comes out 0.9 or 1.1 mm.</li>
+  </ul>
+
+  <h2 id="thin-tall">🔧 Avoid thin tall features</h2>
+  <p>A free-standing post is hit by the nozzle with every pass, gets almost no cooling time (each layer is tiny, so the next layer starts almost immediately on soft plastic), and can snap sideways in use because the layers join only across a few square millimeters. As a rule of thumb keep <b>height ≤ 5 × narrowest width</b>. Beyond that, add taper, a fillet at the base, a connecting rib, or print several posts at once so each layer has time to cool.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 300" role="img" aria-label="Posts of increasing aspect ratio 3 to 1, 5 to 1, 10 to 1 and a tapered reinforced post, with advice">
+      <rect class="d-surface2" x="20" y="250" width="680" height="10" rx="2"/>
+      <g>
+        <rect class="f-green" x="60" y="190" width="20" height="60"/>
+        <text class="t-sm t-c t-b" x="70" y="30">2 × 6 mm</text><text class="t-xs t-c c-green t-b" x="70" y="46">3 : 1 ✓ robust</text>
+        <text class="t-xs t-c" x="70" y="280">easy</text>
+      </g>
+      <g>
+        <rect class="f-green" x="190" y="150" width="20" height="100"/>
+        <text class="t-sm t-c t-b" x="200" y="30">2 × 10 mm</text><text class="t-xs t-c c-green t-b" x="200" y="46">5 : 1 ✓ limit</text>
+        <text class="t-xs t-c" x="200" y="280">add a base fillet</text>
+      </g>
+      <g>
+        <rect class="f-red" x="330" y="60" width="20" height="190"/>
+        <path class="d-dash" d="M340 60 Q352 46 360 52" style="stroke:var(--red)"/>
+        <text class="t-sm t-c t-b" x="340" y="30">2 × 20 mm</text><text class="t-xs t-c c-red t-b" x="340" y="46">10 : 1 ✗ wobbles</text>
+        <text class="t-xs t-c" x="340" y="280">snaps in use</text>
+      </g>
+      <g>
+        <path class="f-green" d="M470 250 L478 210 L486 70 H500 L508 210 L516 250 Z"/>
+        <text class="t-sm t-c t-b" x="493" y="30">4 → 2 × 20 mm</text><text class="t-xs t-c c-green t-b" x="493" y="46">tapered + fillet ✓</text>
+        <text class="t-xs t-c" x="493" y="280">stiff and stable</text>
+      </g>
+      <g>
+        <rect class="f-green" x="580" y="160" width="14" height="90"/><rect class="f-green" x="620" y="160" width="14" height="90"/><rect class="f-green" x="660" y="160" width="14" height="90"/>
+        <rect class="f-green" x="580" y="150" width="94" height="10"/>
+        <text class="t-sm t-c t-b" x="627" y="100">linked posts</text><text class="t-xs t-c c-green t-b" x="627" y="116">bridge ties them ✓</text>
+        <text class="t-xs t-c" x="627" y="280">cooling time between hits</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 11.</b> Aspect ratio of posts. Taper, fillets, ties between posts, or printing several at once give delicate features more cooling time and more stiffness.</figcaption>
+  </figure>
+
+  <div class="callout fact"><span class="callout-title">Why it works</span>
+    <p>Bending stiffness of a round post grows with the fourth power of its diameter (I = πd⁴/64) and falls with the cube of its length. Doubling a pin from 2 to 4 mm makes it 16× stiffer in bending, while a pin that is twice as long is 8× more flexible. That is why a little extra width is the cheapest strength upgrade available.</p></div>
+
+  <h2 id="orientation">🔧 Build orientation: strength, finish, supports</h2>
+  <p>The same bracket can be printed in many orientations, each with a different result. Orientation controls three things at once: <b>strength</b> (which direction the layer lines run relative to the load), <b>surface finish</b> (stair-stepping on slopes, layer lines on visible faces) and <b>support need</b>. There is never a free lunch, so decide what matters most for this specific part.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 300" role="img" aria-label="An L-shaped bracket printed in three orientations: standing, lying flat, and upside down with support, with the load direction and layer lines shown">
+      <g>
+        <text class="t t-b t-c" x="125" y="24">A · Upright</text>
+        <path class="d-plastic" d="M50 90 H70 V200 H170 V220 H50 Z"/>
+        <path class="d-plastic2" d="M50 110 H70 M50 130 H70 M50 150 H70 M50 170 H70 M50 190 H70" style="stroke:var(--plastic-2);stroke-width:1.5"/>
+        <rect class="d-surface2" x="30" y="220" width="160" height="8" rx="2"/>
+        <path class="d-ink arrow" d="M18 100 H46"/><text class="t-xs" x="14" y="92">F</text>
+        <path class="k-red" d="M48 202 H66"/>
+        <text class="t-xs c-red t-b" x="84" y="190">layers split</text><text class="t-xs c-red t-b" x="84" y="204">at the root</text>
+        <text class="t-xs t-c" x="110" y="250">weak in bending · no support</text>
+        <text class="t-xs t-c t-m" x="110" y="266">small footprint · layers ⟂ load</text>
+      </g>
+      <g>
+        <text class="t t-b t-c" x="360" y="24">B · Lying on its side</text>
+        <path class="d-plastic" d="M280 70 H306 V176 H420 V202 H280 Z"/>
+        <path class="d-thin" d="M286 76 H300 V182 H420 M286 82 H294 V188 H420 M286 88 V196 H420" style="stroke:var(--plastic-2);fill:none"/>
+        <path class="d-ink arrow" d="M258 90 H278"/><text class="t-xs" x="248" y="82">F</text>
+        <text class="t-xs t-c" x="350" y="232">strongest · lines wrap the corner</text>
+        <text class="t-xs t-c t-m" x="350" y="248">top view · big footprint · no support</text>
+        <text class="t-xs t-c t-m" x="350" y="264">cosmetic: flat faces best</text>
+      </g>
+      <g>
+        <text class="t t-b t-c" x="598" y="24">C · Upside down</text>
+        <path class="d-plastic" d="M530 120 H680 V140 H550 V220 H530 Z"/>
+        <path class="d-dash" d="M550 140 H680 V220 H550 Z" style="stroke:var(--red)"/>
+        <text class="t-xs c-red t-b t-c" x="618" y="186">support</text>
+        <rect class="d-surface2" x="510" y="220" width="190" height="8" rx="2"/>
+        <text class="t-xs t-c" x="605" y="250">tip is strong · support scars</text>
+        <text class="t-xs t-c t-m" x="605" y="266">more material, rougher underside</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 12.</b> One bracket, three orientations. B puts the lines in the plane of the load and needs no support; A is the quickest but weakest at the bend; C protects a visible face at the cost of support scars.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Orientation</th><th>Strength</th><th>Surface finish</th><th>Support need</th><th>Accuracy</th></tr></thead>
+    <tbody>
+      <tr><td>A · Upright, leg up</td><td><span class="rate"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></td><td><span class="rate g"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td><td><span class="rate g"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td><td><span class="rate g"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></td></tr>
+      <tr><td>B · Flat on its side</td><td><span class="rate g"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td><td><span class="rate g"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></td><td><span class="rate g"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td><td><span class="rate g"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td></tr>
+      <tr><td>C · Upside down</td><td><span class="rate"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td><td><span class="rate g"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></td><td><span class="rate g"><i class="on"></i><i></i><i></i><i></i><i></i></span></td><td><span class="rate g"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout info"><span class="callout-title">Where orientation also matters</span>
+    <p>Round features along Z come out rounder; slopes under 30° from horizontal show stair-steps; text on vertical faces is crisper than text on sloped faces; and the seam (where each layer starts) forms a visible line. A deep dive on orientation versus strength follows in <a href="strength-and-orientation.html">Strength &amp; orientation</a>.</p></div>
+
+  <h2 id="consolidation">🔧 Part consolidation</h2>
+  <p>Traditional manufacturing penalizes complexity: every extra feature means another cutter path or mold insert. FDM does not. You can merge several parts into one printed body, removing fasteners, gaskets and assembly time. A box with a lid, hinge, latch and two screws can become one print-in-place part with a living hinge and a snap hook.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 270" role="img" aria-label="Seven-part assembly replaced by a single consolidated part with integrated hinge and latch">
+      <rect class="d-surface" x="20" y="20" width="330" height="230" rx="12"/>
+      <text class="t t-b" x="36" y="46">Assembly: 7 parts</text>
+      <rect class="f-gray" x="50" y="150" width="190" height="70" rx="4"/><text class="t-xs t-c" x="145" y="190">base</text>
+      <rect class="f-gray" x="50" y="80" width="190" height="30" rx="4"/><text class="t-xs t-c" x="145" y="100">lid</text>
+      <circle class="f-orange" cx="265" cy="100" r="9"/><circle class="f-orange" cx="295" cy="100" r="9"/><text class="t-xs" x="255" y="130">2 hinge</text><text class="t-xs" x="255" y="142">pins</text>
+      <rect class="f-blue" x="262" y="160" width="12" height="28" rx="3"/><rect class="f-blue" x="284" y="160" width="12" height="28" rx="3"/><text class="t-xs" x="258" y="205">2 screws</text>
+      <rect class="f-purple" x="305" y="165" width="18" height="18" rx="3"/><text class="t-xs" x="296" y="205">+ latch</text>
+      <text class="t-xs t-m" x="36" y="240">12 min assembly · tolerances at every joint</text>
+      <rect class="d-surface" x="370" y="20" width="330" height="230" rx="12"/>
+      <text class="t t-b" x="386" y="46">Consolidated: 1 part</text>
+      <rect class="f-green" x="400" y="150" width="200" height="70" rx="4"/>
+      <path class="f-green" d="M400 140 H600 V110 H400 Z"/>
+      <path class="d-thin" d="M400 110 H600" style="stroke-dasharray:3 3"/>
+      <rect class="f-teal" x="590" y="110" width="12" height="40" rx="3"/>
+      <text class="t-xs t-c" x="500" y="188">base + lid in one body</text>
+      <text class="t-xs c-teal t-b" x="606" y="132">living hinge</text>
+      <path class="d-thin arrow" d="M440 100 L430 118"/><text class="t-xs" x="418" y="92">snap hook</text>
+      <text class="t-xs t-m" x="386" y="240">0 fasteners · 0 min assembly · 2 tuned joints</text>
+    </svg>
+    <figcaption><b>Figure 13.</b> Consolidation removes joints and assembly steps. Do not consolidate when one section needs a different material, color, orientation or replacement later.</figcaption>
+  </figure>
+
+  <div class="pros-cons"><div class="pros"><h4>Consolidate when…</h4><ul><li>The parts have no relative motion that needs a bearing.</li><li>They can share one print orientation.</li><li>You want fewer tolerance stacks and fewer fasteners.</li><li>You print many copies.</li></ul></div>
+  <div class="cons"><h4>Keep parts separate when…</h4><ul><li>One piece wears out and must be replaceable.</li><li>Different materials are needed (rigid + TPU).</li><li>The combined part would need heavy support.</li><li>The part exceeds the build volume (256 mm on an X2D).</li></ul></div></div>
+
+  <h2 id="text">🔰 Text and logos: embossed versus debossed</h2>
+  <p><b>Embossed</b> (raised) text stands out from a surface; <b>debossed</b> (engraved) text is cut into it. Both are only as sharp as the nozzle. Strokes thinner than two lines (0.9 mm) get merged or dropped, letter counters (the holes in “A”, “B”, “e”) fill in below about 1.5 mm, and a serif font’s hairlines disappear. Choose a <b>bold sans-serif</b> font and size generously.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 290" role="img" aria-label="Text legibility: letter height of 6 mm, cross-sections of embossed and debossed letters with 0.6 mm relief and a first-layer inlay option">
+      <rect class="d-surface" x="20" y="20" width="230" height="250" rx="10"/>
+      <text class="t t-b" x="36" y="46">Minimum size</text>
+      <text x="48" y="150" class="t-xl" style="font-size:84px;font-weight:800">A</text>
+      <path class="d-thin arrow arrow-start" d="M130 94 V150"/>
+      <text class="t-xs" x="138" y="124">6 mm</text>
+      <text class="t-xs" x="36" y="186">stroke ≥ 0.8–1.2 mm</text>
+      <text class="t-xs" x="36" y="204">counters ≥ 1.5 mm</text>
+      <text class="t-xs" x="36" y="222">bold sans-serif font</text>
+      <text class="t-xs t-m" x="36" y="246">4 mm text only works at 0.2 nozzle</text>
+      <rect class="d-surface" x="270" y="20" width="430" height="250" rx="10"/>
+      <text class="t t-b" x="286" y="46">Cross-sections</text>
+      <g>
+        <rect class="d-plastic" x="290" y="120" width="190" height="30"/>
+        <rect class="d-plastic" x="305" y="104" width="12" height="16"/><rect class="d-plastic" x="335" y="104" width="12" height="16"/><rect class="d-plastic" x="365" y="104" width="12" height="16"/>
+        <path class="d-thin arrow arrow-start" d="M384 104 V120"/><text class="t-xs" x="390" y="116">0.6</text>
+        <text class="t-sm t-b" x="290" y="86">Embossed</text><text class="t-xs" x="290" y="170">+ easy to read, can be painted</text><text class="t-xs" x="290" y="186">− tops are bridged-free but</text><text class="t-xs" x="290" y="200">  prone to stringing and knocks</text>
+      </g>
+      <g>
+        <rect class="d-plastic" x="500" y="120" width="190" height="30"/>
+        <rect class="d-surface" x="515" y="120" width="12" height="16"/><rect class="d-surface" x="545" y="120" width="12" height="16"/><rect class="d-surface" x="575" y="120" width="12" height="16"/>
+        <path class="d-thin arrow arrow-start" d="M594 120 V136"/><text class="t-xs" x="600" y="132">0.6</text>
+        <text class="t-sm t-b" x="500" y="86">Debossed</text><text class="t-xs" x="500" y="170">+ protected from wear</text><text class="t-xs" x="500" y="186">− needs wider strokes (≥ 1.0 mm)</text><text class="t-xs" x="500" y="200">  and a floor 0.6 mm deeper</text>
+      </g>
+      <rect class="f-purple" x="290" y="222" width="400" height="36" rx="8"/>
+      <text class="t-xs t-b" x="302" y="238">Pro option: multi-color inlay</text>
+      <text class="t-xs" x="302" y="252">Deboss 0.4 mm, change filament for those layers: crisp, flush text without painting.</text>
+    </svg>
+    <figcaption><b>Figure 14.</b> Text rules of thumb for a 0.4 mm nozzle: letters ≥ 6 mm tall, strokes ≥ 0.8 mm, relief 0.4–0.6 mm. Embossed text reads better on vertical faces; engraved text survives handling better.</figcaption>
+  </figure>
+
+  <ul>
+    <li><b>Text on the top face</b> prints well if raised ≥ 0.4 mm; keep ironing off on lettering.</li>
+    <li><b>Text on the vertical face</b> is the crispest, since it is cut across clean perimeters. Orientation of the text along Z leaves ladder-like edges on curves.</li>
+    <li><b>Underside text</b> (bed face) takes on the plate’s texture and is protected from wear: ideal for part numbers and revision marks.</li>
+    <li><b>Colour change</b> is the best-looking approach on multi-material printers like the X2D with AMS 2 Pro; see <a href="../techniques/multi-color-and-multi-material.html">Multi-color &amp; multi-material</a>.</li>
+  </ul>
+
+  <h2 id="nozzle-table">🔧 Feature size table by nozzle</h2>
+  <p>Almost every number in this chapter scales with the nozzle. Use the table to translate the 0.4 mm rules to other nozzles. Line width ≈ 1.05–1.2 × nozzle diameter and layer height ≈ 25–75 % of the nozzle diameter.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 200" role="img" aria-label="Nozzle orifices of 0.2, 0.4, 0.6 and 0.8 millimeters drawn to scale">
+      <g>
+        <circle class="d-metal" cx="100" cy="90" r="10"/><text class="t-sm t-c t-b" x="100" y="150">0.2 mm</text><text class="t-xs t-c" x="100" y="168">detail, minis</text>
+        <circle class="d-metal" cx="250" cy="90" r="20"/><text class="t-sm t-c t-b" x="250" y="150">0.4 mm</text><text class="t-xs t-c" x="250" y="168">general purpose</text>
+        <circle class="d-metal" cx="420" cy="90" r="30"/><text class="t-sm t-c t-b" x="420" y="150">0.6 mm</text><text class="t-xs t-c" x="420" y="168">strong, fast</text>
+        <circle class="d-metal" cx="610" cy="90" r="40"/><text class="t-sm t-c t-b" x="610" y="150">0.8 mm</text><text class="t-xs t-c" x="610" y="168">big, draft, vases</text>
+      </g>
+      <text class="t-xs t-m" x="20" y="190">Orifice diameters drawn at 100 px per mm. The extruded line is 5–20 % wider than the hole.</text>
+    </svg>
+    <figcaption><b>Figure 15.</b> Nozzle sizes to scale. Doubling the nozzle diameter quadruples the cross-section of each line and roughly doubles the minimum feature size.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Quantity</th><th>0.2 mm</th><th>0.4 mm</th><th>0.6 mm</th><th>0.8 mm</th></tr></thead>
+    <tbody>
+      <tr><td>Typical line width</td><td>0.22–0.25</td><td>0.42–0.48</td><td>0.62–0.70</td><td>0.85–0.95</td></tr>
+      <tr><td>Typical layer height</td><td>0.05–0.12</td><td>0.12–0.28</td><td>0.2–0.4</td><td>0.3–0.5</td></tr>
+      <tr><td>Min wall (2 lines)</td><td>0.5</td><td>0.9</td><td>1.3</td><td>1.8</td></tr>
+      <tr><td>Structural wall (3 lines)</td><td>0.75</td><td>1.35</td><td>2.0</td><td>2.7</td></tr>
+      <tr><td>Min reliable pin</td><td>1.0</td><td>2.0</td><td>3.0</td><td>4.0</td></tr>
+      <tr><td>Min reliable gap/slot</td><td>0.6</td><td>1.2</td><td>1.8</td><td>2.4</td></tr>
+      <tr><td>Min text stroke</td><td>0.5</td><td>0.8–1.0</td><td>1.3</td><td>1.8</td></tr>
+      <tr><td>Min text height</td><td>3</td><td>6</td><td>9</td><td>12</td></tr>
+      <tr><td>Best use</td><td>Detail, minis, filigree</td><td>All-round</td><td>Strong functional parts, speed</td><td>Large prints, speed, vases</td></tr>
+    </tbody>
+  </table></div>
+  <p>All values in mm and indicative. Real results depend on printer, material and slicer; always confirm with a quick test print.</p>
+
+  <h2 id="no-support">🔧 Designing for no supports</h2>
+  <p>Supports cost time and filament, leave surface scars and are hard to remove from internal cavities. A designer who knows the rules above can design most functional parts so they need none. Work through this ladder from top to bottom and stop as soon as one step solves your overhang.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 420" role="img" aria-label="Decision flow for avoiding supports: reorient, chamfer, split, shorten the bridge, otherwise use support">
+      <g>
+        <rect class="f-blue" x="20" y="14" width="300" height="46" rx="10"/><text class="t-sm t-c t-b" x="170" y="42">Any surface steeper than 45° overhang?</text>
+        <rect class="f-blue" x="20" y="82" width="300" height="46" rx="10"/><text class="t-sm t-c t-b" x="170" y="110">Can you reorient the part?</text>
+        <rect class="f-blue" x="20" y="150" width="300" height="46" rx="10"/><text class="t-sm t-c t-b" x="170" y="178">Chamfer, teardrop or diamond it?</text>
+        <rect class="f-blue" x="20" y="218" width="300" height="46" rx="10"/><text class="t-sm t-c t-b" x="170" y="246">Split into flat-bottomed pieces?</text>
+        <rect class="f-blue" x="20" y="286" width="300" height="46" rx="10"/><text class="t-sm t-c t-b" x="170" y="314">Is the unsupported span ≤ 10–15 mm?</text>
+        <rect class="f-red" x="20" y="354" width="300" height="50" rx="10"/><text class="t-sm t-c t-b" x="170" y="376">Use support material</text><text class="t-xs t-c" x="170" y="394">tree or organic, interface layer, aux nozzle</text>
+      </g>
+      <g class="d-ink">
+        <path class="d-ink arrow" d="M170 60 V82"/><path class="d-ink arrow" d="M170 128 V150"/><path class="d-ink arrow" d="M170 196 V218"/><path class="d-ink arrow" d="M170 264 V286"/><path class="d-ink arrow" d="M170 332 V354"/>
+      </g>
+      <text class="t-xs" x="178" y="75">yes</text><text class="t-xs" x="178" y="143">no</text><text class="t-xs" x="178" y="211">no</text><text class="t-xs" x="178" y="279">no</text><text class="t-xs" x="178" y="347">no</text>
+      <g>
+        <path class="d-ink arrow" d="M320 37 H400"/><text class="t-xs" x="340" y="30">no</text>
+        <rect class="f-green" x="400" y="14" width="300" height="46" rx="10"/><text class="t-sm t-c t-b" x="550" y="42">✓ Print as designed</text>
+        <path class="d-ink arrow" d="M320 105 H400"/><text class="t-xs" x="340" y="98">yes</text>
+        <rect class="f-green" x="400" y="82" width="300" height="46" rx="10"/><text class="t-sm t-c t-b" x="550" y="106">✓ Rotate, check strength</text><text class="t-xs t-c" x="550" y="122">(see Strength &amp; orientation)</text>
+        <path class="d-ink arrow" d="M320 173 H400"/><text class="t-xs" x="340" y="166">yes</text>
+        <rect class="f-green" x="400" y="150" width="300" height="46" rx="10"/><text class="t-sm t-c t-b" x="550" y="178">✓ Add 45° chamfers</text>
+        <path class="d-ink arrow" d="M320 241 H400"/><text class="t-xs" x="340" y="234">yes</text>
+        <rect class="f-green" x="400" y="218" width="300" height="46" rx="10"/><text class="t-sm t-c t-b" x="550" y="238">✓ Cut and add dowels/pegs</text><text class="t-xs t-c" x="550" y="254">print each piece flat</text>
+        <path class="d-ink arrow" d="M320 309 H400"/><text class="t-xs" x="340" y="302">yes</text>
+        <rect class="f-green" x="400" y="286" width="300" height="46" rx="10"/><text class="t-sm t-c t-b" x="550" y="314">✓ Bridge it</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 16.</b> Support-avoidance ladder. Use support material only when no design change is acceptable; see <a href="../techniques/supports-bridges-overhangs.html">Supports, bridges &amp; overhangs</a> for support settings.</figcaption>
+  </figure>
+
+  <h3>Sacrificial bridges</h3>
+  <p>Some features cannot be reshaped: a screw hole under a bigger bore, a nut trap that sits above a through-hole, a bearing seat. The solution is a <b>sacrificial layer</b>: a thin membrane (one or two layers, 0.2–0.4 mm) that you model across the opening so the layers above have something to print on. After printing, pierce the membrane with the screw, a drill, or a craft knife.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 290" role="img" aria-label="Cross-sections of a wide pocket below a narrow hole in three variants: direct, one-layer sacrificial membrane, two-layer membrane with slit">
+      <g>
+        <text class="t-sm t-b t-c" x="110" y="26">Direct</text>
+        <rect class="d-plastic" x="10" y="40" width="200" height="160"/>
+        <rect class="d-surface" x="70" y="130" width="80" height="70"/><rect class="d-surface" x="100" y="40" width="20" height="90"/>
+        <path class="d-dash" d="M70 130 Q85 138 100 130 M120 130 Q135 138 150 130" style="stroke:var(--red)"/>
+        <text class="t-xs t-c c-red t-b" x="110" y="228">✗ ring of sagging strings</text><text class="t-xs t-c t-m" x="110" y="244">dropped threads fill the hole</text>
+      </g>
+      <g>
+        <text class="t-sm t-b t-c" x="360" y="26">1-layer membrane</text>
+        <rect class="d-plastic" x="260" y="40" width="200" height="160"/>
+        <rect class="d-surface" x="320" y="130" width="80" height="70"/><rect class="d-surface" x="350" y="40" width="20" height="90"/>
+        <rect class="s-red" x="350" y="124" width="20" height="6"/>
+        <text class="t-xs t-c c-green t-b" x="360" y="228">✓ solid roof, hole above</text><text class="t-xs t-c t-m" x="360" y="244">pierce 0.2 mm with a drill</text>
+      </g>
+      <g>
+        <text class="t-sm t-b t-c" x="610" y="26">2-layer + slit</text>
+        <rect class="d-plastic" x="510" y="40" width="200" height="160"/>
+        <rect class="d-surface" x="570" y="130" width="80" height="70"/><rect class="d-surface" x="600" y="40" width="20" height="90"/>
+        <rect class="s-red" x="600" y="124" width="20" height="6"/>
+        <rect class="s-orange" x="600" y="118" width="7" height="6"/><rect class="s-orange" x="613" y="118" width="7" height="6"/>
+        <text class="t-xs t-c c-green t-b" x="610" y="228">✓ for larger holes</text><text class="t-xs t-c t-m" x="610" y="244">slit gives a drill a centre</text>
+      </g>
+      <text class="t-xs t-m" x="20" y="274">Layer thickness exaggerated. Red = sacrificial membrane (0.2 mm), orange = second layer with a slit.</text>
+    </svg>
+    <figcaption><b>Figure 17.</b> A sacrificial membrane lets the roof of a wide pocket print as a solid bridge; the hole above is opened afterwards. Many slicers (and the Bambu Studio “detect bridging” logic) handle the second variant automatically if you model the layers in the file.</figcaption>
+  </figure>
+
+  <h2 id="checklist">✅ Design review checklist</h2>
+  <p>Tick through this list before slicing. Progress is stored in your browser, so you can use it for every new design.</p>
+  <ul class="checklist">
+    <li>The part has one large flat face I can put on the bed (or I deliberately chose a different base).</li>
+    <li>Every wall is at least 0.9 mm, and structural walls are 1.35 mm or more in whole line multiples.</li>
+    <li>No unsupported overhang is steeper than 45–55° from vertical, or I added chamfers.</li>
+    <li>No bridge is longer than 15 mm, or I accept support or sacrificial layers.</li>
+    <li>Horizontal holes are teardrop or diamond shaped; vertical holes carry +0.2 mm clearance.</li>
+    <li>Bed-side edges are chamfered 0.4–0.6 mm to hide elephant foot.</li>
+    <li>Inside corners are filleted (r ≥ 1 mm); loaded corners r ≥ 3 mm.</li>
+    <li>Tall thin features are ≤ 5 : 1 height-to-width, tapered, or braced.</li>
+    <li>The main load runs along layer lines, not across them (see strength page).</li>
+    <li>Text is ≥ 6 mm tall with strokes ≥ 0.8 mm and relief of 0.4–0.6 mm.</li>
+    <li>Mating features have clearance drawn from my tolerance parameters, not guessed.</li>
+    <li>Screw bosses, nut traps and inserts follow the dimension tables on the joints page.</li>
+    <li>The part fits the build volume (X2D: 256 × 256 × 260 mm) in its chosen orientation.</li>
+    <li>I printed a small test of the most critical feature before the full print.</li>
+  </ul>
+
+  <h2 id="mistakes">🚧 Common beginner mistakes gallery</h2>
+  <p>Almost every first-year design shares the same six flaws. Learn to see them in the CAD window, before you waste filament.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 380" role="img" aria-label="Six common beginner design mistakes with the fix for each: tiny text, sphere on the bed, needle tower, zero clearance, sharp inside corner, flat ceiling">
+      <g>
+        <rect class="f-red" x="10" y="10" width="220" height="170" rx="10"/>
+        <text class="t-sm t-b" x="22" y="32">1 · Tiny text</text>
+        <text class="t-xs" x="30" y="86" style="font-size:12px">Tiny text 3 mm</text>
+        <path class="d-thin" d="M30 96 H130"/>
+        <text class="t-xs" x="22" y="140">Fix: ≥ 6 mm, bold sans,</text><text class="t-xs" x="22" y="156">stroke ≥ 0.8 mm</text>
+      </g>
+      <g>
+        <rect class="f-red" x="250" y="10" width="220" height="170" rx="10"/>
+        <text class="t-sm t-b" x="262" y="32">2 · Sphere on the bed</text>
+        <circle class="d-plastic" cx="360" cy="78" r="30"/><rect class="d-surface2" x="300" y="108" width="120" height="6" rx="2"/>
+        <text class="t-xs" x="262" y="140">Fix: flatten the bottom,</text><text class="t-xs" x="262" y="156">chamfer, or print halves</text>
+      </g>
+      <g>
+        <rect class="f-red" x="490" y="10" width="220" height="170" rx="10"/>
+        <text class="t-sm t-b" x="502" y="32">3 · Needle tower</text>
+        <rect class="d-plastic" x="590" y="44" width="8" height="66"/><rect class="d-surface2" x="560" y="110" width="70" height="6" rx="2"/>
+        <text class="t-xs" x="502" y="140">Fix: height ≤ 5 × width,</text><text class="t-xs" x="502" y="156">taper or add ribs</text>
+      </g>
+      <g>
+        <rect class="f-red" x="10" y="200" width="220" height="170" rx="10"/>
+        <text class="t-sm t-b" x="22" y="222">4 · Zero clearance</text>
+        <rect class="d-plastic" x="40" y="246" width="60" height="50"/><rect class="d-plastic" x="100" y="246" width="60" height="50"/><text class="t-xs t-c" x="100" y="312">0 mm gap = fused</text>
+        <text class="t-xs" x="22" y="340">Fix: 0.2–0.3 mm gap,</text><text class="t-xs" x="22" y="356">printed test fit first</text>
+      </g>
+      <g>
+        <rect class="f-red" x="250" y="200" width="220" height="170" rx="10"/>
+        <text class="t-sm t-b" x="262" y="222">5 · Sharp inside corner</text>
+        <path class="d-plastic" d="M310 240 H330 V296 H400 V316 H310 Z"/><path class="k-red" d="M330 296 L322 308"/>
+        <text class="t-xs" x="262" y="340">Fix: fillet r ≥ 2 mm</text><text class="t-xs" x="262" y="356">at every loaded corner</text>
+      </g>
+      <g>
+        <rect class="f-red" x="490" y="200" width="220" height="170" rx="10"/>
+        <text class="t-sm t-b" x="502" y="222">6 · Flat ceiling</text>
+        <path class="d-plastic" d="M540 246 H660 V262 H600 V300 H540 Z"/><path class="d-dash" d="M600 262 V300 H660 V262" style="stroke:var(--red)"/>
+        <text class="t-xs" x="502" y="340">Fix: 45° chamfer or split</text><text class="t-xs" x="502" y="356">the part into flat pieces</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 18.</b> The six classic design mistakes and their cures. Every one of them is cheaper to fix in CAD than on the printer.</figcaption>
+  </figure>
+
+  <div class="callout warn"><span class="callout-title">More beginner traps</span>
+    <ul>
+      <li>Designing to the nominal size (a 5.00 mm hole for a 5.00 mm rod) instead of the printed size.</li>
+      <li>Trusting the slicer to fix thin walls; it may silently delete anything under one line width.</li>
+      <li>Designing a 200 mm part without checking the orientation fits the build volume.</li>
+      <li>Skipping a test print for features you have never printed before.</li>
+      <li>Forgetting to leave room for hands, tools and screwdrivers.</li>
+    </ul></div>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul>
+    <li>Build walls from whole lines: 0.9, 1.35, 1.8 mm for a 0.4 mm nozzle.</li>
+    <li>Keep overhangs ≤ 45°, bridges ≤ 10–15 mm, posts ≤ 5 : 1, text ≥ 6 mm.</li>
+    <li>Chamfer the bed edge, fillet the inside corner, teardrop horizontal holes.</li>
+    <li>Choose orientation for strength first, finish second, and aim to remove supports by design.</li>
+    <li>Test the riskiest feature on a small sample before committing to a long print.</li>
+  </ul>
+  <p>Next steps: learn how much clearance to give each fit in <a href="tolerances-and-fits.html">Tolerances &amp; fits</a>, then <a href="joints-and-fasteners.html">Joints &amp; fasteners</a>. Practice with the intermediate tasks in <a href="../exercises/level-2-intermediate.html">Level 2 exercises</a> and the interactive <a href="../tools/visual-lab.html">Visual lab</a>.</p>
+
+
+
+
+</main>
+</body>
+</html>

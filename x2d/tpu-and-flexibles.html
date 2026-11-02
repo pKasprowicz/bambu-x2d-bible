@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TPU &amp; flexible filaments on the X2D · 3D Printing Compendium</title>
+  <meta name="description" content="How the Bambu Lab X2D handles TPU: main nozzle only, feed paths, hotend sizes for 85A, 90A and 95A, loading, settings starting points, drying, plates, rigid and flexible combinations, gaskets, test models and troubleshooting.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="x2d/tpu-and-flexibles.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 6 · Bambu X2D + AMS 2 Pro</div>
+    <h1>TPU &amp; flexible filaments on the X2D</h1>
+    <p class="lead">Flexible filament is the one material family where the X2D's dual-nozzle design has a hard rule: TPU runs on the left (main) nozzle only. This page shows the feed paths Bambu supports, how to load and set up each hardness, and how to combine soft and rigid plastics into gaskets, grips and overmolded parts.</p>
+    <div class="meta"><span class="badge intermediate">Intermediate</span><span class="badge x2d">X2D + AMS 2 Pro</span><span class="badge time">⏱ 30 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <p>Which hotend sizes work for TPU 85A, 90A and 95A HF, why the right nozzle is off limits, how to route TPU (direct, top holder, Feed Assist Module, AMS), starting settings, how to dry and store it, which plates and glue to use, how to mix TPU with rigid plastics, and how to fix common faults.</p></div>
+
+  <div class="callout x2d"><span class="callout-title">Source and honesty note</span>
+    <p>Hotend compatibility, feed-path, temperature, drying and plate recommendations on this page are taken from Bambu Lab's X2D TPU guide. Retraction, speed, flow and design numbers that the guide does not state are labeled <b>typical</b> and are starting points to verify with a test print. Hardness grades are always printed on the spool: trust the spool first.</p></div>
+
+  <h2 id="rules">1. The rules of TPU on the X2D</h2>
+  <p>TPU (thermoplastic polyurethane) is rubbery; it compresses and buckles when pushed, which is why feed path and speed matter more than any slicer trick. Bambu's X2D guidance boils down to five rules:</p>
+  <ol class="steps">
+    <li><strong>Left (main) nozzle only.</strong>The auxiliary (right) extruder is a stepper on the rear panel with a 525 mm PTFE feed path; its feed resistance is too high for TPU, so Bambu does not support it. In the compatibility chart every TPU is marked not available on the right nozzle, and "TPU for AMS" is marked not recommended.</li>
+    <li><strong>Match the hotend to the hardness.</strong>See the table below. A 0.2 mm hotend is not recommended for any TPU.</li>
+    <li><strong>Keep the volumetric speed limit at the default.</strong>Do not raise speed to "make it fast".</li>
+    <li><strong>No chamber heating.</strong>Use the Strong Cooling air mode (the same as PLA).</li>
+    <li><strong>Place the model at the middle-front of the plate</strong> to reduce friction in the PTFE tube.</li>
+  </ol>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 330" role="img" aria-label="Top-down schematic of the X2D showing the left main nozzle with a direct filament path for TPU and the right auxiliary nozzle crossed out for TPU">
+      <rect class="d-surface" x="20" y="14" width="720" height="302" rx="12"/>
+      <rect class="d-surface2 d-ink" x="150" y="40" width="440" height="200" rx="6"/>
+      <text class="t-xs t-m" x="370" y="60" text-anchor="middle">print area (schematic)</text>
+      <rect class="f-green" x="210" y="94" width="120" height="86" rx="8"/>
+      <text class="t-sm t-c t-b" x="270" y="126">Left / main</text><text class="t-xs t-c" x="270" y="144">direct drive</text><text class="t-xs t-c" x="270" y="160">TPU ✓</text>
+      <rect class="f-red" x="410" y="94" width="120" height="86" rx="8"/>
+      <text class="t-sm t-c t-b" x="470" y="126">Right / aux</text><text class="t-xs t-c" x="470" y="144">remote extruder</text><text class="t-xs t-c" x="470" y="160">TPU ✗</text>
+      <path class="s-red" stroke-width="4" d="M420 100 L520 174 M520 100 L420 174"/>
+      <rect class="f-orange" x="50" y="260" width="140" height="42" rx="8"/><text class="t-xs t-c" x="120" y="278">External spool /</text><text class="t-xs t-c" x="120" y="292">top holder</text>
+      <path class="d-ink arrow" d="M120 258 C 120 210 180 150 208 140"/>
+      <rect class="f-purple" x="230" y="260" width="140" height="42" rx="8"/><text class="t-xs t-c" x="300" y="278">Feed Assist Module</text><text class="t-xs t-c" x="300" y="292">(optional)</text>
+      <path class="d-ink arrow" d="M300 258 V182"/>
+      <rect class="f-blue" x="560" y="260" width="150" height="42" rx="8"/><text class="t-xs t-c" x="635" y="278">AMS (TPU for AMS)</text><text class="t-xs t-c" x="635" y="292">main nozzle only</text>
+      <path class="d-ink arrow" d="M590 258 C 530 220 390 200 332 150"/>
+      <text class="t-xs t-m" x="40" y="40">All TPU paths end in the left nozzle</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> All supported TPU feed options end at the left nozzle. The right nozzle is off limits, regardless of hardness.</figcaption>
+  </figure>
+
+  <h3>Which hotend for which TPU?</h3>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>TPU type</th><th>0.2</th><th>0.4</th><th>0.6</th><th>0.8</th><th>High-flow</th><th>Recommended feed</th></tr></thead>
+    <tbody>
+      <tr><td><b>TPU 85A</b></td><td><span class="chip red">✗</span></td><td><span class="chip red">✗</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td><td>⚠ HF 0.6/0.8, ✗ HF 0.4</td><td>Top spool holder or Feed Assist Module</td></tr>
+      <tr><td><b>TPU 90A</b></td><td><span class="chip red">✗</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td><td>⚠ with HF</td><td>Top spool holder or Feed Assist Module</td></tr>
+      <tr><td><b>TPU 95A HF</b></td><td><span class="chip red">✗</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td><td>✓ (works on HF)</td><td>External spool</td></tr>
+      <tr><td><b>TPU for AMS</b></td><td><span class="chip red">✗</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td><td>✓ (works on HF)</td><td>Can go in the AMS (main nozzle)</td></tr>
+    </tbody></table></div>
+  <p class="t-sm">✓ available, ⚠ use with caution, ✗ not available. From Bambu's TPU guide and compatibility chart. Because TPU 85A is not available on 0.4 mm, a plan for 85A means fitting a 0.6 or 0.8 mm hotend first (both nozzles must match for dual-nozzle jobs).</p>
+
+  <div class="callout warn"><span class="callout-title">TPU and the Filament Track Switch</span>
+    <p>The track switch (sold separately) is not suited to TPU. Bambu states that TPU, PA-CF and similar are not supported through it, and "TPU for AMS" is marked as highly not recommended with it fitted. If you own a switch, disable it for a TPU job or use the direct external path.</p></div>
+
+  <h2 id="feed-paths">2. Feed paths in detail</h2>
+  <p>A soft filament needs a short, straight, low-friction path to the extruder gears. The X2D guide describes the following options.</p>
+  <div class="grid cols-2">
+    <div class="card accent-green"><h4>TPU 95A HF · external spool</h4><p>Recommended for TPU 95A HF. The spool sits on the external holder and loads through the left extruder inlet via a short (about 175 mm) PTFE tube. Move the spool base to the right side and do not install the holder reversed.</p></div>
+    <div class="card accent-orange"><h4>TPU 90A / 85A · top mount</h4><p>Use a top-mounted spool holder (the same size as the P2S/P1S top holder, available as a MakerWorld model) or the TPU Feed Assist Module. Softer TPU needs less friction than the standard path allows.</p></div>
+    <div class="card accent-purple"><h4>TPU Feed Assist Module</h4><p>Works inside an enclosed chamber; uses short (about 160 mm) PTFE pieces and a 4-pin to 6-pin adapter. It can be paired with the AMS HT TPU bypass port, in which case the AMS HT acts only as a dry box for the spool.</p></div>
+    <div class="card accent-blue"><h4>TPU for AMS</h4><p>This specific filament type can feed from the AMS to the main nozzle. Do not use standard AMS routing for softer TPU 85A/90A; Bambu advises avoiding TPU, TPE and PVA in a standard AMS because of the bending path.</p></div>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 340" role="img" aria-label="Side schematic of a top-mounted spool holder feeding a short straight PTFE path down to the left extruder inlet, compared to a long curved AMS path">
+      <rect class="d-surface" x="20" y="14" width="350" height="312" rx="10"/>
+      <text class="t t-b" x="36" y="40">Short, straight (top holder)</text>
+      <circle class="f-orange" cx="195" cy="100" r="46"/><circle class="d-surface" cx="195" cy="100" r="12"/>
+      <text class="t-xs t-c" x="195" y="104">spool</text>
+      <path class="s-orange" fill="none" stroke-width="4" d="M195 146 V220"/>
+      <rect class="f-gray" x="160" y="220" width="70" height="60" rx="6"/>
+      <text class="t-xs t-c" x="195" y="248">extruder</text><text class="t-xs t-c" x="195" y="262">inlet (L)</text>
+      <path class="d-ink arrow" d="M195 282 V306"/>
+      <text class="t-xs t-m" x="36" y="302">Low friction, no sharp bends → TPU does not buckle.</text>
+      <rect class="d-surface" x="390" y="14" width="350" height="312" rx="10"/>
+      <text class="t t-b" x="406" y="40">Long, curved (standard AMS path)</text>
+      <rect class="f-blue" x="410" y="64" width="110" height="52" rx="6"/><text class="t-xs t-c" x="465" y="94">AMS 2 Pro</text>
+      <path class="s-orange" fill="none" stroke-width="4" d="M520 90 C 600 90 610 150 560 170 C 500 196 590 240 650 250 L650 280"/>
+      <rect class="f-gray" x="610" y="280" width="70" height="30" rx="6"/><text class="t-xs t-c" x="645" y="300">inlet</text>
+      <text class="t-xs t-m" x="406" y="302">More friction and bends: soft TPU can fold or stall.</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> Why soft TPU wants a straight, short path. The right-hand route is acceptable only for the "TPU for AMS" filament type that Bambu validated.</figcaption>
+  </figure>
+
+  <h3>Loading TPU from the top holder (documented sequence)</h3>
+  <ol class="steps">
+    <li><strong>Open the toolhead cover</strong>and disconnect the main PTFE tube from the extruder.</li>
+    <li><strong>Heat the main hotend to 250 °C</strong>and insert the filament into the extruder inlet.</li>
+    <li><strong>Tap load slowly.</strong>Do not tap repeatedly: soft TPU wraps around the gears if it is pushed too fast.</li>
+    <li><strong>Unload the same way at 250 °C</strong>; do not pull cold.</li>
+  </ol>
+  <div class="callout tip"><span class="callout-title">Before you start a TPU job</span>
+    <p>If the hotend has printed other materials, run <i>Nozzle Cold Pull Maintenance</i> from the Toolbox (cold pull with PLA or PETG 2 to 3 times; never with a fiber-reinforced filament), and check the extruder gears and filament cutter for wear. Dirt and residue are the most common reason soft TPU grinds.</p></div>
+
+  <h2 id="settings">3. Starting settings: 95A, 90A and 85A</h2>
+  <div class="callout warn"><span class="callout-title">Starting points only</span>
+    <p>Items marked <span class="chip blue">doc</span> come from Bambu's TPU guide. Items marked <span class="chip yellow">typical</span> are common practice for TPU on direct-drive printers and must be verified with a test print on your spool.</p></div>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Setting</th><th>TPU 95A HF</th><th>TPU 90A</th><th>TPU 85A</th></tr></thead>
+    <tbody>
+      <tr><td>Nozzle</td><td>0.4–0.8 mm <span class="chip blue">doc</span></td><td>0.4–0.8 mm <span class="chip blue">doc</span></td><td>0.6–0.8 mm <span class="chip blue">doc</span></td></tr>
+      <tr><td>Nozzle temperature</td><td>per spool label</td><td>225 °C <span class="chip blue">doc</span></td><td>225 °C <span class="chip blue">doc</span></td></tr>
+      <tr><td>Bed</td><td>30–35 °C <span class="chip blue">doc</span></td><td>30–35 °C <span class="chip blue">doc</span></td><td>30–35 °C <span class="chip blue">doc</span></td></tr>
+      <tr><td>Chamber / air mode</td><td colspan="3">No chamber heating; Strong Cooling <span class="chip blue">doc</span></td></tr>
+      <tr><td>Volumetric speed limit</td><td colspan="3">Keep the preset default; do not raise <span class="chip blue">doc</span></td></tr>
+      <tr><td>Flow dynamics calibration</td><td colspan="3">Auto or Off <span class="chip blue">doc</span></td></tr>
+      <tr><td>Retraction</td><td colspan="3">Short and slow, e.g. a fraction of the PLA value; may be off for 85A <span class="chip yellow">typical</span></td></tr>
+      <tr><td>Outer wall speed</td><td colspan="3">Far below PLA; slower for 85A <span class="chip yellow">typical</span></td></tr>
+      <tr><td>Part fan</td><td colspan="3">Moderate; reduce for small layers if layers stick <span class="chip yellow">typical</span></td></tr>
+      <tr><td>Placement</td><td colspan="3">Middle-front of the plate <span class="chip blue">doc</span></td></tr>
+    </tbody></table></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 320" role="img" aria-label="Conceptual comparison of how aggressive print speed and retraction should be for PLA, TPU 95A, 90A and 85A, with arrows showing the trend">
+      <path class="d-ink arrow" d="M70 260 V30"/>
+      <path class="d-ink arrow" d="M70 260 H730"/>
+      <text class="t-sm t-b" x="20" y="22">Relative speed / retraction</text>
+      <rect class="f-green" x="120" y="60" width="90" height="200" rx="4"/>
+      <text class="t-sm t-c t-b" x="165" y="284">PLA</text><text class="t-xs t-c" x="165" y="52">high</text>
+      <rect class="f-yellow" x="270" y="150" width="90" height="110" rx="4"/>
+      <text class="t-sm t-c t-b" x="315" y="284">TPU 95A HF</text><text class="t-xs t-c" x="315" y="142">moderate</text>
+      <rect class="f-orange" x="420" y="190" width="90" height="70" rx="4"/>
+      <text class="t-sm t-c t-b" x="465" y="284">TPU 90A</text><text class="t-xs t-c" x="465" y="182">low</text>
+      <rect class="f-red" x="570" y="220" width="90" height="40" rx="4"/>
+      <text class="t-sm t-c t-b" x="615" y="284">TPU 85A</text><text class="t-xs t-c" x="615" y="212">lowest</text>
+      <path class="d-dash d-ink arrow" d="M200 80 C 360 90 480 140 640 200"/>
+      <text class="t-xs t-m" x="90" y="308">Conceptual trend only. Softer = slower feeding, shorter retraction. Bambu says to keep the default volumetric limit.</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> The softer the TPU, the gentler the feed. Heights show direction of change, not measured values.</figcaption>
+  </figure>
+
+  <h3>Why TPU speed is limited by flow, not motion</h3>
+  <p>TPU is compressible: when the extruder pushes, some of the push compresses the filament and the PTFE guide tube instead of reaching the nozzle. The faster you go, the more of it is lost, until the filament buckles or the gear slips. A volumetric speed limit caps the plastic volume per second to a level the path can deliver. Raising it is the single most common cause of failed TPU prints; Bambu's own advice is to leave it at its default.</p>
+  <div class="callout fact"><span class="callout-title">Why slower is also better visually</span>
+    <p>Flexible filaments hold pressure in the nozzle like a squeezed sponge. Slow, constant flow keeps pressure stable, which is also why Bambu advises Auto or Off for flow-dynamics (pressure compensation) on TPU rather than aggressive tuning.</p></div>
+
+  <h2 id="drying">4. Drying and storage</h2>
+  <p>TPU absorbs moisture; wet TPU pops, strings and prints with a rough, bubbly surface. Bambu's documented guidance:</p>
+  <ul>
+    <li><b>Dry:</b> oven at 70 °C for 8 hours, or heatbed at 75–85 °C for 8 hours.</li>
+    <li><b>The spool swells while drying</b> (the guide gives an example growing from 65.4 to about 69.4 mm), so check that it still fits a holder.</li>
+    <li><b>Store:</b> sealed with desiccant, below 20 % relative humidity.</li>
+    <li><b>AMS drying:</b> do not use static drying mode with low-softening materials such as TPU; and follow the manual's temperature rules and keep TPU away from high-temperature spools when drying.</li>
+  </ul>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 260" role="img" aria-label="Workflow for TPU spool: dry, check width, store sealed with desiccant, load, print">
+      <rect class="f-orange" x="20" y="90" width="120" height="70" rx="10"/><text class="t-sm t-c t-b" x="80" y="118">Dry</text><text class="t-xs t-c" x="80" y="136">70 °C oven or</text><text class="t-xs t-c" x="80" y="150">75–85 °C bed, 8 h</text>
+      <path class="d-ink arrow" d="M142 125 H180"/>
+      <rect class="f-yellow" x="182" y="90" width="120" height="70" rx="10"/><text class="t-sm t-c t-b" x="242" y="118">Check</text><text class="t-xs t-c" x="242" y="136">spool swells</text><text class="t-xs t-c" x="242" y="150">fits the holder?</text>
+      <path class="d-ink arrow" d="M304 125 H342"/>
+      <rect class="f-blue" x="344" y="90" width="120" height="70" rx="10"/><text class="t-sm t-c t-b" x="404" y="118">Store</text><text class="t-xs t-c" x="404" y="136">sealed, desiccant</text><text class="t-xs t-c" x="404" y="150">&lt; 20 % RH</text>
+      <path class="d-ink arrow" d="M466 125 H504"/>
+      <rect class="f-green" x="506" y="90" width="110" height="70" rx="10"/><text class="t-sm t-c t-b" x="561" y="118">Load</text><text class="t-xs t-c" x="561" y="136">250 °C, slow</text><text class="t-xs t-c" x="561" y="150">taps only</text>
+      <path class="d-ink arrow" d="M618 125 H640"/>
+      <rect class="f-teal" x="642" y="90" width="98" height="70" rx="10"/><text class="t-sm t-c t-b" x="691" y="130">Print</text>
+      <text class="t-xs t-m" x="20" y="214">Documented values from Bambu's X2D TPU guide.</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> The TPU spool lifecycle from the documentation: dry, check, store, load, print.</figcaption>
+  </figure>
+
+  <h2 id="plates">5. Build plate and glue</h2>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Plate</th><th>TPU?</th><th>Glue stick?</th></tr></thead>
+    <tbody>
+      <tr><td>Cool plate</td><td><span class="chip red">Not recommended</span> <span class="chip blue">doc</span></td><td>—</td></tr>
+      <tr><td>Engineering plate</td><td><span class="chip green">Yes</span> <span class="chip blue">doc</span></td><td>Recommended</td></tr>
+      <tr><td>Smooth PEI / high-temp plate</td><td><span class="chip green">Yes</span> <span class="chip blue">doc</span></td><td>Recommended</td></tr>
+      <tr><td>Textured PEI</td><td><span class="chip green">Yes</span> <span class="chip blue">doc</span></td><td><span class="chip red">No glue</span>: it causes excess adhesion</td></tr>
+    </tbody></table></div>
+  <div class="callout x2d"><span class="callout-title">Release tip</span>
+    <p>If a smooth-plate TPU print grips too hard, let the bed cool, flex the plate gently and peel from a corner; do not pry with a scraper while the part is warm (typical practice).</p></div>
+
+  <h2 id="combos">6. TPU with rigid plastics: interfaces and multi-material tricks</h2>
+  <p>The X2D's two nozzles make soft-plus-rigid prints practical, but the TPU-left-only rule shapes every plan. A few patterns work well.</p>
+
+  <h3>🔧 TPU as a support interface (and rigid as TPU's support)</h3>
+  <p>A <b>support interface</b> is the thin layer between support and model. A flexible interface can peel off a rigid part cleanly because it stretches rather than snaps; a rigid support under a TPU part gives a stable, flat base that TPU cannot provide by itself. In both cases the support and the model are different materials that do not bond strongly (typical expectation; test your pair). The slicer needs the interface and body materials assigned to different filaments, and the nozzle assignment must respect the TPU rule.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 330" role="img" aria-label="Two cross-sections: rigid support with TPU interface beneath a rigid part, and rigid support beneath a TPU part">
+      <rect class="d-surface" x="20" y="14" width="350" height="302" rx="10"/>
+      <text class="t t-b" x="36" y="40">A · TPU interface under a rigid part</text>
+      <rect class="f-gray" x="50" y="270" width="290" height="10"/>
+      <rect class="f-blue" x="70" y="230" width="250" height="36"/><text class="t-xs t-c" x="195" y="253">rigid support (PLA / PETG)</text>
+      <rect class="f-teal" x="70" y="210" width="250" height="18"/><text class="t-xs t-c" x="195" y="223">TPU interface</text>
+      <rect class="f-orange" x="90" y="100" width="210" height="108"/><text class="t-sm t-c t-b" x="195" y="158">rigid part</text>
+      <text class="t-xs t-m" x="40" y="300">TPU stays on the main nozzle only.</text>
+      <rect class="d-surface" x="390" y="14" width="350" height="302" rx="10"/>
+      <text class="t t-b" x="406" y="40">B · Rigid support under a TPU part</text>
+      <rect class="f-gray" x="420" y="270" width="290" height="10"/>
+      <rect class="f-blue" x="440" y="214" width="250" height="52"/><text class="t-xs t-c" x="565" y="244">rigid raft / support</text>
+      <rect class="f-purple" x="460" y="100" width="210" height="112"/><text class="t-sm t-c t-b" x="565" y="158">TPU part</text>
+      <text class="t-xs t-m" x="410" y="300">Rigid layer gives a flat base; TPU prints on top.</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> Two interface combinations. The material that is difficult to remove should be the one that forms the clean break.</figcaption>
+  </figure>
+  <div class="callout warn"><span class="callout-title">Adhesion between TPU and other plastics is material-dependent</span>
+    <p>TPU bonds strongly to some plastics and barely to others; Bambu's TPU guide does not publish a bond chart. Run a small peel test with your exact pair before designing around either outcome (see exercise <a href="../exercises/x2d-challenges.html#X-6">X-6</a> and <a href="../exercises/x2d-challenges.html#X-9">X-9</a>).</p></div>
+
+  <h3>Where each filament goes</h3>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Plan</th><th>TPU</th><th>Rigid material</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><b>Dual-material, one job</b></td><td>Left nozzle, external/top holder path</td><td>Right nozzle, via an AMS wired to the right-hand inlet</td><td>Rigid on the auxiliary is limited to 200 mm/s and about 1000 mm/s². Check that your AMS pairing allows the assignment in Studio's grouping dialog.</td></tr>
+      <tr><td><b>Dual-material, TPU for AMS</b></td><td>Left nozzle, from AMS (TPU for AMS type)</td><td>Same nozzle, filament change, or other AMS to right</td><td>Without a track switch the AMS side stays fixed; plan the slots carefully.</td></tr>
+      <tr><td><b>Two jobs, then assemble</b></td><td>Left nozzle, own job</td><td>Any nozzle</td><td>Most robust: print each material at its own ideal settings and snap or glue together.</td></tr>
+    </tbody></table></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 320" role="img" aria-label="Slot plan: TPU on an external spool feeds the left nozzle while PLA and PETG from an AMS 2 Pro feed the right nozzle">
+      <rect class="f-blue" x="20" y="40" width="270" height="120" rx="10"/>
+      <text class="t t-b" x="36" y="64">AMS 2 Pro (right side)</text>
+      <rect class="f-green" x="36" y="80" width="56" height="64" rx="6"/><text class="t-xs t-c" x="64" y="116">1</text><text class="t-xs t-c" x="64" y="132">PLA</text>
+      <rect class="f-purple" x="100" y="80" width="56" height="64" rx="6"/><text class="t-xs t-c" x="128" y="116">2</text><text class="t-xs t-c" x="128" y="132">PETG</text>
+      <rect class="f-gray" x="164" y="80" width="56" height="64" rx="6"/><text class="t-xs t-c" x="192" y="116">3</text><text class="t-xs t-c" x="192" y="132">spare</text>
+      <rect class="f-gray" x="228" y="80" width="56" height="64" rx="6"/><text class="t-xs t-c" x="256" y="116">4</text><text class="t-xs t-c" x="256" y="132">spare</text>
+      <rect class="f-orange" x="20" y="200" width="270" height="80" rx="10"/>
+      <text class="t t-b" x="36" y="226">External spool (direct path)</text>
+      <text class="t-sm" x="36" y="248">TPU 95A HF</text><text class="t-xs t-m" x="36" y="266">short PTFE to left extruder inlet</text>
+      <path class="d-ink arrow" d="M292 100 H460"/>
+      <path class="d-ink arrow" d="M292 240 C 380 240 420 220 460 210"/>
+      <rect class="f-teal" x="462" y="60" width="130" height="80" rx="10"/><text class="t-sm t-c t-b" x="527" y="94">Right / aux</text><text class="t-xs t-c" x="527" y="112">rigid, ≤ 200 mm/s</text>
+      <rect class="f-red" x="462" y="170" width="130" height="80" rx="10"/><text class="t-sm t-c t-b" x="527" y="204">Left / main</text><text class="t-xs t-c" x="527" y="222">TPU only</text>
+      <rect class="f-yellow" x="620" y="116" width="120" height="100" rx="8"/><text class="t-xs t-c t-b" x="680" y="146">Assembly</text><text class="t-xs t-c" x="680" y="164">rigid frame +</text><text class="t-xs t-c" x="680" y="180">TPU seal</text>
+      <path class="d-ink arrow" d="M594 100 C 610 100 618 130 620 140"/><path class="d-ink arrow" d="M594 210 C 610 210 618 190 620 184"/>
+      <text class="t-xs t-m" x="20" y="306">Example slot plan; the AMS must be set up on the side that feeds the right nozzle (see AMS Setup).</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> A dual-material slot plan for a rigid housing with a flexible seal: TPU direct to the left nozzle, rigid plastics from the AMS to the right nozzle.</figcaption>
+  </figure>
+
+  <div class="callout trick"><span class="callout-title">Multi-material tricks that usually pay off</span>
+    <p>(1) <b>Print the rigid part of the assembly first,</b> so the TPU prints on top of a stable shell (typical). (2) Add a <b>0.2–0.4 mm design gap or interlocking lip</b> between TPU and rigid regions instead of relying on chemical adhesion (typical). (3) Keep TPU layers <b>away from long travel moves</b>; combine TPU regions into one tool change per layer. (4) Use a <b>tall, wide prime tower</b> when switching to or from TPU, because TPU leaves pressure in the nozzle. (5) <b>Avoid rapid alternations</b>: each tool change adds time and risk.</p></div>
+
+  <h2 id="applications">7. Gaskets, seals and overmolding-style printing</h2>
+  <h3>Gaskets</h3>
+  <p>A printed gasket works by being compressed between two faces. Design for a <b>modest compression</b> (typical 10–30 % of the gasket thickness, depending on hardness) and for a groove that holds the gasket in place. Softer TPU (85A) seals more easily but is harder to print; 90A or 95A is more forgiving (typical). Print gaskets flat on the plate so the layer lines run along the seal, not across it, and use 100 % infill or a high wall count for a continuous, non-porous seal.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 300" role="img" aria-label="Cross-section of a lid, groove and TPU gasket before and after compression">
+      <rect class="d-surface" x="20" y="14" width="350" height="272" rx="10"/>
+      <text class="t t-b" x="36" y="40">Uncompressed</text>
+      <rect class="f-blue" x="50" y="60" width="290" height="30" rx="4"/><text class="t-xs t-c" x="195" y="80">lid</text>
+      <rect class="f-blue" x="50" y="200" width="90" height="60" rx="4"/><rect class="f-blue" x="250" y="200" width="90" height="60" rx="4"/>
+      <rect class="f-blue" x="140" y="240" width="110" height="20"/>
+      <rect class="f-purple" x="165" y="184" width="60" height="56" rx="10"/><text class="t-xs t-c" x="195" y="216">TPU</text>
+      <path class="d-dash d-ink" d="M50 92 H340"/>
+      <text class="t-xs t-m" x="50" y="128">gap above the lid</text>
+      <rect class="d-surface" x="390" y="14" width="350" height="272" rx="10"/>
+      <text class="t t-b" x="406" y="40">Compressed</text>
+      <rect class="f-blue" x="420" y="100" width="290" height="30" rx="4"/><text class="t-xs t-c" x="565" y="120">lid</text>
+      <rect class="f-blue" x="420" y="200" width="90" height="60" rx="4"/><rect class="f-blue" x="620" y="200" width="90" height="60" rx="4"/>
+      <rect class="f-blue" x="510" y="240" width="110" height="20"/>
+      <rect class="f-purple" x="520" y="130" width="90" height="110" rx="6" opacity=".0"/>
+      <rect class="f-purple" x="530" y="132" width="70" height="108" rx="4"/><text class="t-xs t-c" x="565" y="190">TPU</text>
+      <text class="t-xs t-m" x="406" y="278">The gasket squashes and fills the gap; the groove keeps it located.</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> A gasket in a groove: design for modest compression and give the soft part somewhere to expand.</figcaption>
+  </figure>
+
+  <h3>Overmolding-style printing</h3>
+  <p>Printing a soft grip, bumper or seal directly onto a rigid part imitates overmolding. It works best when the two materials are <b>mechanically locked</b> (undercuts, holes through which the TPU flows, dovetails) and not only chemically bonded. On the X2D, TPU on the left nozzle and the rigid core on the right nozzle in one job is the more advanced route; the safer route is to print the rigid core first, pause or re-load, then print the TPU region. Reduce travel across the TPU regions, and avoid TPU on the very first layer of a plate containing other materials if the TPU is only a small portion (typical).</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 300" role="img" aria-label="Overmold-style joint: a rigid core with dovetail slots filled by TPU forming a mechanical lock">
+      <rect class="f-blue" x="60" y="100" width="260" height="110" rx="8"/><text class="t-sm t-c t-b" x="190" y="160">rigid core</text>
+      <rect class="f-purple" x="320" y="100" width="150" height="110" rx="14"/><text class="t-sm t-c t-b" x="395" y="160">TPU grip</text>
+      <path class="s-purple" fill="none" stroke-width="10" d="M300 110 L340 125 L340 185 L300 200"/>
+      <path class="d-ink arrow" d="M395 64 V96"/><text class="t-xs t-c" x="395" y="56">soft region</text>
+      <text class="t-xs t-c" x="190" y="86">dovetail locks the TPU</text>
+      <path class="d-ink arrow" d="M240 238 L310 212"/>
+      <text class="t-xs t-m" x="30" y="268">Mechanical interlock + a small gap/lip is more reliable than relying on sticking alone.</text>
+      <rect class="f-yellow" x="520" y="60" width="200" height="170" rx="10"/>
+      <text class="t-sm t-b" x="536" y="86">Checklist</text>
+      <text class="t-xs" x="536" y="110">• undercut or hole to lock</text>
+      <text class="t-xs" x="536" y="130">• 0.2–0.4 mm design gap (typical)</text>
+      <text class="t-xs" x="536" y="150">• TPU region ≥ 2 mm thick</text>
+      <text class="t-xs" x="536" y="170">• keep TPU on left nozzle</text>
+      <text class="t-xs" x="536" y="190">• test a small piece first</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> Overmolding-style design: lock the soft material mechanically, then verify the combination with a small test.</figcaption>
+  </figure>
+
+  <h2 id="test-models">8. Test models worth printing first</h2>
+  <ul class="checklist">
+    <li><b>Retraction tower or stringing test:</b> reveals if retraction should be shorter or off.</li>
+    <li><b>Flow cube or 20 mm cube with 2 walls:</b> check wall thickness and layer bonding by pulling it apart.</li>
+    <li><b>Bridge and overhang sample:</b> soft plastics bridge poorly at speed.</li>
+    <li><b>Compression gasket ring set (three thicknesses):</b> measure seal quality against a mating lid.</li>
+    <li><b>Rigid + TPU peel strip:</b> two strips of rigid plastic with a TPU layer in between, for adhesion tests.</li>
+    <li><b>Hinge/flexure test:</b> a living-hinge pad, bent 100 times, to check layer strength.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 300" role="img" aria-label="Test plate layout at middle-front with six test models arranged for TPU printing">
+      <rect class="d-surface2 d-ink" x="150" y="30" width="460" height="230" rx="6"/>
+      <text class="t-xs t-m" x="380" y="50" text-anchor="middle">rear of plate</text>
+      <text class="t-xs t-m" x="380" y="276" text-anchor="middle">front of plate (preferred for TPU)</text>
+      <rect class="f-gray d-dash" x="170" y="70" width="420" height="80" rx="6"/><text class="t-xs t-c" x="380" y="112">avoid: long travel, more PTFE friction</text>
+      <rect class="f-green" x="190" y="170" width="60" height="60" rx="4"/><text class="t-xs t-c" x="220" y="204">cube</text>
+      <rect class="f-orange" x="270" y="170" width="60" height="60" rx="4"/><text class="t-xs t-c" x="300" y="200">tower</text>
+      <circle class="f-purple" cx="390" cy="200" r="30"/><text class="t-xs t-c" x="390" y="204">gasket</text>
+      <rect class="f-blue" x="440" y="170" width="70" height="60" rx="4"/><text class="t-xs t-c" x="475" y="204">bridge</text>
+      <rect class="f-teal" x="520" y="170" width="60" height="60" rx="4"/><text class="t-xs t-c" x="550" y="204">hinge</text>
+      <path class="d-ink arrow" d="M670 140 V200"/><text class="t-xs" x="640" y="130">place here</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> A single test plate laid out at the middle-front, as Bambu recommends for TPU.</figcaption>
+  </figure>
+
+  <h2 id="troubleshooting">9. Troubleshooting cards</h2>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 380" role="img" aria-label="Six troubleshooting cards for TPU: grinding gear, stringing, under-extrusion, bubbles, sticking too hard, and nozzle blob">
+      <g>
+        <rect class="d-surface" x="20" y="14" width="230" height="170" rx="10"/><text class="t-sm t-b" x="34" y="38">Gear grinding / wrap</text>
+        <text class="t-xs" x="34" y="62">Cause: loading too fast,</text><text class="t-xs" x="34" y="78">worn gears, dirt.</text>
+        <text class="t-xs t-b" x="34" y="104">Fix: slow load taps at 250 °C,</text><text class="t-xs t-b" x="34" y="120">check gears and cutter,</text><text class="t-xs t-b" x="34" y="136">cold pull first.</text>
+        <rect class="d-surface" x="265" y="14" width="230" height="170" rx="10"/><text class="t-sm t-b" x="279" y="38">Stringing</text>
+        <text class="t-xs" x="279" y="62">Cause: wet filament, hot nozzle,</text><text class="t-xs" x="279" y="78">no retraction.</text>
+        <text class="t-xs t-b" x="279" y="104">Fix: dry 8 h, shorter travel,</text><text class="t-xs t-b" x="279" y="120">test small retraction.</text>
+        <rect class="d-surface" x="510" y="14" width="230" height="170" rx="10"/><text class="t-sm t-b" x="524" y="38">Under-extrusion</text>
+        <text class="t-xs" x="524" y="62">Cause: speed too high, path</text><text class="t-xs" x="524" y="78">friction, partial clog.</text>
+        <text class="t-xs t-b" x="524" y="104">Fix: keep default volumetric</text><text class="t-xs t-b" x="524" y="120">limit, front placement, shorter</text><text class="t-xs t-b" x="524" y="136">PTFE, clean nozzle.</text>
+        <rect class="d-surface" x="20" y="196" width="230" height="170" rx="10"/><text class="t-sm t-b" x="34" y="220">Bubbles / popping</text>
+        <text class="t-xs" x="34" y="244">Cause: moisture.</text>
+        <text class="t-xs t-b" x="34" y="270">Fix: dry (70 °C oven or 75–85 °C</text><text class="t-xs t-b" x="34" y="286">bed, 8 h), store &lt; 20 % RH.</text>
+        <rect class="d-surface" x="265" y="196" width="230" height="170" rx="10"/><text class="t-sm t-b" x="279" y="220">Sticks too hard</text>
+        <text class="t-xs" x="279" y="244">Cause: glue on textured PEI,</text><text class="t-xs" x="279" y="260">cool plate wrongly used.</text>
+        <text class="t-xs t-b" x="279" y="286">Fix: no glue on textured PEI;</text><text class="t-xs t-b" x="279" y="302">avoid the cool plate.</text>
+        <rect class="d-surface" x="510" y="196" width="230" height="170" rx="10"/><text class="t-sm t-b" x="524" y="220">Blob on the nozzle</text>
+        <text class="t-xs" x="524" y="244">Cause: residue or oozing from a</text><text class="t-xs" x="524" y="260">previous material.</text>
+        <text class="t-xs t-b" x="524" y="286">Fix: clean the nozzle and sock,</text><text class="t-xs t-b" x="524" y="302">enable clumping detection.</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 10.</b> Six common TPU faults, their usual causes and first fixes. Details for hotend cleaning are on the <a href="maintenance-and-troubleshooting.html">maintenance page</a>.</figcaption>
+  </figure>
+
+  <h2 id="warnings">10. Flexible-specific warnings from the documentation</h2>
+  <div class="callout danger"><span class="callout-title">Do not</span>
+    <ul>
+      <li>Do not print TPU on the right (auxiliary) nozzle.</li>
+      <li>Do not use a 0.2 mm hotend for any TPU.</li>
+      <li>Do not use TPU 85A on the 0.4 mm hotend.</li>
+      <li>Do not use TPU with the Filament Track Switch.</li>
+      <li>Do not use the AMS's static drying mode for TPU.</li>
+      <li>Do not use glue on a textured PEI plate for TPU.</li>
+      <li>Do not use the cool plate for TPU.</li>
+      <li>Do not tap load repeatedly: TPU wraps around the gears.</li>
+      <li>Do not push the speed or volumetric limit up for TPU.</li>
+      <li>Do not run TPU in a standard AMS, unless it is the "TPU for AMS" type.</li>
+    </ul></div>
+
+  <h2 id="hardness">Choosing a hardness</h2>
+  <p>Shore hardness (the "A" number) measures how deep a standard probe sinks into the material: lower means softer. The X2D guide covers three grades plus a special AMS-friendly type, and the choice is a trade between feel and printability:</p>
+  <div class="grid cols-3">
+    <div class="card accent-green"><h4>95A (HF)</h4><p>Firmest. Easiest to push through a path and the only one Bambu recommends from a plain external spool. Good for belts-like parts, bumpers, protective feet and anything that must keep its shape under load.</p></div>
+    <div class="card accent-orange"><h4>90A</h4><p>A middle ground. More cushion than 95A, still workable on 0.4 mm. Needs the top-mounted holder or the Feed Assist Module for a gentle path.</p></div>
+    <div class="card accent-red"><h4>85A</h4><p>Softest in the guide and hardest to feed. Needs a 0.6 or 0.8 mm hotend and the top holder or Feed Assist Module. Choose it for soft seals and comfort grips only when 90A is not soft enough.</p></div>
+  </div>
+  <div class="callout tip"><span class="callout-title">Start firm, go softer later</span>
+    <p>Learn the geometry, retraction and plate behavior on 95A HF. Once your design works, swap to a softer grade, which usually needs a slower print, a bigger nozzle and a better feed path. A design that fails at 95A will not succeed at 85A.</p></div>
+
+  <h2 id="studio-workflow">Slicer workflow for a TPU job</h2>
+  <ol class="steps">
+    <li><strong>Select the hotend size</strong>in the printer preset that matches what is installed (0.6 or 0.8 for 85A).</li>
+    <li><strong>Pick the TPU filament preset</strong>and confirm it is assigned to the <b>left</b> nozzle in the filament list. If Studio proposes the right nozzle, use Custom grouping and move it.</li>
+    <li><strong>Choose the plate</strong>to match the surface (textured PEI without glue, or engineering/smooth plate with glue).</li>
+    <li><strong>Position the model</strong>at the middle-front, then set flow dynamics to Auto or Off.</li>
+    <li><strong>Check the speed</strong>shown for outer walls; do not raise volumetric speed.</li>
+    <li><strong>Send</strong>and watch the first layers on the camera: a clean, slightly squished first layer is the sign you are on track.</li>
+  </ol>
+
+  <h2 id="design-tips">Design tips for flexible parts</h2>
+  <ul>
+    <li><b>Wall thickness in multiples of the line width:</b> thin flexible walls print as one solid line, which is more flexible but less strong (typical).</li>
+    <li><b>Fillets everywhere:</b> sharp inside corners tear; add a generous radius at stress points.</li>
+    <li><b>Orient flex axes along layers</b> so bending happens across the layer bonds that are strongest in the XY plane, not between layers.</li>
+    <li><b>Use thicker, sturdier clamping areas</b> at holes and screws: TPU creeps under a screw head, so use a washer or a rigid insert.</li>
+    <li><b>Accept some elephant's-foot and surface texture</b>; plan post-processing such as trimming with a sharp blade rather than sanding.</li>
+  </ul>
+  <p>More general joint and fastener rules are in <a href="../design/joints-and-fasteners.html">joints and fasteners</a> and <a href="../design/tolerances-and-fits.html">tolerances and fits</a>.</p>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul class="checklist">
+    <li>TPU lives on the left nozzle; the right nozzle is for rigid supports and companions.</li>
+    <li>95A HF: external spool. 90A and 85A: top-mounted holder or Feed Assist Module; 85A needs 0.6 or 0.8 mm.</li>
+    <li>Nozzle 225 °C and bed 30–35 °C for 85A/90A; no chamber heating; keep the speed limit at default.</li>
+    <li>Dry for 8 hours; store under 20 % humidity; expect the spool to grow while drying.</li>
+    <li>Textured PEI without glue, or engineering/smooth plate with glue; never cool plate.</li>
+    <li>Lock soft and rigid parts mechanically and test the combination on a small piece first.</li>
+  </ul>
+  <div class="callout goal"><span class="callout-title">Practice and next</span>
+    <p>Try <a href="../exercises/x2d-challenges.html#X-6">X-6 (TPU + rigid combo)</a> and <a href="../exercises/x2d-challenges.html#X-7">X-7 (drying with a weigh-in)</a>. The gasket and housing recipe is in <a href="recipes.html">recipes</a>; background on flexible materials is on <a href="../materials/flexibles-and-specialty.html">flexibles and specialty</a>.</p></div>
+
+</main>
+</body>
+</html>

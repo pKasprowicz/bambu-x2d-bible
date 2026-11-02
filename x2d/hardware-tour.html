@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>X2D hardware tour · 3D Printing Compendium</title>
+  <meta name="description" content="An annotated tour of the Bambu Lab X2D: the two hotends, the gear-and-trigger nozzle switch, servo and auxiliary extruders, buffer, chamber airflow and filtration, bed, cameras, sensors, motion system, nozzle swap and spare parts.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="x2d/hardware-tour.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 6 · Bambu X2D + AMS 2 Pro</div>
+    <h1>X2D hardware tour</h1>
+    <p class="lead">Walk around the machine part by part: what each component is called, what it does, how the two nozzles trade places, how air moves through the cabinet, and which pieces you will eventually replace.</p>
+    <div class="meta"><span class="badge x2d">X2D + AMS 2 Pro</span><span class="badge intermediate">Beginner → Intermediate</span><span class="badge time">⏱ 35 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <ul>
+      <li>The name and purpose of every major part, in front, side and top views.</li>
+      <li>How the left (main) and right (auxiliary) hotends are built and why they feed differently.</li>
+      <li>How the gear-and-trigger mechanism changes nozzles without an extra motor.</li>
+      <li>How air moves in cooling mode and heating mode, and where the filter sits.</li>
+      <li>How the motion system, bed, cameras and sensors fit together.</li>
+      <li>Which consumables and spare parts come in the box and which you will want to stock.</li>
+    </ul>
+  </div>
+
+  <div class="callout x2d"><span class="callout-title">Reading the drawings</span>
+    <p>The figures are schematic. They show the <i>relationship</i> of parts, not exact proportions or exact positions of screws. Where a part’s position is not stated in Bambu’s documentation, the drawing is labeled <b>typical</b> and the text says so. The <a href="https://wiki.bambulab.com">Bambu Lab wiki</a> has photographs and step-by-step service guides.</p>
+  </div>
+
+  <h2 id="outside">🔰 Walking around the outside</h2>
+  <p>The X2D is a closed box of 392 × 406 × 478 mm that weighs 16.25 kg. A <b>front door</b> and a <b>top cover</b> give access to the chamber; the top cover is a glass lid, and Bambu notes that the top glass cover is shared with the P2S. A 5-inch <b>touchscreen</b> is mounted on the front. The AMS 2 Pro normally stands on top of the printer, and a <b>spool holder</b> for an external spool sits on the left. At the rear are the exhaust fan, the main power inlet and the 6-pin connectors for accessories. Side intakes feed air into the cabinet; the purge chute lets waste leave the machine.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 520" role="img" aria-label="Annotated front view of the X2D: AMS 2 Pro on top, filament buffer and PTFE tubes, touchscreen, glass door, chamber with toolhead, two nozzles, heatbed, build plate, live-view camera, spool holder on the left and the anti-vibration feet">
+      <text class="t-lg" x="20" y="28">Front view</text>
+      <rect class="f-teal" x="250" y="40" width="300" height="70" rx="10" opacity=".8"/>
+      <text class="t t-b t-c" x="400" y="70">AMS 2 Pro (top)</text><text class="t-xs t-c" x="400" y="90">4 slots · dryers · humidity sensor</text>
+      <rect class="d-surface2" x="330" y="116" width="140" height="20" rx="6"/><text class="t-xs t-c" x="400" y="130">filament buffer</text>
+      <path class="d-surface" d="M230 140 H570 V470 H230 Z"/>
+      <rect class="f-blue" x="250" y="160" width="300" height="230" rx="6" opacity=".25"/>
+      <rect class="d-ink" x="250" y="160" width="300" height="230" rx="6"/>
+      <text class="t-xs t-m" x="258" y="178">glass door · chamber</text>
+      <rect class="d-surface2" x="262" y="204" width="276" height="12" rx="4"/>
+      <text class="t-xs t-m" x="266" y="198">X-axis rod</text>
+      <rect class="d-surface2" x="352" y="216" width="96" height="44" rx="6"/>
+      <path class="d-metal2" d="M370 260 l10 22 l10 -22 z"/><path class="d-metal2" d="M410 260 l10 22 l10 -22 z"/>
+      <rect class="d-plastic" x="300" y="352" width="200" height="12" rx="3"/>
+      <rect class="d-surface2" x="285" y="364" width="230" height="16" rx="4"/>
+      <circle class="d-ink" cx="262" cy="172" r="5"/>
+      <rect class="f-gray" x="240" y="400" width="320" height="60" rx="8"/>
+      <text class="t-sm t-c t-b" x="400" y="424">Front panel · touchscreen 5″ 1280 × 720</text>
+      <text class="t-xs t-c" x="400" y="442">Homepage · Controls · Filaments · Settings · HMS</text>
+      <rect class="d-solid" x="250" y="470" width="30" height="12" rx="3"/><rect class="d-solid" x="520" y="470" width="30" height="12" rx="3"/>
+      <rect class="f-yellow" x="70" y="170" width="110" height="80" rx="8"/>
+      <text class="t-sm t-c t-b" x="125" y="196">Spool holder</text><text class="t-xs t-c" x="125" y="214">external spool,</text><text class="t-xs t-c" x="125" y="228">left side</text>
+      <path class="d-thin" d="M180 210 H230 L250 230"/>
+
+      <text class="t-sm t-b" x="600" y="70">Callouts</text>
+      <circle class="s-red" cx="610" cy="98" r="11"/><text class="t-xs t-w t-c t-b" x="610" y="102">1</text><text class="t-sm" x="630" y="102">Left (main) nozzle</text>
+      <circle class="s-orange" cx="610" cy="126" r="11"/><text class="t-xs t-w t-c t-b" x="610" y="130">2</text><text class="t-sm" x="630" y="130">Right (aux) nozzle</text>
+      <circle class="s-blue" cx="610" cy="154" r="11"/><text class="t-xs t-w t-c t-b" x="610" y="158">3</text><text class="t-sm" x="630" y="158">Live-view camera (corner)</text>
+      <circle class="s-green" cx="610" cy="182" r="11"/><text class="t-xs t-w t-c t-b" x="610" y="186">4</text><text class="t-sm" x="630" y="186">Heatbed + textured PEI</text>
+      <circle class="s-purple" cx="610" cy="210" r="11"/><text class="t-xs t-w t-c t-b" x="610" y="214">5</text><text class="t-sm" x="630" y="214">Buffer (two 6-pin ports)</text>
+      <circle class="s-teal" cx="610" cy="238" r="11"/><text class="t-xs t-w t-c t-b" x="610" y="242">6</text><text class="t-sm" x="630" y="242">AMS 2 Pro</text>
+      <circle class="s-gray" cx="610" cy="266" r="11"/><text class="t-xs t-w t-c t-b" x="610" y="270">7</text><text class="t-sm" x="630" y="270">Anti-vibration feet</text>
+      <circle class="s-red" cx="365" cy="270" r="9"/><text class="t-xs t-w t-c t-b" x="365" y="274">1</text>
+      <circle class="s-orange" cx="435" cy="270" r="9"/><text class="t-xs t-w t-c t-b" x="435" y="274">2</text>
+      <circle class="s-blue" cx="262" cy="172" r="9"/><text class="t-xs t-w t-c t-b" x="262" y="176">3</text>
+      <circle class="s-green" cx="400" cy="345" r="9"/><text class="t-xs t-w t-c t-b" x="400" y="349">4</text>
+      <circle class="s-purple" cx="400" cy="126" r="9"/><text class="t-xs t-w t-c t-b" x="400" y="130">5</text>
+      <circle class="s-teal" cx="270" cy="75" r="9"/><text class="t-xs t-w t-c t-b" x="270" y="79">6</text>
+      <circle class="s-gray" cx="265" cy="476" r="9"/><text class="t-xs t-w t-c t-b" x="265" y="480">7</text>
+      <text class="t-xs t-m" x="600" y="310">Not to scale. Camera position is typical:</text>
+      <text class="t-xs t-m" x="600" y="324">Bambu says it sits at a chamber corner.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> Front view with numbered callouts. The left nozzle (1) is the main one; the right nozzle (2) is the auxiliary one. Both hang from a single toolhead on the X-axis rod.</figcaption>
+  </figure>
+
+  <h3>Side view: the cabinet from the right</h3>
+  <p>From the side you can see how the bed moves in Z and where the rear panel carries the auxiliary extruder and the exhaust fan. The AMS 2 Pro sits on top and its PTFE tubes run down the back to the buffer.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 800 460" role="img" aria-label="Annotated side view of the X2D: AMS 2 Pro on top, buffer at the rear, auxiliary extruder on the rear panel, PTFE tube to the toolhead, exhaust fan at the rear, chamber with toolhead and bed on three lead screws, touchscreen at the front and filter housing on the right side">
+      <text class="t-lg" x="20" y="28">Side view (typical layout)</text>
+      <rect class="d-surface" x="210" y="130" width="380" height="290" rx="10"/>
+      <rect class="f-teal" x="220" y="44" width="360" height="76" rx="10" opacity=".8"/>
+      <text class="t t-b t-c" x="400" y="76">AMS 2 Pro</text><text class="t-xs t-c" x="400" y="96">filament leaves at the rear via PTFE</text>
+      <rect class="f-purple" x="550" y="124" width="60" height="28" rx="6"/><text class="t-xs t-c" x="580" y="142">buffer</text>
+      <rect class="f-orange" x="612" y="156" width="110" height="52" rx="8"/><text class="t-sm t-c t-b" x="667" y="178">Aux extruder</text><text class="t-xs t-c" x="667" y="196">rear panel, top</text>
+      <path class="k-orange" d="M640 208 C640 240 480 220 430 250"/>
+      <text class="t-xs c-orange" x="620" y="232">PTFE to aux hotend</text>
+      <rect class="f-gray" x="612" y="260" width="110" height="60" rx="8"/><text class="t-sm t-c t-b" x="667" y="286">Exhaust fan</text><text class="t-xs t-c" x="667" y="304">rear, keep clear</text>
+      <rect class="f-green" x="612" y="334" width="110" height="60" rx="8"/><text class="t-sm t-c t-b" x="667" y="360">Filter</text><text class="t-xs t-c" x="667" y="378">side housing (typical)</text>
+      <rect class="f-blue" x="226" y="150" width="364" height="190" rx="6" opacity=".25"/>
+      <rect class="d-surface2" x="360" y="236" width="90" height="46" rx="6"/>
+      <text class="t-xs t-c" x="405" y="262">toolhead</text>
+      <path class="d-ink" d="M250 150 V330 M570 150 V330"/>
+      <rect class="d-plastic" x="330" y="326" width="150" height="10" rx="3"/>
+      <rect class="d-surface2" x="316" y="336" width="180" height="14" rx="4"/>
+      <path class="d-ink" d="M334 350 V400 M406 350 V400 M478 350 V400"/>
+      <text class="t-xs t-m t-c" x="406" y="414">three lead screws (Z)</text>
+      <rect class="f-gray" x="140" y="330" width="84" height="64" rx="8"/><text class="t-sm t-c t-b" x="182" y="358">Screen</text><text class="t-xs t-c" x="182" y="374">front</text>
+      <text class="t-xs t-m" x="150" y="100">FRONT ←</text><text class="t-xs t-m" x="660" y="100">→ REAR</text>
+      <rect class="d-solid" x="226" y="420" width="30" height="12" rx="3"/><rect class="d-solid" x="544" y="420" width="30" height="12" rx="3"/>
+    </svg>
+    <figcaption><b>Figure 2.</b> Side view. Everything that adds weight to the moving toolhead has been moved out of it: the auxiliary extruder rides on the stationary rear panel, and the AMS lives on top.</figcaption>
+  </figure>
+
+  <h3>Top view: placement and clearances</h3>
+  <p>Bambu’s placement guide gives a free space of 500 × 700 × 600 mm for the X2D (it does not say which figure is width, depth or height in the extract used here, so check the wiki), with an ambient temperature between 10 °C and 30 °C and humidity below 85%. The reason is airflow: the printer breathes through the side intakes and the rear exhaust fan, and it needs room to open the door and the lid.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 800 400" role="img" aria-label="Top view of the X2D showing the placement footprint of 392 by 406 millimeters inside a recommended clearance zone of 500 by 700 millimeters, with side intakes on the sides, the exhaust fan and purge chute at the rear and the AMS on top">
+      <rect class="d-dash" x="60" y="30" width="500" height="340" rx="14"/>
+      <text class="t-xs t-m" x="68" y="48">recommended free zone, approx. 500 × 700 mm (as published)</text>
+      <rect class="f-red" x="170" y="86" width="280" height="248" rx="12" opacity=".35"/>
+      <rect class="d-ink" x="170" y="86" width="280" height="248" rx="12"/>
+      <text class="t-lg t-c" x="310" y="116">X2D</text><text class="t-sm t-c" x="310" y="136">392 × 406 mm footprint</text>
+      <rect class="f-teal" x="196" y="160" width="228" height="100" rx="8"/><text class="t-sm t-c t-b" x="310" y="206">AMS 2 Pro on top</text><text class="t-xs t-c" x="310" y="224">keep clear above</text>
+      <rect class="f-gray" x="150" y="190" width="20" height="60" rx="4"/><text class="t-xs t-r" x="144" y="224">side intake</text>
+      <rect class="f-gray" x="450" y="190" width="20" height="60" rx="4"/><text class="t-xs" x="476" y="224">side intake</text>
+      <rect class="f-green" x="240" y="334" width="140" height="26" rx="4"/><text class="t-xs t-c" x="310" y="352">rear: exhaust fan + purge chute</text>
+      <text class="t-sm t-c t-b" x="310" y="76">FRONT: door and screen</text>
+      <path class="d-ink arrow arrow-start" d="M170 380 H450"/><text class="t-xs t-c" x="310" y="396">392 mm</text>
+      <path class="d-ink arrow arrow-start" d="M520 86 V334"/><text class="t-xs" x="530" y="214">406 mm</text>
+      <rect class="f-yellow" x="590" y="40" width="200" height="320" rx="10"/>
+      <text class="t-sm t-b" x="604" y="66">Placement checklist</text>
+      <text class="t-xs" x="604" y="92">• Stable, level, heat-resistant surface</text>
+      <text class="t-xs" x="604" y="112">• Do not block rear exhaust fan</text>
+      <text class="t-xs" x="604" y="132">• Do not block side intakes</text>
+      <text class="t-xs" x="604" y="152">• Leave the purge chute free</text>
+      <text class="t-xs" x="604" y="172">• Room for door and top cover</text>
+      <text class="t-xs" x="604" y="192">• 10–30 °C, humidity under 85%</text>
+      <text class="t-xs" x="604" y="212">• Keep away from direct sunlight</text>
+      <text class="t-xs" x="604" y="232">  (typical advice)</text>
+      <text class="t-xs" x="604" y="262">Weight: 16.25 kg net, so use a</text>
+      <text class="t-xs" x="604" y="278">sturdy table and two hands.</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> Top view with the free zone. “Do not block” items are from Bambu’s placement guide; the sunlight note is a common-sense addition and is labeled typical.</figcaption>
+  </figure>
+
+  <h2 id="toolhead">🔧 The toolhead and the two hotends</h2>
+  <p>The toolhead is the moving heart of the printer. It carries the <b>left (main) hotend</b>, the <b>right (auxiliary) hotend</b>, the main servo extruder, two filament cutters, the part-cooling fan assembly, two hotend-cooling fans and the lever that triggers the nozzle swap. The toolhead camera also looks from here.</p>
+  <p>The two hotends are <b>identical and interchangeable</b>: the same structure, a maximum temperature of 300 °C, a quick-release lever that locks the hotend onto a ceramic base carrying the heater and thermistor (there are no terminals to unplug), and a silicone sock with three yellow markers that the AI system uses to see the nozzle. A 0.4 mm hardened-steel nozzle is pre-installed, and a spare hotend is in the toolbox.</p>
+  <p>Standard nozzles come in 0.2, 0.4, 0.6 and 0.8 mm. <b>High-flow</b> nozzles (0.4, 0.6, 0.8 mm) are sold separately and need firmware 01.01.00.00 or later and Bambu Studio 2.5.3.60 or later. Bambu states up to 30% less time for suitable prints. Dual-nozzle printing needs the <b>same diameter on both sides</b>; mixing sizes is not yet supported.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 800 420" role="img" aria-label="Exploded view of a hotend assembly: quick-release lever, ceramic base with heater and thermistor, hotend body, nozzle and silicone sock with three AI markers, together with the toolhead's cutter, cooling fans and part-cooling fan">
+      <text class="t-lg" x="20" y="28">Hotend and toolhead parts</text>
+      <rect class="d-surface2" x="40" y="60" width="330" height="60" rx="10"/><text class="t-sm t-c t-b" x="205" y="96">Toolhead housing</text>
+      <rect class="f-orange" x="86" y="130" width="40" height="24" rx="4"/><text class="t-xs" x="134" y="146">quick-release lever</text>
+      <rect class="f-red" x="90" y="164" width="120" height="30" rx="4"/><text class="t-xs t-c" x="150" y="184">ceramic base: heater + thermistor</text>
+      <rect class="d-metal" x="110" y="204" width="80" height="50" rx="4"/><text class="t-xs t-c" x="150" y="234">hotend</text>
+      <rect class="f-yellow" x="100" y="262" width="100" height="46" rx="8"/><text class="t-xs t-c" x="150" y="283">silicone sock</text><text class="t-xs t-c" x="150" y="297">3 yellow AI markers</text>
+      <path class="d-metal2" d="M125 308 l25 40 l25 -40 z"/>
+      <text class="t-xs" x="200" y="334">nozzle (0.4 mm hardened steel pre-installed)</text>
+      <path class="d-thin" d="M205 292 H300"/><text class="t-xs" x="306" y="296">sock also insulates; AI sees the markers</text>
+      <rect class="f-blue" x="440" y="60" width="150" height="60" rx="8"/><text class="t-sm t-c t-b" x="515" y="86">Hotend fans (×2)</text><text class="t-xs t-c" x="515" y="104">left and right hotend</text>
+      <rect class="f-teal" x="610" y="60" width="150" height="60" rx="8"/><text class="t-sm t-c t-b" x="685" y="86">Part-cooling fan</text><text class="t-xs t-c" x="685" y="104">front cover</text>
+      <rect class="f-gray" x="440" y="140" width="150" height="60" rx="8"/><text class="t-sm t-c t-b" x="515" y="166">Servo extruder</text><text class="t-xs t-c" x="515" y="184">PMSM, hardened gears</text>
+      <rect class="f-red" x="610" y="140" width="150" height="60" rx="8"/><text class="t-sm t-c t-b" x="685" y="166">Filament cutters</text><text class="t-xs t-c" x="685" y="184">one per side</text>
+      <rect class="f-purple" x="440" y="220" width="150" height="60" rx="8"/><text class="t-sm t-c t-b" x="515" y="246">Switch lever</text><text class="t-xs t-c" x="515" y="264">taps the push block</text>
+      <rect class="f-green" x="610" y="220" width="150" height="60" rx="8"/><text class="t-sm t-c t-b" x="685" y="246">Toolhead camera</text><text class="t-xs t-c" x="685" y="264">1600 × 1200</text>
+      <rect class="f-pink" x="440" y="300" width="320" height="64" rx="8"/><text class="t-sm t-c t-b" x="600" y="326">Flow blocker</text><text class="t-xs t-c" x="600" y="346">covers the idle nozzle to stop ooze; swung by gears</text>
+      <path class="d-thin" d="M210 179 H260 M190 229 H260"/>
+    </svg>
+    <figcaption><b>Figure 4.</b> Parts of the toolhead. Because the hotend has no wiring terminals, a left–right swap is mechanical: release the lever, change the hotend, relock.</figcaption>
+  </figure>
+
+  <div class="callout x2d"><span class="callout-title">Swapping left and right is a diagnostic tool</span>
+    <p>Because both hotends are identical, a clog can be located by swapping them: if the clog follows the hotend, it is in the hotend; if it stays on the same side, suspect the extruder or tube. After reinstalling a hotend, run <b>nozzle offset calibration</b> again so the printer knows where each tip sits.</p>
+  </div>
+
+  <h2 id="switch">🔄 The gear-and-trigger nozzle switch</h2>
+  <p>On a conventional tool changer a motor moves the tool. On the X2D there is no extra motor in the switch. The toolhead is already moving in X and Y, so Bambu uses that motion. A <b>lever</b> at the bottom of the toolhead is pushed against a <b>push block</b> mounted on the printer’s lining. A connecting rod and gear train then swing the <b>flow blocker</b> and raise or lower the hotends. The same action can be started from the touchscreen on the <i>Nozzle &amp; Extruder</i> page by choosing Left or Right (Aux). Bambu cites tests of more than a million switch cycles.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 400" role="img" aria-label="Four-step sequence of the nozzle switch: step one left nozzle printing with the right nozzle covered by the flow blocker; step two toolhead moves so the lever meets the push block; step three the lever pushes and the gear rotates the blocker and swaps the nozzle heights; step four right nozzle printing with the left nozzle covered">
+      <text class="t-lg" x="20" y="28">Switching from left to right</text>
+      <g>
+        <rect class="d-surface" x="20" y="50" width="185" height="300" rx="10"/>
+        <text class="t-sm t-b t-c" x="112" y="76">1 · Left prints</text>
+        <rect class="d-surface2" x="55" y="100" width="110" height="46" rx="6"/>
+        <path class="d-metal2" d="M72 146 l12 40 l12 -40 z"/><path class="d-metal2" d="M118 150 l12 30 l12 -30 z" opacity=".5"/>
+        <rect class="f-yellow" x="104" y="188" width="52" height="8" rx="2"/>
+        <text class="t-xs t-c" x="84" y="212" >active</text><text class="t-xs t-c" x="134" y="212">blocked</text>
+        <rect class="d-plastic" x="50" y="250" width="120" height="8" rx="2"/>
+        <text class="t-xs t-c t-m" x="112" y="290">flow blocker covers</text><text class="t-xs t-c t-m" x="112" y="304">the right nozzle</text>
+      </g>
+      <g>
+        <rect class="d-surface" x="225" y="50" width="185" height="300" rx="10"/>
+        <text class="t-sm t-b t-c" x="317" y="76">2 · Move to block</text>
+        <rect class="d-surface2" x="255" y="100" width="110" height="46" rx="6"/>
+        <rect class="f-purple" x="355" y="110" width="12" height="26" rx="2"/>
+        <rect class="s-gray" x="385" y="104" width="16" height="40" rx="2"/>
+        <path class="k-purple arrow" d="M330 123 H378"/>
+        <text class="t-xs t-c t-m" x="317" y="290">toolhead drives to the</text><text class="t-xs t-c t-m" x="317" y="304">push block on the lining</text>
+        <text class="t-xs t-c" x="392" y="162">block</text><text class="t-xs t-c" x="340" y="162">lever</text>
+      </g>
+      <g>
+        <rect class="d-surface" x="430" y="50" width="185" height="300" rx="10"/>
+        <text class="t-sm t-b t-c" x="522" y="76">3 · Lever pushes</text>
+        <rect class="d-surface2" x="460" y="100" width="110" height="46" rx="6"/>
+        <circle class="f-orange" cx="515" cy="190" r="22"/><circle class="d-ink" cx="515" cy="190" r="6"/>
+        <path class="k-orange arrow" d="M540 172 A28 28 0 0 1 540 208"/>
+        <path class="d-metal2" d="M480 146 l12 40 l12 -40 z" opacity=".5"/><path class="d-metal2" d="M530 146 l12 34 l12 -34 z"/>
+        <text class="t-xs t-c t-m" x="522" y="290">gear and rod swing the</text><text class="t-xs t-c t-m" x="522" y="304">blocker; heights exchange</text>
+      </g>
+      <g>
+        <rect class="d-surface" x="635" y="50" width="165" height="300" rx="10"/>
+        <text class="t-sm t-b t-c" x="717" y="76">4 · Right prints</text>
+        <rect class="d-surface2" x="660" y="100" width="110" height="46" rx="6"/>
+        <path class="d-metal2" d="M677 146 l12 30 l12 -30 z" opacity=".5"/><path class="d-metal2" d="M723 146 l12 40 l12 -40 z"/>
+        <rect class="f-yellow" x="672" y="180" width="46" height="8" rx="2"/>
+        <rect class="d-plastic" x="655" y="250" width="115" height="8" rx="2"/>
+        <text class="t-xs t-c t-m" x="717" y="290">blocker now covers</text><text class="t-xs t-c t-m" x="717" y="304">the left nozzle</text>
+      </g>
+      <path class="d-ink arrow" d="M206 200 H224"/><path class="d-ink arrow" d="M411 200 H429"/><path class="d-ink arrow" d="M616 200 H634"/>
+      <text class="t-xs t-m t-c" x="410" y="380">Schematic only: the real mechanism is a lever, a connecting rod and a gear train inside the toolhead.</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> The sequence of a switch. The same action in reverse brings the left nozzle back. Because the right nozzle’s print area is 4 mm shorter, the blocker and the lowered auxiliary hotend are the reason.</figcaption>
+  </figure>
+
+  <div class="callout fact"><span class="callout-title">Why a blocker at all?</span>
+    <p>A hot nozzle full of molten plastic drips slowly even when nothing is being pushed. If the idle nozzle hung just 1 mm lower than the active one, it could scrape the print. The blocker and the height difference together keep the idle nozzle out of the work and keep any ooze off the model.</p>
+  </div>
+
+  <h2 id="extruders">⚙️ The two extruders and the filament routes</h2>
+  <h3>Main extruder: a servo (PMSM) in the toolhead</h3>
+  <p>The left hotend is fed by a <b>direct-drive extruder</b> inside the toolhead. Its motor is a <b>PMSM</b> (permanent-magnet synchronous motor) run as a servo: the controller reads the motor’s position continuously and corrects it, instead of just counting steps. Because the load on the motor shows up as electrical resistance, the printer can detect filament <b>tangles</b>, and together with the buffer it also understands when the filament is being held back. The gears are hardened steel, which matters for abrasive fiber-filled plastics. The brief mentions a fast servo sampling loop (about 20 kHz); treat that figure as vendor marketing and rely on the observable behavior instead.</p>
+
+  <h3>Auxiliary extruder: a stepper on the rear panel</h3>
+  <p>The right hotend is fed by the <b>auxiliary extruder</b>, a stepper-driven extruder mounted at the top of the rear panel. Filament leaves it through a <b>525 mm white PTFE tube</b> to the auxiliary hotend inlet. A second, <b>555 mm gray PTFE tube</b>, runs from the chamber inlet to the main hotend inlet. Each tube is held by a <b>locking nut with a washer</b>; when the nut is tight it “clicks”, and it can be tightened with the 8 mm open-end wrench from the toolbox. The auxiliary path has two sensors: one in the auxiliary extruder and one in the right side of the toolhead. The touchscreen shows three states: filament in the aux extruder, in the toolhead, or both.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 440" role="img" aria-label="Filament routes: AMS to the buffer, buffer upper port by the rear inlet to the main hotend through a 555 millimeter gray PTFE tube, buffer lower port to the auxiliary extruder and then through a 525 millimeter white PTFE tube to the auxiliary hotend">
+      <text class="t-lg" x="20" y="28">Where filament travels</text>
+      <rect class="f-teal" x="30" y="60" width="150" height="80" rx="10"/><text class="t t-b t-c" x="105" y="92">AMS 2 Pro</text><text class="t-xs t-c" x="105" y="112">four slots, rear hub</text>
+      <rect class="f-purple" x="260" y="60" width="150" height="80" rx="10"/><text class="t t-b t-c" x="335" y="88">Buffer</text><text class="t-xs t-c" x="335" y="106">upper inlet → main</text><text class="t-xs t-c" x="335" y="120">lower inlet → aux</text>
+      <path class="k-teal" d="M180 100 H260"/>
+      <text class="t-xs t-m" x="188" y="92">PTFE</text>
+      <rect class="f-blue" x="560" y="60" width="220" height="80" rx="10"/><text class="t t-b t-c" x="670" y="88">Chamber inlet</text><text class="t-xs t-c" x="670" y="108">→ 555 mm gray PTFE</text><text class="t-xs t-c" x="670" y="122">→ main hotend inlet</text>
+      <path class="k-blue arrow" d="M410 80 H560"/>
+      <text class="t-xs c-blue" x="440" y="72">upper port: left / main</text>
+      <rect class="f-orange" x="560" y="170" width="220" height="80" rx="10"/><text class="t t-b t-c" x="670" y="198">Aux extruder</text><text class="t-xs t-c" x="670" y="218">stepper, rear panel, top</text><text class="t-xs t-c" x="670" y="232">2 sensors in the aux path</text>
+      <path class="k-orange arrow" d="M335 140 V210 H560"/>
+      <text class="t-xs c-orange" x="345" y="200">lower port: right / aux</text>
+      <rect class="f-gray" x="560" y="290" width="220" height="60" rx="10"/><text class="t t-b t-c" x="670" y="316">Toolhead</text><text class="t-xs t-c" x="670" y="334">left hotend + right hotend</text>
+      <path class="k-orange arrow" d="M780 210 H800 V320 H780"/>
+      <text class="t-xs c-orange" x="640" y="272">525 mm white PTFE to aux hotend</text>
+      <path class="k-blue arrow" d="M670 140 V290"/>
+      <text class="t-xs t-m" x="30" y="190">Standard: one AMS 2 Pro to the upper</text>
+      <text class="t-xs t-m" x="30" y="204">(left/main) inlet, a second AMS to</text>
+      <text class="t-xs t-m" x="30" y="218">the lower (right/aux) inlet.</text>
+      <text class="t-xs t-m" x="30" y="248">With more than two AMS units, or two</text>
+      <text class="t-xs t-m" x="30" y="262">AMS plus an external spool, use the</text>
+      <text class="t-xs t-m" x="30" y="276">4-in-1 PTFE adapter between AMS and buffer.</text>
+      <rect class="f-yellow" x="30" y="310" width="300" height="90" rx="8"/>
+      <text class="t-sm t-b" x="44" y="334">External spool (left)</text>
+      <text class="t-xs" x="44" y="354">Spool holder base is preinstalled at the left.</text>
+      <text class="t-xs" x="44" y="370">A short PTFE (about 175 mm for TPU) runs to the</text>
+      <text class="t-xs" x="44" y="386">left extruder inlet.</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> Two inlets, two destinations. The AMS never connects straight to the nozzle: the buffer is always in the path, and the upper and lower buffer inlets decide which hotend a given AMS feeds, unless the optional filament track switch is installed.</figcaption>
+  </figure>
+
+  <div class="callout warn"><span class="callout-title">Never reverse the adapter</span>
+    <p>The 4-in-1 PTFE adapter (FAZ013-N according to the brief) belongs <b>between the AMS and the buffer</b> and must not be installed the other way round. It adds friction, so avoid it with only two AMS units. A standard white adapter is used; the H2C adapter II is a different part.</p>
+  </div>
+
+  <h2 id="buffer">🧷 The filament buffer</h2>
+  <p>Between the AMS and the printer sits the <b>buffer</b>, a small module with a spring-and-magnet slider and a Hall sensor. When the extruder pulls filament faster than the AMS can supply it, the slider moves, and the AMS speeds up. When the filament is slack, the slider returns and the AMS slows down. A jam or a spool tangle makes the slider stay at an extreme position, so the buffer also detects <b>tangles and runouts</b>. The buffer has <b>two filament inlets</b> (upper for the left extruder, lower for the right extruder) and <b>two 6-pin ports</b>. According to Bambu’s FAQ, one port is used for the AMS data cable and the other for the exhaust fan cable; the AMS units themselves are daisy-chained through their own two rear 6-pin ports. If you do not use the exhaust fan, either port may be used.</p>
+
+  <div class="callout x2d"><span class="callout-title">Why the AMS 2 Pro needs a buffer</span>
+    <p>The AMS 2 Pro feeds in two stages: a feeder motor in each slot and a brushless assist motor in the hub. With two motors in series, a buffer is the shock absorber that keeps them in step with the extruder. This is why the buffer is part of every X2D set-up, not an optional extra.</p>
+  </div>
+
+  <h2 id="airflow">🌀 Air: fans, vents and filter</h2>
+  <p>The cabinet contains five types of air movers: the <b>part-cooling fan</b> in the toolhead cover, the <b>two hotend-cooling fans</b>, the <b>chamber heating fan</b> on the left, the <b>filtration fan</b> on the right and the <b>exhaust fan</b> on the rear. A chamber thermistor, the door sensor and the material profile decide which of them run. In <i>strong-cooling</i> mode, used for PLA and TPU, the left and right auxiliary part-cooling fans blow on the part, the right fan draws external air, and the rear fan exhausts. In <i>heating</i> mode, used for ABS, ASA, PC and PA, the left heating fan and the right filtration fan recirculate the same air through the filter and heater.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 400" role="img" aria-label="Top-down airflow diagram: in cooling mode the right fan draws outside air through the side intake into the chamber and exhausts at the rear; in heating mode the left heating fan and right filtration fan circulate air in a loop through the PTC heater and the filter">
+      <text class="t-lg" x="20" y="28">Top-down airflow</text>
+      <rect class="d-surface" x="30" y="50" width="360" height="300" rx="12"/><text class="t-sm t-b t-c" x="210" y="76">Cooling mode (PLA, TPU)</text>
+      <rect class="f-blue" x="60" y="96" width="300" height="220" rx="8" opacity=".2"/>
+      <rect class="d-plastic" x="170" y="190" width="80" height="50" rx="4"/>
+      <rect class="f-green" x="342" y="130" width="18" height="60" rx="3"/><text class="t-xs t-r" x="334" y="164">filter / intake</text>
+      <rect class="f-gray" x="132" y="304" width="156" height="16" rx="3"/><text class="t-xs t-c" x="210" y="334">rear exhaust fan</text>
+      <path class="k-blue arrow" d="M420 160 H362"/><text class="t-xs c-blue" x="394" y="150">outside</text>
+      <path class="k-blue arrow" d="M340 160 C300 160 270 200 252 212"/>
+      <path class="k-orange arrow" d="M170 225 C120 250 150 290 190 304"/>
+      <path class="k-orange arrow" d="M230 304 V345"/>
+      <rect class="d-surface" x="430" y="50" width="360" height="300" rx="12"/><text class="t-sm t-b t-c" x="610" y="76">Heating mode (ABS, ASA, PC, PA)</text>
+      <rect class="f-orange" x="460" y="96" width="300" height="220" rx="8" opacity=".25"/>
+      <rect class="d-plastic" x="570" y="190" width="80" height="50" rx="4"/>
+      <rect class="s-red" x="466" y="130" width="16" height="70" rx="3" opacity=".8"/><text class="t-xs" x="488" y="168">PTC + fan</text>
+      <rect class="f-green" x="738" y="130" width="18" height="70" rx="3"/><text class="t-xs t-r" x="732" y="168">filter fan</text>
+      <path class="k-red arrow" d="M486 150 C540 120 690 120 736 150"/>
+      <path class="k-orange arrow" d="M736 190 C690 260 540 260 486 190"/>
+      <text class="t-xs t-c t-m" x="610" y="338">exhaust closed or minimal; bed lowers to clear the vent</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> A top-down view of the two airflow modes. Positions are schematic; the chamber heater and left fan are on the left side, and the filtration fan and filter are on the right side, as described by Bambu.</figcaption>
+  </figure>
+
+  <h2 id="bed">🛏️ Heatbed, plate and calibration hardware</h2>
+  <p>The <b>heatbed</b> heats up to 120 °C and carries the textured PEI plate on <b>magnets</b>, with a positioning block so the plate always sits in the same place. Around the bed are several items you will not see on a basic printer: a <b>marker</b> on the magnet surface for camera calibration, a <b>coil</b> behind the bed that the nozzle offset calibration reads with an eddy-current sensor, a <b>wiper steel sheet</b> on which the nozzles are scraped, and a <b>calibration sticker</b> for the toolhead camera. Foreign-object detection under the bed is available from firmware 01.01.00.00. The plate accepts Bambu’s current 256 × 256 mm plates; first-generation plates are not recognized, so choose “Ignore” or disable plate detection if you insist on using one.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 800 360" role="img" aria-label="Layered cross-section of the heated bed: heatbed with heating area and sensors, magnets, textured PEI plate, with labels for nozzle offset calibration coil, wiper steel sheet, positioning block and calibration sticker">
+      <text class="t-lg" x="20" y="28">Heatbed stack and nearby calibration parts</text>
+      <rect class="d-plastic" x="120" y="110" width="400" height="14" rx="3"/><text class="t-sm" x="540" y="122">Textured PEI plate (both sides usable)</text>
+      <rect class="d-surface2" x="120" y="124" width="400" height="18" rx="3"/><text class="t-sm" x="540" y="138">Magnet layer</text>
+      <rect class="f-red" x="120" y="142" width="400" height="30" rx="3"/><text class="t-sm" x="540" y="162">Heating area (up to 120 °C)</text>
+      <rect class="f-gray" x="120" y="172" width="400" height="22" rx="3"/><text class="t-sm" x="540" y="188">Carrier + foreign-object sensing (below)</text>
+      <path class="d-ink" d="M200 194 V300 M320 194 V300 M440 194 V300"/>
+      <text class="t-xs t-m t-c" x="320" y="318">Z lead screws and rods</text>
+      <rect class="f-blue" x="60" y="104" width="46" height="24" rx="3"/><text class="t-xs t-c" x="83" y="148">locating</text><text class="t-xs t-c" x="83" y="160">block</text>
+      <rect class="f-purple" x="120" y="206" width="90" height="26" rx="3"/><text class="t-xs t-c" x="165" y="223">offset coil</text>
+      <rect class="f-yellow" x="470" y="206" width="90" height="26" rx="3"/><text class="t-xs t-c" x="515" y="223">wiper sheet</text>
+      <rect class="f-green" x="280" y="206" width="90" height="26" rx="3"/><text class="t-xs t-c" x="325" y="223">sticker</text>
+      <text class="t-xs t-m" x="40" y="260">Eddy-current sensor (in the toolhead) reads the coil to find each nozzle tip’s height.</text>
+      <text class="t-xs t-m" x="40" y="276">The sticker and silk-screen marker give the cameras fixed reference points.</text>
+      <text class="t-xs t-m" x="40" y="62">Positions on this stack are schematic: Bambu describes the parts but the exact layout may differ.</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> The bed stack. For PLA a Cool Plate-style temperature of 35–45 °C is typical; ABS and PC typically use 100–110 °C, and the heatbed can go to 120 °C.</figcaption>
+  </figure>
+
+  <div class="callout tip"><span class="callout-title">Plate care</span>
+    <p>If you touch the plate, finger oils reduce adhesion. Wash it with warm water and dish soap, dry it and avoid touching the printing area. For TPU, textured PEI needs no glue stick; other plates may need it.</p>
+  </div>
+
+  <h2 id="motion">🏁 Motion system</h2>
+  <p>Two stepper motors at the rear drive a CoreXY belt system. Both motors turn together to move the toolhead diagonally and in opposite directions to move it straight. The X-axis is a <b>hollow steel rod</b>. For Z, <b>three lead screws</b> sit at front left, front right and rear middle and are turned together by one Z motor through a belt, so the bed rises level. A semi-automatic belt tensioner uses a spring at the upper rear to keep belt tension within range. The printer lets you tune the motion in the <i>Calibration</i> menu: motor noise cancellation, vibration compensation and automatic bed leveling are the three you will run most often, especially after lubrication or a transport.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 800 380" role="img" aria-label="CoreXY top view with two motors at the rear, belts crossing to the toolhead, plus a Z diagram showing three lead screws linked by a belt to one Z motor">
+      <text class="t-lg" x="20" y="28">CoreXY (left) and the Z drive (right)</text>
+      <rect class="d-surface" x="30" y="50" width="340" height="300" rx="10"/>
+      <rect class="f-blue" x="44" y="60" width="40" height="36" rx="4"/><text class="t-xs t-c" x="64" y="82">M1</text>
+      <rect class="f-blue" x="316" y="60" width="40" height="36" rx="4"/><text class="t-xs t-c" x="336" y="82">M2</text>
+      <path class="k-red" d="M84 78 H316"/>
+      <path class="k-orange" d="M64 96 V330 H300 L150 160"/>
+      <path class="k-orange" d="M336 96 V330 H100 L250 160"/>
+      <rect class="d-surface2" x="62" y="190" width="256" height="10" rx="3"/>
+      <rect class="f-gray" x="170" y="176" width="40" height="38" rx="4"/><text class="t-xs t-c" x="190" y="200">head</text>
+      <text class="t-xs t-m t-c" x="200" y="344">belts crossing: both motors same direction = X, opposite = Y (conceptually)</text>
+      <rect class="d-surface" x="420" y="50" width="350" height="300" rx="10"/>
+      <circle class="d-surface2" cx="480" cy="110" r="22"/><text class="t-xs t-c" x="480" y="150">front L</text>
+      <circle class="d-surface2" cx="700" cy="110" r="22"/><text class="t-xs t-c" x="700" y="150">front R</text>
+      <circle class="d-surface2" cx="590" cy="240" r="22"/><text class="t-xs t-c" x="590" y="280">rear middle</text>
+      <path class="k-purple" d="M480 110 L700 110 L590 240 Z"/>
+      <rect class="f-purple" x="548" y="300" width="84" height="34" rx="4"/><text class="t-xs t-c" x="590" y="321">Z motor</text>
+      <path class="k-purple" d="M590 300 V262" />
+      <text class="t-xs t-m t-c" x="595" y="76">one belt links the three screws</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> Left: CoreXY, where two motors share the work of every move. Right: three lead screws form a triangle under the bed, so the bed stays flat as it rises. Both drawings are conceptual.</figcaption>
+  </figure>
+
+  <h3>Lubrication and the motion system</h3>
+  <p>Bambu’s periodic maintenance schedule depends on how much you print: for heavy use (more than five hours a day) lubricate the XY rods monthly and the Z axis every three months; for regular use (one to five hours a day), every two and four months; for low use, every three and five months. Use one or two drops of oil per 5 cm on linear shafts and grease on the lead screws and extruder gears. After lubricating, run motor noise cancellation, vibration compensation and automatic bed leveling. The full routine is on <a href="maintenance-and-troubleshooting.html">Maintenance &amp; troubleshooting</a>.</p>
+
+  <h2 id="cutters">✂️ Cutters, wiper, purge chute</h2>
+  <p>With two filaments always loaded, the printer must be able to cut and retract cleanly. The toolhead holds <b>two filament cutters</b>, one for each hotend. When the toolhead moves to the middle of the chamber, a <b>cutter stopper</b> extends from the rear so the cutter lever can press against it. Bambu advises checking the blades every 8–12 print rolls (6–10 with carbon- or glass-fiber filaments) and replacing a dull blade. The <b>purge wiper</b> uses a push plate and a receiving plate to sweep purged plastic into the <b>purge chute</b>. The <b>nozzle wiper</b> rubs the tip on the plate steel sheet for a rough wipe on a block and a fine wipe that scrapes 1–2 mm. Later units dropped the silicone wiper pad for the auxiliary nozzle because of an algorithm change; either version is fine.</p>
+
+  <h2 id="ports">🔌 Ports, screen and holders</h2>
+  <div class="grid cols-2">
+    <div class="card accent-blue"><span class="ico">📱</span><h3>Touchscreen</h3><p>5 inch, 1280 × 720. Left menu: Homepage, Controls, Filaments, Settings, HMS. Controls include air conditioning, speed, motion, nozzle and extruder, temperatures and light.</p></div>
+    <div class="card accent-green"><span class="ico">💾</span><h3>USB-A 2.0</h3><p>For FAT32 or exFAT drives (32–64 GB recommended; one drive only). Needed for video recording and log export; no drive is supplied. Internal timelapse storage has been possible since firmware 01.01.00.00.</p></div>
+    <div class="card accent-orange"><span class="ico">🔌</span><h3>Power inlet</h3><p>Check the voltage version. High voltage: 200–240 V, 1600 W at 220 V; low voltage: 100–120 V, 1100 W at 110 V. Standby draw is about 7–8 W.</p></div>
+    <div class="card accent-purple"><span class="ico">🧵</span><h3>6-pin ports</h3><p>On the buffer and on every AMS: data and power for AMS units and the exhaust fan. Use the newer 6-pin cable; the older cable is unstable for AMS 2 Pro.</p></div>
+    <div class="card accent-teal"><span class="ico">📶</span><h3>Wi-Fi</h3><p>Dual-band (2.4 GHz and 5 GHz). There is no wired Ethernet. Choose cloud mode or LAN Only mode.</p></div>
+    <div class="card accent-red"><span class="ico">🧰</span><h3>Spool holders</h3><p>An external spool holder base is preinstalled on the left. Use it for filaments that must not go through the AMS, such as TPU.</p></div>
+  </div>
+
+  <h2 id="vision-encoder">🎯 Vision Encoder (optional)</h2>
+  <p>The <b>Vision Encoder</b>, sold separately, is the accessory that enables the <b>motion accuracy calibration</b>. It works together with the toolhead camera to measure how well the toolhead really follows commanded positions. Bambu groups it with the calibration tools in the same menu as the nozzle offset and the high-precision nozzle offset. For everyday printing it is not necessary; it is for people who chase dimensional accuracy.</p>
+
+  <h2 id="swap">🛠️ Nozzle and hotend swap: the overview</h2>
+  <p>This is an overview, not a replacement for the step-by-step guide on the Bambu Lab wiki. The principle is the same for any size or material change:</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 220" role="img" aria-label="Six-step overview of swapping a hotend: heat and unload, cool and power off, open the quick-release lever, exchange the hotend, relock and reconnect, then recalibrate nozzle offset and update the nozzle setting">
+      <text class="t-lg" x="20" y="28">Hotend swap in six steps</text>
+      <rect class="f-red" x="20" y="50" width="120" height="110" rx="10"/><text class="t-sm t-b t-c" x="80" y="76">1 Unload</text><text class="t-xs t-c" x="80" y="98">heat, unload</text><text class="t-xs t-c" x="80" y="112">filament from</text><text class="t-xs t-c" x="80" y="126">that side</text>
+      <rect class="f-blue" x="148" y="50" width="120" height="110" rx="10"/><text class="t-sm t-b t-c" x="208" y="76">2 Safe</text><text class="t-xs t-c" x="208" y="98">power off,</text><text class="t-xs t-c" x="208" y="112">let it cool</text><text class="t-xs t-c" x="208" y="126">(or use gloves)</text>
+      <rect class="f-orange" x="276" y="50" width="120" height="110" rx="10"/><text class="t-sm t-b t-c" x="336" y="76">3 Release</text><text class="t-xs t-c" x="336" y="98">open the</text><text class="t-xs t-c" x="336" y="112">quick-release</text><text class="t-xs t-c" x="336" y="126">lever</text>
+      <rect class="f-purple" x="404" y="50" width="120" height="110" rx="10"/><text class="t-sm t-b t-c" x="464" y="76">4 Exchange</text><text class="t-xs t-c" x="464" y="98">remove the</text><text class="t-xs t-c" x="464" y="112">hotend, fit</text><text class="t-xs t-c" x="464" y="126">the other</text>
+      <rect class="f-green" x="532" y="50" width="120" height="110" rx="10"/><text class="t-sm t-b t-c" x="592" y="76">5 Lock</text><text class="t-xs t-c" x="592" y="98">relock lever,</text><text class="t-xs t-c" x="592" y="112">check PTFE</text><text class="t-xs t-c" x="592" y="126">and nut</text>
+      <rect class="f-teal" x="660" y="50" width="140" height="110" rx="10"/><text class="t-sm t-b t-c" x="730" y="76">6 Calibrate</text><text class="t-xs t-c" x="730" y="98">nozzle offset,</text><text class="t-xs t-c" x="730" y="112">set nozzle type</text><text class="t-xs t-c" x="730" y="126">on the screen</text>
+      <path class="d-ink arrow" d="M140 105 H146"/><path class="d-ink arrow" d="M268 105 H274"/><path class="d-ink arrow" d="M396 105 H402"/><path class="d-ink arrow" d="M524 105 H530"/><path class="d-ink arrow" d="M652 105 H658"/>
+      <text class="t-xs t-m" x="20" y="190">Order of steps is conceptual; follow the wiki. Hot nozzles burn: wear gloves and never use bare fingers.</text>
+    </svg>
+    <figcaption><b>Figure 10.</b> A generic swap sequence for hotends, derived from how Bambu describes the quick-release design. Always recalibrate the nozzle offset afterwards.</figcaption>
+  </figure>
+  <div class="callout danger"><span class="callout-title">Heat and gloves</span>
+    <p>Nozzles reach 300 °C. If you must remove plastic from a hot nozzle, use the printer’s <b>Heating Base Maintenance Mode</b> and protect your hands. Do not touch the hot tip, and do not put a cold tool into molten plastic and then pull it by hand.</p>
+  </div>
+
+  <h2 id="parts">📦 Consumables and spare parts</h2>
+  <p>The box includes a spare 0.4 mm hardened-steel hotend, a silicone sock, left and right filament cutters, an unclogging pin, a nozzle wiping pad, a scraper blade with screws, a PTFE locking nut, two Allen keys (H1.5 and H2.0), an 8 mm open-end wrench, a flow blocker, lubricating oil and grease, and two PTFE tubes. Printed items are also built in: you can print the scraper from a model stored on the printer. Here is a short list of what wears out and when.</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Part</th><th>What it does</th><th>Replace when</th><th>In the box?</th></tr></thead>
+    <tbody>
+      <tr><td>Nozzle / hotend</td><td>Melts and places plastic</td><td>Worn, clogged, size or material change</td><td><span class="chip green">Spare 0.4 mm HS</span></td></tr>
+      <tr><td>Silicone sock</td><td>Insulates; carries AI markers</td><td>Torn or heavily soiled</td><td><span class="chip green">Yes</span></td></tr>
+      <tr><td>Filament cutters (L/R)</td><td>Cut filament for swaps</td><td>Dull; check every 8–12 rolls (6–10 CF/GF)</td><td><span class="chip green">Yes</span></td></tr>
+      <tr><td>PTFE tubes</td><td>Guide filament to the nozzles</td><td>Worn or the tube can move with the nut tight</td><td><span class="chip green">Two</span></td></tr>
+      <tr><td>PTFE locking nut</td><td>Holds the aux/main tubes</td><td>If damaged or loose</td><td><span class="chip green">Yes</span></td></tr>
+      <tr><td>Nozzle wiping pad / wiper</td><td>Cleans the nozzle tip</td><td>Worn or contaminated</td><td><span class="chip green">Yes</span></td></tr>
+      <tr><td>Scraper blade</td><td>Removes prints</td><td>When dull</td><td><span class="chip green">Yes</span></td></tr>
+      <tr><td>Carbon filter</td><td>Odors and VOCs</td><td>When heavily contaminated</td><td><span class="chip yellow">Installed; spares extra</span></td></tr>
+      <tr><td>Build plate</td><td>Print surface</td><td>Damaged or worn; keep a second one</td><td><span class="chip green">One textured PEI</span></td></tr>
+      <tr><td>Lubricant and grease</td><td>Rods, lead screws, gears</td><td>Per schedule</td><td><span class="chip green">Yes</span></td></tr>
+      <tr><td>Desiccant (AMS 2 Pro)</td><td>Keeps storage dry</td><td>When it no longer turns yellow to purple correctly</td><td><span class="chip yellow">Combo only</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout x2d"><span class="callout-title">Stock a small kit</span>
+    <p>For smooth operation, a typical owner keeps a spare 0.4 mm hotend, a second plate, a spare cutter set, spare PTFE tubing from Bambu, isopropyl alcohol for the chamber and a soft brush. These are suggestions based on the maintenance guides, not an official list.</p>
+  </div>
+
+  <h2 id="takeaways">✅ Key takeaways</h2>
+  <ul>
+    <li>The X2D carries two identical, interchangeable hotends; the left one has a servo extruder in the toolhead, the right one is fed by a stepper extruder on the rear panel through a 525 mm PTFE tube.</li>
+    <li>The nozzle switch uses the toolhead’s own motion: a lever hits a push block and gears swing the flow blocker. No additional motor is involved.</li>
+    <li>The buffer, with two inlets and two 6-pin ports, sits between the AMS and the printer; the 4-in-1 adapter goes between AMS and buffer, never the other way round.</li>
+    <li>Air handling has two modes: cooling for PLA and TPU, heating for ABS, ASA, PC and PA, with a three-stage filter.</li>
+    <li>Calibration hardware (coil, sticker, wiper sheet, cameras) is part of the bed area; run the relevant calibrations after maintenance.</li>
+    <li>Keep spare nozzles, cutters, PTFE and a second plate, and follow the lubrication schedule.</li>
+  </ul>
+
+</main>
+</body>
+</html>

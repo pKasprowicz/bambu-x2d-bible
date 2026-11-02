@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PLA, PETG &amp; everyday plastics · 3D Printing Compendium</title>
+  <meta name="description" content="In-depth guide to the PLA family (PLA+, silk, matte, tough, CF, aero, glow), PETG and PCTG: settings, tuning, annealing, troubleshooting, storage and myths.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="materials/everyday-plastics.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 2 · Materials</div>
+    <h1>PLA, PETG &amp; everyday plastics</h1>
+    <p class="lead">The three plastics behind most of the world’s 3D prints: how each one works, how to tune it, where it fails, and how to fix the usual problems.</p>
+    <div class="meta"><span class="badge beginner">Beginner</span><span class="badge time">⏱ 35 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <ul>
+      <li>What makes PLA, PETG and PCTG different, and which to pick for a job.</li>
+      <li>The whole PLA family (plus, tough, high-speed, matte, silk, marble, wood, CF, aero, glow, color-change) and the quirks of each.</li>
+      <li>Starting settings for temperature, cooling, retraction, speed and bed, and how to adjust them.</li>
+      <li>How to anneal PLA, fix material-specific faults, store spools and see through common myths.</li>
+    </ul>
+  </div>
+
+  <h2 id="why">🔰 Why these three</h2>
+  <p>If you print for a year, roughly nine parts in ten will probably be PLA or PETG. They print at moderate temperatures on almost any machine, do not need an enclosure, and are inexpensive. PCTG, a close cousin of PETG, is increasingly popular for tougher parts. Before engineering materials make sense (<a href="engineering-plastics.html">Engineering plastics</a>), you should be comfortable with these three. A good rule: <b>start with PLA, move to PETG when you need heat resistance up to about 70 °C, toughness or outdoor tolerance, and only then think about anything harder</b>. A comparison of every material is on the <a href="overview.html">overview page</a>.</p>
+
+  <div class="stats">
+    <div class="stat"><b>~55–60 °C</b><span>PLA softening (Tg)</span></div>
+    <div class="stat"><b>~70–80 °C</b><span>PETG / PCTG softening</span></div>
+    <div class="stat"><b>190–270 °C</b><span>nozzle range across the family</span></div>
+    <div class="stat"><b>0.3–0.5 %</b><span>typical shrinkage (low warping)</span></div>
+  </div>
+
+  <h2 id="pla">🟢 PLA: the friendly one</h2>
+  <p><b>PLA</b> (polylactic acid) is a polyester made from fermented plant sugars (corn, sugarcane, cassava). It melts at low temperature, shrinks very little, and adheres to almost any clean bed, so it is the easiest filament to print. It is rigid and takes sharp detail, and it comes in more colors and finishes than any other material. Its two weaknesses are low heat resistance (it softens at about 55–60 °C) and brittleness: it snaps rather than bends.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 290" role="img" aria-label="Flow from plants through sugar and lactic acid to PLA, filament and printed part, then three end-of-life paths: industrial compost, recycling, and landfill or nature">
+      <rect class="f-green" x="10" y="20" width="130" height="50" rx="10"/><text class="t t-c t-b" x="75" y="50">Plants</text>
+      <rect class="f-green" x="165" y="20" width="130" height="50" rx="10"/><text class="t t-c t-b" x="230" y="50">Sugar</text>
+      <rect class="f-green" x="320" y="20" width="130" height="50" rx="10"/><text class="t t-c t-b" x="385" y="44">Lactic acid</text><text class="t-xs t-c" x="385" y="60">fermentation</text>
+      <rect class="f-green" x="475" y="20" width="130" height="50" rx="10"/><text class="t t-c t-b" x="540" y="44">PLA pellets</text><text class="t-xs t-c" x="540" y="60">polymerization</text>
+      <rect class="f-green" x="630" y="20" width="140" height="50" rx="10"/><text class="t t-c t-b" x="700" y="44">Filament</text><text class="t-xs t-c" x="700" y="60">extruded + spooled</text>
+      <path class="d-ink arrow" d="M140 45 H162"/><path class="d-ink arrow" d="M295 45 H317"/><path class="d-ink arrow" d="M450 45 H472"/><path class="d-ink arrow" d="M605 45 H627"/>
+      <path class="d-ink" d="M700 70 V100 H390 V112"/><path class="d-ink arrow" d="M390 100 V112"/>
+      <rect class="f-blue" x="300" y="112" width="180" height="46" rx="10"/><text class="t t-c t-b" x="390" y="140">Printed part</text>
+      <path class="d-ink" d="M390 158 V176 M105 176 H675"/>
+      <path class="d-ink arrow" d="M105 176 V198"/><path class="d-ink arrow" d="M390 176 V198"/><path class="d-ink arrow" d="M675 176 V198"/>
+      <rect class="f-green" x="10" y="198" width="190" height="76" rx="10"/><text class="t-sm t-b t-c" x="105" y="220">Industrial compost</text><text class="t-xs t-c" x="105" y="238">58 °C+, humid, active microbes</text><text class="t-xs t-c" x="105" y="254">weeks to months</text>
+      <rect class="f-yellow" x="295" y="198" width="190" height="76" rx="10"/><text class="t-sm t-b t-c" x="390" y="220">Recycling</text><text class="t-xs t-c" x="390" y="238">technically possible</text><text class="t-xs t-c" x="390" y="254">rare for small print waste</text>
+      <rect class="f-red" x="580" y="198" width="190" height="76" rx="10"/><text class="t-sm t-b t-c" x="675" y="220">Landfill, garden, sea</text><text class="t-xs t-c" x="675" y="238">no suitable conditions:</text><text class="t-xs t-c" x="675" y="254">persists for years</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> PLA is bio-based, but bio-based is not the same as biodegradable at home. It breaks down quickly only in industrial composting, which most printers do not have access to.</figcaption>
+  </figure>
+
+  <h3>What PLA is good at, and what it is not</h3>
+  <div class="pros-cons">
+    <div class="pros"><h4>Strengths</h4><ul>
+      <li>Easiest to print; low nozzle and bed temperature</li>
+      <li>Very low warp; no enclosure required</li>
+      <li>Stiff, crisp detail and sharp corners</li>
+      <li>Huge range of colors and finishes</li>
+      <li>Inexpensive; plant-derived</li>
+      <li>Low odor while printing</li></ul></div>
+    <div class="cons"><h4>Limits</h4><ul>
+      <li>Softens around 55–60 °C: cars, kettles, radiators, direct sun</li>
+      <li>Brittle: snaps under impact or flexing</li>
+      <li>Creeps under constant load, even below Tg</li>
+      <li>Poor UV and outdoor lifetime (months, not years)</li>
+      <li>Weak to many solvents; hydrolyzes when wet and warm</li>
+      <li>Not suitable for sliding or wear</li></ul></div>
+  </div>
+
+  <h3>The creep problem (🔧 intermediate)</h3>
+  <p>Plastics under steady load deform slowly. That is <b>creep</b>. It speeds up dramatically as the temperature nears the glass transition. A PLA clip that holds a weight happily at 20 °C may stretch noticeably at 40 °C within days and give way at 55 °C within hours. Any part that carries a continuous load (springs, hooks, belt clamps, shelves, bike mounts) needs a material with a margin: PETG for modest load, ABS/ASA, nylon or CF-composites for more.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 320" role="img" aria-label="Illustrative chart of deformation over time for a loaded PLA part at three temperatures: nearly flat at 20 degrees, slowly rising at 40, and rapidly failing at 55">
+      <path class="d-ink" d="M80 20 V270 H720"/>
+      <path class="d-grid" d="M80 70 H720 M80 120 H720 M80 170 H720 M80 220 H720"/>
+      <text class="t-sm" x="30" y="190" transform="rotate(-90 30 190)">Deformation under constant load →</text>
+      <text class="t-sm t-c" x="400" y="305">Time under load →  (hours · days · months)</text>
+      <path class="k-blue" d="M80 250 C200 245 400 240 700 232"/>
+      <path class="k-orange" d="M80 248 C200 235 350 205 480 165 S650 110 700 100"/>
+      <path class="k-red" d="M80 245 C140 220 190 160 250 100 S300 40 330 28"/>
+      <circle class="s-red" cx="330" cy="28" r="6"/>
+      <text class="t-sm c-red" x="342" y="32">sag / failure</text>
+      <text class="t-sm c-blue t-r" x="715" y="222">20 °C: barely moves</text>
+      <text class="t-sm c-orange" x="520" y="132">40 °C: slow stretch</text>
+      <text class="t-sm c-red" x="116" y="150">55 °C</text>
+      <text class="t-xs" x="480" y="40">Illustrative shape, not measured data.</text>
+      <path class="d-dash" d="M120 40 V270"/><path class="d-dash" d="M420 40 V270"/>
+      <text class="t-xs t-c" x="120" y="284">hours</text><text class="t-xs t-c" x="420" y="284">weeks</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> Creep curves for a loaded PLA bracket (schematic). The same load that is harmless at room temperature can destroy the part in hot weather. Warm environments multiply creep much faster than they reduce strength.</figcaption>
+  </figure>
+
+  <h2 id="pla-variants">🧬 The PLA family</h2>
+  <p>“PLA” on a spool is rarely the plain polymer. Manufacturers blend in modifiers, fillers and pigments to give different looks and behaviors. Think of the base polymer as a canvas: the additive determines the quirk.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 330" role="img" aria-label="Map of PLA variants around a central PLA base: plus, tough, high-speed, matte, silk, marble, wood-lite, carbon fiber, aero foaming, glow and color-change, each with its main additive">
+      <path class="d-mute" d="M100 85 L330 128 M285 85 L350 128 M470 85 L410 128 M655 85 L440 128"/>
+      <path class="d-mute" d="M80 245 L330 190 M230 245 L355 190 M380 245 L380 190 M530 245 L405 190 M680 245 L440 190"/>
+      <path class="d-mute" d="M170 160 H300 M590 160 H460"/>
+      <rect class="f-green" x="300" y="128" width="160" height="62" rx="12"/><text class="t-lg t-c" x="380" y="154">PLA base</text><text class="t-xs t-c" x="380" y="172">polylactic acid</text>
+      <rect class="f-blue" x="15" y="20" width="170" height="65" rx="10"/><text class="t t-c t-b" x="100" y="44">PLA+</text><text class="t-xs t-c" x="100" y="62">small impact modifier</text><text class="t-xs t-c" x="100" y="76">less brittle</text>
+      <rect class="f-blue" x="200" y="20" width="170" height="65" rx="10"/><text class="t t-c t-b" x="285" y="44">Tough PLA</text><text class="t-xs t-c" x="285" y="62">strong rubber modifier</text><text class="t-xs t-c" x="285" y="76">bends before it breaks</text>
+      <rect class="f-orange" x="385" y="20" width="170" height="65" rx="10"/><text class="t t-c t-b" x="470" y="44">High-speed PLA</text><text class="t-xs t-c" x="470" y="62">flow aid, fast crystal</text><text class="t-xs t-c" x="470" y="76">for 300+ mm/s</text>
+      <rect class="f-purple" x="570" y="20" width="170" height="65" rx="10"/><text class="t t-c t-b" x="655" y="44">Matte PLA</text><text class="t-xs t-c" x="655" y="62">mineral filler</text><text class="t-xs t-c" x="655" y="76">hides layer lines</text>
+      <rect class="f-pink" x="10" y="245" width="140" height="70" rx="10"/><text class="t t-c t-b" x="80" y="270">Silk</text><text class="t-xs t-c" x="80" y="288">gloss modifier</text><text class="t-xs t-c" x="80" y="302">metallic sheen</text>
+      <rect class="f-purple" x="160" y="245" width="140" height="70" rx="10"/><text class="t t-c t-b" x="230" y="270">Marble / stone</text><text class="t-xs t-c" x="230" y="288">fine mineral grains</text><text class="t-xs t-c" x="230" y="302">speckled look</text>
+      <rect class="f-yellow" x="310" y="245" width="140" height="70" rx="10"/><text class="t t-c t-b" x="380" y="270">Wood-lite</text><text class="t-xs t-c" x="380" y="288">10–30 % wood fiber</text><text class="t-xs t-c" x="380" y="302">low temp, clog risk</text>
+      <rect class="f-gray" x="460" y="245" width="140" height="70" rx="10"/><text class="t t-c t-b" x="530" y="270">PLA-CF</text><text class="t-xs t-c" x="530" y="288">chopped carbon fiber</text><text class="t-xs t-c" x="530" y="302">hardened nozzle</text>
+      <rect class="f-teal" x="610" y="245" width="140" height="70" rx="10"/><text class="t t-c t-b" x="680" y="270">Aero / foaming</text><text class="t-xs t-c" x="680" y="288">expands when hot</text><text class="t-xs t-c" x="680" y="302">about half the weight</text>
+      <rect class="f-yellow" x="10" y="128" width="160" height="64" rx="10"/><text class="t t-c t-b" x="90" y="154">Glow</text><text class="t-xs t-c" x="90" y="172">phosphor pigment</text><text class="t-xs t-c" x="90" y="184">abrasive</text>
+      <rect class="f-pink" x="590" y="128" width="160" height="64" rx="10"/><text class="t t-c t-b" x="670" y="154">Color-change</text><text class="t-xs t-c" x="670" y="172">thermo- or photochromic</text><text class="t-xs t-c" x="670" y="184">pigment</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> Each PLA variant adds one idea to the same base polymer. The base’s weakness (low Tg) is shared by all, except where fillers or annealing help a little.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Variant</th><th>What it is</th><th>Typical nozzle</th><th>Behavior and quirks</th><th>Best for</th></tr></thead>
+    <tbody>
+      <tr><td><b>PLA (basic)</b></td><td>Plain PLA with pigment</td><td>200–225 °C</td><td>Reference material; extremely forgiving.</td><td>Everything first</td></tr>
+      <tr><td><b>PLA+</b></td><td>PLA with a modest toughener</td><td>205–230 °C</td><td>Better layer bond, less brittle; marginally hotter and stringier. “+” is not a standard: brands differ.</td><td>Functional desk parts, clips</td></tr>
+      <tr><td><b>Tough PLA</b></td><td>PLA with a stronger impact modifier</td><td>210–235 °C</td><td>Bends before breaking; lower stiffness; higher friction; may need a slightly slower print.</td><td>Snap fits, hinges, housings</td></tr>
+      <tr><td><b>High-speed PLA</b></td><td>PLA tuned for low melt viscosity</td><td>210–240 °C</td><td>Prints well at 250–500 mm/s on fast machines; needs strong cooling and a high-flow nozzle to pay off.</td><td>Large, fast prints</td></tr>
+      <tr><td><b>Matte PLA</b></td><td>Mineral-filled, low sheen</td><td>200–230 °C</td><td>Hides layer lines and small flaws; often slightly more brittle and stiffer; shows scratches and fingerprints.</td><td>Display, enclosures</td></tr>
+      <tr><td><b>Silk PLA</b></td><td>Glossy blend, metallic look</td><td>210–235 °C</td><td>Excellent shine. Runs best slower; bonds between layers worse, so weaker and more flexible; can string; poor overhang finish.</td><td>Vases, figurines, decor</td></tr>
+      <tr><td><b>Marble / stone</b></td><td>PLA with fine mineral particles</td><td>205–230 °C</td><td>Speckled look, sandable; mildly abrasive; avoid 0.2 mm nozzles; more brittle.</td><td>Statues, planters</td></tr>
+      <tr><td><b>Wood-lite</b></td><td>PLA with 10–30 % wood fiber</td><td>190–215 °C</td><td>Too hot burns the fibers (dark brown, smell); retracts poorly; a 0.4 mm nozzle can clog, so 0.6 mm is safer; varying temperature varies the shade.</td><td>Decor, sign letters</td></tr>
+      <tr><td><b>PLA-CF</b></td><td>Chopped carbon fiber</td><td>210–240 °C</td><td>Very stiff, matte, nearly zero warp, brittle across layers; fibers wear brass out, so use a hardened nozzle; dry it well.</td><td>Stiff brackets, drone frames</td></tr>
+      <tr><td><b>PLA Aero / foaming</b></td><td>PLA with a foaming agent</td><td>Hot: 230–260 °C</td><td>Temperature controls expansion and density; reduce flow to compensate; about half the weight; weak surface; not good with abrasion or tight bends in feeding paths.</td><td>RC planes, lightweight models</td></tr>
+      <tr><td><b>Glow-in-the-dark</b></td><td>PLA with phosphor</td><td>205–230 °C</td><td>Phosphor particles (strontium aluminate) abrade brass quickly; use a hardened nozzle; charge under bright light; glow lasts minutes to hours.</td><td>Signs, toys, night markers</td></tr>
+      <tr><td><b>Color-change</b></td><td>Thermochromic or photochromic pigment</td><td>200–225 °C</td><td>Thermochromic parts change color with temperature (often around 25–30 °C); photochromic parts react to UV. Pigments fade with use and UV; run at the lower end of the temperature range.</td><td>Novelty, mood items</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout x2d"><span class="callout-title">X2D note: PLA on the auxiliary nozzle</span>
+    <p>Bambu’s compatibility notes recommend official PLA, especially for the <b>auxiliary (right) nozzle</b>, which is fed through a longer path and prints at slightly lower quality than the main nozzle. Some PLA flavors (Aero, Glow, CF) are flagged as problematic with the filament track switch. Always check <a href="../x2d/filament-compatibility.html">Filament compatibility</a> before loading a new special PLA, and prefer the main nozzle for fine detail.</p>
+  </div>
+
+  <h2 id="tuning">🔧 Tuning: temperature, cooling, retraction, speed</h2>
+  <p>Each setting has one purpose. Think of them as five dials: <b>how hot</b>, <b>how cool</b>, <b>how far you pull back</b>, <b>how fast</b>, and <b>how much sticks to the bed</b>. Start from your slicer’s official or vendor profile for your spool; change one dial at a time.</p>
+
+  <h3>Temperature</h3>
+  <p>Hotter plastic flows better, bonds between layers more strongly and shines more. But it also strings more, sags on bridges, and degrades if left sitting. The sweet spot is the lowest temperature that still gives a strong bond at your speed. Higher speed needs higher temperature because the plastic has less time in the hot zone. Use a <a href="../techniques/calibration.html">temperature tower</a> for each new spool: a quick print with the nozzle temperature stepping down every few millimeters.</p>
+  <ul>
+    <li><b>PLA</b>: start at 210 °C; high-speed grades 220–240 °C; silk 215–230 °C; wood 195–210 °C.</li>
+    <li><b>PETG</b>: start at 240–250 °C; many brands print well at 235–255 °C.</li>
+    <li><b>PCTG</b>: start at 255 °C; range 245–275 °C.</li>
+  </ul>
+
+  <h3>Cooling</h3>
+  <p>PLA needs lots of cooling: it stays soft and sags if it is not chilled quickly. Use 80–100 % fan after the first layers, 100 % on bridges and overhangs, and minimum layer time of about 6–10 seconds on tiny parts. PETG wants less cooling: too much weakens layer bonds, but too little lets overhangs droop. Try 30–60 % with higher values on overhangs and bridges. PETG on tall thin features needs a short minimum layer time to stay stable.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 340" role="img" aria-label="Side view of a nozzle with two part-cooling ducts blowing air onto the freshly printed layer and an overhang, with fan percentage guidance for PLA, PETG and ABS">
+      <rect class="d-metal" x="320" y="30" width="80" height="50" rx="6"/>
+      <path class="d-hot" d="M326 80 H394 L372 130 H348 Z"/>
+      <path class="d-surface2" d="M180 60 H290 L320 140 H230 Z"/>
+      <path class="d-surface2" d="M540 60 H430 L400 140 H490 Z" transform="translate(0 0)"/>
+      <text class="t-xs t-c" x="235" y="98">fan duct</text><text class="t-xs t-c" x="485" y="98">fan duct</text>
+      <path class="k-blue arrow" d="M255 125 L335 168"/><path class="k-blue arrow" d="M450 125 L385 168"/>
+      <path class="k-blue arrow" d="M240 150 L300 185"/><path class="k-blue arrow" d="M470 150 L430 185"/>
+      <rect class="d-plastic" x="300" y="150" width="120" height="14"/>
+      <rect class="d-plastic" x="300" y="164" width="120" height="14"/>
+      <rect class="d-plastic" x="300" y="178" width="120" height="14"/>
+      <rect class="d-plastic" x="300" y="192" width="120" height="14"/>
+      <path class="d-plastic" d="M420 192 H470 V206 H420 Z"/><path class="d-plastic" d="M420 178 H445 V192 H420 Z"/>
+      <rect class="d-metal2" x="260" y="226" width="220" height="14" rx="3"/>
+      <rect class="d-plastic" x="300" y="206" width="120" height="20"/>
+      <text class="t-sm" x="486" y="203">overhang: needs the most airflow</text>
+      <text class="t-sm" x="90" y="190">freshly laid layer</text>
+      <path class="d-thin arrow" d="M200 186 H298"/>
+      <rect class="f-green" x="30" y="262" width="230" height="64" rx="10"/><text class="t-sm t-b" x="44" y="284">PLA: 80–100 %</text><text class="t-xs" x="44" y="302">freezes layers fast; sharp detail</text><text class="t-xs" x="44" y="316">too little: droop and blobs</text>
+      <rect class="f-blue" x="275" y="262" width="230" height="64" rx="10"/><text class="t-sm t-b" x="289" y="284">PETG: 30–60 %</text><text class="t-xs" x="289" y="302">balance bond vs. droop</text><text class="t-xs" x="289" y="316">too much: weak layers, delamination</text>
+      <rect class="f-red" x="520" y="262" width="230" height="64" rx="10"/><text class="t-sm t-b" x="534" y="284">ABS / ASA: 0–30 %</text><text class="t-xs" x="534" y="302">cool air breeds cracks and warp</text><text class="t-xs" x="534" y="316">see Engineering plastics</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> Part cooling is a trade-off between shape (fast freezing) and layer bond (staying warm). PLA sits at one extreme and ABS at the other; PETG is in the middle.</figcaption>
+  </figure>
+
+  <h3>Retraction and stringing</h3>
+  <p><b>Retraction</b> pulls the filament back a short distance before the nozzle travels across a gap, so that molten plastic does not ooze out and leave strings. Too little leaves hairs; too much grinds filament, causes clogs, or pulls air into the melt. On a direct-drive extruder (extruder gear on the toolhead), 0.4–1.0 mm is typical. On Bowden setups (the filament pushed through a long tube), 3–6 mm. PETG is stringier than PLA because it is stickier, so it benefits from a slightly longer retraction, slower travel acceleration and a cooler nozzle.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 290" role="img" aria-label="Three panels: extruding with filament pushed in, retraction pulling filament back, and travel where too little retraction leaves a plastic string between two features">
+      <rect class="d-surface" x="10" y="28" width="240" height="224" rx="10"/><rect class="d-surface" x="270" y="28" width="240" height="224" rx="10"/><rect class="d-surface" x="530" y="28" width="240" height="224" rx="10"/>
+      <text class="t-sm t-b t-c" x="130" y="22">1 · Extrude</text><text class="t-sm t-b t-c" x="390" y="22">2 · Retract</text><text class="t-sm t-b t-c" x="650" y="22">3 · Travel</text>
+      <rect class="d-plastic" x="122" y="40" width="16" height="64"/><path class="k-green arrow" d="M160 50 V92"/>
+      <rect class="d-metal" x="100" y="104" width="60" height="34" rx="4"/><path class="d-hot" d="M106 138 H154 L142 170 H118 Z"/>
+      <rect class="d-plastic" x="127" y="170" width="6" height="22"/>
+      <rect class="d-plastic" x="40" y="192" width="170" height="8" rx="3"/><rect class="d-metal2" x="30" y="200" width="190" height="14" rx="3"/>
+      <text class="t-xs t-c" x="130" y="236">melt flows, line is laid</text>
+      <rect class="d-plastic" x="382" y="40" width="16" height="64"/><path class="k-orange arrow" d="M420 92 V50"/>
+      <rect class="d-metal" x="360" y="104" width="60" height="34" rx="4"/><path class="d-hot" d="M366 138 H414 L402 170 H378 Z"/>
+      <rect class="d-surface" x="387" y="160" width="6" height="12"/>
+      <rect class="d-plastic" x="300" y="192" width="170" height="8" rx="3"/><rect class="d-metal2" x="290" y="200" width="190" height="14" rx="3"/>
+      <text class="t-xs t-c" x="390" y="236">filament pulled back: melt retreats</text>
+      <rect class="d-metal" x="650" y="104" width="60" height="34" rx="4"/><path class="d-hot" d="M656 138 H704 L692 170 H668 Z"/><rect class="d-plastic" x="672" y="40" width="16" height="64"/>
+      <rect class="d-plastic" x="552" y="192" width="40" height="8" rx="3"/><rect class="d-plastic" x="700" y="192" width="50" height="8" rx="3"/>
+      <path class="k-orange" d="M592 194 C620 180 650 184 680 176 L700 190" stroke-width="1.5"/>
+      <text class="t-xs t-c" x="650" y="236">string left if retraction too low</text>
+      <rect class="d-metal2" x="542" y="200" width="218" height="14" rx="3"/>
+      <text class="t-xs t-c" x="390" y="272">Direct drive 0.4–1.0 mm · Bowden 3–6 mm · PETG slightly more than PLA</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> The retract-and-travel cycle. If you still see hairs, first dry the filament and lower the temperature by 5–10 °C before increasing retraction.</figcaption>
+  </figure>
+
+  <h3>Speed and volumetric flow</h3>
+  <p>The real speed limit is not mm/s but <b>volumetric flow</b>, the volume of plastic the hotend can melt per second (mm³/s). It equals line width × layer height × print speed. A standard 0.4 mm hotend melts about 12–20 mm³/s of PLA; a high-flow hotend can reach 30 mm³/s or more. PETG melts more slowly and needs a lower limit, about 8–14 mm³/s. If you exceed your hotend’s limit, you get under-extrusion: gaps, rough walls, weak layers, sometimes extruder clicking. See <a href="../techniques/speed-cooling-quality.html">Speed, cooling &amp; quality</a>.</p>
+
+  <div class="bars"><div class="bars-title">Typical safe volumetric flow on a standard 0.4 mm hotend (mm³/s, ballpark)</div>
+    <div class="bar green"><span>High-speed PLA</span><i style="--v:80%"></i><em>20–28</em></div>
+    <div class="bar green"><span>PLA / PLA+</span><i style="--v:60%"></i><em>14–20</em></div>
+    <div class="bar teal"><span>PCTG</span><i style="--v:48%"></i><em>10–14</em></div>
+    <div class="bar blue"><span>PETG</span><i style="--v:46%"></i><em>9–14</em></div>
+    <div class="bar yellow"><span>Silk PLA</span><i style="--v:40%"></i><em>8–12</em></div>
+    <div class="bar red"><span>PLA Aero (foaming)</span><i style="--v:24%"></i><em>5–8</em></div>
+  </div>
+
+  <h3>Bed and first layer</h3>
+  <ul>
+    <li><b>PLA</b> sticks well to textured or smooth PEI at 55–60 °C; on glass use a glue stick or hairspray. Lower the bed to 45–50 °C if you see elephant foot (a flared first layer).</li>
+    <li><b>PETG</b> bonds very strongly to PEI at 70–85 °C: sometimes too strongly. Use a thin layer of glue stick as a release agent, or a textured plate, and let the bed cool before removal. Never print PETG directly on a smooth PEI sheet without a separator, as it can pull off bits of the coating.</li>
+    <li><b>PCTG</b> sticks like PETG; same release-layer trick.</li>
+  </ul>
+
+  <h2 id="petg">🔵 PETG: the all-rounder</h2>
+  <p><b>PETG</b> is PET (the plastic of drink bottles) with glycol added during polymerization. The “G” stops it from crystallizing, which makes it clear-capable, tough, easier to print than pure PET, and gives it a Tg of roughly 70–80 °C. It is more flexible than PLA, much more impact resistant, more resistant to water, many chemicals and UV, and its layers bond very well. The cost: it is stickier, so it strings and blobs, scratches easily, and it can bond so strongly to the bed that it damages it.</p>
+  <div class="grid cols-2">
+    <div class="card accent-blue"><h3>Where PETG shines</h3><p>Mechanical brackets, water-exposed parts, outdoor-light use, bottles and containers (non-food-contact, see myths), protective covers, tools, drone parts and anything that has to survive a drop.</p></div>
+    <div class="card accent-red"><h3>Where PETG disappoints</h3><p>Very fine detail and sharp overhangs, bridging, cosmetic surfaces that must not scratch, sliding bearings, sustained temperatures above 70 °C, and prints that need to be sanded to a polish (it gums up).</p></div>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 300" role="img" aria-label="Two cross-sections of PETG printed on a PEI plate: bare PEI where the first layer fuses too strongly and can tear the surface, and PEI with a thin glue stick release layer so the part pops off cleanly">
+      <text class="t-lg t-c" x="195" y="26">Bare PEI: bonds too well</text>
+      <rect class="d-metal" x="30" y="220" width="330" height="20" rx="4"/>
+      <rect class="d-surface2" x="30" y="206" width="330" height="14"/>
+      <rect class="d-plastic" x="60" y="150" width="270" height="56"/>
+      <path class="d-thin" d="M60 206 L75 198 L90 206 L105 198 L120 206 L135 198 L150 206 L165 198 L180 206 L195 198 L210 206 L225 198 L240 206 L255 198 L270 206 L285 198 L300 206 L315 198 L330 206"/>
+      <path class="k-red arrow" d="M195 140 V90"/><text class="t-sm c-red t-c" x="195" y="80">pull → coating tears</text>
+      <text class="t-xs t-c" x="195" y="262">PETG wets and locks into the textured surface</text>
+      <text class="t-xs t-c" x="195" y="278">at 70–85 °C bed temperature</text>
+      <text class="t-lg t-c" x="585" y="26">With glue stick: clean release</text>
+      <rect class="d-metal" x="420" y="220" width="330" height="20" rx="4"/>
+      <rect class="d-surface2" x="420" y="206" width="330" height="14"/>
+      <rect class="f-purple" x="420" y="200" width="330" height="6"/>
+      <rect class="d-plastic" x="450" y="144" width="270" height="56"/>
+      <path class="k-green arrow" d="M585 134 V90"/><text class="t-sm c-green t-c" x="585" y="80">pops off after cooling</text>
+      <text class="t-xs t-c" x="585" y="262">thin separating layer breaks the bond</text>
+      <text class="t-xs t-c" x="585" y="278">wash off with warm water</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> PETG and PEI love each other too much. A thin film of washable glue stick acts as a sacrificial release layer without hurting the first-layer grip.</figcaption>
+  </figure>
+
+  <h3>PETG tuning checklist</h3>
+  <ol class="steps">
+    <li><strong>Dry it</strong>Wet PETG gives cloudy, bubbly, stringy prints. Dry at 60–65 °C for 6–8 h if it hisses.</li>
+    <li><strong>Nozzle 240–250 °C, bed 70–80 °C</strong>Go hotter only for speed. Cooler reduces strings but weakens layers.</li>
+    <li><strong>Fan 30–60 %</strong>Higher on overhangs. For maximum strength, run 20–30 %.</li>
+    <li><strong>Z-offset slightly looser</strong>PETG likes a bit more room: squish it too hard and it forms blobs, ridges and nozzle-dragging “zits”. A first layer a hair higher than for PLA is usually best.</li>
+    <li><strong>Slow outer walls and keep flow stable</strong>Print outer walls at 60–100 mm/s, with coasting or pressure advance tuned (<a href="../techniques/calibration.html">Calibration playbook</a>).</li>
+    <li><strong>Wipe, don’t drag</strong>Use “wipe on retract” and avoid crossing walls so any blob does not collect on the nozzle and show up later as a lump.</li>
+    <li><strong>Use a glue-stick separator</strong>Particularly on smooth PEI.</li>
+  </ol>
+
+  <div class="callout warn"><span class="callout-title">The nozzle blob problem</span>
+    <p>Sticky PETG can build up a blob on the nozzle and later drag it across the part. Heat the nozzle to 250 °C and wipe it with a brass brush (hot!) before printing. In a dedicated case, a silicone nozzle sock and a long, slow final wipe at the end of each layer reduce it. Bambu’s own guide has more on <a href="https://wiki.bambulab.com" rel="noopener">hotend blob</a>.</p>
+  </div>
+
+  <div class="callout x2d"><span class="callout-title">X2D: PETG on which nozzle?</span>
+    <p>PETG is fully usable on the main hotend. On the auxiliary hotend, Bambu’s table lists PETG as printable but not a primary recommendation, because the auxiliary head moves up and down between jobs and its remote extrusion path gives slightly less precise response. Keep PETG on the main nozzle when quality matters, and use the auxiliary nozzle for supports or simple dual-material parts. Details: <a href="../x2d/dual-nozzle-printing.html">Dual-nozzle printing</a>.</p>
+  </div>
+
+  <h2 id="pctg">🔷 PCTG: PETG’s tougher cousin</h2>
+  <p><b>PCTG</b> is a copolyester similar to PETG, but with a different monomer balance (more cyclohexanedimethanol, “CHDM”, in the polymer). It is tougher, more shatter-resistant, optically clearer, and often prints at a slightly higher temperature. It has a bit lower stiffness than PETG, and handles chemical and impact stress well, which makes it a favorite for protective covers, tool handles and parts that get dropped. Its settings sit close to PETG’s, usually with a hotter nozzle (250–270 °C), and a hotter bed (70–90 °C); it dislikes drafts and also needs thorough drying.</p>
+  <p>PCTG strings a little more than PETG and gums on the nozzle more readily. If a PETG profile gives you blobs, expect them with PCTG too and raise the nozzle by 5 °C only when layer adhesion suffers.</p>
+
+  <h2 id="head-to-head">⚖️ PLA vs PETG head to head</h2>
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th>Property</th><th>PLA</th><th>PETG</th><th>PCTG</th></tr></thead>
+    <tbody>
+      <tr><td><b>Ease of printing</b></td><td><span class="chip green">Easiest</span></td><td><span class="chip yellow">Moderate</span></td><td><span class="chip yellow">Moderate</span></td></tr>
+      <tr><td><b>Nozzle temperature</b></td><td>200–225 °C</td><td>235–255 °C</td><td>245–270 °C</td></tr>
+      <tr><td><b>Bed temperature</b></td><td>55–60 °C</td><td>70–85 °C</td><td>70–90 °C</td></tr>
+      <tr><td><b>Part-cooling fan</b></td><td>80–100 %</td><td>30–60 %</td><td>20–50 %</td></tr>
+      <tr><td><b>Softening (Tg)</b></td><td>55–60 °C</td><td>70–80 °C</td><td>75–85 °C</td></tr>
+      <tr><td><b>Stiffness</b></td><td>High (rigid)</td><td>Medium</td><td>Medium-low</td></tr>
+      <tr><td><b>Impact toughness</b></td><td>Low (brittle)</td><td>Good</td><td>Very good</td></tr>
+      <tr><td><b>Layer adhesion</b></td><td>Good</td><td>Excellent</td><td>Excellent</td></tr>
+      <tr><td><b>Fine detail and overhangs</b></td><td>Best</td><td>Fair</td><td>Fair</td></tr>
+      <tr><td><b>Stringing tendency</b></td><td>Low</td><td>High</td><td>High</td></tr>
+      <tr><td><b>Moisture sensitivity</b></td><td>Moderate</td><td>Moderate to high</td><td>Moderate to high</td></tr>
+      <tr><td><b>Outdoor / UV</b></td><td>Poor</td><td>Fair</td><td>Fair</td></tr>
+      <tr><td><b>Water / chemical resistance</b></td><td>Fair</td><td>Good</td><td>Good</td></tr>
+      <tr><td><b>Shrinkage</b></td><td>≈0.3 %</td><td>≈0.4–0.5 %</td><td>≈0.4–0.6 %</td></tr>
+      <tr><td><b>Sanding and finishing</b></td><td>Easy</td><td>Gummy</td><td>Gummy</td></tr>
+      <tr><td><b>Typical price</b></td><td>$</td><td>$</td><td>$$</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="grid cols-2">
+    <div class="bars"><div class="bars-title">Toughness (index, higher = harder to break)</div>
+      <div class="bar red"><span>PLA</span><i style="--v:20%"></i><em>2</em></div>
+      <div class="bar yellow"><span>Tough PLA</span><i style="--v:45%"></i><em>4.5</em></div>
+      <div class="bar blue"><span>PETG</span><i style="--v:55%"></i><em>5.5</em></div>
+      <div class="bar teal"><span>PCTG</span><i style="--v:70%"></i><em>7</em></div>
+    </div>
+    <div class="bars"><div class="bars-title">Detail and overhang quality (index)</div>
+      <div class="bar green"><span>PLA</span><i style="--v:90%"></i><em>9</em></div>
+      <div class="bar green"><span>Matte PLA</span><i style="--v:85%"></i><em>8.5</em></div>
+      <div class="bar blue"><span>PETG</span><i style="--v:60%"></i><em>6</em></div>
+      <div class="bar teal"><span>PCTG</span><i style="--v:55%"></i><em>5.5</em></div>
+    </div>
+  </div>
+
+  <div class="callout tip"><span class="callout-title">Quick chooser</span>
+    <p>Ask: “Will it sit in a warm place, take a drop, get wet, or live outside?” If yes to any, take PETG or PCTG. If it is for looks, fit tests, jigs on your desk, or highly detailed models, PLA wins. If you simply cannot decide, print a small test in each.</p>
+  </div>
+
+  <h2 id="recipes">📋 Side-by-side print recipes</h2>
+  <p>Treat these as starting points for a 0.4 mm nozzle and 0.2 mm layers on a well-tuned enclosed printer; always overrule them with the profile for your specific spool.</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Setting</th><th>PLA</th><th>High-speed PLA</th><th>Silk PLA</th><th>PETG</th><th>PCTG</th></tr></thead>
+    <tbody>
+      <tr><td>Nozzle</td><td>210 °C</td><td>220–240 °C</td><td>220 °C</td><td>245 °C</td><td>255 °C</td></tr>
+      <tr><td>First layer nozzle</td><td>215 °C</td><td>225 °C</td><td>225 °C</td><td>245 °C</td><td>260 °C</td></tr>
+      <tr><td>Bed</td><td>55–60 °C</td><td>55–60 °C</td><td>55–60 °C</td><td>75 °C</td><td>80 °C</td></tr>
+      <tr><td>Fan (after layer 3)</td><td>100 %</td><td>100 %</td><td>100 %</td><td>40–60 %</td><td>30–50 %</td></tr>
+      <tr><td>Outer wall speed</td><td>100–250 mm/s</td><td>200–300 mm/s</td><td>60–100 mm/s</td><td>60–150 mm/s</td><td>60–120 mm/s</td></tr>
+      <tr><td>Max flow</td><td>16–20 mm³/s</td><td>22–28 mm³/s</td><td>8–12 mm³/s</td><td>9–14 mm³/s</td><td>9–13 mm³/s</td></tr>
+      <tr><td>Retraction (direct drive)</td><td>0.5–0.8 mm</td><td>0.5–0.8 mm</td><td>0.8–1.2 mm</td><td>0.8–1.2 mm</td><td>0.8–1.4 mm</td></tr>
+      <tr><td>Retraction speed</td><td>30–45 mm/s</td><td>30–45 mm/s</td><td>25–40 mm/s</td><td>25–40 mm/s</td><td>25–40 mm/s</td></tr>
+      <tr><td>Z-hop</td><td>Off / 0.2 mm</td><td>Off</td><td>0.2 mm</td><td>0.2–0.4 mm</td><td>0.2–0.4 mm</td></tr>
+      <tr><td>Min layer time</td><td>6–8 s</td><td>5–8 s</td><td>8 s</td><td>10 s</td><td>10 s</td></tr>
+      <tr><td>Chamber / enclosure</td><td>Cool; lid or door open</td><td>Cool</td><td>Cool</td><td>Optional</td><td>Optional</td></tr>
+      <tr><td>Drying</td><td>45–55 °C · 4–8 h</td><td>45–55 °C · 4–8 h</td><td>45–55 °C · 4–8 h</td><td>60–65 °C · 6–8 h</td><td>65 °C · 6–8 h</td></tr>
+      <tr><td>Bed adhesion aid</td><td>None / glue stick on glass</td><td>None</td><td>None</td><td>Glue stick separator</td><td>Glue stick separator</td></tr>
+      <tr><td>Supports</td><td>Normal; tree is good</td><td>Normal</td><td>Support rough overhangs</td><td>Support interface with gap 0.2–0.3 mm</td><td>Same as PETG</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout x2d"><span class="callout-title">X2D: keep PLA’s chamber cool</span>
+    <p>The X2D can heat its chamber up to 65 °C, which is fantastic for ABS, PC and nylon but harmful to PLA: heat creeping up the filament path can soften the filament before the nozzle and clog it. Leave chamber heating off for PLA and PETG (the printer’s intakes can flush the chamber with cool air for PLA-class materials), and see <a href="../x2d/settings-and-profiles.html">Bambu Studio settings &amp; profiles</a> for chamber-temperature options.</p>
+  </div>
+
+  <h2 id="annealing">🔥 Annealing PLA for heat resistance (🚀 advanced)</h2>
+  <p>Printed PLA is mostly amorphous because it cools too fast to crystallize. If you heat it above its glass transition (≈60 °C) and hold it, the chains rearrange into crystals. Crystalline PLA keeps its stiffness to much higher temperatures: parts that softened at 60 °C may hold shape at 90–110 °C. The price is shrinkage and distortion, typically 1–5 % in some or all directions, and the result is more brittle. Best results come from PLA grades made for annealing (often called HT-PLA or crystallizing PLA); ordinary PLA anneals less predictably.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 320" role="img" aria-label="Annealing profile: ramp the oven to about 100 degrees Celsius, hold for 30 to 60 minutes with the part packed in salt, then cool slowly in the closed oven, with the glass transition at about 60 degrees marked">
+      <path class="d-ink" d="M80 20 V270 H730"/>
+      <path class="d-grid" d="M80 90 H730 M80 130 H730 M80 170 H730 M80 210 H730"/>
+      <text class="t-sm" x="30" y="190" transform="rotate(-90 30 190)">Temperature (°C) →</text>
+      <text class="t-sm t-c" x="405" y="306">Time →</text>
+      <text class="t-xs t-r" x="74" y="94">100</text><text class="t-xs t-r" x="74" y="134">80</text><text class="t-xs t-r" x="74" y="174">60</text><text class="t-xs t-r" x="74" y="214">40</text><text class="t-xs t-r" x="74" y="254">20</text>
+      <path class="d-dash" d="M80 170 H730"/><text class="t-xs" x="640" y="164">Tg ≈ 60 °C</text>
+      <path class="k-red" d="M80 250 L170 90 H430 C500 90 540 190 640 240 L720 250"/>
+      <rect class="f-orange" x="170" y="60" width="260" height="30" rx="6" fill-opacity=".4"/>
+      <text class="t-sm t-b t-c" x="300" y="80">Hold 30–60 min at 90–110 °C</text>
+      <text class="t-sm t-c" x="125" y="140">1 · Ramp</text>
+      <text class="t-sm t-c" x="580" y="200">3 · Cool slowly</text><text class="t-xs t-c" x="580" y="216">oven off, door shut</text>
+      <text class="t-sm t-c" x="300" y="130">2 · Crystallize</text><text class="t-xs t-c" x="300" y="146">part packed in salt or sand</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> A typical annealing run. Packing the part supports its shape through the soft stage; a slow cool prevents internal stress from re-appearing.</figcaption>
+  </figure>
+
+  <ol class="steps">
+    <li><strong>Test on a spare print first</strong>Measure it before and after to learn the shrinkage in X, Y and Z for your brand.</li>
+    <li><strong>Pack it</strong>Put the part in a metal or glass tray, buried in fine salt or sand so thin features are supported.</li>
+    <li><strong>Heat gradually</strong>Preheat the oven to 90–100 °C (check it with a separate thermometer: kitchen ovens are inaccurate) and hold 30–60 minutes. Never exceed 110 °C; PLA softens badly.</li>
+    <li><strong>Cool slowly</strong>Turn the oven off and let it fall to room temperature with the door closed.</li>
+    <li><strong>Plan for shrinkage</strong>Scale critical dimensions in the model, or accept small distortion for non-fitted parts.</li>
+  </ol>
+  <div class="callout warn"><span class="callout-title">Not for food</span>
+    <p>Do not use a kitchen oven for anything that touches food afterwards without cleaning it thoroughly; ventilate during heating, since hot PLA can emit a faint sweet smell. Better: use a dedicated filament dryer or small hobby oven.</p>
+  </div>
+
+  <h2 id="troubleshooting">🩺 Troubleshooting per material</h2>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 330" role="img" aria-label="Flowchart for stringing and hairs: check for wet filament first, then lower the nozzle temperature, then increase retraction and reduce travel over open areas, then check hardware">
+      <rect class="f-orange" x="270" y="8" width="240" height="40" rx="10"/><text class="t t-c t-b" x="390" y="33">Strings, hairs or blobs</text>
+      <path class="d-ink" d="M390 48 V62 M100 62 H680"/>
+      <path class="d-ink arrow" d="M100 62 V78"/><path class="d-ink arrow" d="M295 62 V78"/><path class="d-ink arrow" d="M490 62 V78"/><path class="d-ink arrow" d="M680 62 V78"/>
+      <rect class="f-blue" x="15" y="78" width="170" height="64" rx="10"/><text class="t-sm t-b t-c" x="100" y="104">1 · Hissing, popping,</text><text class="t-sm t-b t-c" x="100" y="122">rough surface?</text>
+      <rect class="f-blue" x="210" y="78" width="170" height="64" rx="10"/><text class="t-sm t-b t-c" x="295" y="104">2 · Nozzle at the</text><text class="t-sm t-b t-c" x="295" y="122">top of its range?</text>
+      <rect class="f-blue" x="405" y="78" width="170" height="64" rx="10"/><text class="t-sm t-b t-c" x="490" y="104">3 · Long travels</text><text class="t-sm t-b t-c" x="490" y="122">over open air?</text>
+      <rect class="f-blue" x="595" y="78" width="170" height="64" rx="10"/><text class="t-sm t-b t-c" x="680" y="104">4 · Still hairy after</text><text class="t-sm t-b t-c" x="680" y="122">1 – 3?</text>
+      <path class="d-ink arrow" d="M185 110 H208"/><path class="d-ink arrow" d="M380 110 H403"/><path class="d-ink arrow" d="M575 110 H593"/>
+      <text class="t-xs" x="188" y="104">no</text><text class="t-xs" x="383" y="104">no</text><text class="t-xs" x="578" y="104">no</text>
+      <path class="d-ink arrow" d="M100 142 V180"/><path class="d-ink arrow" d="M295 142 V180"/><path class="d-ink arrow" d="M490 142 V180"/><path class="d-ink arrow" d="M680 142 V180"/>
+      <text class="t-xs" x="106" y="165">yes</text><text class="t-xs" x="301" y="165">yes</text><text class="t-xs" x="496" y="165">yes</text><text class="t-xs" x="686" y="165">yes</text>
+      <rect class="f-green" x="15" y="180" width="170" height="118" rx="10"/><text class="t-sm t-b t-c" x="100" y="204">Dry the spool</text><text class="t-xs t-c" x="100" y="224">PLA 45–55 °C 4–8 h</text><text class="t-xs t-c" x="100" y="240">PETG 60–65 °C 6–8 h</text><text class="t-xs t-c" x="100" y="260">Fixes more stringing</text><text class="t-xs t-c" x="100" y="274">than any other step</text>
+      <rect class="f-green" x="210" y="180" width="170" height="118" rx="10"/><text class="t-sm t-b t-c" x="295" y="204">Lower the temperature</text><text class="t-xs t-c" x="295" y="224">5–10 °C steps</text><text class="t-xs t-c" x="295" y="240">Use a temperature tower</text><text class="t-xs t-c" x="295" y="260">Watch layer bonding:</text><text class="t-xs t-c" x="295" y="274">stop if walls delaminate</text>
+      <rect class="f-green" x="405" y="180" width="170" height="118" rx="10"/><text class="t-sm t-b t-c" x="490" y="204">Retract more, travel less</text><text class="t-xs t-c" x="490" y="224">+0.2 mm steps</text><text class="t-xs t-c" x="490" y="240">Faster retraction speed</text><text class="t-xs t-c" x="490" y="260">Avoid crossing gaps</text><text class="t-xs t-c" x="490" y="274">Enable wipe on retract</text>
+      <rect class="f-green" x="595" y="180" width="170" height="118" rx="10"/><text class="t-sm t-b t-c" x="680" y="204">Check hardware</text><text class="t-xs t-c" x="680" y="224">Partial clog or worn nozzle</text><text class="t-xs t-c" x="680" y="240">Loose hotend or heat break</text><text class="t-xs t-c" x="680" y="260">Try a fresh spool</text><text class="t-xs t-c" x="680" y="274">of another brand</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> Work left to right. Moisture and temperature explain most stringing; retraction tweaks only help once those are right.</figcaption>
+  </figure>
+
+  <h3>PLA</h3>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Nozzle clogs partway through a print, especially in warm weather or a closed chamber</td><td>Heat creep: the filament softens above the melt zone</td><td>Open the door or lid, lower chamber temperature, check the heat-break fan, avoid very long slow prints with high heat soak.</td></tr>
+      <tr><td>Drooping overhangs, rough undersides</td><td>Not enough cooling</td><td>Fan to 100 %, add supports, lower nozzle temperature, reduce speed on overhangs.</td></tr>
+      <tr><td>Bottom edge bulges (elephant foot)</td><td>Bed too hot or nozzle too close</td><td>Lower bed to 50 °C, raise Z-offset a little, use the slicer’s elephant-foot compensation.</td></tr>
+      <tr><td>Part cracks along layers</td><td>Cold or fast printing, wrong orientation</td><td>Raise temperature 5–10 °C, slow down, orient so layers do not take tension.</td></tr>
+      <tr><td>Fine hairs and wisps</td><td>Wet filament, high temperature</td><td>Dry, lower temperature, tune retraction (Figure 8).</td></tr>
+      <tr><td>Silk PLA layers pull apart</td><td>Weak interlayer bond</td><td>Print hotter (225–235 °C), slower, fewer thin features, don’t use for load-bearing parts.</td></tr>
+      <tr><td>Dull or cloudy surface</td><td>Fan too weak, speed too fast</td><td>More cooling, slower outer walls.</td></tr>
+      <tr><td>Part warps on a large flat area</td><td>Cold bed, drafts</td><td>Clean bed, raise bed 5 °C, add a brim, close the door but keep chamber cool.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>PETG and PCTG</h3>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Strings, hair, “spider webs”</td><td>Wet filament, nozzle too hot</td><td>Dry 60–65 °C; reduce temperature 5 °C steps; increase retraction slightly; slow travel.</td></tr>
+      <tr><td>Blobs and zits on walls</td><td>Pressure variation at seam, sticky blob on nozzle</td><td>Pressure advance, “wipe on retract”, set seam to aligned/back, clean the nozzle.</td></tr>
+      <tr><td>First layer too sticky, part will not release, plate damaged</td><td>PETG fuses to PEI</td><td>Glue-stick separator, textured plate, let the bed cool to 30 °C before removal.</td></tr>
+      <tr><td>Poor bridging; sagging</td><td>Too much heat, too little air on the bridge</td><td>Fan 100 % for bridges, slower bridge speed, lower flow ratio for bridges.</td></tr>
+      <tr><td>Cloudy / bubbly / matte surface</td><td>Wet filament</td><td>Dry thoroughly; store in sealed box.</td></tr>
+      <tr><td>Layer splits in tall thin walls</td><td>Too much cooling or too cold</td><td>Fan 20–30 %, raise temperature 5 °C, enclose.</td></tr>
+      <tr><td>Nozzle drags a line across the part</td><td>Z-hop missing, blob forms, over-extrusion</td><td>Enable Z-hop 0.2–0.4 mm, calibrate flow ratio, wipe nozzle.</td></tr>
+    </tbody>
+  </table></div>
+  <p>Further defects, including photos-as-diagrams and a diagnostic index, are covered in <a href="../techniques/troubleshooting.html">Troubleshooting gallery</a>.</p>
+
+  <h2 id="storage">📦 Storage and drying in brief</h2>
+  <p>PLA absorbs water slowly (often under 0.5 % by weight after weeks), but when it is wet enough to print badly it also becomes brittle. PETG and PCTG absorb more, and show it as haze and stringing. Keep opened spools in a sealed bag or box with desiccant and a hygrometer, aiming for below about 20 % relative humidity for PETG and below about 30–40 % for PLA. If a spool misbehaves, dry it: PLA at 45–55 °C for 4–8 hours, PETG at 60–65 °C for 6–8 hours. Do not dry PLA above about 55 °C or it can soften and fuse on the spool. The full guide, including dryer types and the AMS 2 Pro’s 65 °C limit, is in <a href="drying-and-storage.html">Drying &amp; storage</a>.</p>
+
+  <h2 id="myths">🧠 Myths worth busting</h2>
+  <h3>“PLA is food safe”</h3>
+  <p>The raw polymer is a food-contact grade plastic, but a printed object is a different thing. Layer lines trap food and bacteria, the filament contains pigments and additives that are not food-tested, brass nozzles can contain traces of lead, and washing at high temperature deforms the part. Treat 3D-printed items as single-use or short-contact at most, never for hot liquids, acidic food or long storage. Coatings that are explicitly food-safe can seal a surface, but they do not make an unknown filament safe. PETG is not magically food safe either; the same cautions apply.</p>
+  <h3>“PLA is biodegradable, so I can bury it”</h3>
+  <p>PLA is bio-based and <b>industrially compostable</b>: at about 58 °C or above, with moisture and microbes, it breaks down in weeks to months. In a garden bin, landfill or the sea, it persists for many years. Printed parts are dense, which slows degradation. Do not throw prints in the compost; instead, reuse, regrind, or take them to a facility that accepts PLA. See <a href="../reference/economics-and-ethics.html">Economics, licensing &amp; sustainability</a>.</p>
+  <h3>“PETG is recycled like water bottles”</h3>
+  <p>PETG contains glycol and melts differently from bottle PET, so it can contaminate PET recycling streams. It is technically recyclable, but print waste is rarely collected. Reuse spools, use refills and keep failed prints for regrinding or test pieces.</p>
+  <h3>“PLA+ is a different plastic”</h3>
+  <p>Not usually. It is PLA with additives, and each brand’s mix is secret. Two “PLA+” spools can differ in temperature, strength and stringiness.</p>
+  <h3>“Higher temperature always means stronger parts”</h3>
+  <p>It improves layer bonding up to a point, but too hot causes degradation, oozing, and poor detail. The right temperature is the lowest one that gives a good bond at your speed.</p>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul>
+    <li>PLA is the easiest and most detailed; its limits are 55–60 °C, brittleness, creep and weather.</li>
+    <li>PETG and PCTG trade easy printing for toughness, temperature (70–85 °C), water and chemical resistance.</li>
+    <li>Cooling: PLA 80–100 %, PETG 30–60 %. Retraction and temperature fix stringing once the filament is dry.</li>
+    <li>PETG needs a release layer on PEI; PLA needs a cool chamber on heated-chamber printers like the X2D.</li>
+    <li>Annealing raises PLA’s heat resistance at the cost of shrinkage; special crystallizing PLA works best.</li>
+    <li>“Food safe” and “biodegradable” are context-dependent claims; treat both with skepticism.</li>
+  </ul>
+  <p>Next: <a href="engineering-plastics.html">Engineering plastics</a> · <a href="drying-and-storage.html">Drying &amp; storage</a> · practice with the <a href="../exercises/level-1-beginner.html">Level 1 exercises</a>.</p>
+
+</main>
+</body>
+</html>

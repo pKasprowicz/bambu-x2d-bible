@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your first print · 3D Printing Compendium</title>
+  <meta name="description" content="A complete beginner walkthrough for any FDM printer: unboxing, placement, calibration, loading filament, choosing and slicing a first model, reading the first layer, removing the print and what to print next.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="foundations/first-print.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 1 · Foundations</div>
+    <h1>Your first print</h1>
+    <p class="lead">A calm, step-by-step walkthrough from the closed box to a finished part on the plate. The steps apply to almost any filament printer; where a machine-specific detail matters, you will see a short note. By the end you will know what good looks like, what to do when it does not, and what to print next.</p>
+    <div class="meta"><span class="badge beginner">Beginner</span><span class="badge time">⏱ 40 min read</span><span class="badge time">🖨 first job: about 1–2 hours</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <ul>
+      <li>How to unbox, inspect, place and power up a printer safely.</li>
+      <li>How to load filament correctly and why a clean cut matters.</li>
+      <li>Which model to print first and why, and how to slice it with sensible defaults.</li>
+      <li>How to read the first layer, the best predictor of success.</li>
+      <li>How to remove, clean and store the result, and which ten prints to do next.</li>
+    </ul>
+  </div>
+
+  <div class="callout x2d"><span class="callout-title">Using a Bambu Lab printer?</span>
+    <p>Read this page for the concepts, then follow the machine-specific walkthrough in <a href="../x2d/setup-and-first-print.html">Setup and first print</a>. Bambu machines automate several steps below (calibration, leveling and filament recognition), so you will mostly watch rather than adjust.</p>
+  </div>
+
+  <h2 id="mental">🔰 The mental model: what is happening</h2>
+  <p>Before touching the machine, it helps to know what the machine is going to do. A 3D print is a loop of instruction, motion, melting and feedback. You provide a model; software turns it into thousands of tiny moves; the printer follows them while checking its temperatures and positions.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 270" role="img" aria-label="Loop diagram: model to slicer to G-code to printer controller; controller drives motion and heaters; plastic is deposited and fuses; sensors report back to the controller.">
+      <rect class="d-surface2" x="20" y="40" width="120" height="50" rx="8"/><text class="t-sm t-c" x="80" y="70" style="text-anchor:middle">3D model (STL / 3MF)</text>
+      <path class="d-ink arrow" d="M140 65 H180"/>
+      <rect class="d-surface2" x="180" y="40" width="120" height="50" rx="8"/><text class="t-sm t-c" x="240" y="70" style="text-anchor:middle">Slicer</text>
+      <path class="d-ink arrow" d="M300 65 H340"/>
+      <rect class="d-surface2" x="340" y="40" width="120" height="50" rx="8"/><text class="t-sm t-c" x="400" y="70" style="text-anchor:middle">G-code file</text>
+      <path class="d-ink arrow" d="M460 65 H500"/>
+      <rect class="d-surface2" x="500" y="40" width="130" height="50" rx="8"/><text class="t-sm t-c" x="565" y="70" style="text-anchor:middle">Printer controller</text>
+      <path class="d-ink arrow" d="M565 90 V140"/>
+      <rect style="fill:var(--orange);fill-opacity:.2;stroke:var(--ink)" x="500" y="140" width="130" height="50" rx="8"/><text class="t-sm t-c" x="565" y="162" style="text-anchor:middle">Motors move,</text><text class="t-sm t-c" x="565" y="178" style="text-anchor:middle">heaters hold temp</text>
+      <path class="d-ink arrow" d="M500 165 H460"/>
+      <rect style="fill:var(--green);fill-opacity:.2;stroke:var(--ink)" x="340" y="140" width="120" height="50" rx="8"/><text class="t-sm t-c" x="400" y="162" style="text-anchor:middle">Bead laid down,</text><text class="t-sm t-c" x="400" y="178" style="text-anchor:middle">fuses to layer</text>
+      <path class="d-ink arrow" d="M340 165 H300"/>
+      <rect style="fill:var(--blue);fill-opacity:.2;stroke:var(--ink)" x="180" y="140" width="120" height="50" rx="8"/><text class="t-sm t-c" x="240" y="162" style="text-anchor:middle">Sensors check</text><text class="t-sm t-c" x="240" y="178" style="text-anchor:middle">heat, filament</text>
+      <path class="d-dash arrow" d="M240 140 V115 H530 V92" style="fill:none"/>
+      <text class="t-xs" x="300" y="109">feedback: temperatures, filament, position</text>
+      <text class="t-xs" x="20" y="218">You control three things: the model, the slicer settings, and the physical setup (filament, plate, level).</text>
+      <text class="t-xs" x="20" y="236">The printer controls the rest, thousands of times per second.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> A print is a pipeline: your file becomes G-code, the printer executes it, and sensors keep the loop honest.</figcaption>
+  </figure>
+
+  <div class="callout info"><span class="callout-title">Three ingredients decide success</span>
+    <p>Almost every first-print failure comes from one of three things: the nozzle is the wrong distance from the plate (first layer), the filament is wet or not flowing (extrusion), or the part is not stuck down or not sliced sensibly (adhesion and orientation). Keep these in mind and the troubleshooting section at the end will read like common sense.</p>
+  </div>
+
+  <h2 id="unbox">📦 Step 1: unboxing and inspection</h2>
+  <p>Keep the box and the packing materials until the machine has printed successfully; you will need them if you must return it. Unpack on a clear table and take your time. Many "broken" printers are simply still locked for transport.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 840 330" role="img" aria-label="Printer outline with numbered inspection points: transit locks, packing tape on moving parts, foam inserts, protective film on the plate, nozzle cover, cables, accessories and spool holder.">
+      <rect class="d-dash" x="40" y="40" width="340" height="260" style="fill:none"/>
+      <rect class="d-metal" x="50" y="100" width="320" height="12"/>
+      <rect class="d-surface2" x="170" y="112" width="60" height="50"/>
+      <path class="d-metal2" d="M192 162 H208 L200 178Z"/>
+      <rect class="d-surface2" x="70" y="230" width="280" height="8"/>
+      <rect class="d-hot" x="70" y="238" width="280" height="10"/>
+      <rect class="d-surface2" x="40" y="270" width="340" height="30"/>
+      <circle class="d-plastic" cx="330" cy="70" r="22"/>
+      <circle class="f-orange" cx="60" cy="104" r="11"/><text class="t-xs t-b t-c" x="60" y="108" style="text-anchor:middle">1</text>
+      <circle class="f-orange" cx="200" cy="130" r="11"/><text class="t-xs t-b t-c" x="200" y="134" style="text-anchor:middle">2</text>
+      <circle class="f-orange" cx="200" cy="190" r="11"/><text class="t-xs t-b t-c" x="200" y="194" style="text-anchor:middle">3</text>
+      <circle class="f-orange" cx="120" cy="226" r="11"/><text class="t-xs t-b t-c" x="120" y="230" style="text-anchor:middle">4</text>
+      <circle class="f-orange" cx="300" cy="285" r="11"/><text class="t-xs t-b t-c" x="300" y="289" style="text-anchor:middle">5</text>
+      <circle class="f-orange" cx="330" cy="70" r="11"/><text class="t-xs t-b t-c" x="330" y="74" style="text-anchor:middle">6</text>
+      <circle class="f-orange" cx="100" cy="285" r="11"/><text class="t-xs t-b t-c" x="100" y="289" style="text-anchor:middle">7</text>
+      <text class="t-b" x="420" y="56">Check these before power-on</text>
+      <text class="t-sm" x="420" y="90"><tspan class="t-b">1</tspan> Transit screws, locks, zip ties on the gantry</text>
+      <text class="t-sm" x="420" y="116"><tspan class="t-b">2</tspan> Tape or foam around the toolhead</text>
+      <text class="t-sm" x="420" y="142"><tspan class="t-b">3</tspan> Nozzle cover or silicone sock stays on if supplied</text>
+      <text class="t-sm" x="420" y="168"><tspan class="t-b">4</tspan> Protective film peeled from the build plate</text>
+      <text class="t-sm" x="420" y="194"><tspan class="t-b">5</tspan> Power cable, voltage switch, fuse seated correctly</text>
+      <text class="t-sm" x="420" y="220"><tspan class="t-b">6</tspan> Spool holder or filament sample present</text>
+      <text class="t-sm" x="420" y="246"><tspan class="t-b">7</tspan> Accessories checked against the packing list</text>
+      <text class="t-xs" x="420" y="280">Moving parts should slide freely by hand with the power off.</text>
+      <text class="t-xs" x="420" y="296">Do not force anything that resists; look for a lock.</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> Typical inspection points. Every manufacturer locks different parts for transport, so always read the quick-start card that came in the box.</figcaption>
+  </figure>
+
+  <div class="callout warn"><span class="callout-title">Voltage and mains</span>
+    <p>Some printers ship with a mains voltage selector on the back. Check it matches your wall supply before the first power-on, and use the supplied or a certified cable in a properly grounded outlet. See <a href="safety-and-workspace.html">Safety &amp; workspace</a> for outlet, surge and fire safety.</p>
+  </div>
+
+  <h2 id="placement">📍 Step 2: placement</h2>
+  <p>Where a printer lives shapes how often you will use it. A good location is stable, ventilated, near a power outlet and not in a bedroom or somewhere you would not smell a problem. Leave space for the door, the lid and the filament spool.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 360" role="img" aria-label="Top-down placement plan: printer on a sturdy table against a wall with clearances at the back, sides and front, an outlet, a window and a smoke detector above.">
+      <rect class="d-surface2" x="20" y="20" width="780" height="14"/>
+      <text class="t-xs" x="30" y="31">wall</text>
+      <rect class="d-cool" x="560" y="20" width="160" height="14"/>
+      <text class="t-xs" x="600" y="31">window (draughts)</text>
+      <rect class="d-surface" x="200" y="60" width="420" height="260" rx="4"/>
+      <text class="t-xs" x="210" y="78">sturdy, level table or shelf</text>
+      <rect class="d-metal" x="320" y="110" width="180" height="150"/>
+      <text class="t-sm t-c" x="410" y="180" style="text-anchor:middle">Printer</text>
+      <text class="t-xs t-c" x="410" y="198" style="text-anchor:middle">footprint</text>
+      <path class="d-ink arrow arrow-start" d="M410 36 V108"/><text class="t-xs" x="418" y="76">10–15 cm to wall (fans, cables)</text>
+      <path class="d-ink arrow arrow-start" d="M220 190 H318"/><text class="t-xs" x="210" y="176">15 cm side</text>
+      <path class="d-ink arrow arrow-start" d="M410 262 V318"/><text class="t-xs" x="418" y="296">40+ cm front for the door and tools</text>
+      <rect class="f-green" x="660" y="120" width="20" height="20"/><text class="t-xs" x="640" y="156">outlet within reach</text>
+      <circle class="f-red" cx="720" cy="230" r="14"/><text class="t-xs" x="690" y="260">smoke detector</text><text class="t-xs" x="690" y="274">in the room</text>
+      <text class="t-xs" x="30" y="350">Avoid: bedrooms, narrow shelves, direct sun, draughts, tables that wobble, soft surfaces, places pets or small children can reach.</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> Plan view of a sensible printer spot. Distances are rules of thumb; follow the manual for the exact clearance of your machine.</figcaption>
+  </figure>
+
+  <ul class="checklist">
+    <li>Table or shelf is level and does not wobble when you push it.</li>
+    <li>There is a power outlet within cable reach; avoid extension cables and adapters for heated machines.</li>
+    <li>Room is ventilated and has a working smoke detector.</li>
+    <li>Nothing flammable sits next to or above the printer.</li>
+    <li>Filament has a dry, dust-free place to wait.</li>
+  </ul>
+
+  <h2 id="powerup">🔌 Step 3: first power-up and calibration</h2>
+  <p>On first start most printers walk you through a series of self-tests. Do not skip them. They teach the machine its own geometry and tune it for vibration.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 840 170" role="img" aria-label="Flow of first power-up: power on, connect and update firmware, homing, vibration or resonance test, bed probing and mesh, Z offset check, ready.">
+      <g>
+        <rect class="d-surface2" x="10" y="50" width="108" height="60" rx="8"/><text class="t-sm t-c" x="64" y="76" style="text-anchor:middle">1 Power on</text><text class="t-xs t-c" x="64" y="94" style="text-anchor:middle">check screen</text>
+        <path class="d-ink arrow" d="M118 80 H134"/>
+        <rect class="d-surface2" x="134" y="50" width="108" height="60" rx="8"/><text class="t-sm t-c" x="188" y="76" style="text-anchor:middle">2 Network</text><text class="t-xs t-c" x="188" y="94" style="text-anchor:middle">+ firmware</text>
+        <path class="d-ink arrow" d="M242 80 H258"/>
+        <rect class="d-surface2" x="258" y="50" width="108" height="60" rx="8"/><text class="t-sm t-c" x="312" y="76" style="text-anchor:middle">3 Homing</text><text class="t-xs t-c" x="312" y="94" style="text-anchor:middle">finds limits</text>
+        <path class="d-ink arrow" d="M366 80 H382"/>
+        <rect class="d-surface2" x="382" y="50" width="108" height="60" rx="8"/><text class="t-sm t-c" x="436" y="76" style="text-anchor:middle">4 Vibration</text><text class="t-xs t-c" x="436" y="94" style="text-anchor:middle">input shaping</text>
+        <path class="d-ink arrow" d="M490 80 H506"/>
+        <rect class="d-surface2" x="506" y="50" width="108" height="60" rx="8"/><text class="t-sm t-c" x="560" y="76" style="text-anchor:middle">5 Bed probe</text><text class="t-xs t-c" x="560" y="94" style="text-anchor:middle">mesh / level</text>
+        <path class="d-ink arrow" d="M614 80 H630"/>
+        <rect class="d-surface2" x="630" y="50" width="108" height="60" rx="8"/><text class="t-sm t-c" x="684" y="76" style="text-anchor:middle">6 Z offset</text><text class="t-xs t-c" x="684" y="94" style="text-anchor:middle">first-layer test</text>
+        <path class="d-ink arrow" d="M738 80 H754"/>
+        <circle class="f-green" cx="790" cy="80" r="26"/><text class="t-sm t-b t-c" x="790" y="85" style="text-anchor:middle">Ready</text>
+      </g>
+      <text class="t-xs" x="10" y="146">Order and names vary by brand. Fully automatic machines run steps 3–6 in a single press; basic machines may skip 4–6.</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> What a typical first start-up does. If your printer has an auto-calibration button, run it once after unpacking and any time you move the machine.</figcaption>
+  </figure>
+
+  <ol class="steps">
+    <li><strong>Connect and update.</strong>Join Wi-Fi or insert an SD/USB stick if needed, and install the firmware update. Updates fix real bugs and safety issues.</li>
+    <li><strong>Home the machine.</strong>It moves each axis until it finds its limit. Stand clear and listen for grinding or knocking; if you hear it, stop and re-check transit locks.</li>
+    <li><strong>Run vibration and bed calibration.</strong>These can take several minutes; the head moves and the bed heats. Let it finish; do not touch the plate while it probes.</li>
+    <li><strong>Check the Z offset.</strong>If the printer asks for a first-layer calibration, accept it. See the first-layer section below for what to look for.</li>
+  </ol>
+
+  <div class="callout tip"><span class="callout-title">Manual leveling</span>
+    <p>If your printer is a basic model with adjustable bed screws, level it hot: heat the bed to printing temperature, then use the paper test at each corner. You want light drag on a sheet of copy paper. Re-check after the first few prints because springs settle.</p>
+  </div>
+
+  <h2 id="loading">🧵 Step 4: loading filament</h2>
+  <p>The loading procedure differs slightly between printers, but the idea is identical: heat the nozzle, push filament until it flows, and stop when the plastic extrudes cleanly.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 840 320" role="img" aria-label="Filament loading path with five numbered steps: trim the tip at an angle, feed through the runout sensor and extruder gears, heat the nozzle, push until flowing, wipe the nozzle.">
+      <circle class="d-plastic" cx="90" cy="110" r="52" style="fill:var(--green);fill-opacity:.55"/>
+      <circle class="d-surface2" cx="90" cy="110" r="14"/>
+      <path d="M142 90 C200 50 250 50 300 60 H400 V170" style="fill:none;stroke:var(--plastic);stroke-width:4"/>
+      <rect class="d-surface2" x="240" y="30" width="50" height="40"/>
+      <text class="t-xs" x="236" y="24">runout sensor</text>
+      <rect class="d-surface2" x="360" y="100" width="80" height="80"/>
+      <circle class="d-metal" cx="400" cy="140" r="16"/>
+      <text class="t-xs" x="446" y="140">extruder gears</text>
+      <rect class="d-metal" x="390" y="180" width="20" height="30"/>
+      <rect class="d-hot" x="386" y="210" width="28" height="24"/>
+      <path class="d-metal2" d="M390 234 H410 L400 252Z"/>
+      <rect class="d-plastic" x="380" y="258" width="40" height="6" rx="3" style="fill:var(--green);fill-opacity:.8"/>
+      <rect class="d-metal2" x="320" y="266" width="160" height="8"/>
+      <text class="t-b" x="560" y="40">Loading in five steps</text>
+      <text class="t-sm" x="560" y="68"><tspan class="t-b">1</tspan> Trim the tip at a 45° angle</text>
+      <text class="t-sm" x="560" y="94"><tspan class="t-b">2</tspan> Feed it past the sensor and gears</text>
+      <text class="t-sm" x="560" y="120"><tspan class="t-b">3</tspan> Heat the nozzle for this material</text>
+      <text class="t-sm" x="560" y="146"><tspan class="t-b">4</tspan> Push until the colour flows clean</text>
+      <text class="t-sm" x="560" y="172"><tspan class="t-b">5</tspan> Wipe the nozzle with the plate</text>
+      <text class="t-xs" x="560" y="214">Wait for the filament to come out evenly:</text>
+      <text class="t-xs" x="560" y="230">no bubbles, no old colour, no clicking.</text>
+      <text class="t-xs" x="20" y="300">Feed from a spool that unwinds freely, without twisting or crossing over itself.</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> The filament path. A clean angled cut and a free-spinning spool prevent most loading problems.</figcaption>
+  </figure>
+
+  <div class="callout warn"><span class="callout-title">Heat means burns</span>
+    <p>The nozzle reaches 200 °C or more. Never reach into the print area to guide filament with the nozzle hot unless the manual says it is safe; use pliers or wait for it to cool.</p>
+  </div>
+
+  <div class="callout tip"><span class="callout-title">Start with PLA</span>
+    <p>PLA is the right first material: low temperature (about 190–220 °C), minimal warping, little odour, and tolerant of imperfect settings. Move to PETG, ABS and engineering materials later; see the materials section of this compendium.</p>
+  </div>
+
+  <h2 id="model">🎯 Step 5: choose a first model</h2>
+  <p>Your first print should be small, flat on the bottom, forgiving, and tell you something. Avoid your dream project; you will be learning the machine at the same time. Three classic candidates exist, and each teaches something different.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 840 330" role="img" aria-label="Three candidate first models: a calibration cube, a small boat benchmark, and a simple practical part such as a hook, each with what it tests.">
+      <g>
+        <text class="t-b" x="20" y="28">Calibration cube</text>
+        <polygon class="d-plastic" points="60,120 160,120 160,220 60,220"/>
+        <polygon class="d-plastic" points="60,120 90,90 190,90 160,120" style="fill-opacity:.7"/>
+        <polygon class="d-plastic" points="160,120 190,90 190,190 160,220" style="fill-opacity:.5"/>
+        <text class="t-b t-c" x="110" y="176" style="text-anchor:middle">20 mm</text>
+        <text class="t-xs" x="20" y="256">Tests: dimensional accuracy,</text><text class="t-xs" x="20" y="272">corners, wall quality, extrusion.</text>
+        <text class="t-xs" x="20" y="296">Quick: 20 mm cube prints in about 30 min.</text>
+      </g>
+      <g transform="translate(290,0)">
+        <text class="t-b" x="20" y="28">Benchy boat</text>
+        <path class="d-plastic" d="M30 180 H170 L190 150 L170 140 L140 140 V100 H100 V140 H50 L30 160 Z"/>
+        <rect class="d-plastic" x="110" y="70" width="14" height="32"/>
+        <rect class="d-surface2" x="104" y="110" width="26" height="22"/>
+        <rect class="d-surface2" x="150" y="148" width="12" height="12"/>
+        <text class="t-xs" x="20" y="224">Tests: overhangs, bridging, small</text><text class="t-xs" x="20" y="240">detail, cooling, stringing.</text>
+        <text class="t-xs" x="20" y="264">Slower: about 45–90 min. Great for</text><text class="t-xs" x="20" y="280">comparing results across tuning.</text>
+      </g>
+      <g transform="translate(580,0)">
+        <text class="t-b" x="20" y="28">Simple practical part</text>
+        <path class="d-plastic" d="M40 60 H120 V90 H70 V160 H120 V190 H40 Z"/>
+        <circle class="d-surface2" cx="70" cy="75" r="6"/>
+        <text class="t-xs" x="20" y="224">e.g. a hook, cable clip or phone stand.</text>
+        <text class="t-xs" x="20" y="240">Tests: strength, real use, fit, and</text><text class="t-xs" x="20" y="256">the joy of printing something useful.</text>
+        <text class="t-xs" x="20" y="280">Great motivation after the first test.</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 6.</b> Pick one of these three. The cube verifies basics, the boat stress-tests everything, and a practical part shows what printing is for.</figcaption>
+  </figure>
+
+  <div class="callout tip"><span class="callout-title">Why not start big?</span>
+    <p>A large print is a long bet: any early flaw ruins hours of work and wastes filament. A small print gives you a result and a lesson in under an hour. Every successful print builds trust in the printer and in your settings.</p>
+  </div>
+
+  <h2 id="slicing">🍰 Step 6: slicing the model</h2>
+  <p>The <strong>slicer</strong> turns a 3D model into G-code: the list of moves and extrusions the printer will execute. Use the slicer that matches your printer (the manufacturer's slicer or a well-known open one), and select the printer, nozzle size and filament profile first. A good built-in profile already sets temperatures, speeds and fan curves; you rarely need to change them for a first print.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 840 290" role="img" aria-label="Three slicing choices: lay the part flat on its largest face, avoid standing it on a small end, and add a brim around the base for extra grip.">
+      <g>
+        <text class="t-b" x="20" y="28">Lay it flat</text>
+        <rect class="d-metal" x="20" y="180" width="220" height="10"/>
+        <rect class="d-plastic" x="60" y="130" width="140" height="50"/>
+        <text class="t-xs" x="20" y="214">Wide footprint = stable and strong.</text>
+        <text class="t-xs" x="20" y="230">Print the flattest face down.</text>
+        <circle class="f-green" cx="220" cy="140" r="12"/><text class="t-sm t-b t-c" x="220" y="145" style="text-anchor:middle">✓</text>
+      </g>
+      <g transform="translate(290,0)">
+        <text class="t-b" x="20" y="28">Avoid a tiny base</text>
+        <rect class="d-metal" x="20" y="180" width="220" height="10"/>
+        <rect class="d-plastic" x="110" y="60" width="30" height="120"/>
+        <path class="d-ink" d="M150 60 Q165 70 150 80 M156 52 Q175 66 156 82" style="fill:none"/>
+        <text class="t-xs" x="20" y="214">Tall and narrow can wobble or</text>
+        <text class="t-xs" x="20" y="230">detach. Rotate the model if possible.</text>
+        <circle class="f-red" cx="220" cy="100" r="12"/><text class="t-sm t-b t-c" x="220" y="105" style="text-anchor:middle">✕</text>
+      </g>
+      <g transform="translate(580,0)">
+        <text class="t-b" x="20" y="28">Brim (optional)</text>
+        <rect style="fill:var(--plastic);fill-opacity:.35;stroke:var(--ink)" x="60" y="70" width="140" height="110"/>
+        <rect class="d-plastic" x="85" y="90" width="90" height="70"/>
+        <text class="t-xs" x="20" y="214">Top view. A brim is a flat ring around</text>
+        <text class="t-xs" x="20" y="230">the first layer; tear it off afterwards.</text>
+        <text class="t-xs" x="20" y="246">Helps small or tall parts stay put.</text>
+      </g>
+      <text class="t-xs" x="20" y="276">Supports: leave off for a first print if the model has no big overhangs.</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> Three decisions for the first slice: orientation, small-base risk, and whether to add a brim.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Setting</th><th>Safe first-print choice</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Printer / nozzle</td><td>Match your machine, 0.4 mm</td><td>Everything else depends on it.</td></tr>
+      <tr><td>Filament profile</td><td>Generic PLA or your spool's brand profile</td><td>Sets temperatures and fan.</td></tr>
+      <tr><td>Layer height</td><td>0.2 mm standard</td><td>Good compromise of speed and quality.</td></tr>
+      <tr><td>Walls (perimeters)</td><td>2–3</td><td>Strength and a clean outer surface.</td></tr>
+      <tr><td>Infill</td><td>10–20% (gyroid or grid)</td><td>Enough support and strength for most parts.</td></tr>
+      <tr><td>Supports</td><td>Off, unless the preview shows a large overhang</td><td>Easier removal and cleaner surface.</td></tr>
+      <tr><td>Adhesion</td><td>Brim for small or tall models; none for a wide cube</td><td>Prevents the model detaching.</td></tr>
+      <tr><td>Speed</td><td>Default profile</td><td>Tuned by the manufacturer; speed up later.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout trick"><span class="callout-title">Always read the preview</span>
+    <p>Before you send a job, scrub through the layer preview. Check that the first layer covers the plate where you expect, that no part floats in mid-air, and that the time estimate makes sense. Two minutes in the preview saves two hours of wasted print.</p>
+  </div>
+
+  <h2 id="start">▶️ Step 7: start the print</h2>
+  <ol class="steps">
+    <li><strong>Check the plate.</strong>Clean and dry; no old prints, no fingerprints on the printing area.</li>
+    <li><strong>Check the filament.</strong>The loaded colour matches the slicer's choice; the spool unwinds freely.</li>
+    <li><strong>Send the file.</strong>From the slicer, over Wi-Fi, USB or SD card, according to your printer.</li>
+    <li><strong>Let it warm up.</strong>The printer heats the bed and nozzle, may run an automatic bed scan, and then purges a line or blob at the edge of the plate.</li>
+    <li><strong>Stay and watch.</strong>Do not walk away until the first layer is complete.</li>
+  </ol>
+
+  <h2 id="firstlayer">🔍 Step 8: watching the first layer</h2>
+  <p>The first layer sets the foundation. If it is wrong, the print will be wrong; if it is good, the rest usually follows. You are looking for the right amount of "squish": the molten line is pressed slightly flat against the plate so it bonds across its whole width, and neighbouring lines fuse into a smooth sheet.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 840 360" role="img" aria-label="Three first-layer cases in cross-section and top view: nozzle too high leaves round separate lines with gaps, correct height gives flattened touching lines, too low gives thin over-squished lines with ridges.">
+      <g>
+        <text class="t-b" x="20" y="24" style="fill:var(--red)">Too high</text>
+        <path class="d-metal2" d="M90 60 H150 L136 98 H104 Z"/>
+        <rect class="d-metal" x="20" y="140" width="240" height="10"/>
+        <circle class="d-plastic" cx="50" cy="132" r="8"/><circle class="d-plastic" cx="84" cy="132" r="8"/><circle class="d-plastic" cx="118" cy="132" r="8"/><circle class="d-plastic" cx="152" cy="132" r="8"/><circle class="d-plastic" cx="186" cy="132" r="8"/><circle class="d-plastic" cx="220" cy="132" r="8"/>
+        <rect class="d-surface" x="20" y="180" width="240" height="70"/>
+        <rect class="d-plastic" x="36" y="184" width="14" height="62"/><rect class="d-plastic" x="70" y="184" width="14" height="62"/><rect class="d-plastic" x="104" y="184" width="14" height="62"/><rect class="d-plastic" x="138" y="184" width="14" height="62"/><rect class="d-plastic" x="172" y="184" width="14" height="62"/><rect class="d-plastic" x="206" y="184" width="14" height="62"/>
+        <text class="t-xs" x="20" y="272">Round, separate lines with gaps.</text>
+        <text class="t-xs" x="20" y="288">Weak bond, parts peel off.</text>
+        <text class="t-sm t-b" x="20" y="316">Fix: lower the Z offset</text>
+        <text class="t-xs" x="20" y="332">(nozzle closer) in small steps.</text>
+      </g>
+      <g transform="translate(290,0)">
+        <text class="t-b" x="20" y="24" style="fill:var(--green)">Just right</text>
+        <path class="d-metal2" d="M90 60 H150 L136 120 H104 Z"/>
+        <rect class="d-metal" x="20" y="140" width="240" height="10"/>
+        <rect class="d-plastic" x="14" y="131" width="42" height="9" rx="3"/><rect class="d-plastic" x="52" y="131" width="42" height="9" rx="3"/><rect class="d-plastic" x="90" y="131" width="42" height="9" rx="3"/><rect class="d-plastic" x="128" y="131" width="42" height="9" rx="3"/><rect class="d-plastic" x="166" y="131" width="42" height="9" rx="3"/><rect class="d-plastic" x="204" y="131" width="42" height="9" rx="3"/>
+        <rect class="d-surface" x="20" y="180" width="240" height="70"/>
+        <rect class="d-plastic" x="22" y="184" width="39" height="62"/><rect class="d-plastic" x="61" y="184" width="39" height="62"/><rect class="d-plastic" x="100" y="184" width="39" height="62"/><rect class="d-plastic" x="139" y="184" width="39" height="62"/><rect class="d-plastic" x="178" y="184" width="39" height="62"/>
+        <text class="t-xs" x="20" y="272">Flattened lines touching, smooth,</text>
+        <text class="t-xs" x="20" y="288">slightly glossy, no gaps or ridges.</text>
+        <text class="t-sm t-b" x="20" y="316">Keep it. Nothing to change.</text>
+      </g>
+      <g transform="translate(580,0)">
+        <text class="t-b" x="20" y="24" style="fill:var(--orange)">Too low</text>
+        <path class="d-metal2" d="M90 60 H150 L138 134 H102 Z"/>
+        <rect class="d-metal" x="20" y="140" width="240" height="10"/>
+        <rect class="d-plastic" x="14" y="137" width="48" height="3"/><rect class="d-plastic" x="58" y="137" width="48" height="3"/><rect class="d-plastic" x="102" y="137" width="48" height="3"/><rect class="d-plastic" x="146" y="137" width="48" height="3"/><rect class="d-plastic" x="190" y="137" width="50" height="3"/>
+        <circle class="d-plastic" cx="60" cy="135" r="2"/><circle class="d-plastic" cx="104" cy="135" r="2"/><circle class="d-plastic" cx="148" cy="135" r="2"/><circle class="d-plastic" cx="192" cy="135" r="2"/>
+        <rect class="d-surface" x="20" y="180" width="240" height="70"/>
+        <rect class="d-plastic" x="20" y="184" width="224" height="62"/>
+        <path class="d-ink" d="M20 200 q14 -5 28 0 t28 0 t28 0 t28 0 t28 0 t28 0 t28 0 t28 0 M20 222 q14 -5 28 0 t28 0 t28 0 t28 0 t28 0 t28 0 t28 0 t28 0" style="fill:none"/>
+        <text class="t-xs" x="20" y="272">Thin, glassy, over-squished; ridges</text>
+        <text class="t-xs" x="20" y="288">or rippled surface; may clog or scrape.</text>
+        <text class="t-sm t-b" x="20" y="316">Fix: raise the Z offset</text>
+        <text class="t-xs" x="20" y="332">(nozzle farther) in small steps.</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 8.</b> Reading the first layer. The top row is a cross-section through the nozzle and bed; the lower block is the view from above.</figcaption>
+  </figure>
+
+  <div class="callout tip"><span class="callout-title">The adjust-while-printing trick</span>
+    <p>Most printers let you change Z offset while the first layer is still running (usually in steps of 0.02 mm or 0.05 mm). Change one step, wait for a lap of the pattern, and compare. You are done when adjacent lines just fuse, without gaps and without ridges between them. Newer machines offer a flow or first-layer calibration routine; use it when available.</p>
+  </div>
+
+  <div class="callout warn"><span class="callout-title">Stop if the first layer fails</span>
+    <p>If the filament is dragging, curling up behind the nozzle, or not sticking at all, cancel the job. Clean the plate, re-check the Z offset, and restart. Continuing only wastes filament and can pull a part off the plate and entangle the nozzle.</p>
+  </div>
+
+  <h2 id="removal">🧤 Step 9: removing the print</h2>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 840 250" role="img" aria-label="Two-step print removal: first let the plate cool, then flex the removable plate so the part pops off; do not pry with metal tools on the surface.">
+      <g>
+        <text class="t-b" x="20" y="28">1 · Let it cool</text>
+        <rect class="d-metal" x="20" y="150" width="280" height="12"/>
+        <rect class="d-plastic" x="110" y="116" width="100" height="34"/>
+        <path class="d-cool" d="M60 90 Q80 60 100 90 M260 90 Q280 60 300 90" style="fill:none"/>
+        <text class="t-xs" x="20" y="190">Wait until the plate drops to roughly</text>
+        <text class="t-xs" x="20" y="206">body temperature; most parts release alone.</text>
+      </g>
+      <g transform="translate(420,0)">
+        <text class="t-b" x="20" y="28">2 · Flex the plate</text>
+        <path class="d-metal" d="M20 150 Q150 120 280 150 L280 160 Q150 130 20 160 Z"/>
+        <rect class="d-plastic" x="120" y="108" width="60" height="14" rx="2"/>
+        <path class="d-ink arrow" d="M20 100 V138"/><path class="d-ink arrow" d="M280 100 V138"/>
+        <text class="t-xs" x="20" y="190">Remove the plate from the bed, bend it</text>
+        <text class="t-xs" x="20" y="206">slightly and the part pops off the surface.</text>
+        <text class="t-xs" x="20" y="222">Do not pry with metal tools on the coating.</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 9.</b> Safe removal for a flexible plate. For glass or fixed plates, wait for the bed to cool completely and use a plastic scraper at a shallow angle.</figcaption>
+  </figure>
+
+  <ul class="checklist">
+    <li>Bed has cooled, or you are wearing heat-safe gloves.</li>
+    <li>Keep hands away from the scraper's path.</li>
+    <li>Remove brim and stray strands with flush cutters, not fingernails.</li>
+    <li>Wipe the plate with a clean cloth and a little dish soap before the next print.</li>
+  </ul>
+
+  <h2 id="cleanup">🧹 Step 10: clean up and storage</h2>
+  <ul>
+    <li><strong>Printer:</strong> brush or vacuum stray bits from the bed and the purge area. Remove loose filament dust. Never wipe a hot nozzle with a bare finger.</li>
+    <li><strong>Filament:</strong> unload (or leave loaded if you print soon) and keep the spool sealed with desiccant, especially in humid climates. Moisture makes filament pop, string and weaken.</li>
+    <li><strong>Records:</strong> note what worked: model, profile, temperatures and anything you changed. A habit of recording saves time later.</li>
+    <li><strong>Power:</strong> switch the machine off or leave it in idle; do not leave a hot printer unattended.</li>
+  </ul>
+
+  <h2 id="ladder">🪜 The first ten prints ladder</h2>
+  <p>After the first print, do not jump straight to your complex project. Each small step below teaches one skill, and by the tenth you will understand your machine.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 840 340" role="img" aria-label="A ten-step staircase of first prints: cube, benchy, bridging test, overhang test, practical clip, different material, tall tower, multi-part assembly, supports test, your own design.">
+      <g>
+        <rect class="d-plastic" x="20" y="262" width="76" height="40" style="fill-opacity:.3"/><text class="t-b t-c" x="58" y="282" style="text-anchor:middle">1</text><text class="t-xs t-c" x="58" y="318" style="text-anchor:middle">Cube</text>
+        <rect class="d-plastic" x="96" y="238" width="76" height="64" style="fill-opacity:.35"/><text class="t-b t-c" x="134" y="258" style="text-anchor:middle">2</text><text class="t-xs t-c" x="134" y="318" style="text-anchor:middle">Benchy</text>
+        <rect class="d-plastic" x="172" y="214" width="76" height="88" style="fill-opacity:.4"/><text class="t-b t-c" x="210" y="234" style="text-anchor:middle">3</text><text class="t-xs t-c" x="210" y="318" style="text-anchor:middle">Bridges</text>
+        <rect class="d-plastic" x="248" y="190" width="76" height="112" style="fill-opacity:.45"/><text class="t-b t-c" x="286" y="210" style="text-anchor:middle">4</text><text class="t-xs t-c" x="286" y="318" style="text-anchor:middle">Overhangs</text>
+        <rect class="d-plastic" x="324" y="166" width="76" height="136" style="fill-opacity:.5"/><text class="t-b t-c" x="362" y="186" style="text-anchor:middle">5</text><text class="t-xs t-c" x="362" y="318" style="text-anchor:middle">Useful clip</text>
+        <rect class="d-plastic" x="400" y="142" width="76" height="160" style="fill-opacity:.55"/><text class="t-b t-c" x="438" y="162" style="text-anchor:middle">6</text><text class="t-xs t-c" x="438" y="318" style="text-anchor:middle">New material</text>
+        <rect class="d-plastic" x="476" y="118" width="76" height="184" style="fill-opacity:.6"/><text class="t-b t-c" x="514" y="138" style="text-anchor:middle">7</text><text class="t-xs t-c" x="514" y="318" style="text-anchor:middle">Temp tower</text>
+        <rect class="d-plastic" x="552" y="94" width="76" height="208" style="fill-opacity:.65"/><text class="t-b t-c" x="590" y="114" style="text-anchor:middle">8</text><text class="t-xs t-c" x="590" y="318" style="text-anchor:middle">Assembly</text>
+        <rect class="d-plastic" x="628" y="70" width="76" height="232" style="fill-opacity:.7"/><text class="t-b t-c" x="666" y="90" style="text-anchor:middle">9</text><text class="t-xs t-c" x="666" y="318" style="text-anchor:middle">Supports</text>
+        <rect class="d-plastic" x="704" y="46" width="76" height="256" style="fill-opacity:.8"/><text class="t-b t-c" x="742" y="66" style="text-anchor:middle">10</text><text class="t-xs t-c" x="742" y="318" style="text-anchor:middle">Your design</text>
+      </g>
+      <text class="t-xs" x="20" y="24">Each rung adds one new skill: accuracy, details, spans, angles, function, materials, tuning, fit, supports, design.</text>
+    </svg>
+    <figcaption><b>Figure 10.</b> A staircase of ten practice prints. Each step is small and measurable; do not skip ahead until the previous one works.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>#</th><th>Print</th><th>What you learn</th><th>Success looks like</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>20 mm calibration cube</td><td>Basic dimensions and walls</td><td>Within ±0.2 mm, sharp corners.</td></tr>
+      <tr><td>2</td><td>Benchy boat</td><td>Overhangs, bridging, cooling</td><td>Clean hull, no stringing blobs.</td></tr>
+      <tr><td>3</td><td>Bridging test</td><td>Short spans without supports</td><td>Little sag on bridges.</td></tr>
+      <tr><td>4</td><td>Overhang test</td><td>Angle limits</td><td>Clean up to about 45–60°.</td></tr>
+      <tr><td>5</td><td>Useful part (clip, hook)</td><td>Strength and orientation</td><td>Part works in real life.</td></tr>
+      <tr><td>6</td><td>Same part in PETG or another filament</td><td>Material differences</td><td>Dry filament, good adhesion.</td></tr>
+      <tr><td>7</td><td>Temperature tower</td><td>Best temperature for a filament</td><td>Clear winner section.</td></tr>
+      <tr><td>8</td><td>Two-part assembly</td><td>Tolerances and fits</td><td>Parts slide or snap as intended.</td></tr>
+      <tr><td>9</td><td>Model with supports</td><td>Support settings and removal</td><td>Clean surface under overhangs.</td></tr>
+      <tr><td>10</td><td>Your own design</td><td>The whole workflow</td><td>Idea to part on your own.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="troubleshooting">🩺 Immediate troubleshooting</h2>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>First thing to try</th></tr></thead>
+    <tbody>
+      <tr><td>Print does not stick or comes loose</td><td>Z offset too high, dirty plate, cold bed</td><td>Wash the plate, lower Z offset, check bed temperature.</td></tr>
+      <tr><td>Filament does not come out</td><td>Clog, unloaded filament, cold nozzle</td><td>Reload with a clean cut; check temperature; do a cold pull if needed.</td></tr>
+      <tr><td>Clicking or grinding at the extruder</td><td>Nozzle too close, clog, tangled spool</td><td>Raise Z offset; check the spool; clear the clog.</td></tr>
+      <tr><td>Stringing and wispy hairs</td><td>Wet filament or too hot</td><td>Dry filament; reduce temperature; check retraction.</td></tr>
+      <tr><td>Rough surface and tiny bubbles</td><td>Wet filament</td><td>Dry it for several hours or use a fresh spool.</td></tr>
+      <tr><td>Warping at corners</td><td>Plate cold or draught</td><td>Add a brim; close the door; clean the plate.</td></tr>
+      <tr><td>Spaghetti / print failed mid-air</td><td>Part detached or filament tangle</td><td>Cancel; check adhesion and orientation.</td></tr>
+      <tr><td>Layer shifts</td><td>Loose belt, collision, speed too high</td><td>Check belts and pulleys, remove debris, reduce speed.</td></tr>
+      <tr><td>Nozzle drags in the part</td><td>Curling edges, overheating</td><td>Lower speed; improve cooling; reorient the model.</td></tr>
+      <tr><td>Strange noises</td><td>Loose screws, dry rods, transit lock</td><td>Power off, inspect, and tighten or lubricate as the manual recommends.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="preflight">✈️ Pre-flight checklist</h2>
+  <p>Run through this before every print until it becomes automatic. The boxes keep their state in your browser.</p>
+  <ul class="checklist">
+    <li>Plate is clean and properly seated.</li>
+    <li>Nozzle is clean, with no leftover plastic.</li>
+    <li>Correct filament is loaded, dry, and flows freely.</li>
+    <li>Spool unwinds without tangles; the spool holder is free.</li>
+    <li>Printer is level or auto-calibrated; the first layer looked right last time.</li>
+    <li>Slicer profile matches printer, nozzle and filament.</li>
+    <li>Layer preview checked; supports and brim set on purpose.</li>
+    <li>Door or lid state suits the material (open for PLA, closed for ABS).</li>
+    <li>Nothing flammable or loose near the printer; smoke detector working.</li>
+    <li>You will be present for at least the first layer.</li>
+  </ul>
+
+  <h2 id="watching">👀 What you will see during a print</h2>
+  <p>Knowing the normal sequence makes it much easier to spot something abnormal. A typical job passes through these stages:</p>
+  <ol class="steps">
+    <li><strong>Heat-up and purge.</strong>Bed and nozzle reach temperature. The printer may wipe the nozzle, scan the bed and extrude a short line or blob at the edge to prime the hotend. A little plastic waste here is normal.</li>
+    <li><strong>First layer.</strong>The nozzle traces the outline of the part and fills the footprint at slow speed. This is the stage to watch closely.</li>
+    <li><strong>Walls and infill.</strong>For every layer the printer draws outer and inner walls first, then fills the interior with the infill pattern. You will notice the speed changes: slow for the outer wall, faster for infill.</li>
+    <li><strong>Top layers and bridges.</strong>The final layers close the top of the part. They are printed over sparse infill, so thin top surfaces can look rough if there are too few top layers.</li>
+    <li><strong>Cool-down.</strong>The nozzle retracts, the head parks, and the printer cools. Parts stay slightly soft for a short time; wait before handling.</li>
+  </ol>
+
+  <h3>Normal sounds and smells</h3>
+  <p>A printer is not silent. Fans whir, steppers hum, belts chirp as direction changes, and the bed heater clicks on and off. PLA gives off a faint sweet smell; other plastics smell stronger, which is covered in <a href="safety-and-workspace.html">Safety &amp; workspace</a>. Sounds that are <em>not</em> normal include rhythmic clicking from the extruder (a jam or a nozzle too close), a sharp grinding from an axis (a collision or a locked part), and a burning or chemical smell (power off, investigate).</p>
+
+  <h3>Estimating time and cost</h3>
+  <p>The slicer shows the print time and filament weight before you start. For first prints expect roughly:</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Model</th><th>Time (typical)</th><th>Filament</th><th>Material cost</th></tr></thead>
+    <tbody>
+      <tr><td>20 mm calibration cube</td><td>20–40 min</td><td>3–5 g</td><td>Under €0.15</td></tr>
+      <tr><td>Benchy boat</td><td>40–90 min</td><td>12–15 g</td><td>About €0.30</td></tr>
+      <tr><td>Small practical part</td><td>30–120 min</td><td>5–30 g</td><td>€0.10–€0.80</td></tr>
+      <tr><td>Phone stand</td><td>2–4 hours</td><td>40–80 g</td><td>€1–€2</td></tr>
+    </tbody>
+  </table></div>
+  <p>These figures depend on speed and machine; fast CoreXY printers finish in roughly a third of the time of slow bedslingers. Prices assume common PLA at about €15–25 per kilogram.</p>
+
+  <h2 id="mistakes">⚠️ Common beginner mistakes</h2>
+  <div class="grid cols-2">
+    <div class="card accent-red"><h3>Changing many things at once</h3><p>If you change temperature, speed and retraction together, you will not know which fixed (or ruined) the print. Change one variable per attempt and write it down.</p></div>
+    <div class="card accent-orange"><h3>Ignoring wet filament</h3><p>Filament absorbs moisture from the air. Symptoms (pops, bubbles, strings) look like slicer problems. Keep spools sealed with desiccant and dry them when in doubt.</p></div>
+    <div class="card accent-yellow"><h3>Touching the plate</h3><p>Finger grease ruins adhesion. Handle the plate by its edges and wash it regularly.</p></div>
+    <div class="card accent-blue"><h3>Skipping the first-layer check</h3><p>People start a print and leave. Half of all failures show up in the first minutes; staying for the first layer is the cheapest insurance you have.</p></div>
+    <div class="card accent-green"><h3>Printing huge models first</h3><p>A big failure teaches the same lesson as a small one, at ten times the cost. Climb the ladder.</p></div>
+    <div class="card accent-purple"><h3>Unattended long prints early on</h3><p>Until you trust the machine and have fire detection, stay nearby for long jobs. See the safety page for the sensible limits.</p></div>
+  </div>
+
+  <div class="callout info"><span class="callout-title">Failure is data</span>
+    <p>A failed print is not wasted effort. Keep it, look at where it went wrong (which layer, which corner), and ask which of the three ingredients (distance, flow, adhesion) was involved. Photograph it and note the settings. Experienced makers keep a small "wall of fails" for the same reason: each one explains a rule they now follow without thinking.</p>
+  </div>
+
+  <h3>Where to find models</h3>
+  <p>Beyond the three starters, the large public model repositories host millions of free designs. Look at the printing notes in each listing, filter by "no supports" while you are learning, and prefer models with photos of real prints. Always check the licence before you sell or redistribute copies; many designs are free for personal use only.</p>
+
+  <h2 id="takeaways">✅ Key takeaways</h2>
+  <div class="callout fact"><span class="callout-title">Remember these</span>
+    <ul>
+      <li>A print is a pipeline: model, slicer, G-code, printer, feedback.</li>
+      <li>Unlock transit parts, level the machine and run the calibration routines before the first job.</li>
+      <li>Start with PLA, a small model and the manufacturer's default profile.</li>
+      <li>The first layer decides everything: aim for flattened, touching lines without gaps or ridges.</li>
+      <li>Most failures are adhesion, moisture or a clogged nozzle, not "a broken printer".</li>
+      <li>Work up the ten-print ladder, changing one thing at a time.</li>
+    </ul>
+  </div>
+
+  <p>Continue with <a href="safety-and-workspace.html">Safety &amp; workspace</a> to set up a safe place to print, or return to <a href="printer-anatomy.html">Anatomy of an FDM printer</a> to understand each part you just used.</p>
+
+
+</main>
+</body>
+</html>

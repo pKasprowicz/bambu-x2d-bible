@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Drying &amp; storage · 3D Printing Compendium</title>
+  <meta name="description" content="The science of wet filament: hygroscopy, symptoms, humidity targets, drying temperatures and times, dryer types, storage methods, moisture math and tests, plus drying on the AMS 2 Pro.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="materials/drying-and-storage.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 2 · Materials</div>
+    <h1>Drying &amp; storage</h1>
+    <p class="lead">Wet filament is the most common hidden cause of bad prints. Learn why plastics drink water from the air, how to spot it, how to dry each material safely, and how to keep it dry afterward.</p>
+    <div class="meta"><span class="badge beginner">Beginner</span><span class="badge time">⏱ 40 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <ul>
+      <li>Why polymers absorb moisture and which ones are the worst.</li>
+      <li>The symptoms of wet filament and three tests to confirm it.</li>
+      <li>Drying temperatures and times for each material, and the traps (spool softening, oven errors).</li>
+      <li>Dryer types, storage methods and a simple moisture budget calculation.</li>
+    </ul>
+  </div>
+
+  <h2 id="science">🔬 Hygroscopy: why plastic drinks water</h2>
+  <p>A <b>hygroscopic</b> material pulls water vapor out of the air. In polymers the cause is chemistry: chains that contain polar groups (amide –CONH– in nylon, ester –COO– in PLA, PET and PETG, urethane in TPU, hydroxyl –OH in PVA and BVOH) form hydrogen bonds with water molecules and let them diffuse into the amorphous regions. Non-polar polymers such as polypropylene and polystyrene hardly absorb any. The amount depends on <b>relative humidity (RH)</b>, temperature and time. At equilibrium, the water content is a fixed percentage of the filament’s weight for a given RH; to reach it takes hours to weeks, depending on diameter and how tightly the spool is wound.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 300" role="img" aria-label="Bar chart of approximate equilibrium moisture content at about 50 percent relative humidity: PP and PLA under 1 percent, PETG, ABS, PC under 1 percent, TPU about 1 percent, PA12 about 1 point 5, PA6 about 3 percent, PVA and BVOH about 8 to 15 percent">
+      <path class="d-ink" d="M70 20 V250 H750"/><path class="d-grid" d="M70 70 H750 M70 120 H750 M70 170 H750 M70 220 H750"/>
+      <text class="t-xs t-r" x="64" y="254">0</text><text class="t-xs t-r" x="64" y="224">2 %</text><text class="t-xs t-r" x="64" y="174">4 %</text><text class="t-xs t-r" x="64" y="124">6 %</text><text class="t-xs t-r" x="64" y="74">8 %+</text>
+      <text class="t-sm" x="14" y="200" transform="rotate(-90 14 200)">Water at ≈ 50 % RH (weight %) →</text>
+      <rect class="f-green" x="90" y="240" width="40" height="10"/><text class="t-xs t-c" x="110" y="270">PP</text>
+      <rect class="f-green" x="150" y="236" width="40" height="14"/><text class="t-xs t-c" x="170" y="270">PLA</text>
+      <rect class="f-teal" x="210" y="238" width="40" height="12"/><text class="t-xs t-c" x="230" y="270">PETG</text>
+      <rect class="f-orange" x="270" y="237" width="40" height="13"/><text class="t-xs t-c" x="290" y="270">ABS</text>
+      <rect class="f-red" x="330" y="240" width="40" height="10"/><text class="t-xs t-c" x="350" y="270">PC</text>
+      <rect class="f-yellow" x="390" y="226" width="40" height="24"/><text class="t-xs t-c" x="410" y="270">TPU</text>
+      <rect class="f-purple" x="450" y="220" width="40" height="30"/><text class="t-xs t-c" x="470" y="270">PA12</text>
+      <rect class="f-purple" x="510" y="170" width="40" height="80"/><text class="t-xs t-c" x="530" y="270">PA6</text>
+      <rect class="f-blue" x="570" y="70" width="40" height="180"/><text class="t-xs t-c" x="590" y="270">PVA</text>
+      <rect class="f-blue" x="630" y="50" width="40" height="200"/><text class="t-xs t-c" x="650" y="270">BVOH</text>
+      <text class="t-xs" x="250" y="46">Order-of-magnitude values; grade, crystallinity and fillers change them.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> Approximate equilibrium moisture content. Absolute numbers differ by grade, but the ranking is reliable: PVA and BVOH ≫ nylon ≫ TPU, PETG, PC, PLA ≫ PP.</figcaption>
+  </figure>
+
+  <h3>What the water does</h3>
+  <ul>
+    <li><b>In the hotend:</b> water flashes to steam at 200–300 °C, makes bubbles inside the molten plastic, and bursts out of the nozzle (popping, hissing, tiny craters).</li>
+    <li><b>Hydrolysis:</b> at high temperature, water breaks ester and amide bonds. Chains shorten, so PETG, PET, PC, PLA, PA and TPU print weaker, and the damage is permanent. This is why wet PC or PET makes brittle parts even when they look fine.</li>
+    <li><b>Lower viscosity:</b> hydrolyzed polymer flows too easily, which creates stringing and blobs.</li>
+    <li><b>Post-print:</b> parts keep absorbing moisture: nylon swells and softens; PVA turns sticky.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 260" role="img" aria-label="Cross-section of a hotend with wet filament entering, water molecules turning to steam bubbles in the melt zone, and bubbles bursting at the nozzle tip causing pops and rough surface">
+      <rect class="d-surface" x="20" y="20" width="740" height="220" rx="10"/>
+      <rect class="d-plastic" x="90" y="60" width="170" height="30"/><circle class="s-blue" cx="120" cy="75" r="3"/><circle class="s-blue" cx="160" cy="72" r="3"/><circle class="s-blue" cx="200" cy="78" r="3"/><circle class="s-blue" cx="235" cy="74" r="3"/>
+      <text class="t-xs t-c" x="175" y="110">wet filament: water inside</text>
+      <rect class="d-metal" x="260" y="40" width="240" height="80" rx="6"/>
+      <rect class="d-hot" x="290" y="62" width="180" height="36"/>
+      <circle class="s-blue" cx="320" cy="80" r="6" fill="none"/><circle class="s-blue" cx="370" cy="76" r="9" fill="none"/><circle class="s-blue" cx="420" cy="82" r="5" fill="none"/><circle class="s-blue" cx="450" cy="78" r="7" fill="none"/>
+      <text class="t-xs t-c" x="380" y="140">melt zone: water → steam bubbles</text>
+      <path class="d-metal" d="M500 70 L540 70 L560 110 L540 150 H520 Z"/>
+      <path class="k-blue arrow" d="M545 160 L560 200"/><path class="k-blue arrow" d="M560 160 L590 190"/><path class="k-blue arrow" d="M530 160 L520 200"/>
+      <text class="t-xs" x="600" y="176">bubbles burst → pops, craters,</text><text class="t-xs" x="600" y="192">stringing, rough surface</text>
+      <rect class="d-metal" x="480" y="210" width="220" height="10" rx="2"/>
+    </svg>
+    <figcaption><b>Figure 2.</b> Illustration of how a trace of water becomes steam inside the hotend. The part ends up with voids and visible blemishes.</figcaption>
+  </figure>
+
+  <h2 id="symptoms">🔍 Symptoms of wet filament</h2>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Symptom</th><th>What you see or hear</th><th>Usually worst in</th></tr></thead>
+    <tbody>
+    <tr><td>Popping / crackling</td><td>Audible snaps at the nozzle; tiny spits of plastic</td><td>PETG, nylon, TPU, PVA, PC</td></tr>
+    <tr><td>Steam</td><td>White vapor at the nozzle, especially after a retraction</td><td>Nylon, PVA, PC</td></tr>
+    <tr><td>Stringing and wisps</td><td>Hair-like threads between features despite good retraction</td><td>PETG, TPU, PLA</td></tr>
+    <tr><td>Rough, fuzzy or bumpy surface</td><td>Craters, blisters, matte patches; dull layers</td><td>All</td></tr>
+    <tr><td>Weak or brittle parts</td><td>Layers split easily; filament snaps when bent</td><td>PC, PET, nylon, PLA</td></tr>
+    <tr><td>Inconsistent extrusion</td><td>Gaps, under-extrusion, blobs</td><td>Nylon, TPU</td></tr>
+    <tr><td>Bubbles in a translucent print</td><td>Visible voids in clear materials</td><td>PC, PETG</td></tr>
+    <tr><td>Nozzle clog</td><td>Slumping and clogs from degraded polymer</td><td>PVA, BVOH, PC</td></tr>
+    </tbody></table></div>
+  <p>Many of the same defects have other causes. Pops and steam strongly indicate moisture, while pure stringing can equally be temperature or retraction. See <a href="../techniques/troubleshooting.html">Troubleshooting</a> to separate them. The cheapest way to find out is to dry a sample and reprint.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 260" role="img" aria-label="Three printed surface close-ups: a dry print with smooth lines, a slightly wet print with fine stringing, and a very wet print with pits, bubbles and rough texture">
+      <g>
+        <rect class="d-surface" x="20" y="30" width="230" height="190" rx="10"/><text class="t-b t-c" x="135" y="22">Dry</text>
+        <path class="d-plastic" d="M40 70 h190 v16 h-190 Z M40 90 h190 v16 h-190 Z M40 110 h190 v16 h-190 Z M40 130 h190 v16 h-190 Z M40 150 h190 v16 h-190 Z"/>
+        <text class="t-xs t-c" x="135" y="198">smooth, even layers</text>
+      </g>
+      <g>
+        <rect class="d-surface" x="275" y="30" width="230" height="190" rx="10"/><text class="t-b t-c" x="390" y="22">Damp</text>
+        <path class="d-plastic" d="M295 70 h190 v16 h-190 Z M295 90 h190 v16 h-190 Z M295 110 h190 v16 h-190 Z M295 130 h190 v16 h-190 Z M295 150 h190 v16 h-190 Z"/>
+        <path class="d-thin" d="M320 86 q6 8 0 16 M360 90 q8 10 0 20 M400 90 q-6 8 0 16 M440 106 q6 8 0 16"/>
+        <text class="t-xs t-c" x="390" y="198">fine strings, dull surface</text>
+      </g>
+      <g>
+        <rect class="d-surface" x="530" y="30" width="230" height="190" rx="10"/><text class="t-b t-c" x="645" y="22">Wet</text>
+        <path class="d-plastic" d="M550 70 h190 v16 h-190 Z M550 90 h190 v16 h-190 Z M550 110 h190 v16 h-190 Z M550 130 h190 v16 h-190 Z M550 150 h190 v16 h-190 Z"/>
+        <circle class="d-surface" cx="580" cy="78" r="4"/><circle class="d-surface" cx="620" cy="98" r="5"/><circle class="d-surface" cx="660" cy="118" r="4"/><circle class="d-surface" cx="700" cy="138" r="5"/><circle class="d-surface" cx="600" cy="158" r="4"/><circle class="d-surface" cx="720" cy="98" r="3"/>
+        <path class="d-thin" d="M560 90 q-8 8 0 16 M640 110 q8 10 0 20 M690 90 q8 8 0 18"/>
+        <text class="t-xs t-c" x="645" y="198">pits, bubbles, hairs</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 3.</b> Schematic of how the surface changes as moisture rises (stylized illustration, not photographs).</figcaption>
+  </figure>
+
+  <h2 id="targets">🎯 Humidity targets</h2>
+  <p>Humidity is the <b>storage</b> target; it sets how fast filament re-absorbs water. Lower is always better, but the benefit depends on the material:</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Material</th><th>Storage RH target</th><th>Sensitivity</th><th>Comment</th></tr></thead>
+    <tbody>
+    <tr><td>PVA, BVOH</td><td>&lt; 10 %</td><td><span class="chip red">Extreme</span></td><td>Keep sealed; print from a heated dry box.</td></tr>
+    <tr><td>Nylon (PA6, PA66, PAHT)</td><td>&lt; 15 %</td><td><span class="chip red">Very high</span></td><td>Foams within hours in humid air.</td></tr>
+    <tr><td>TPU / TPE</td><td>&lt; 20 %</td><td><span class="chip red">High</span></td><td>Bambu advises &lt; 20 % RH in a sealed box with desiccant.</td></tr>
+    <tr><td>PC, PC-ABS, PET-CF</td><td>&lt; 20 %</td><td><span class="chip yellow">High</span></td><td>Hydrolysis ruins strength.</td></tr>
+    <tr><td>PETG, PCTG</td><td>&lt; 25 %</td><td><span class="chip yellow">Medium-high</span></td><td>Pops and strings quickly.</td></tr>
+    <tr><td>ABS, ASA</td><td>&lt; 30 %</td><td><span class="chip yellow">Medium</span></td><td>Surface rough when wet.</td></tr>
+    <tr><td>PLA</td><td>&lt; 30–40 %</td><td><span class="chip green">Low-medium</span></td><td>Tolerant for weeks; but wet PLA gets brittle and stringy.</td></tr>
+    <tr><td>PP</td><td>no strict target</td><td><span class="chip green">Low</span></td><td>Keep clean and dust-free.</td></tr>
+    </tbody></table></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 240" role="img" aria-label="Relative humidity scale from 0 to 100 percent with colored zones: under 15 percent for nylon and PVA, under 30 for most filaments, 30 to 50 for PLA only, above 60 percent risky">
+      <rect class="f-blue" x="60" y="70" width="110" height="36"/><rect class="f-green" x="170" y="70" width="130" height="36"/><rect class="f-yellow" x="300" y="70" width="140" height="36"/><rect class="f-orange" x="440" y="70" width="140" height="36"/><rect class="f-red" x="580" y="70" width="140" height="36"/>
+      <text class="t-sm t-c" x="115" y="94">0–15 %</text><text class="t-sm t-c" x="235" y="94">15–30 %</text><text class="t-sm t-c" x="370" y="94">30–45 %</text><text class="t-sm t-c" x="510" y="94">45–60 %</text><text class="t-sm t-c" x="650" y="94">60–100 %</text>
+      <text class="t-xs t-c" x="115" y="130">PVA, nylon</text><text class="t-xs t-c" x="235" y="130">TPU, PC, PETG</text><text class="t-xs t-c" x="370" y="130">ABS, PLA</text><text class="t-xs t-c" x="510" y="130">PLA, briefly</text><text class="t-xs t-c" x="650" y="130">dry everything</text>
+      <text class="t-b t-c" x="390" y="50">Relative humidity inside a dry box</text>
+      <text class="t-xs" x="60" y="190">Indoor air is commonly 40–60 % RH; in summer or a basement it can exceed 70 %.</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> Humidity zones by material class. A humidity reading belongs to the <em>air inside the box</em>; it says little about how wet the filament already is.</figcaption>
+  </figure>
+
+  <h2 id="temperature-table">🌡️ Drying temperature and time</h2>
+  <p>Heat increases the vapor pressure of the absorbed water and speeds its escape. The limit is the filament’s softening point: above it the spool deforms, filaments fuse together, and the loops cross-weld. Stay <b>at least 10–15 °C below the glass transition (Tg)</b> of the polymer, or follow the maker’s spool label. Times assume a standard 1 kg spool, ventilated dryer and mild moisture; very wet nylon or PVA can take twice as long.</p>
+  <div class="table-wrap"><table class="data compact" id="dry-table">
+    <thead><tr><th>Material</th><th>Temp (°C)</th><th>Time (h)</th><th>Spool caveat</th><th>Tg of base (°C, approx.)</th></tr></thead>
+    <tbody>
+    <tr><td>PLA / PLA+</td><td>45–55</td><td>4–8</td><td>Tg ≈ 60 °C; above 55 °C the spool may soften and warp.</td><td>≈ 60</td></tr>
+    <tr><td>Silk / wood / filled PLA</td><td>40–50</td><td>4–8</td><td>Stay cooler; wood fillers can darken.</td><td>≈ 55–60</td></tr>
+    <tr><td>PETG / PCTG</td><td>60–65</td><td>4–8</td><td>Tg ≈ 80 °C, so 65 °C is safe.</td><td>≈ 80</td></tr>
+    <tr><td>TPU / TPE</td><td>50–65 (some vendors up to 70)</td><td>6–10</td><td>Softens; spools can swell by a few mm. Check the vendor.</td><td>(rubbery)</td></tr>
+    <tr><td>ABS / ASA</td><td>70–80</td><td>4–6</td><td>Cardboard or thin spools may deform.</td><td>≈ 105</td></tr>
+    <tr><td>PC / PC-ABS</td><td>70–80</td><td>6–8</td><td>Needs a dryer that holds temperature.</td><td>≈ 145 / ≈ 110</td></tr>
+    <tr><td>PA6 / PA66 / PAHT</td><td>75–90</td><td>8–12</td><td>Fastest drying is above 80 °C; only on heat-resistant spools.</td><td>≈ 50–70 (dry)</td></tr>
+    <tr><td>PA12</td><td>70–80</td><td>6–8</td><td>Moderate.</td><td>≈ 45–50</td></tr>
+    <tr><td>PET-CF / PET</td><td>65–80</td><td>6–10</td><td>Also dry before crystallization is complete; fine.</td><td>≈ 80</td></tr>
+    <tr><td>PPS-CF</td><td>80–100</td><td>6–8</td><td>Only with heat-safe spools.</td><td>≈ 90</td></tr>
+    <tr><td>PP</td><td>50–60</td><td>3–4</td><td>Rarely needed.</td><td>≈ −10</td></tr>
+    <tr><td>PVA</td><td>45–55</td><td>6–12</td><td>Gets sticky; do not exceed 55 °C.</td><td>≈ 75</td></tr>
+    <tr><td>BVOH</td><td>45–60</td><td>6–12</td><td>Follow maker.</td><td>≈ 60–70</td></tr>
+    <tr><td>HIPS</td><td>60–65</td><td>4–6</td><td>Low sensitivity.</td><td>≈ 100</td></tr>
+    </tbody></table></div>
+  <div class="callout warn"><span class="callout-title">Why drying temperature has a ceiling</span>
+    <p>Heating PLA to 70 °C on a spool is a classic mistake: the polymer is above its Tg, the spool relaxes, loops fuse and the filament can no longer unwind. Nylon is the opposite: it benefits from high temperatures but a standard plastic spool can warp, so move the filament to a heat-resistant spool or use a dryer designed for it. Also, a hot oven set to 50 °C usually swings 10–20 °C, which is why food ovens are risky.</p>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 300" role="img" aria-label="Illustrative drying curve showing moisture content falling quickly in the first hours then flattening, for nylon at 80 degrees and PLA at 50 degrees">
+      <path class="d-ink" d="M80 20 V250 H730"/><path class="d-grid" d="M80 70 H730 M80 120 H730 M80 170 H730 M80 220 H730"/>
+      <text class="t-sm" x="26" y="190" transform="rotate(-90 26 190)">Moisture remaining (% of initial) →</text>
+      <text class="t-sm t-c" x="405" y="288">Drying time (hours) →</text>
+      <text class="t-xs t-r" x="74" y="254">0</text><text class="t-xs t-r" x="74" y="204">25</text><text class="t-xs t-r" x="74" y="154">50</text><text class="t-xs t-r" x="74" y="104">75</text><text class="t-xs t-r" x="74" y="54">100</text>
+      <text class="t-xs t-c" x="80" y="268">0</text><text class="t-xs t-c" x="240" y="268">4</text><text class="t-xs t-c" x="400" y="268">8</text><text class="t-xs t-c" x="560" y="268">12</text><text class="t-xs t-c" x="720" y="268">16</text>
+      <path class="k-purple" d="M80 50 C150 120 220 180 300 210 C420 235 560 244 720 248"/><text class="t-sm c-purple" x="330" y="196">Nylon at 80 °C</text>
+      <path class="k-green" d="M80 50 C180 100 280 150 380 180 C500 205 620 215 720 220"/><text class="t-sm c-green" x="470" y="170">PLA at 50 °C</text>
+      <text class="t-xs" x="430" y="62">Illustrative shape only: faster at first, a long slow tail.</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> Why “one more hour” has diminishing returns, and why a hotter, longer cycle matters most for nylon. Illustrative, not measured.</figcaption>
+  </figure>
+
+  <h2 id="dryers">🧰 Dryer types</h2>
+  <div class="grid cols-2">
+    <div class="card accent-green"><h3>Dedicated filament dryers</h3><p>Heated, insulated boxes with a fan or a ventilated vent and a thermostat, usually 35–70 °C and sometimes up to 90 °C. Most hold 1–2 spools and have a feed port for printing from them. The most reliable and safe option for everyday use.</p></div>
+    <div class="card accent-blue"><h3>Food dehydrators</h3><p>Cheap, high capacity, fans give good airflow. Many only reach 70 °C, and the temperature display can be off by 5–10 °C. Verify with a thermometer. Do not use the same unit for food afterward.</p></div>
+    <div class="card accent-orange"><h3>Ovens</h3><p>A convection oven can work but cycles ±10–20 °C around a low setpoint, and many do not go below 80–100 °C. Dangerous for PLA and TPU. If you must, use an oven thermometer and a heat-safe tray; never leave it unattended with plastics.</p></div>
+    <div class="card accent-purple"><h3>Heated AMS-type enclosures</h3><p>Multi-material systems such as the AMS 2 Pro and AMS HT include heaters and desiccant to dry and store spools in place. They dry slower than a dedicated unit but keep filament dry during long prints.</p></div>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 280" role="img" aria-label="Cross-section of a filament dryer: heater and fan at the base, warm air flowing up through the spool and out a vent carrying water vapor, with a feed port for printing">
+      <rect class="d-surface" x="20" y="20" width="740" height="240" rx="10"/>
+      <rect class="d-metal" x="200" y="50" width="280" height="190" rx="10"/>
+      <circle class="d-plastic" cx="340" cy="140" r="62"/><circle class="d-surface2" cx="340" cy="140" r="20"/>
+      <rect class="d-hot" x="230" y="210" width="220" height="20" rx="4"/><text class="t-xs t-c" x="340" y="224">heater + fan</text>
+      <path class="k-orange arrow" d="M260 205 V160"/><path class="k-orange arrow" d="M420 205 V160"/>
+      <path class="k-teal arrow" d="M340 68 V40"/><text class="t-xs" x="352" y="42">humid air out (vent)</text>
+      <path class="d-plastic" d="M480 120 H600" fill="none" stroke-width="6"/><text class="t-xs" x="520" y="108">feed to printer</text>
+      <text class="t-xs" x="500" y="200">Typical: 35–70 °C,</text><text class="t-xs" x="500" y="216">timer, thermostat,</text><text class="t-xs" x="500" y="232">hygrometer</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> A basic spool dryer: warm air picks up water from the filament, and a vent or desiccant carries it away.</figcaption>
+  </figure>
+
+  <h3>Drying inside the AMS 2 Pro and similar units</h3>
+  <p>Bambu’s <b>AMS 2 Pro</b> can heat and dry spools in place, to a maximum of <b>65 °C</b>. That is enough for PLA, PETG, TPU, and borderline for ABS or nylon (most nylons need a higher-temperature dryer for deep drying). Important details from the official documentation:</p>
+  <ul>
+    <li>Drying needs a 6-pin cable power connection. Depending on the printer, the power comes from the printer itself or from an included adapter; it does not dry as a standalone unit without that connection.</li>
+    <li>Drying power is <b>reduced if the AMS is feeding or the printer is printing</b> at the same time, so the unit dries more slowly while a job runs.</li>
+    <li>The AMS contains a <b>color-changing desiccant</b>; when the indicator shows saturation, or after roughly 4–6 weeks of use, replace or regenerate it.</li>
+  </ul>
+  <p>Treat this as keeping filament <em>from getting worse during a job</em> and an extra drying step for lightly wet spools. For heavily wet nylon or PC, use a dedicated dryer first. Details for the unit are on the <a href="../x2d/ams-2-pro.html">AMS 2 Pro page</a>, with model and printer compatibility in the <a href="../x2d/filament-compatibility.html">compatibility notes</a>.</p>
+
+  <h3>“Active drying” while printing</h3>
+  <p>A long, large-capacity job lasts 10–30 hours, during which the spool in a printer or on a shelf may reabsorb moisture. To prevent that, feed filament from a heated dry box, or keep the spool in a sealed container with desiccant plus a short PTFE tube. For nylon, PC, PVA and BVOH, this is not a luxury: it determines whether the second half of the print is as good as the first.</p>
+
+  <h2 id="storage">📦 Storage methods</h2>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Method</th><th>Typical RH achieved</th><th>Cost</th><th>Pros</th><th>Cons</th></tr></thead>
+    <tbody>
+    <tr><td>Original vacuum bag + desiccant</td><td>&lt; 10–20 %</td><td>free</td><td>Excellent while sealed.</td><td>Poor once opened unless re-sealed.</td></tr>
+    <tr><td>Reusable vacuum bags (zip, valve, hand pump)</td><td>15–30 %</td><td>low</td><td>Compact, cheap; easy shipping.</td><td>Slow leaks; film can crease.</td></tr>
+    <tr><td>Airtight box + desiccant</td><td>5–20 %</td><td>low–medium</td><td>Good for 1–6 spools; hygrometer window.</td><td>Needs fresh desiccant; seals vary.</td></tr>
+    <tr><td>Dry cabinet (electronic)</td><td>10–30 %</td><td>high</td><td>Active control, large capacity.</td><td>Power, space, cost.</td></tr>
+    <tr><td>Heated filament dryer (storing in it)</td><td>&lt; 10 % with desiccant</td><td>medium</td><td>Drying + storage + feeding.</td><td>Single-spool capacity.</td></tr>
+    <tr><td>Open shelf</td><td>ambient 40–60 %</td><td>free</td><td>Convenient.</td><td>Only for PLA short-term; poor for anything else.</td></tr>
+    </tbody></table></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 280" role="img" aria-label="Cross-section of an airtight storage box with a filament spool, desiccant pouches, a hygrometer and a rubber gasket, plus a PTFE tube port for printing from the box">
+      <rect class="d-surface" x="20" y="20" width="740" height="240" rx="10"/>
+      <rect class="d-metal" x="180" y="50" width="380" height="180" rx="12"/>
+      <rect class="d-surface2" x="190" y="60" width="360" height="160" rx="8"/>
+      <circle class="d-plastic" cx="320" cy="140" r="64"/><circle class="d-surface" cx="320" cy="140" r="20"/>
+      <rect class="f-yellow" x="420" y="160" width="40" height="46" rx="6"/><rect class="f-yellow" x="470" y="160" width="40" height="46" rx="6"/><text class="t-xs t-c" x="465" y="222">desiccant pouches</text>
+      <rect class="d-surface" x="420" y="70" width="90" height="38" rx="6"/><text class="t-sm t-c" x="465" y="94" >RH 18 %</text><text class="t-xs t-c" x="465" y="124">hygrometer</text>
+      <path class="d-thin" d="M180 50 H560" stroke-dasharray="4 3"/><text class="t-xs" x="570" y="54">gasket seal</text>
+      <path class="d-plastic" d="M560 140 H680" fill="none" stroke-width="6"/><text class="t-xs" x="590" y="130">PTFE tube port → printer</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> A well-built dry box. The seal and the fresh desiccant matter more than the box’s size.</figcaption>
+  </figure>
+
+  <h3>Desiccants: what they are and how to recharge them</h3>
+  <ul>
+    <li><b>Silica gel</b> (colour-changing orange-to-green or blue-to-pink) absorbs about 20–30 % of its weight at moderate humidity and releases it when heated. Recharge in an oven at ≈ 120 °C for 1–2 h (use only products rated for it; some indicator dyes cannot take heat).</li>
+    <li><b>Molecular sieve</b> (zeolite 3A/4A) reaches lower humidity (down to a few percent) but is slower to regenerate, needing 200–300 °C.</li>
+    <li><b>Clay (montmorillonite)</b> desiccant is cheap, but has a lower capacity and doesn’t reach low humidity.</li>
+    <li>Always put desiccant in a breathable pouch so dust cannot reach the filament path.</li>
+  </ul>
+
+  <h2 id="moisture-budget">🧮 Moisture budget: why a tiny leak matters</h2>
+  <p>A sealed box has two numbers that matter: the <b>water in the air</b> and the <b>water the filament and desiccant can hold</b>. Air carries remarkably little: at 25 °C and 50 % RH, 1 m³ of air holds ≈ 11.5 g of water (saturated air is ≈ 23 g/m³). A 20 L box contains therefore ≈ 0.23 g of water vapor. A 1 kg nylon spool at equilibrium (≈ 2.5–3 % at 50 % RH) holds 25–30 g, over a hundred times more than the box air.</p>
+  <ul>
+    <li><b>Desiccant capacity:</b> 50 g of silica gel at ~25 % capacity can take about 12 g of water.</li>
+    <li><b>Ingress:</b> a poorly sealed box lets humid air in continuously: each air exchange adds ≈ 0.23 g, so 50 exchanges over a month deliver ≈ 11 g, about what the desiccant can hold. That is why a good gasket matters.</li>
+    <li><b>Takeaway:</b> the box air dries within minutes of adding desiccant. What the desiccant must really offset is the <em>slow leak plus the spool’s own stored water</em>. A spool that was never dried will keep releasing water into the box for days.</li>
+  </ul>
+  <p>Budget by hand: <code>box water per refill = (volume m³ × 11.5 g × RH/50 %) × exchanges</code>; <code>desiccant needed ≈ total water ÷ (0.2 to 0.25)</code>. For a 20 L box opened twice a week at 50 % RH, 20–50 g of silica per month is enough. Spreadsheet help lives in the <a href="../tools/calculators.html">calculators</a>.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 300" role="img" aria-label="Illustrative moisture uptake over time for different filaments in 50 percent humidity: PVA rises within hours, nylon within a day, PETG over days and PLA over weeks; labelled as illustrative">
+      <path class="d-ink" d="M80 20 V250 H730"/><path class="d-grid" d="M80 70 H730 M80 120 H730 M80 170 H730 M80 220 H730"/>
+      <text class="t-sm" x="26" y="190" transform="rotate(-90 26 190)">Moisture uptake (% of equilibrium) →</text>
+      <text class="t-sm t-c" x="405" y="288">Time exposed to ≈ 50 % RH (log scale) →</text>
+      <text class="t-xs t-c" x="130" y="268">1 h</text><text class="t-xs t-c" x="270" y="268">6 h</text><text class="t-xs t-c" x="410" y="268">1 day</text><text class="t-xs t-c" x="550" y="268">1 week</text><text class="t-xs t-c" x="690" y="268">1 month</text>
+      <text class="t-xs t-r" x="74" y="254">0</text><text class="t-xs t-r" x="74" y="174">50</text><text class="t-xs t-r" x="74" y="74">100</text>
+      <path class="k-blue" d="M90 240 C150 140 220 80 300 58"/><text class="t-sm c-blue" x="310" y="62">PVA / BVOH</text>
+      <path class="k-purple" d="M100 245 C220 200 300 130 420 80 S600 56 720 52"/><text class="t-sm c-purple" x="440" y="102">Nylon</text>
+      <path class="k-orange" d="M110 248 C260 240 380 200 520 140 S680 70 720 62"/><text class="t-sm c-orange" x="560" y="156">PETG / TPU</text>
+      <path class="k-green" d="M120 249 C300 246 460 235 600 200 S700 130 725 110"/><text class="t-sm c-green" x="580" y="228">PLA</text>
+      <text class="t-b" x="250" y="40">ILLUSTRATIVE — shapes only, not measured data</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> Illustrative moisture uptake. Real rates depend on the grade, filament diameter, spool winding, and air movement, but the order (PVA fastest, PLA slowest) is dependable.</figcaption>
+  </figure>
+
+  <h2 id="tests">🧪 How to test: is my filament wet?</h2>
+  <ol class="steps">
+    <li><strong>Sound test</strong>Extrude 100 mm of hot filament in the air at the right temperature, listening and watching. Crackling, popping or a steam wisp says wet; a silent, glossy, bubble-free strand says dry enough.</li>
+    <li><strong>Extrude test</strong>Look at the extruded strand: bubbles, a rough or foamy surface, and thin, curly threads show moisture. Compare to a fresh spool of the same material if you have one.</li>
+    <li><strong>Weigh-in test</strong>Weigh the spool on a 0.1 g scale (kitchen scales are often enough for 1 kg spools if they resolve 1 g). Dry it, weigh it again. A loss of more than 0.3–0.5 % of the filament’s weight for PLA/PETG, or more than 1 % for nylon, means it was wet. Subtract the spool weight from your measurement for accuracy.</li>
+    <li><strong>Print test</strong>Print a small stringing test or a 10-mm tower; compare before and after drying.</li>
+    <li><strong>Brittleness test</strong>Bend a 20 cm piece. PLA snapping like a dry twig is a sign of hydrolysis; nylon that bends but looks hazy is probably wet rather than damaged.</li>
+  </ol>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 240" role="img" aria-label="Weigh-in test: weigh the spool before drying, dry it, weigh again; the weight difference is the water lost">
+      <rect class="d-surface" x="20" y="20" width="740" height="200" rx="10"/>
+      <rect class="d-metal" x="60" y="150" width="140" height="20" rx="4"/><circle class="d-plastic" cx="130" cy="110" r="38"/><rect class="d-surface" x="95" y="176" width="70" height="26" rx="4"/><text class="t-sm t-c" x="130" y="194">1 012.4 g</text><text class="t-xs t-c" x="130" y="48">1. Weigh</text>
+      <path class="k-orange arrow" d="M215 130 H300"/>
+      <rect class="d-hot" x="310" y="70" width="160" height="110" rx="10"/><text class="t-sm t-c" x="390" y="130">Dryer</text><text class="t-xs t-c" x="390" y="148">6–8 h</text><text class="t-xs t-c" x="390" y="48">2. Dry</text>
+      <path class="k-orange arrow" d="M485 130 H560"/>
+      <rect class="d-metal" x="580" y="150" width="140" height="20" rx="4"/><circle class="d-plastic" cx="650" cy="110" r="38"/><rect class="d-surface" x="615" y="176" width="70" height="26" rx="4"/><text class="t-sm t-c" x="650" y="194">1 003.9 g</text><text class="t-xs t-c" x="650" y="48">3. Weigh again</text>
+      <text class="t-sm t-b t-c" x="390" y="212">Lost 8.5 g (≈ 0.85 %) → it was wet</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> A weigh-in test turns a guess into a number. The example values are illustrative.</figcaption>
+  </figure>
+
+  <h2 id="shipping">🚚 Printing from the dry box, shipping, and vacuum bags</h2>
+  <ul>
+    <li><b>Printing from a box:</b> use a PTFE tube from the box port to the printer and a smooth spool path; make sure the spool can rotate with low friction and that the tube cannot kink as the toolhead moves. Seal the gap around the tube with foam or tape.</li>
+    <li><b>Vacuum bags:</b> re-bagging a dried spool with a fresh desiccant pouch extends its life from days to months. Do not pull a hard vacuum on soft spools; just remove most of the air.</li>
+    <li><b>Shipping:</b> keep spools in a sealed bag and use desiccant in the box. Do not ship the dried spool in an uncontrolled, hot truck without a seal, as moisture can reenter within days for nylon.</li>
+    <li><b>Humidity indicator cards</b> that turn from blue to pink are cheap and handy inside bags and boxes.</li>
+  </ul>
+
+  <h2 id="protocol">📝 A step-by-step drying protocol</h2>
+  <ol class="steps">
+    <li><strong>Identify the material and its limit</strong>Read the spool label or datasheet. If it lists a drying temperature, use it. If not, use the table above and stay 10–15 °C under the base polymer’s Tg.</li>
+    <li><strong>Check the spool</strong>Cardboard spools tolerate low temperatures only; thin plastic spools soften above about 60 °C. For nylon at 80 °C or more, rewind onto a heat-resistant spool, or hang the loose coil on a rack.</li>
+    <li><strong>Open the lid or vent</strong>A fully closed hot box simply recirculates the humid air. Crack the vent, or use a dryer with a built-in exhaust, so vapor can leave.</li>
+    <li><strong>Verify the real temperature</strong>Put a cheap probe thermometer in the dryer on the first run. Inexpensive units are often 5–10 °C off the setting.</li>
+    <li><strong>Dry for the table time, then test</strong>Do a sound or extrude test. If the strand still pops, give it another 2–4 h.</li>
+    <li><strong>Seal or feed immediately</strong>Move the spool straight to a dry box or feed from the dryer. Spools left in room air start picking water up the moment they cool.</li>
+    <li><strong>Label and log</strong>Write the date on the spool. It saves you from re-drying a spool you dried yesterday, and it shows which brands need regular treatment.</li>
+  </ol>
+
+  <h3>How many times can I dry a spool?</h3>
+  <p>As many times as needed, as long as you stay below Tg. Drying is not what damages filament; <b>printing while wet</b> (hydrolysis in the hotend) and long storage at high temperature are. Repeated drying cycles can make some dyed filaments slightly yellower or the spool slightly looser, but these are cosmetic. If a spool is brittle and snaps when bent after drying, the polymer chains have probably been damaged by earlier moisture exposure and drying cannot repair it.</p>
+
+  <h2 id="quirks">🧩 Material-by-material moisture notes</h2>
+  <div class="grid cols-2">
+    <div class="card accent-green"><h3>PLA</h3><p>Absorbs slowly. Mild stringing and a dull surface are the first signs, but a spool may sit open for weeks in dry climates. In very humid regions, dry it too before critical prints. Never dry above 55 °C on the spool. Wet PLA often looks fine but is more brittle.</p></div>
+    <div class="card accent-teal"><h3>PETG and PCTG</h3><p>Picks up water in a few days and shows it quickly: pops, strings and blobs. Cheap to fix: 60–65 °C for 4–8 h. Wet PETG tends to string long, glassy hairs and the layers look wet.</p></div>
+    <div class="card accent-purple"><h3>Nylon</h3><p>The extreme case. It reaches a few percent water within a day and prints as a foam when wet. It is hygroscopic after printing, so a dried part’s stiffness and size change over days. Always dry just before printing and feed from a dry box.</p></div>
+    <div class="card accent-orange"><h3>TPU</h3><p>Moderately hygroscopic but with a nasty sensitivity: wet TPU prints very stringy and bubbly because its soft melt traps steam. Dry it gently and watch for spool swelling.</p></div>
+    <div class="card accent-red"><h3>PC and PET-CF</h3><p>Hydrolysis is the key risk: wet PC loses toughness permanently and can even turn a hazy yellow. Dry thoroughly and keep dry during the print.</p></div>
+    <div class="card accent-blue"><h3>PVA and BVOH</h3><p>Absorb so much water that they can swell and stick to themselves in hours of humid air. Store sealed, dry hot, and print from a heated box. Once wet, they clog nozzles by bubbling and degrading.</p></div>
+  </div>
+
+  <h2 id="myths-dry">🚫 Common drying myths</h2>
+  <ul>
+    <li><b>“Vacuum-sealed filament is guaranteed dry.”</b> Only if it was dry when sealed and the bag has desiccant. Factory seals can fail, and cheap bags leak slowly.</li>
+    <li><b>“A hygrometer reading of 20 % means the spool is dry.”</b> It reports the air. A spool can hold water from past exposure and slowly release it into the box.</li>
+    <li><b>“PLA never needs drying.”</b> Not true in humid climates or after long storage, though it is far more forgiving than nylon.</li>
+    <li><b>“Hotter is always better.”</b> Above the Tg the spool deforms and the filament fuses; below the limit, longer is safer.</li>
+    <li><b>“The microwave is a fast way to dry filament.”</b> It heats unevenly, melts spools, and can start fires. Do not do this.</li>
+    <li><b>“Dried filament will remain dry.”</b> Nylon can pick up significant water in hours; PLA in days to weeks. Sealing immediately matters.</li>
+  </ul>
+
+  <h2 id="climate">🌍 Your climate matters</h2>
+  <p>Humidity swings with the seasons and location. A dry winter apartment might sit at 25–35 % RH and need no special measures for PLA or PETG, while a tropical summer at 80 % RH can ruin a PETG spool in a weekend. Measure it: a US$10 hygrometer in the print room tells you the baseline. If your room is typically below 40 % RH, a dry box for sensitive materials will be enough. Above 60 % RH, store everything sealed. Coastal and basement workshops need dehumidifiers or air-conditioning to protect more than just filament, since electronics and linear rails also suffer from condensation.</p>
+
+  <div class="callout tip"><span class="callout-title">Quick triage</span>
+    <p>Printing a new material? Dry it first, then print a test. If you hear pops, mark the spool. If a spool you haven’t used for a month acts up, assume it is wet until proven otherwise; an hour on the dryer costs less than an hour of troubleshooting.</p>
+  </div>
+
+  <h2 id="cost-benefit">💰 Cost and benefit</h2>
+  <p>A dedicated dryer costs about US$40–90 and a good box with desiccant US$15–40. A failed 12-hour nylon print wastes 100–300 g of filament (US$5–15) plus your time and machine wear. If you print PLA exclusively in a dry climate, you can often skip drying. The moment you print nylon, PC, PET-CF, TPU or PVA, a dryer is cheaper than the failures it prevents.</p>
+  <div class="grid cols-3">
+    <div class="card accent-green"><h3>Only PLA</h3><p>Seal opened spools in a bag with desiccant and dry only if symptoms appear (≈ US$10–20).</p></div>
+    <div class="card accent-blue"><h3>PETG, ABS, TPU</h3><p>Buy a dryer and a few airtight boxes (≈ US$50–120). Dry new spools before first use in humid climates.</p></div>
+    <div class="card accent-red"><h3>Nylon, PC, PVA, CF blends</h3><p>A 90 °C-capable dryer with feed port plus a heated enclosure or AMS-type drying; always print from the dry box (≈ US$100–250).</p></div>
+  </div>
+  <p>For the broader costs of a print farm or hobby, read <a href="../reference/economics-and-ethics.html">Economics &amp; ethics</a>.</p>
+
+  <h2 id="takeaways">✅ Key takeaways</h2>
+  <ul>
+    <li>Polar polymers absorb water: <b>PVA/BVOH ≫ nylon ≫ TPU, PC, PETG, PLA ≫ PP</b>.</li>
+    <li>Wet filament pops, steams, strings, looks rough and prints weak; hydrolysis damage is permanent.</li>
+    <li>Dry <b>below Tg</b>: PLA 45–55 °C, PETG 60–65 °C, TPU 50–65 °C, ABS/ASA 70–80 °C, PA 75–90 °C (on a heat-safe spool).</li>
+    <li>The AMS 2 Pro dries up to 65 °C and loses power while printing; use a dedicated dryer for nylon and PC.</li>
+    <li>Seals and fresh desiccant keep the filament dry; test with sound, extrusion and weigh-in.</li>
+    <li>Look up each material’s details in the <a href="overview.html">overview</a>, <a href="everyday-plastics.html#storage">everyday plastics storage</a> and <a href="engineering-plastics.html#drying">engineering plastics</a> pages, then try the <a href="../exercises/level-1-beginner.html">Level 1 exercises</a>.</li>
+  </ul>
+</main>
+</body>
+</html>

@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Post-processing · 3D Printing Compendium</title>
+  <meta name="description" content="Complete post-processing guide for FDM prints: support removal, sanding grit progression, fillers and primer, vapor smoothing, epoxy coating, annealing, painting, gluing, heat-set inserts, threading, UV resin post-processing and shipping.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="techniques/post-processing.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 4 · Techniques</div>
+    <h1>Post-processing</h1>
+    <p class="lead">A print coming off the plate is a raw part. Post-processing is everything after: removing supports, sanding, filling, painting, smoothing, strengthening, joining and installing hardware. This page walks the whole ladder from “good enough” to “is that really 3D printed?”.</p>
+    <div class="meta"><span class="badge intermediate">Intermediate</span><span class="badge time">⏱ 40 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <p>Which finish to aim for (and how long it takes), how to remove supports cleanly, how to sand and prime properly, how to smooth, coat and paint, how to anneal for strength and heat resistance, how to glue and weld plastics, and how to install inserts, threads and magnets. Safety notes are included wherever a chemical or tool can hurt you.</p></div>
+
+  <h2 id="ladder">Choose your finish level first</h2>
+  <p>Post-processing time grows faster than quality. The first minutes give big gains; the last 5 % of perfection can take hours. Decide your target before you start, so you do not over-polish a functional bracket or under-finish a display piece.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 360" role="img" aria-label="Finish ladder: five levels from raw print to showroom finish, plotted by quality and time">
+      <path class="d-grid" d="M70 30 V300 H740"/>
+      <text class="t t-sm" x="20" y="170" transform="rotate(-90 20 170)">Surface quality →</text>
+      <text class="t t-sm" x="400" y="334">Time spent per part →</text>
+      <path class="k-orange" d="M90 280 C180 230 230 140 320 110 C420 78 500 70 720 60" fill="none"/>
+      <g>
+        <circle class="s-gray" cx="90" cy="280" r="8"/><text class="t t-sm t-b" x="100" y="296">0 · Raw</text>
+        <circle class="s-blue" cx="195" cy="214" r="8"/><text class="t t-sm t-b" x="152" y="236">1 · Cleaned</text>
+        <circle class="s-green" cx="300" cy="125" r="8"/><text class="t t-sm t-b" x="258" y="148">2 · Sanded</text>
+        <circle class="s-purple" cx="460" cy="84" r="8"/><text class="t t-sm t-b" x="402" y="108">3 · Primed &amp; painted</text>
+        <circle class="s-red" cx="690" cy="62" r="8"/><text class="t t-sm t-b" x="590" y="90">4 · Showroom</text>
+      </g>
+      <text class="t t-xs" x="100" y="312">minutes</text><text class="t t-xs" x="300" y="312">≈ 30 min</text><text class="t t-xs" x="460" y="312">2–6 h</text><text class="t t-xs" x="650" y="312">1–3 days</text>
+      <text class="t t-sm" x="420" y="190">Level 1 removes supports, burrs, strings (5–15 min).</text>
+      <text class="t t-sm" x="420" y="210">Level 2 adds sanding to hide layer lines.</text>
+      <text class="t t-sm" x="420" y="230">Level 3 adds filler primer + paint.</text>
+      <text class="t t-sm" x="420" y="250">Level 4 adds wet sanding, clear coat and polish.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> The finish ladder: quality rises quickly at first, then slowly. Pick the lowest level that meets the purpose.</figcaption>
+  </figure>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 200" role="img" aria-label="Typical post-processing workflow from print to final part">
+      <g>
+        <rect class="f-gray" x="10" y="70" width="90" height="50" rx="8"/><text class="t t-c t-b" x="55" y="100">Print</text>
+        <rect class="f-blue" x="125" y="70" width="95" height="50" rx="8"/><text class="t t-c t-b" x="172" y="92">Remove</text><text class="t t-c t-b" x="172" y="108">supports</text>
+        <rect class="f-green" x="245" y="70" width="95" height="50" rx="8"/><text class="t t-c t-b" x="292" y="92">Clean &amp;</text><text class="t t-c t-b" x="292" y="108">deburr</text>
+        <rect class="f-yellow" x="365" y="70" width="95" height="50" rx="8"/><text class="t t-c t-b" x="412" y="100">Sand</text>
+        <rect class="f-orange" x="485" y="70" width="95" height="50" rx="8"/><text class="t t-c t-b" x="532" y="92">Fill &amp;</text><text class="t t-c t-b" x="532" y="108">prime</text>
+        <rect class="f-purple" x="605" y="70" width="80" height="50" rx="8"/><text class="t t-c t-b" x="645" y="100">Paint</text>
+        <rect class="f-red" x="705" y="70" width="70" height="50" rx="8"/><text class="t t-c t-b" x="740" y="92">Seal &amp;</text><text class="t t-c t-b" x="740" y="108">assemble</text>
+        <path class="d-ink arrow" d="M102 95 H122 M222 95 H242 M342 95 H362 M462 95 H482 M582 95 H602 M687 95 H702"/>
+      </g>
+      <path class="d-dash arrow" d="M532 122 V160 H412 V124"/>
+      <text class="t t-sm t-c" x="472" y="180">repeat until smooth</text>
+      <text class="t t-xs" x="10" y="30">Do structural steps first (annealing, gluing, inserts), cosmetic steps last. Skip any box you do not need.</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> A typical sequence. The dashed loop is the most common one: sand, prime, inspect, repeat.</figcaption>
+  </figure>
+
+  <div class="callout fact"><span class="callout-title">Why order matters</span><p>Annealing and gluing change shape or add seams, so do them before sanding and painting. Paint and clear coat should come last because they can soften or contaminate surfaces that you still need to glue. Heat-set inserts go in before painting so a slipped iron does not scar the finish.</p></div>
+
+  <h2 id="support-removal">1 · Support removal and cleanup</h2>
+
+  <h3>🔰 Removing supports safely</h3>
+  <ol class="steps">
+    <li><strong>Let the plate cool</strong>Most parts release more cleanly when cool (below ~30 °C) because the plastic is stiffer and the bed contraction frees the first layer. Parts on textured PEI plates often pop off after a minute.</li>
+    <li><strong>Start from the outside in</strong>Grip the support near its base with pliers or your fingers and bend away from the model, not toward it. Peel in the direction that pulls the support off the surface rather than pushes it into it.</li>
+    <li><strong>Use flush cutters for stubborn bits</strong>Cut each support strut close to the surface, then remove the stub with a sharp craft knife or by sanding. Always cut away from your body and wear eye protection: small plastic fragments fly.</li>
+    <li><strong>Clean the interface</strong>Remove leftover interface layers with a deburring tool or a fine file. Smooth bumps with 180–240 grit sandpaper.</li>
+  </ol>
+  <div class="callout warn"><span class="callout-title">Safety</span><p>Never pull a blade toward your hand. Use a cut-resistant glove on the holding hand when cutting thick supports, and place the part on a non-slip mat. Eye protection is mandatory when snipping brittle materials such as PLA or PLA-CF.</p></div>
+
+  <h3>Hand tools worth owning</h3>
+  <div class="grid cols-3">
+    <div class="card accent-blue"><h3>🔧 Flush cutters</h3><p>Trim supports, strings and filament ends cleanly. One flat side leaves almost no stub.</p></div>
+    <div class="card accent-green"><h3>🔪 Hobby knife + deburring tool</h3><p>Scrape elephant foot, brims and seam bulges. Rotating deburr blades work best for edges.</p></div>
+    <div class="card accent-orange"><h3>🧰 Needle-nose pliers</h3><p>Grip support roots. Long tweezers retrieve small bits inside cavities.</p></div>
+    <div class="card accent-purple"><h3>📏 Needle files</h3><p>Clean holes, slots and sharp corners; round files fix undersized holes.</p></div>
+    <div class="card accent-teal"><h3>🧽 Sanding sponges and sticks</h3><p>Foam-backed blocks follow curves; flat sticks keep edges crisp.</p></div>
+    <div class="card accent-yellow"><h3>🌬️ Compressed air / soft brush</h3><p>Dust control. Keeps dust off wet paint and out of the printer.</p></div>
+  </div>
+
+  <h3>🔧 Other support types</h3>
+  <ul>
+    <li><b>Soluble supports (PVA, BVOH):</b> soak the part in room-temperature water for hours; stir occasionally and refresh the water. PVA is slow and smells when dissolving; BVOH dissolves faster. Dry the part afterwards before painting or sealing.</li>
+    <li><b>Breakaway supports:</b> special filaments with a weak bond. Peel by hand; use the matching interface material recommended by the filament maker.</li>
+    <li><b>Dual-nozzle supports:</b> on the Bambu X2D the auxiliary nozzle can lay down support in a different material so the interface peels off easily; see <a href="../x2d/dual-nozzle-printing.html">dual-nozzle printing</a> and <a href="supports-bridges-overhangs.html">supports</a>.</li>
+  </ul>
+
+  <h3>Fixing small defects before sanding</h3>
+  <table class="data compact"><thead><tr><th>Defect</th><th>Quick fix</th></tr></thead><tbody>
+    <tr><td>Strings and hairs</td><td>Brush with a toothbrush, then pass a heat gun for one second at a distance (PLA) or flick with a lighter only if the material is non-sticky. Keep flames away from the part.</td></tr>
+    <tr><td>Blobs and zits</td><td>Scrape with a sharp blade at a shallow angle, then sand with 220 grit.</td></tr>
+    <tr><td>Elephant foot</td><td>File or sand the bottom 1 mm with 120 grit on a flat block.</td></tr>
+    <tr><td>Brim remnants</td><td>Peel the brim; trim the edge with a deburring tool.</td></tr>
+    <tr><td>Z-seam line</td><td>Sand across the seam with 220 grit; fill with putty if deep.</td></tr>
+    <tr><td>Cracks along layers</td><td>Fill with CA glue and baking soda, then sand. Consider printing hotter next time.</td></tr>
+  </tbody></table>
+
+  <h2 id="sanding">2 · Sanding</h2>
+  <p>Sanding turns layer lines into a smooth surface by abrading plastic away. The trick is to work through <em>grits</em> in order, never skipping more than one step. Each grit removes the scratches of the previous one and leaves finer ones.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 320" role="img" aria-label="Surface cross-sections: layer lines, after coarse sanding, after fine sanding, after primer">
+      <g>
+        <text class="t t-b t-c" x="100" y="28">Raw</text>
+        <path class="d-plastic" d="M20 220 V90 C30 70 50 70 60 90 C70 70 90 70 100 90 C110 70 130 70 140 90 C150 70 170 70 180 90 V220 Z"/>
+        <text class="t t-sm t-c" x="100" y="250">layer ridges</text>
+        <text class="t t-sm t-c" x="100" y="270">0.2 mm steps</text>
+      </g>
+      <g>
+        <text class="t t-b t-c" x="300" y="28">120–240 grit</text>
+        <path class="d-plastic" d="M220 220 V84 C240 80 260 82 280 78 C300 76 320 80 340 82 C355 80 370 82 380 84 V220 Z"/>
+        <text class="t t-sm t-c" x="300" y="250">ridges removed</text>
+        <text class="t t-sm t-c" x="300" y="270">visible scratches</text>
+      </g>
+      <g>
+        <text class="t t-b t-c" x="500" y="28">320–600 grit</text>
+        <path class="d-plastic" d="M420 220 V82 H580 V220 Z"/>
+        <path class="d-thin" d="M425 82 L440 80 M470 82 L490 80 M520 82 L540 80" />
+        <text class="t t-sm t-c" x="500" y="250">fine scratches</text>
+        <text class="t t-sm t-c" x="500" y="270">matte surface</text>
+      </g>
+      <g>
+        <text class="t t-b t-c" x="690" y="28">Primer + fine grit</text>
+        <rect class="d-plastic" x="620" y="86" width="140" height="134"/>
+        <path class="k-gray" d="M620 86 H760" stroke-width="5"/>
+        <text class="t t-sm t-c" x="690" y="250">primer fills scratches</text>
+        <text class="t t-sm t-c" x="690" y="270">ready for paint</text>
+      </g>
+      <path class="d-ink arrow" d="M185 150 H215 M385 150 H415 M585 150 H615"/>
+      <text class="t t-xs" x="20" y="306">Not to scale. Real layer ridges are 0.05–0.2 mm; primer fills scratches up to about 0.1 mm per coat.</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> What sanding does to a surface. Each stage removes the scratches of the previous grit.</figcaption>
+  </figure>
+
+  <h3>Grit progression table</h3>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Stage</th><th>Grit (US/CAMI P)</th><th>Purpose</th><th>Wet or dry</th><th>Remarks</th></tr></thead>
+    <tbody>
+      <tr><td>Rough shaping</td><td>80–120</td><td>Remove seams, stubs, big layer ridges</td><td>Dry</td><td>Use a block; do not stay in one spot or it will melt</td></tr>
+      <tr><td>Smoothing</td><td>180–240</td><td>Remove 120 scratches, level the surface</td><td>Dry</td><td>Main stage for most prints</td></tr>
+      <tr><td>Pre-primer</td><td>320–400</td><td>Even matte surface</td><td>Dry or wet</td><td>Good enough for filler primer</td></tr>
+      <tr><td>Between primer coats</td><td>400–600</td><td>Level primer, remove dust nibs</td><td>Wet</td><td>Light pressure only</td></tr>
+      <tr><td>Pre-paint</td><td>600–800</td><td>Silky base for paint</td><td>Wet</td><td>Wipe clean, tack cloth</td></tr>
+      <tr><td>Clear-coat polish</td><td>1000–2000+</td><td>Remove orange peel and dust</td><td>Wet</td><td>Then polishing compound</td></tr>
+    </tbody></table></div>
+
+  <h3>Technique</h3>
+  <ul>
+    <li><b>Wet sanding</b> (with a few drops of dish soap in water) reduces dust, prevents clogging and keeps plastic cool. Use waterproof paper from 400 grit up. Dry sanding is fine for coarse grits, but dust from CF, GF or glass-bead filaments is hazardous: wear a P2/FFP2 respirator.</li>
+    <li><b>Use backing:</b> sand over a flat block for flat faces, a sponge for curves, folded paper for tight spots.</li>
+    <li><b>Cross-hatch strokes</b> (alternate 90° directions) so you can see when old scratches are gone.</li>
+    <li><b>Mind the heat:</b> friction can melt PLA and TPU (gummy surface). Slow down or switch to wet sanding.</li>
+    <li><b>Keep edges crisp:</b> use a block and avoid rocking; support corners with tape when sanding adjacent faces.</li>
+  </ul>
+  <div class="callout danger"><span class="callout-title">Dust safety</span><p>Plastic dust, especially from carbon-fiber, glass-fiber or metal-filled filaments, is a respiratory irritant and in some cases a long-term hazard. Wet-sand whenever possible and wear an FFP2/N95 (or better) mask when dry sanding, plus eye protection. Keep dust away from the printer’s electronics and rails.</p></div>
+  <div class="callout tip"><span class="callout-title">Print for sanding</span><p>If you plan to sand, print at 0.12–0.16 mm layers with 3+ walls, slow outer walls and Z-seam aligned to a hidden edge. Add 0.1–0.2 mm of extra material in CAD on faces that must keep dimensions. Prints sand faster than they look: you only need to remove the ridges.</p></div>
+
+  <h2 id="filler">3 · Filler, putty and primer</h2>
+  <p>Sanding alone rarely removes every layer line without damaging detail. <b>Filler primer</b> is spray paint loaded with solids that fill fine scratches and layer lines. It is the secret of a smooth painted print.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 260" role="img" aria-label="Filler primer cycle: spray, dry, sand, inspect, repeat">
+      <rect class="f-blue" x="20" y="50" width="110" height="56" rx="10"/><text class="t t-c t-b" x="75" y="83">Spray thin coat</text>
+      <rect class="f-yellow" x="165" y="50" width="110" height="56" rx="10"/><text class="t t-c t-b" x="220" y="83">Dry 30–60 min</text>
+      <rect class="f-green" x="310" y="50" width="130" height="56" rx="10"/><text class="t t-c t-b" x="375" y="76">Wet sand</text><text class="t t-c t-sm" x="375" y="94">400–600 grit</text>
+      <rect class="f-orange" x="475" y="50" width="120" height="56" rx="10"/><text class="t t-c t-b" x="535" y="76">Inspect in</text><text class="t t-c t-b" x="535" y="94">raking light</text>
+      <rect class="f-purple" x="630" y="50" width="130" height="56" rx="10"/><text class="t t-c t-b" x="695" y="83">Paint-ready</text>
+      <path class="d-ink arrow" d="M132 78 H162 M277 78 H307 M442 78 H472 M597 78 H627"/>
+      <path class="d-dash arrow" d="M535 108 V150 H75 V110"/>
+      <text class="t t-sm t-c" x="305" y="170">still lines or pits? fill with putty, repeat</text>
+      <text class="t t-xs" x="20" y="226">Typical: 2–4 cycles for a smooth display piece. Spray light, hold the can 20–25 cm away, never one heavy coat.</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> The prime–sand loop. Raking light (a torch held low across the surface) exposes remaining ridges immediately.</figcaption>
+  </figure>
+
+  <h3>Fillers compared</h3>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Product</th><th>Fills</th><th>Dry time</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Filler / sanding primer (spray)</td><td>Fine lines up to ~0.1 mm per coat</td><td>30–60 min</td><td>The workhorse; builds with 3–4 coats</td></tr>
+      <tr><td>Automotive spot putty</td><td>Dents, gaps up to 1 mm</td><td>15–30 min</td><td>Thin layers; sands well; strong smell</td></tr>
+      <tr><td>Two-part epoxy putty</td><td>Gaps, seams, missing chunks</td><td>1–24 h</td><td>Very strong, can be sculpted</td></tr>
+      <tr><td>CA glue + baking soda</td><td>Small cracks, chips</td><td>seconds</td><td>Hard and instant; do in ventilated space</td></tr>
+      <tr><td>Modeling / acrylic putty</td><td>Hairline seams</td><td>30 min</td><td>Easy to sand; water-cleanup</td></tr>
+      <tr><td>Wood filler / spackle</td><td>Larger voids in visible faces</td><td>1–4 h</td><td>Cheap; absorbent, must be sealed before painting</td></tr>
+    </tbody></table></div>
+  <div class="callout trick"><span class="callout-title">Raking light</span><p>Hold a phone torch at a very shallow angle to the surface and rotate the part. Tiny ridges and pits cast long shadows. Do this after every sanding or priming step; defects that vanish in normal light will otherwise reappear after painting.</p></div>
+
+  <h2 id="smoothing">4 · Smoothing: heat, solvent and coating</h2>
+
+  <h3>🔧 Hot-air and flame polish (use with caution)</h3>
+  <p>A quick pass of a heat gun or flame can melt the outer skin slightly so layer lines flow together and strings vanish. It works on PLA at low skill levels and on ABS/ASA with practice. The window between “glossy” and “melted blob” is only a second or two.</p>
+  <ul>
+    <li><b>Heat gun:</b> 150–200 °C air from 15–20 cm, moving constantly. Good for removing strings and gentle gloss.</li>
+    <li><b>Flame (lighter / torch):</b> very fast and risky. Only for non-critical parts, with a fire-safe surface, extinguisher or water nearby, and no solvents in the room.</li>
+    <li><b>Risks:</b> warps thin walls, blisters PLA, smudges text and detail, and produces fumes. Always ventilate and test on a scrap print.</li>
+  </ul>
+
+  <h3>🚀 Acetone vapor smoothing (ABS and ASA)</h3>
+  <p><b>ABS and ASA</b> dissolve in acetone. In a closed container, acetone vapor condenses on the surface and softens a micron-thin layer; surface tension pulls it into a glossy, sealed skin. Layer lines vanish, parts become watertight, and gloss resembles injection molding. PLA and PETG do not respond to acetone.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 320" role="img" aria-label="Acetone vapor smoothing setup: closed container with elevated part and acetone-soaked towels, plus safety notes">
+      <rect class="d-surface" x="60" y="60" width="300" height="200" rx="8"/>
+      <rect class="d-metal" x="50" y="48" width="320" height="16" rx="4"/>
+      <rect class="f-yellow" x="75" y="228" width="270" height="22" rx="4"/><text class="t t-sm t-c" x="210" y="244">acetone-soaked paper towel (damp, not dripping)</text>
+      <rect class="d-metal2" x="140" y="190" width="140" height="8"/><path class="d-metal" d="M150 198 V222 M270 198 V222"/>
+      <path class="d-plastic" d="M180 190 V130 C180 110 240 110 240 130 V190 Z"/>
+      <path class="k-orange" d="M170 175 C165 160 168 145 172 132 M250 175 C255 160 252 145 248 132 M210 105 C205 95 215 85 210 75" stroke-dasharray="3 4"/>
+      <text class="t t-sm" x="400" y="80">Sealed container (glass or metal)</text>
+      <text class="t t-sm" x="400" y="102">Part on a raised stand or hooks</text>
+      <text class="t t-sm" x="400" y="124">Vapor condenses on the surface</text>
+      <text class="t t-sm" x="400" y="146">Time: 10–40 min; check every 5–10 min</text>
+      <rect class="f-red" x="400" y="170" width="350" height="110" rx="10"/>
+      <text class="t t-b c-red" x="414" y="194">Acetone safety</text>
+      <text class="t t-sm" x="414" y="214">• Extremely flammable: no flames, sparks, hot plates</text>
+      <text class="t t-sm" x="414" y="232">• Work outdoors or in a well-ventilated space</text>
+      <text class="t t-sm" x="414" y="250">• Gloves and eye protection; keep away from children</text>
+      <text class="t t-sm" x="414" y="268">• Let part air out; the surface stays soft for hours</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> Cold vapor smoothing: the part never touches liquid acetone. Never heat acetone to speed up the process.</figcaption>
+  </figure>
+
+  <ol class="steps">
+    <li><strong>Prepare</strong>Finish sanding to ~320 grit first; vapor smoothing hides fine ridges but not large defects. Test on a scrap print.</li>
+    <li><strong>Set up</strong>Put damp (not dripping) acetone-soaked paper towels at the bottom of a sealed glass or metal container. Raise the part on a stand with hooks or a small platform made from skewers.</li>
+    <li><strong>Expose</strong>Close the lid. Check every 5–10 minutes through glass; remove when the surface is shiny and just starting to look wet.</li>
+    <li><strong>Air out</strong>Hang the part to dry in a ventilated area for several hours; handle only by the base because the surface remains soft for a while.</li>
+    <li><strong>Dispose</strong>Allow acetone-soaked towels to dry outdoors on a non-flammable surface; follow local waste rules for solvents.</li>
+  </ol>
+  <div class="callout danger"><span class="callout-title">Fire and health warning</span><p>Acetone vapor is highly flammable and can ignite from a spark, a heat plate or a switch. Do not do this near the printer’s hot parts, a heater, or an open flame, and do not heat the container. The vapor is irritating to eyes and respiratory tract and can cause dizziness at high concentrations. Use a ventilated or outdoor workspace and wear nitrile (or acetone-resistant) gloves and eye protection.</p></div>
+  <p><b>Alternatives:</b> ethyl acetate or MEK work on some plastics but are more hazardous; for PLA, a mild approach uses tetrahydrofuran-based products, which are toxic and not recommended for hobby use. Sanding and coating is the safer path for PLA and PETG.</p>
+
+  <h3>🔧 Epoxy and XTC-3D-style coating</h3>
+  <p>A thin brush-on two-part epoxy flows into layer lines, self-levels and cures into a glossy, hard shell. Products sold for 3D prints (for example XTC-3D) are designed for low viscosity and long working time. You can also use clear laminating epoxy or a UV-curing resin as a top coat.</p>
+  <ol class="steps">
+    <li><strong>Sand and clean</strong>Sand to 220–320 grit, wipe with isopropyl alcohol (IPA), let dry completely.</li>
+    <li><strong>Mix exactly</strong>Follow the ratio by volume or weight; stir slowly for 2 minutes to avoid bubbles. Work at 20–25 °C.</li>
+    <li><strong>Apply thin</strong>Brush a thin coat with a disposable foam or soft brush, working quickly. Avoid pooling in recesses; remove drips with a brush.</li>
+    <li><strong>Rotate while curing</strong>On a skewer or turning rack for 30–60 min to avoid sags; cure 4–24 h.</li>
+    <li><strong>Sand and finish</strong>Wet-sand with 600–1000 grit if you need a mirror finish, then paint or polish.</li>
+  </ol>
+  <ul>
+    <li><b>Pros:</b> fast build-up, strong, fills fine ridges, waterproofs.</li>
+    <li><b>Cons:</b> softens sharp detail, adds ~0.1–0.3 mm per coat (account for fits), skin and respiratory sensitizer: gloves, ventilation and eye protection are required.</li>
+  </ul>
+
+  <h2 id="annealing">5 · Annealing for strength and heat resistance</h2>
+  <p><b>Annealing</b> heats a finished print above its glass-transition temperature (Tg) but below its melting point and holds it there. In semi-crystalline plastics (PLA, PETG partially, nylon, PET-CF, PEEK) the molecular chains rearrange into crystals. The result: higher heat deflection temperature (a PLA part that softened at ~55 °C can survive 80–100 °C), better stiffness and sometimes better layer strength. The price is <b>shrinkage and warping</b>.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 330" role="img" aria-label="Annealing temperature profile: ramp up, hold, slow cool, with PLA Tg and typical anneal window">
+      <path class="d-grid" d="M70 30 V270 H740"/>
+      <text class="t t-sm" x="20" y="150" transform="rotate(-90 20 150)">Temperature (°C)</text>
+      <text class="t t-sm" x="400" y="304">Time</text>
+      <path class="d-dash" d="M70 200 H740"/><text class="t t-xs" x="76" y="194">PLA Tg ≈ 60 °C</text>
+      <rect class="f-green" x="70" y="100" width="670" height="40" opacity="0.35"/>
+      <text class="t t-xs" x="76" y="96">typical PLA anneal window 80–110 °C (follow filament data)</text>
+      <path class="k-orange" d="M70 262 C110 230 150 150 200 120 H520 C580 130 640 210 740 255" fill="none"/>
+      <text class="t t-sm t-b" x="105" y="212">ramp</text><text class="t t-sm t-b" x="330" y="112">hold 15–60 min</text><text class="t t-sm t-b" x="600" y="180">slow cool in the oven</text>
+      <path class="d-ink arrow" d="M200 262 V232"/><text class="t t-xs" x="160" y="286">room temp</text>
+      <text class="t t-sm" x="400" y="326">Keep the part supported and the door closed while cooling: fast cooling re-introduces stress.</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> Heat slowly, hold, cool slowly. Use an oven with an independent thermometer; many ovens are 10–20 °C off.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Material</th><th>Typical anneal</th><th>Time</th><th>Shrinkage / risk</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td>PLA (standard)</td><td>80–100 °C</td><td>15–60 min</td><td>~0.5–3 % (more on large/low-infill parts); warps</td><td>Heat resistance up to ~90 °C, stiffer, more brittle</td></tr>
+      <tr><td>HT-PLA / PLA-CF</td><td>80–110 °C, follow maker</td><td>30–60 min</td><td>Often lower than plain PLA</td><td>Best candidate for PLA annealing</td></tr>
+      <tr><td>PETG</td><td>70–80 °C (limited benefit)</td><td>30–60 min</td><td>Low; mostly stress relief</td><td>Slightly more stable</td></tr>
+      <tr><td>PA (nylon, dry)</td><td>80–120 °C</td><td>1–4 h</td><td>1–2 %; also dries the part</td><td>More crystalline, less moisture-sensitive</td></tr>
+      <tr><td>PET-CF / PA-CF</td><td>per maker, often 100–140 °C</td><td>1–3 h</td><td>Small</td><td>Raises HDT, relieves stress</td></tr>
+      <tr><td>ABS / ASA</td><td>Not crystalline: stress relief only at ~80–90 °C</td><td>1–2 h</td><td>Warping risk</td><td>Little strength gain</td></tr>
+    </tbody></table></div>
+
+  <h3>How to anneal PLA safely</h3>
+  <ol class="steps">
+    <li><strong>Pack the part</strong>Bury it in dry table salt, sand or fine silica powder inside an oven-safe metal container so it keeps its shape and heats evenly. Thin or hollow parts can also be supported by a metal former.</li>
+    <li><strong>Heat slowly</strong>Preheat to 60 °C, then step to the target (e.g. 90 °C) in 10 °C increments every 10 minutes. Put an oven thermometer next to the part.</li>
+    <li><strong>Hold</strong>15–60 min depending on wall thickness (about 10 minutes per mm of wall is a decent starting guess for thick parts).</li>
+    <li><strong>Cool slowly</strong>Turn off the oven and leave the door closed until it is warm to the touch.</li>
+    <li><strong>Measure</strong>Compare before and after; expect 0.5–3 % shrinkage in X/Y, mostly in the direction of extrusion, plus a little growth in Z. Design the part “oversize” (e.g. +1.5 %) if tolerances matter, and test with one part first.</li>
+  </ol>
+  <div class="callout warn"><span class="callout-title">Annealing caveats</span><ul><li>Do not anneal parts with tight tolerances, threads or press-fits without a test.</li><li>Do not use a food oven for plastics you intend to cook with later; use a dedicated toaster oven or filament dryer with a high temperature range.</li><li>Thin walls and low infill collapse; fill the cavity with sand or salt.</li><li>Printing with a 40–60 °C chamber (see <a href="../x2d/engineering-and-chamber.html">X2D chamber guide</a>) gives some crystallization during the print and can reduce the need to anneal.</li></ul></div>
+
+  <h2 id="painting">6 · Painting and decorating</h2>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 300" role="img" aria-label="Before and after illustration: raw layer lines, sanded, primed, painted with clear coat shown as surface cross-sections and swatches">
+      <g>
+        <rect class="d-surface2" x="20" y="40" width="165" height="170" rx="10"/>
+        <rect class="d-plastic" x="40" y="90" width="125" height="100"/>
+        <path class="d-thin" d="M40 100 H165 M40 110 H165 M40 120 H165 M40 130 H165 M40 140 H165 M40 150 H165 M40 160 H165 M40 170 H165 M40 180 H165"/>
+        <text class="t t-b t-c" x="102" y="66">① Raw</text><text class="t t-sm t-c" x="102" y="232">layer lines visible</text>
+      </g>
+      <g>
+        <rect class="d-surface2" x="205" y="40" width="165" height="170" rx="10"/>
+        <rect class="d-plastic" x="225" y="90" width="125" height="100"/>
+        <path class="d-grid" d="M230 110 L340 100 M230 140 L340 132 M230 170 L340 165"/>
+        <text class="t t-b t-c" x="287" y="66">② Sanded</text><text class="t t-sm t-c" x="287" y="232">matte, fine scratches</text>
+      </g>
+      <g>
+        <rect class="d-surface2" x="390" y="40" width="165" height="170" rx="10"/>
+        <rect x="410" y="90" width="125" height="100" fill="#9aa4b1" stroke="#66737f" stroke-width="1.5"/>
+        <text class="t t-b t-c" x="472" y="66">③ Primed</text><text class="t t-sm t-c" x="472" y="232">uniform gray base</text>
+      </g>
+      <g>
+        <rect class="d-surface2" x="575" y="40" width="185" height="170" rx="10"/>
+        <rect class="s-blue" x="595" y="90" width="145" height="100"/>
+        <path class="s-white" d="M605 100 L690 100 L605 140 Z" opacity="0.3"/>
+        <text class="t t-b t-c" x="667" y="66">④ Painted + clear</text><text class="t t-sm t-c" x="667" y="232">smooth gloss or satin</text>
+      </g>
+      <path class="d-ink arrow" d="M188 125 H202 M373 125 H387 M558 125 H572"/>
+      <text class="t t-sm" x="20" y="268">Typical time from ① to ④: 3–6 hours of work spread over a day (drying time dominates).</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> The four visual stages of a painted print. Primer is what makes paint look smooth rather than showing layer lines.</figcaption>
+  </figure>
+
+  <h3>Paint types</h3>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Paint</th><th>Best for</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Spray primer (filler)</td><td>Base coat for everything</td><td>Use a plastic-compatible primer; thin coats</td></tr>
+      <tr><td>Acrylic hobby paint (brush)</td><td>Miniatures, details, dry brushing</td><td>Water-based, low odor, easy cleanup</td></tr>
+      <tr><td>Airbrush (acrylic/lacquer)</td><td>Smooth gradients, large models</td><td>Thin the paint; build in layers</td></tr>
+      <tr><td>Spray enamel / lacquer</td><td>Large areas, props</td><td>Test on a scrap: solvents can attack PLA surface</td></tr>
+      <tr><td>Clear coat (acrylic, 2K)</td><td>Protection, gloss control</td><td>2K clear is very hard but needs a good respirator</td></tr>
+      <tr><td>Markers / paint pens</td><td>Small color accents</td><td>Seal with clear coat</td></tr>
+    </tbody></table></div>
+
+  <h3>Techniques</h3>
+  <div class="tabs">
+    <div class="tab" data-title="Base coat">
+      <p>Spray 2–3 thin coats at 20–25 cm, 10 minutes apart, then wait for a full dry. Heavy coats run and hide detail. Use a color-matched primer (light gray, white or black) under the final color: white under bright colors, black or dark gray under dark colors and metallics.</p>
+    </div>
+    <div class="tab" data-title="Airbrush">
+      <p>Thin acrylic with the maker’s thinner to a milk-like consistency; 15–25 psi; spray with overlapping passes. Pre-shading with dark color in recesses and post-shading highlights on top creates depth. Clean the airbrush immediately after use.</p>
+    </div>
+    <div class="tab" data-title="Dry brushing">
+      <p>Load a stiff brush with a little paint, wipe almost all of it off on a paper towel, then lightly drag the brush across raised details. Paint catches only on high points, instantly highlighting texture on fur, scales and weathered surfaces.</p>
+    </div>
+    <div class="tab" data-title="Washes &amp; weathering">
+      <p>A thin dark wash (diluted brown/black acrylic, or ink) flows into recesses for depth; wipe the surface clean. Weathering: sponge chipping (a sponge dabbed with dark paint), rust stippling, soot with powdered pigment or a spray of thin dark paint, and a final matte clear coat.</p>
+    </div>
+  </div>
+  <div class="callout tip"><span class="callout-title">Pro tips</span><ul><li>Spray in warm (15–25 °C), dry weather. Cold and humidity cause blushing.</li><li>Always let paint cure for 24 h before handling or assembly.</li><li>Mask with painter’s tape and cut tape with a knife along a straight edge. Burnish the edges to avoid bleed.</li><li>Paint before assembly where possible, and keep the mating surfaces unpainted (paint adds 0.05–0.15 mm).</li></ul></div>
+
+  <h3>Dyeing nylon (PA)</h3>
+  <p>Nylon is porous at the micro scale and absorbs fabric dye. Dyeing gives deep, uniform color even where the surface is scratched, and works on nylon and PA-CF parts.</p>
+  <ol class="steps">
+    <li><strong>Clean and sand</strong>Wash the part, lightly scuff with 400 grit, and degrease.</li>
+    <li><strong>Prepare the dye bath</strong>Use a disperse or all-purpose fabric dye at 80–90 °C in a dedicated stainless pot with a little vinegar or detergent as recommended on the dye package.</li>
+    <li><strong>Soak</strong>Immerse for 5–20 minutes, stirring; remove when color is as strong as you want (it dries slightly lighter). Rinse and dry.</li>
+  </ol>
+  <p><b>Caveats:</b> the part will absorb water and may change size slightly; re-dry nylon afterwards (see <a href="../materials/drying-and-storage.html">drying &amp; storage</a>); never reuse the pot for food.</p>
+
+  <h3>Metallic finishes, plating and transfers</h3>
+  <ul>
+    <li><b>Metallic paint:</b> shiny metal spray needs a very smooth base (primed + wet-sanded to 800+ grit and often a gloss-black base). Seal with clear.</li>
+    <li><b>Rub-on waxes and powders</b> (metallic waxes, pigment powders in clear lacquer) give an aged-metal look and highlight raised edges quickly.</li>
+    <li><b>Electroplating (overview):</b> a conductive layer (graphite or copper conductive paint) is applied, then the part is plated in a copper bath, followed by nickel or chrome. It gives a true metal shell but needs chemicals and power supplies; many hobbyists use a service. The part must be sealed and smooth.</li>
+    <li><b>Vinyl wraps, decals and water-slide transfers:</b> flat or gently curved surfaces take adhesive vinyl; hydrographic (“water transfer”) film wraps carbon or wood patterns around complex forms. Seal with clear coat.</li>
+    <li><b>Laser engraving:</b> diode and CO₂ lasers can engrave painted or dark surfaces for logos and serial numbers. Many plastics release toxic fumes when lasered (especially PVC); use only materials you know are safe and ventilate.</li>
+    <li><b>Soft-touch coat:</b> a rubberized spray (“rubber paint”) gives a velvety feel for grips and cases; apply thin coats on a clean base.</li>
+  </ul>
+
+  <h3>Waterproofing and food contact</h3>
+  <ul>
+    <li><b>Making a print watertight:</b> print with 3+ walls, 100 % flow, slightly hotter temperatures and slower speeds, or use vase mode. Seal with epoxy, a brush-on polyurethane or acetone smoothing (ABS/ASA). Test with a water-filled cup for 24 h.</li>
+    <li><b>Outdoor use:</b> ASA, PETG, nylon or PP survive better than PLA. UV-resistant clear coats help.</li>
+  </ul>
+  <div class="callout warn"><span class="callout-title">Food-contact guidance (caveat)</span><p>Even a food-safe filament does not make a printed object food-safe. Layer lines trap bacteria and are almost impossible to clean; nozzles may contain lead or other contaminants from earlier materials; dyes and additives vary. Use printed items for dry, short-contact or non-food uses (cookie cutters used once, then thrown away; stamps; molds for shaping). For long-term contact, print a mold and cast a food-grade silicone, or coat with a certified food-safe epoxy and follow its instructions. When in doubt, do not eat from or drink from printed parts.</p></div>
+
+  <h2 id="gluing">7 · Gluing and joining</h2>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Method</th><th>Works on</th><th>Strength</th><th>Cure time</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Cyanoacrylate (CA / super glue)</td><td>PLA, PETG, ABS, ASA</td><td>Good (brittle)</td><td>Seconds</td><td>Gel for gaps; accelerator for speed; fumes cause whitening “frosting”</td></tr>
+      <tr><td>Two-part epoxy</td><td>All plastics (PP excepted)</td><td>Very high</td><td>5 min–24 h</td><td>Fills gaps; best structural glue; scuff surfaces first</td></tr>
+      <tr><td>Solvent weld (e.g. acetone on ABS/ASA)</td><td>ABS, ASA</td><td>As strong as the part</td><td>Minutes–hours</td><td>Parts fuse into one; apply with brush or syringe</td></tr>
+      <tr><td>Plastic cement (PLA) / dichloromethane-based</td><td>PLA, some others</td><td>High</td><td>Minutes</td><td>Hazardous solvents; avoid unless properly equipped</td></tr>
+      <tr><td>Polyurethane / MS adhesive</td><td>Larger shapes, outdoor</td><td>Good, flexible</td><td>Hours</td><td>Absorbs vibration</td></tr>
+      <tr><td>Hot glue</td><td>Temporary, TPU</td><td>Low</td><td>Seconds</td><td>Easy to remove</td></tr>
+      <tr><td>Plastic welding (3D pen, hot iron, rod)</td><td>PLA, ABS, PETG, nylon</td><td>Good</td><td>Seconds</td><td>Use matching filament; melt both sides, add filler, sand</td></tr>
+    </tbody></table></div>
+  <ul>
+    <li><b>Preparation:</b> sand both faces with 120–180 grit and wipe with isopropyl alcohol. Rough surfaces give better mechanical keys.</li>
+    <li><b>Clamp:</b> tape, rubber bands or clamps; epoxy joints are strongest with 0.1–0.3 mm of glue line.</li>
+    <li><b>Hard-to-glue plastics:</b> PP, PE and TPU resist glue; use mechanical fasteners or plastic welding for PP/PE and flexible adhesive for TPU.</li>
+    <li><b>Strength:</b> a glued seam is usually weaker than the part. Design a lap joint, pins or tongue-and-groove (see <a href="advanced-techniques.html#cutting">cutting and gluing large parts</a>).</li>
+  </ul>
+  <div class="callout warn"><span class="callout-title">Glue safety</span><p>CA glue bonds skin in seconds and can release heat on porous materials like cotton (never wipe CA with a cloth or tissue on your fingers). Epoxy and solvents need gloves, ventilation and eye protection.</p></div>
+
+  <h3>🔧 Plastic welding</h3>
+  <p>Fusing plastic by melting both sides and adding filler works like welding metal. For a quick weld, use a soldering iron with a flat tip to melt both edges and push a filament rod into the seam. A 3D printing pen can add material without a tool. After cooling, sand the bump flat. For long seams, a hot-air plastic welder with a triangular nozzle gives a very strong bond in PETG, ABS and nylon.</p>
+
+  <h2 id="hardware">8 · Threads, inserts, magnets and hardware</h2>
+
+  <h3>🔧 Heat-set threaded inserts</h3>
+  <p>A <b>heat-set insert</b> is a knurled brass nut that you press into a slightly undersized hole with a heated tip. The plastic melts around the knurls and re-solidifies, giving metal threads that survive hundreds of screw cycles, far more than threads printed in plastic.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 340" role="img" aria-label="Heat-set insert installation in four steps: undersized hole, place insert, press with soldering iron, finished flush">
+      <g>
+        <text class="t t-b t-c" x="100" y="26">1 · Hole</text>
+        <rect class="d-plastic" x="30" y="60" width="140" height="130"/><rect class="d-surface2" x="85" y="60" width="30" height="100"/>
+        <text class="t t-sm t-c" x="100" y="214">hole ≈ insert OD</text><text class="t t-sm t-c" x="100" y="232">minus 0.2–0.4 mm</text><text class="t t-sm t-c" x="100" y="250">chamfer entry</text>
+      </g>
+      <g>
+        <text class="t t-b t-c" x="290" y="26">2 · Place</text>
+        <rect class="d-plastic" x="220" y="60" width="140" height="130"/><rect class="d-surface2" x="275" y="60" width="30" height="100"/>
+        <rect class="d-metal" x="272" y="30" width="36" height="28" rx="3"/><path class="d-thin" d="M276 34 V54 M282 34 V54 M288 34 V54 M294 34 V54 M300 34 V54"/>
+        <text class="t t-sm t-c" x="290" y="214">insert sits on the hole</text><text class="t t-sm t-c" x="290" y="232">square to the surface</text>
+      </g>
+      <g>
+        <text class="t t-b t-c" x="480" y="26">3 · Press with iron</text>
+        <rect class="d-plastic" x="410" y="60" width="140" height="130"/>
+        <rect class="d-metal" x="462" y="60" width="36" height="28" rx="3"/>
+        <path class="d-hot" d="M470 6 H490 V50 L482 60 L478 60 L470 50 Z"/>
+        <path class="d-ink arrow" d="M440 40 V68"/>
+        <path class="k-orange" d="M456 66 V96 M504 66 V96" stroke-dasharray="3 3"/>
+        <text class="t t-sm t-c" x="480" y="214">slow, even pressure;</text><text class="t t-sm t-c" x="480" y="232">plastic flows into knurls</text>
+      </g>
+      <g>
+        <text class="t t-b t-c" x="670" y="26">4 · Flush and set</text>
+        <rect class="d-plastic" x="600" y="60" width="140" height="130"/>
+        <rect class="d-metal" x="652" y="60" width="36" height="60" rx="3"/>
+        <path class="d-thin" d="M656 64 V116 M662 64 V116 M668 64 V116 M674 64 V116 M680 64 V116"/>
+        <rect class="s-gray" x="560" y="64" width="30" height="6"/>
+        <text class="t t-sm t-c" x="670" y="214">press flat with a</text><text class="t t-sm t-c" x="670" y="232">flat metal plate; cool</text>
+      </g>
+      <rect class="d-surface2" x="30" y="264" width="720" height="62" rx="10"/>
+      <text class="t t-sm" x="46" y="286">Iron temperature: ~200–250 °C for PLA/PETG; 230–260 °C for ABS/ASA/nylon (start low).</text>
+      <text class="t t-sm" x="46" y="306">Use a tip that fits the insert. Wall around the insert ≥ 1.5–2× the insert’s OD; leave 1–2 mm extra depth for displaced plastic.</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> Heat-set insert installation. Check the manufacturer’s datasheet for hole diameter, depth and temperature of your insert and material.</figcaption>
+  </figure>
+
+  <ol class="steps">
+    <li><strong>Design the hole</strong>Use the insert maker’s recommended diameter (for most M3 inserts around 4.0–4.6 mm depending on the model) and make it 1–2 mm deeper than the insert so melted plastic has somewhere to go. Print the hole vertically (axis along Z) so it is round.</li>
+    <li><strong>Heat the iron</strong>200–250 °C for PLA/PETG (higher for ABS/ASA/nylon). Use a pointed or flat insert-tool tip rather than a worn soldering tip.</li>
+    <li><strong>Press slowly</strong>Hold the insert on the iron tip, set it on the hole, and apply light, even pressure straight down. You will see plastic flow up around it. Stop when it is flush.</li>
+    <li><strong>Flatten and cool</strong>Press the surface with a flat metal block while the plastic is soft to level any ridge, then let it cool 1–2 minutes before inserting a screw.</li>
+    <li><strong>Test the pull-out</strong>Screw in and pull gently. A good insert resists far more force than a printed thread.</li>
+  </ol>
+  <div class="callout tip"><span class="callout-title">Crooked insert?</span><p>Re-heat the tip and straighten while soft. Prevent crookedness with an alignment jig or the guide on the insert tool, and by pressing the iron tip vertically.</p></div>
+
+  <h3>Tapping, threading, drilling and reaming</h3>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Thread</th><th>Clearance hole (loose)</th><th>Tap drill (cut thread)</th><th>Heat-set insert hole (typical)</th></tr></thead>
+    <tbody>
+      <tr><td>M2</td><td>2.4 mm</td><td>1.6 mm</td><td>~3.0–3.2 mm</td></tr>
+      <tr><td>M3</td><td>3.4 mm</td><td>2.5 mm</td><td>~4.0–4.6 mm</td></tr>
+      <tr><td>M4</td><td>4.5 mm</td><td>3.3 mm</td><td>~5.6–6.0 mm</td></tr>
+      <tr><td>M5</td><td>5.5 mm</td><td>4.2 mm</td><td>~6.4–7.0 mm</td></tr>
+      <tr><td>M6</td><td>6.6 mm</td><td>5.0 mm</td><td>~8.0–8.4 mm</td></tr>
+    </tbody></table></div>
+  <p>Use these as a starting point and check against your printer: holes print 0.1–0.3 mm small. See the <a href="../reference/cheat-sheets.html">cheat sheets</a> for a printable version.</p>
+  <ul>
+    <li><b>Tapping plastic:</b> use a hand tap in a drilled or printed pilot hole; go slowly, back off often, apply a drop of oil on hard plastics. Self-tapping screws in a printed pilot hole (screw diameter minus ~0.5–0.8 mm) work for light duty; they strip if overtightened.</li>
+    <li><b>Printed threads:</b> work for large coarse threads (M8 and up, or 1.5–2 mm pitch) printed vertically; M3–M5 threads are fragile. Use inserts instead.</li>
+    <li><b>Drilling:</b> use a sharp bit at low speed; ease off when exiting; a printed pilot hole improves accuracy. Melted plastic clogs bits; clear them often.</li>
+    <li><b>Reaming:</b> a reamer or drill bit twisted by hand cleans an undersized hole to the exact diameter (e.g. a 3 mm bearing pin).</li>
+  </ul>
+
+  <h3>Magnets, bearings and hardware</h3>
+  <ul>
+    <li><b>Magnets after printing:</b> use a hole 0.1–0.2 mm bigger than the magnet; glue with epoxy or CA, checking polarity <em>before</em> the glue sets. Cover with a thin printed layer for a hidden mount (see <a href="advanced-techniques.html#inserts">pause-and-insert</a>).</li>
+    <li><b>Bearings:</b> press-fit with a hole 0.1 mm smaller than the OD, or use a hole of the exact size and a drop of CA or retaining compound. Do not hammer; use a vise or a bolt and washers to press evenly.</li>
+    <li><b>Washers and fasteners:</b> use a washer under screw heads to spread load on plastic; stop tightening at the first resistance, because overtightening cracks plastic.</li>
+    <li><b>Thread locker and gaskets:</b> light thread locker prevents vibration loosening but avoid on plastic unless it is approved for it; use rubber gaskets or foam tape for sealing.</li>
+  </ul>
+  <p>For design-side detail (screw boss geometry, snap fits, captive nuts), see <a href="../design/joints-and-fasteners.html">joints &amp; fasteners</a>.</p>
+
+  <h2 id="resin">9 · UV resin post-processing</h2>
+  <p>Resin (MSLA/SLA/DLP) prints come out coated in liquid uncured resin, which is toxic to skin and the environment until cured. Post-processing is a must, not an option. See <a href="../foundations/printing-processes.html">printing processes</a> for how resin printing works.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 220" role="img" aria-label="Resin post-processing flow: drain, wash in IPA, dry, remove supports, UV cure, optional finish">
+      <rect class="f-blue" x="10" y="70" width="100" height="56" rx="8"/><text class="t t-c t-b" x="60" y="94">Drain</text><text class="t t-c t-sm" x="60" y="112">on the plate</text>
+      <rect class="f-teal" x="130" y="70" width="110" height="56" rx="8"/><text class="t t-c t-b" x="185" y="94">Wash IPA</text><text class="t t-c t-sm" x="185" y="112">2 × 3 min</text>
+      <rect class="f-yellow" x="260" y="70" width="100" height="56" rx="8"/><text class="t t-c t-b" x="310" y="94">Dry</text><text class="t t-c t-sm" x="310" y="112">10–15 min</text>
+      <rect class="f-green" x="380" y="70" width="110" height="56" rx="8"/><text class="t t-c t-b" x="435" y="94">Supports</text><text class="t t-c t-sm" x="435" y="112">remove now</text>
+      <rect class="f-purple" x="510" y="70" width="110" height="56" rx="8"/><text class="t t-c t-b" x="565" y="94">UV cure</text><text class="t t-c t-sm" x="565" y="112">2–10 min</text>
+      <rect class="f-orange" x="640" y="70" width="130" height="56" rx="8"/><text class="t t-c t-b" x="705" y="94">Sand, paint</text><text class="t t-c t-sm" x="705" y="112">or coat</text>
+      <path class="d-ink arrow" d="M112 98 H128 M242 98 H258 M362 98 H378 M492 98 H508 M622 98 H638"/>
+      <text class="t t-xs" x="10" y="180">Times depend on resin and equipment; follow the resin maker’s data sheet.</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> Resin post-processing: wash, dry, remove supports (softer when uncured), then cure.</figcaption>
+  </figure>
+  <ul>
+    <li><b>Wash:</b> isopropyl alcohol (≥ 90 %) or water-washable resin with water. Use two baths: a dirty one for most resin and a clean one for the final rinse. Do not wash longer than needed; over-washing can leave cracks and a sticky surface.</li>
+    <li><b>Cure:</b> UV chamber or sunlight; rotate or use a turntable. Over-curing yellows and embrittles; under-curing leaves tacky, toxic surfaces. Water-submerged curing prevents oxygen inhibition and gives a dry, glossy surface.</li>
+    <li><b>Safety:</b> nitrile gloves, eye protection, ventilation and a cover for the wash container. Never pour resin or IPA down a drain; cure leftover resin in the sun and dispose of it as solid waste; filter IPA and reuse it.</li>
+    <li><b>Finishing:</b> cured resin sands and primes easily; wet-sand to avoid dust.</li>
+  </ul>
+
+  <h2 id="packaging">10 · Packaging and shipping</h2>
+  <ul>
+    <li><b>Protect fragile features:</b> foam or bubble wrap around thin spikes; boxes at least 5 cm larger than the part in each dimension; fill voids so nothing moves.</li>
+    <li><b>Layers shear, so avoid pressure on edges:</b> pack so the part is cushioned on its largest faces. Never pack a PLA print in a hot car or a hot warehouse: it can soften and deform above ~50 °C.</li>
+    <li><b>Documentation:</b> include a short care sheet (cleaning, temperature limits, assembly tips) and, for functional parts, the material and recommended load limits.</li>
+    <li><b>Labeling:</b> add a customs description and, for resin-printed or chemically treated parts, check shipping restrictions on solvents.</li>
+    <li><b>Test-ship:</b> ship one to yourself first and inspect it; adjust packaging before selling many.</li>
+  </ul>
+
+  <h2 id="mistakes">Common mistakes</h2>
+  <div class="grid cols-2">
+    <div class="callout warn" style="margin:0"><span class="callout-title">Skipping steps</span><ul><li>Painting directly onto a rough print (layer lines amplify under gloss).</li><li>Using thick primer coats that hide detail and then crack.</li><li>Dry-sanding PLA until it melts.</li><li>Gluing before test-fitting.</li></ul></div>
+    <div class="callout warn" style="margin:0"><span class="callout-title">Safety slips</span><ul><li>Vapor smoothing near a heater or an open flame.</li><li>Using the kitchen oven for plastic without a thermometer.</li><li>Breathing sanding dust or spray paint without a mask.</li><li>Mixing resin and epoxy in food containers.</li></ul></div>
+  </div>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul>
+    <li>Decide the finish level first; most functional parts only need cleanup and a little sanding.</li>
+    <li>Sand in order through the grits and use raking light to check; primer is the real surface-smoother.</li>
+    <li>Acetone smoothing works only on ABS/ASA and is a fire and health hazard: cold-vapor method, ventilation, no flames.</li>
+    <li>Annealing increases heat resistance but shrinks and warps; test on a scrap and design for it.</li>
+    <li>Heat-set inserts give durable metal threads; follow the insert maker’s hole size and use a controlled iron.</li>
+    <li>Glue choice depends on material: epoxy is the all-rounder; solvent welding fuses ABS/ASA.</li>
+    <li>Treat solvents, resins and dust as real hazards: gloves, ventilation, eye and respiratory protection.</li>
+  </ul>
+  <p>Next: diagnose print problems before they need extra finishing in the <a href="troubleshooting.html">troubleshooting gallery</a>, learn <a href="advanced-techniques.html">advanced techniques</a> like casting, or practice in the <a href="../exercises/level-2-intermediate.html">Level 2 exercises</a>.</p>
+
+
+</main>
+</body>
+</html>

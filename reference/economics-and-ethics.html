@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Economics, licensing &amp; sustainability · 3D Printing Compendium</title>
+  <meta name="description" content="What a 3D print really costs (material, electricity, machine, maintenance, failures, labor), when to print or buy, pricing prints for sale, farm economics, environmental impact, licenses and IP, weapons and safety-critical rules, accessibility and right to repair.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="reference/economics-and-ethics.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 9 · Reference</div>
+    <h1>Economics, licensing &amp; sustainability</h1>
+    <p class="lead">A printer turns plastic, electricity and your time into objects, and each of those has a price, an impact and sometimes a legal or ethical strings attached. This page builds a realistic cost model with worked examples, shows when printing beats buying, explains how to price prints for sale, and then covers the environment, licenses, dangerous objects, safety-critical parts, accessibility and the open community that makes the hobby possible.</p>
+    <div class="meta"><span class="badge intermediate">Intermediate</span><span class="badge time">⏱ 30 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <ul>
+      <li>The seven real costs behind a print and how to calculate each of them.</li>
+      <li>A simple test for "print it or buy it", and a method to price prints for sale.</li>
+      <li>What actually creates waste in 3D printing, and what you can do about it.</li>
+      <li>The basics of copyright, licenses and remixing, with the limits of this guide clearly marked.</li>
+      <li>Why some things must never be printed, and where the hard lines are.</li>
+    </ul>
+  </div>
+
+  <div class="callout warn"><span class="callout-title">Not legal, financial or engineering advice</span>
+    <p>This page is general education. Laws on intellectual property, product liability, taxes, consumer protection and regulated objects differ by country and change over time. Prices, fees and electricity rates here are round illustrative numbers, not quotes. For decisions with real money or real risk, ask a qualified professional in your jurisdiction.</p></div>
+
+  <h2 id="cost-model">The cost model: what one print really costs</h2>
+  <p>Most beginners count only the filament. That is the smallest honest number you can quote, and sometimes it is not even the biggest cost. A complete model has seven parts.</p>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Cost</th><th>Formula</th><th>Typical order of magnitude</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>1 · Material</td><td>grams used ÷ 1000 × price per kg</td><td>$15–40 per kg for common filaments</td><td>Include supports, brim and purge, not just the model weight shown in the slicer.</td></tr>
+      <tr><td>2 · Electricity</td><td>average watts ÷ 1000 × hours × price per kWh</td><td>cents per print for PLA</td><td>Heated chambers and long high-temperature prints use noticeably more.</td></tr>
+      <tr><td>3 · Machine amortization</td><td>purchase price ÷ expected printing hours × print hours</td><td>often the largest hidden cost</td><td>Include accessories; use realistic lifetime hours.</td></tr>
+      <tr><td>4 · Maintenance and wear</td><td>nozzles, plates, belts, lubricants, filters per print hour</td><td>cents to tens of cents per hour</td><td>Hardened nozzles and abrasive filaments raise it.</td></tr>
+      <tr><td>5 · Failures</td><td>(cost of 1–4) × failure rate</td><td>3–15% for a tuned hobby setup</td><td>Higher for new materials, large flat parts and tricky designs.</td></tr>
+      <tr><td>6 · Labor</td><td>minutes of hands-on time × hourly value</td><td>often exceeds all of the above for sale items</td><td>Includes design, slicing, plate swaps, support removal and messaging.</td></tr>
+      <tr><td>7 · Post-processing and packaging</td><td>consumables + extra labor</td><td>sanding paper, primer, inserts, boxes</td><td>For painted or assembled items this can double the price.</td></tr>
+    </tbody></table></div>
+
+  <h3>🔰 Worked example 1 · A plain PLA part</h3>
+  <p>Assume a 120 g part that prints in 6 hours, filament at $20 per kg, electricity at $0.20 per kWh, an average draw of 150 W, a $1,000 machine expected to run about 2,000 printing hours, maintenance of about $0.05 per print hour and an 8% failure allowance.</p>
+  <ul>
+    <li><strong>Material:</strong> 120 g ÷ 1000 × $20 = <strong>$2.40</strong></li>
+    <li><strong>Electricity:</strong> 0.15 kW × 6 h = 0.9 kWh × $0.20 = <strong>$0.18</strong></li>
+    <li><strong>Machine:</strong> $1,000 ÷ 2,000 h × 6 h = <strong>$3.00</strong></li>
+    <li><strong>Maintenance:</strong> 6 h × $0.05 = <strong>$0.30</strong></li>
+    <li><strong>Subtotal:</strong> $5.88; <strong>failure allowance</strong> 8% ≈ <strong>$0.47</strong></li>
+    <li><strong>Total (without your time):</strong> ≈ <strong>$6.35</strong></li>
+  </ul>
+  <p>The surprise is that the machine, not the filament, takes the largest slice. Electricity, which people worry about most, is a rounding error for PLA.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 330" role="img" aria-label="Pie chart of the cost of the example 6 hour PLA part: machine amortization 47 percent, filament 38 percent, failures 7 percent, maintenance 5 percent, electricity 3 percent">
+      <path class="s-blue" d="M150 150 L150 40 A110 110 0 0 1 226.3 229.3 Z" style="stroke:var(--surface);stroke-width:2"/>
+      <path class="s-yellow" d="M150 150 L226.3 229.3 A110 110 0 0 1 211.1 241.5 Z" style="stroke:var(--surface);stroke-width:2"/>
+      <path class="s-orange" d="M150 150 L211.1 241.5 A110 110 0 0 1 74.1 70.4 Z" style="stroke:var(--surface);stroke-width:2"/>
+      <path class="s-purple" d="M150 150 L74.1 70.4 A110 110 0 0 1 100.6 51.7 Z" style="stroke:var(--surface);stroke-width:2"/>
+      <path class="s-red" d="M150 150 L100.6 51.7 A110 110 0 0 1 150 40 Z" style="stroke:var(--surface);stroke-width:2"/>
+      <text class="t t-b t-c" x="150" y="290" style="text-anchor:middle">Total ≈ $6.35</text>
+      <text class="t-xs t-m" x="150" y="310" style="text-anchor:middle">120 g PLA, 6 h, illustrative rates</text>
+      <rect class="s-orange" x="330" y="50" width="18" height="18" rx="3"/><text class="t" x="358" y="64">Machine amortization · $3.00 · 47%</text>
+      <rect class="s-blue" x="330" y="90" width="18" height="18" rx="3"/><text class="t" x="358" y="104">Filament · $2.40 · 38%</text>
+      <rect class="s-red" x="330" y="130" width="18" height="18" rx="3"/><text class="t" x="358" y="144">Failure allowance · $0.47 · 7%</text>
+      <rect class="s-purple" x="330" y="170" width="18" height="18" rx="3"/><text class="t" x="358" y="184">Maintenance and wear · $0.30 · 5%</text>
+      <rect class="s-yellow" x="330" y="210" width="18" height="18" rx="3"/><text class="t" x="358" y="224">Electricity · $0.18 · 3%</text>
+      <rect class="d-surface2" x="330" y="248" width="500" height="58" rx="8"/>
+      <text class="t-sm" x="344" y="272">Your labor is not in this chart. Ten minutes at $15 per hour adds $2.50,</text>
+      <text class="t-sm" x="344" y="292">which is nearly 40% on top of the total shown here.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> Where the money goes for a small PLA part. Change the inputs (a cheaper machine, a longer lifetime, pricier filament) and the slices move, but the lesson stays: count more than the plastic.</figcaption>
+  </figure>
+
+  <h3>🔰 Electricity in more detail</h3>
+  <p>Power draw is not constant. The heatbed and chamber heaters cycle, motors run, fans spin. Measure your own printer with a plug-in power meter for a few prints and use your average. As a reference, Bambu Lab's published figures for the X2D are about 250 W steady-state for PLA and about 550 W for PC at 25 °C ambient, with 7–8 W in standby (the machine's maximum is 1,600 W at 220 V during heat-up, which is not a typical average). Treat vendor figures as a starting point, since your enclosure temperature, room and material will change the result.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 280" role="img" aria-label="Bar chart of electricity for a 10 hour print at different average power levels at 0.20 dollars per kilowatt hour: 100 watts costs 0.20, 250 watts costs 0.50, 550 watts costs 1.10, 1000 watts costs 2.00 dollars">
+      <text class="t t-b" x="20" y="28">Electricity for a 10 hour print at $0.20 per kWh</text>
+      <path class="d-ink" d="M200 50 V250"/>
+      <text class="t-sm" x="190" y="84" style="text-anchor:end">100 W · small printer, PLA</text>
+      <rect class="s-green" x="200" y="66" width="35" height="28" rx="3"/><text class="t t-b" x="244" y="86">$0.20</text>
+      <text class="t-sm" x="190" y="134" style="text-anchor:end">250 W · enclosed, PLA</text>
+      <rect class="s-blue" x="200" y="116" width="87.5" height="28" rx="3"/><text class="t t-b" x="296" y="136">$0.50</text>
+      <text class="t-sm" x="190" y="184" style="text-anchor:end">550 W · hot chamber, PC</text>
+      <rect class="s-orange" x="200" y="166" width="192.5" height="28" rx="3"/><text class="t t-b" x="402" y="186">$1.10</text>
+      <text class="t-sm" x="190" y="234" style="text-anchor:end">1,000 W · heavy sustained load</text>
+      <rect class="s-red" x="200" y="216" width="350" height="28" rx="3"/><text class="t t-b" x="560" y="236">$2.00</text>
+      <text class="t-xs t-m" x="600" y="100">Bar length is proportional to cost.</text>
+      <text class="t-xs t-m" x="600" y="118">Prices of electricity vary several-fold</text>
+      <text class="t-xs t-m" x="600" y="136">between regions; check your own bill.</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> Electricity matters mostly for long, hot prints. For a typical PLA job it stays well below the cost of the filament.</figcaption>
+  </figure>
+
+  <h3>🔧 Machine amortization: the hidden driver</h3>
+  <p>Amortization spreads the purchase price over the hours you will actually print. The number of lifetime hours is a guess, and it changes the result strongly: a machine that earns its keep over 4,000 hours is half as expensive per hour as one that lasts 2,000. It also means <strong>idle machines are expensive machines</strong>. A $1,000 printer used 5 hours per week for 3 years has run only about 780 hours; its true cost per printed hour is much higher than for a printer busy every day.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 280" role="img" aria-label="Bar chart: cost per print hour for a 1000 dollar printer over 500 hours is 2.00, over 1000 hours is 1.00, over 2000 hours is 0.50, over 4000 hours is 0.25 dollars">
+      <text class="t t-b" x="20" y="28">Amortization per print hour for a $1,000 printer</text>
+      <path class="d-ink" d="M200 50 V250"/>
+      <text class="t-sm" x="190" y="84" style="text-anchor:end">used 500 h in its life</text>
+      <rect class="s-red" x="200" y="66" width="560" height="28" rx="3"/><text class="t t-b" x="768" y="86">$2.00</text>
+      <text class="t-sm" x="190" y="134" style="text-anchor:end">1,000 h</text>
+      <rect class="s-orange" x="200" y="116" width="280" height="28" rx="3"/><text class="t t-b" x="488" y="136">$1.00</text>
+      <text class="t-sm" x="190" y="184" style="text-anchor:end">2,000 h</text>
+      <rect class="s-blue" x="200" y="166" width="140" height="28" rx="3"/><text class="t t-b" x="348" y="186">$0.50</text>
+      <text class="t-sm" x="190" y="234" style="text-anchor:end">4,000 h</text>
+      <rect class="s-green" x="200" y="216" width="70" height="28" rx="3"/><text class="t t-b" x="278" y="236">$0.25</text>
+      <text class="t-xs t-m" x="470" y="236">Resale value, if you sell later, lowers the real cost.</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> The same machine costs eight times as much per hour if it is barely used. Utilization is the lever for anyone who sells prints.</figcaption>
+  </figure>
+
+  <h3>🔧 Worked example 2 · A multi-color print</h3>
+  <p>A 90 g model in four colors can generate more waste than part weight. If a color change needs a purge of, say, 5 g per change and the print has 60 changes, that is about 300 g of purge, more than three times the part. Slicer-reported "flush" and "waste" values show this. Modern tools, including purge into infill, purge into support, and printers that offer more than one nozzle or a tool-changer design, exist largely to attack this number (see <a href="../techniques/multi-color-and-multi-material.html">Multi-color &amp; multi-material</a>). The numbers here are invented for the arithmetic; read your own slicer's totals.</p>
+  <ul>
+    <li>Part: 90 g × $20 per kg = $1.80</li>
+    <li>Purge and tower: 300 g × $20 per kg = $6.00, more than the part itself</li>
+    <li>Time rises too, since each change takes tens of seconds to minutes</li>
+  </ul>
+  <p>If purge dominates, reduce the number of color changes, merge similar colors, choose designs with color layers instead of scattered islands, and let the slicer use waste for infill where your quality target allows.</p>
+
+  <h3>🚀 Worked example 3 · Engineering material</h3>
+  <p>A 200 g functional bracket in carbon-fiber nylon on a $50 per kg spool: material $10.00. Add drying time and energy for the dryer, a hardened nozzle that wears faster, a higher failure allowance (say 15%) and annealing or inserts afterwards. The unit cost can easily be several times the PLA version. The question to ask is whether the strength or temperature resistance is required; see <a href="../materials/engineering-plastics.html">Engineering plastics</a> and <a href="../materials/drying-and-storage.html">Drying &amp; storage</a>.</p>
+
+  <div class="callout tip"><span class="callout-title">Use the calculators</span>
+    <p>The site has a <a href="../tools/calculators.html">cost calculator</a> where you can enter your own filament price, power draw, machine price and failure rate instead of trusting the round numbers on this page.</p></div>
+
+  <h2 id="print-vs-buy">Print it or buy it?</h2>
+  <p>A printer does not beat a shop on every object. Mass-produced injection-molded goods are cheap because tooling cost is spread over millions of units. A print wins when the unit is unique, small-batch, urgent, customized, no longer sold, or when design freedom adds value.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 400" role="img" aria-label="Decision tree for print versus buy: is the part safety-critical, is it available cheaply off the shelf, is it unique or customized, can the material and strength meet the need, then print, buy or test first">
+      <rect class="f-blue" x="300" y="10" width="260" height="46" rx="10"/><text class="t t-b t-c" x="430" y="38" style="text-anchor:middle">I need an object</text>
+      <path class="d-ink arrow" d="M430 58 V84"/>
+      <rect class="f-red" x="280" y="86" width="300" height="52" rx="10"/><text class="t t-b" x="430" y="108" style="text-anchor:middle">Could failure injure someone?</text><text class="t-xs" x="430" y="126" style="text-anchor:middle">brakes, climbing, medical, pressure, children</text>
+      <path class="d-ink arrow" d="M280 112 H150 V150"/><text class="t-sm" x="214" y="104">yes</text>
+      <rect class="f-red" x="40" y="152" width="220" height="56" rx="10"/><text class="t t-b" x="150" y="176" style="text-anchor:middle">Buy certified</text><text class="t-xs" x="150" y="194" style="text-anchor:middle">see safety-critical parts</text>
+      <path class="d-ink arrow" d="M430 140 V168"/><text class="t-sm" x="440" y="160">no</text>
+      <rect class="f-yellow" x="280" y="170" width="300" height="52" rx="10"/><text class="t t-b" x="430" y="192" style="text-anchor:middle">Is a good cheap one on the shelf?</text><text class="t-xs" x="430" y="210" style="text-anchor:middle">same fit, same function, delivered soon</text>
+      <path class="d-ink arrow" d="M580 196 H700 V234"/><text class="t-sm" x="630" y="188">yes</text>
+      <rect class="f-gray" x="600" y="236" width="220" height="56" rx="10"/><text class="t t-b" x="710" y="260" style="text-anchor:middle">Buy it</text><text class="t-xs" x="710" y="278" style="text-anchor:middle">your hours are worth more</text>
+      <path class="d-ink arrow" d="M430 224 V252"/><text class="t-sm" x="440" y="244">no</text>
+      <rect class="f-purple" x="280" y="254" width="300" height="52" rx="10"/><text class="t t-b" x="430" y="276" style="text-anchor:middle">Custom, rare, or a repair?</text><text class="t-xs" x="430" y="294" style="text-anchor:middle">no equivalent, or fit must be exact</text>
+      <path class="d-ink arrow" d="M430 308 V336"/><text class="t-sm" x="440" y="328">yes</text>
+      <rect class="f-green" x="280" y="338" width="300" height="52" rx="10"/><text class="t t-b" x="430" y="360" style="text-anchor:middle">Print it, choose the right material</text><text class="t-xs" x="430" y="378" style="text-anchor:middle">prototype first, test, then keep the file</text>
+      <path class="d-dash d-ink arrow" d="M280 280 H150 V318"/><text class="t-sm" x="190" y="272">no</text>
+      <rect class="f-gray" x="40" y="320" width="220" height="56" rx="10"/><text class="t t-b" x="150" y="344" style="text-anchor:middle">Probably buy</text><text class="t-xs" x="150" y="362" style="text-anchor:middle">unless printing is the hobby</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> A quick filter. The hobby value of making things is real, but be honest about whether you are saving money or enjoying yourself, and about the consequences of failure.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Situation</th><th>Tends to favor</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Replacement knob, clip or bracket no longer sold</td><td>Print</td><td>No alternative exists; printing a few grams is cheap.</td></tr>
+      <tr><td>Standard screws, bearings, gears for a load</td><td>Buy</td><td>Cheap, certified, stronger, and consistent.</td></tr>
+      <tr><td>Desk organizer for your exact desk</td><td>Print</td><td>Fit to measurements, any color.</td></tr>
+      <tr><td>Hundreds of identical simple parts</td><td>Buy (or mold)</td><td>See figure in <a href="applications.html#why">applications</a> for break-even.</td></tr>
+      <tr><td>Custom jig or fixture</td><td>Print</td><td>Faster than machining and tolerant of iteration.</td></tr>
+      <tr><td>Helmet, brake part, ladder foot</td><td>Buy certified</td><td>Failure can injure; see <a href="#safety-critical">safety-critical parts</a>.</td></tr>
+    </tbody></table></div>
+
+  <h2 id="pricing">Pricing prints for sale</h2>
+  <p>Selling changes the question from "what did it cost" to "what must I charge to stay in business". Start with your full cost, add what the customer sees (shipping, packaging, speed, personalization), subtract the platform fees, then decide on a profit that pays for your time and risk.</p>
+
+  <h3>🔧 A pricing method</h3>
+  <ol class="steps">
+    <li><strong>Direct cost:</strong> materials, electricity, machine wear, maintenance and a failure allowance.</li>
+    <li><strong>Labor:</strong> hands-on minutes × a realistic hourly rate. Include modeling, plate prep, support removal, finishing, photos and messages. Be honest; the commonest error is paying yourself nothing.</li>
+    <li><strong>Packaging and consumables:</strong> box, tape, padding, labels, sandpaper, primer.</li>
+    <li><strong>Fees and taxes:</strong> marketplace commission, payment processing, sales taxes or VAT where applicable. Rates differ per platform and country and change often, so check current terms.</li>
+    <li><strong>Overheads:</strong> software subscriptions, spare parts fund, space, insurance, and an allowance for returns.</li>
+    <li><strong>Target margin:</strong> what is left must be worth the effort, otherwise it is a costly hobby, not a business.</li>
+    <li><strong>Check the market:</strong> compare similar items. If you cannot meet the market price with a decent margin, change the product (unique design, higher perceived value) rather than competing on price alone.</li>
+  </ol>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 260" role="img" aria-label="Stacked bar of a 20 dollar selling price: filament 2.40, electricity maintenance and failures 0.95, machine 3.00, labor 5.00, packaging 1.00, platform and payment fees 2.40, profit 5.25">
+      <text class="t t-b" x="20" y="28">Where a $20 sale goes (illustrative)</text>
+      <rect class="s-blue" x="80" y="50" width="84" height="56"/><text class="t-sm t-w t-c" x="122" y="82" style="text-anchor:middle">Filament</text>
+      <rect class="s-yellow" x="164" y="50" width="33.25" height="56"/>
+      <rect class="s-orange" x="197.25" y="50" width="105" height="56"/><text class="t-sm t-w" x="249.75" y="82" style="text-anchor:middle">Machine</text>
+      <rect class="s-purple" x="302.25" y="50" width="175" height="56"/><text class="t-sm t-w" x="389.75" y="82" style="text-anchor:middle">Labor $5.00</text>
+      <rect class="s-teal" x="477.25" y="50" width="35" height="56"/>
+      <rect class="s-red" x="512.25" y="50" width="84" height="56"/><text class="t-sm t-w" x="554.25" y="82" style="text-anchor:middle">Fees</text>
+      <rect class="s-green" x="596.25" y="50" width="183.75" height="56"/><text class="t-sm t-w" x="688" y="82" style="text-anchor:middle">Profit $5.25</text>
+      <path class="d-ink" d="M80 120 H780"/><text class="t-xs" x="80" y="136">$0</text><text class="t-xs" x="770" y="136">$20</text>
+      <text class="t-sm" x="80" y="168"><tspan class="c-blue t-b">■</tspan> Filament $2.40   <tspan class="c-yellow t-b">■</tspan> Electricity + maintenance + failures $0.95   <tspan class="c-orange t-b">■</tspan> Machine $3.00   <tspan class="c-teal t-b">■</tspan> Packaging $1.00</text>
+      <text class="t-sm" x="80" y="190"><tspan class="c-purple t-b">■</tspan> Labor (20 min at $15 per hour) $5.00   <tspan class="c-red t-b">■</tspan> Platform and payment fees (about 12%) $2.40   <tspan class="c-green t-b">■</tspan> Profit $5.25</text>
+      <rect class="d-surface2" x="20" y="208" width="820" height="40" rx="8"/><text class="t-sm" x="34" y="233">Shipping is usually charged separately. A 12% fee is an example only; real fee schedules vary.</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> A modest item priced at $20 leaves about a quarter as profit once every cost is counted. That is why personalization, speed and original designs usually matter more than being cheapest.</figcaption>
+  </figure>
+
+  <div class="callout trick"><span class="callout-title">Pricing rules of thumb</span>
+    <ul>
+      <li>Price by value for the customer, using cost as a floor, not a target.</li>
+      <li>Offer fixed prices for standard sizes and quotes for custom work, with a minimum order fee that covers setup.</li>
+      <li>Charge separately for design changes and rush jobs.</li>
+      <li>Keep a record of real failure rates and update your model every few months.</li>
+    </ul></div>
+
+  <h2 id="farm-economics">Print farm economics</h2>
+  <p>A farm has fixed monthly costs (space, subscriptions, a share of labor, depreciation of machines you own either way) and variable costs per item (material, energy, wear, packaging and fees). The contribution per item is the price minus variable costs; the number of sales at which contribution covers fixed costs is the break-even point. Using the figures from above, with variable cost per item of $9.75 (material, electricity, machine wear, maintenance, failures, packaging and fees), a price of $20 and fixed monthly costs of $600:</p>
+  <p>Break-even ≈ $600 ÷ ($20 − $9.75) ≈ <strong>59 items per month</strong>, before you pay yourself.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 330" role="img" aria-label="Line chart: revenue line at 20 dollars per item and cost line of 600 dollars fixed plus 9.75 per item cross at about 59 items per month, with profit region to the right and loss region to the left">
+      <path class="d-ink" d="M80 20 V260 H790"/>
+      <path class="d-grid" d="M80 187 H780 M80 113 H780 M80 40 H780"/>
+      <text class="t-xs" x="72" y="264" style="text-anchor:end">0</text><text class="t-xs" x="72" y="191" style="text-anchor:end">$1,000</text><text class="t-xs" x="72" y="117" style="text-anchor:end">$2,000</text><text class="t-xs" x="72" y="44" style="text-anchor:end">$3,000</text>
+      <text class="t-xs" x="80" y="278" style="text-anchor:middle">0</text><text class="t-xs" x="313" y="278" style="text-anchor:middle">50</text><text class="t-xs" x="547" y="278" style="text-anchor:middle">100</text><text class="t-xs" x="780" y="278" style="text-anchor:middle">150</text>
+      <text class="t-sm t-m" x="430" y="302" style="text-anchor:middle">items sold per month</text>
+      <path class="k-green" d="M80 260 L780 40" style="stroke-width:3.5"/>
+      <path class="k-red" d="M80 216 L780 109" style="stroke-width:3.5"/>
+      <circle class="s-orange" cx="353" cy="174" r="7"/>
+      <text class="t-sm t-b c-green" x="620" y="82">Revenue: $20 per item</text>
+      <text class="t-sm t-b c-red" x="560" y="150">Cost: $600 + $9.75 per item</text>
+      <text class="t-sm t-b" x="366" y="172">Break-even ≈ 59 items</text>
+      <text class="t-xs t-m" x="100" y="238">loss zone</text><text class="t-xs t-m" x="700" y="94">profit zone</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> The shape of the business. Every item above break-even adds roughly $10 in this example, but only if demand, machines and your time can really deliver that volume.</figcaption>
+  </figure>
+
+  <h3>🚀 Reality checks for farms</h3>
+  <ul>
+    <li><strong>Utilization is rarely 100%.</strong> Plate changes, failures, maintenance and gaps between orders lower it; plan with a realistic figure.</li>
+    <li><strong>Labor scales slower than machines</strong> only if the process is standardized.</li>
+    <li><strong>Demand is the constraint.</strong> Adding printers before orders exist adds cost, not income.</li>
+    <li><strong>Insurance, fire safety and neighbors matter.</strong> Many printers in one space raise risk and noise; check your lease, local rules and insurance cover.</li>
+    <li><strong>Diversify.</strong> One platform, one product or one customer is a fragile base.</li>
+  </ul>
+  <p>More operations detail is in <a href="applications.html#business">Business and side-hustle realities</a>.</p>
+
+  <h2 id="environment">Environmental impact</h2>
+  <p>Home printing is small compared with industry, but it is not free of impact: plastic is produced, shipped and eventually thrown away, and a hobby encourages making many objects. The honest approach is to know where the waste comes from, cut the avoidable part, and avoid greenwashing claims in both directions.</p>
+
+  <h3>🔰 Where the waste comes from</h3>
+  <ul>
+    <li><strong>Failed prints and test prints.</strong> Often the largest share for beginners; calibration and good first layers cut it fastest.</li>
+    <li><strong>Supports, brims, rafts and skirts.</strong> Design and orientation can avoid many of them (see <a href="../techniques/supports-bridges-overhangs.html">Supports, bridges &amp; overhangs</a>).</li>
+    <li><strong>Purge and prime towers in multi-color printing.</strong> Can exceed the weight of the part itself, as in worked example 2.</li>
+    <li><strong>Unwanted objects.</strong> Printing things that are never used is the quietest waste of all.</li>
+    <li><strong>Spools, packaging and leftover filament ends.</strong> Plastic spools and bags add to the footprint; cardboard spools and refills reduce it.</li>
+    <li><strong>Energy.</strong> Small per print, but heated chambers and long jobs add up over a year.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 300" role="img" aria-label="Illustrative stacked bars showing where filament ends up for a tuned single-color print, a beginner single-color print and a multi-color print: model, supports, failed attempts and purge. Proportions are illustrative, not measured data">
+      <text class="t t-b" x="20" y="26">Where does the filament end up? (illustrative shares, not measured data)</text>
+      <text class="t-sm" x="190" y="76" style="text-anchor:end">Tuned, single color</text>
+      <rect class="s-green" x="200" y="56" width="476" height="30"/><rect class="s-blue" x="676" y="56" width="52" height="30"/><rect class="s-red" x="728" y="56" width="42" height="30"/>
+      <text class="t-sm" x="190" y="136" style="text-anchor:end">Beginner, single color</text>
+      <rect class="s-green" x="200" y="116" width="330" height="30"/><rect class="s-blue" x="530" y="116" width="90" height="30"/><rect class="s-red" x="620" y="116" width="150" height="30"/>
+      <text class="t-sm" x="190" y="196" style="text-anchor:end">Multi-color, default purge</text>
+      <rect class="s-green" x="200" y="176" width="240" height="30"/><rect class="s-blue" x="440" y="176" width="50" height="30"/><rect class="s-red" x="490" y="176" width="60" height="30"/><rect class="s-orange" x="550" y="176" width="220" height="30"/>
+      <text class="t-xs t-m" x="200" y="104">  the bars are the same length; each represents the filament consumed in total</text>
+      <text class="t-sm" x="200" y="244"><tspan class="c-green t-b">■</tspan> In the finished part   <tspan class="c-blue t-b">■</tspan> Supports, brim, skirt   <tspan class="c-red t-b">■</tspan> Failed or test attempts   <tspan class="c-orange t-b">■</tspan> Purge and tower</text>
+      <text class="t-xs t-m" x="200" y="272">Real numbers depend on the model, slicer and color count. Measure your own over a month by weighing the waste bin.</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> A conceptual picture, not a study. The lesson is where to look first: failures for beginners, purge for multi-color printers.</figcaption>
+  </figure>
+
+  <h3>🔧 Reducing waste in practice</h3>
+  <div class="grid cols-2">
+    <div class="card accent-green"><h4>Print less waste</h4>
+      <ul>
+        <li>Calibrate the first layer and keep filament dry; most failures start there.</li>
+        <li>Prototype at small scale or with low infill before committing to a big part.</li>
+        <li>Orient the part to need fewer supports; use tree or organic supports sparingly.</li>
+        <li>Use remote monitoring and failure detection to stop bad prints early.</li>
+      </ul></div>
+    <div class="card accent-blue"><h4>Buy and store wisely</h4>
+      <ul>
+        <li>Buy fewer, larger spools of colors you actually use.</li>
+        <li>Prefer cardboard spools or refills where the product exists and fits your system.</li>
+        <li>Store filament dry so it is not scrapped (see <a href="../materials/drying-and-storage.html">Drying &amp; storage</a>).</li>
+        <li>Print useful, repairable, long-lasting things instead of disposable novelties.</li>
+      </ul></div>
+  </div>
+
+  <h3>🔧 AMS and multi-color purge reduction</h3>
+  <p>Switching filaments means flushing the old color out of the nozzle, and the amount depends on how different the colors are: switching from dark to light needs a lot of purge, light to dark very little. Slicers calculate this from a flush matrix. The levers below apply to Bambu Studio and similar slicers; exact menu names differ between versions, so check the current <a href="../x2d/settings-and-profiles.html">settings page</a> and the <a href="../techniques/multi-color-and-multi-material.html">multi-color guide</a>.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 330" role="img" aria-label="Ladder of purge reduction strategies from design to hardware: fewer color changes, sensible color order, tuned flush volumes, purge into infill or supports, more than one nozzle, reuse of purge material">
+      <rect class="f-green" x="20" y="14" width="820" height="40" rx="8"/><text class="t t-b" x="36" y="40">1 · Design with fewer color changes: group colors by layer, avoid scattered islands</text>
+      <rect class="f-green" x="50" y="64" width="790" height="40" rx="8"/><text class="t t-b" x="66" y="90">2 · Pick colors that sit close in lightness; place dark colors after light ones</text>
+      <rect class="f-blue" x="80" y="114" width="760" height="40" rx="8"/><text class="t t-b" x="96" y="140">3 · Tune the flush volumes per color pair instead of using one large default</text>
+      <rect class="f-blue" x="110" y="164" width="730" height="40" rx="8"/><text class="t t-b" x="126" y="190">4 · Purge into infill or into support material so the waste has a job</text>
+      <rect class="f-purple" x="140" y="214" width="700" height="40" rx="8"/><text class="t t-b" x="156" y="240">5 · Hardware: a second nozzle holds two colors ready, so fewer swaps are needed</text>
+      <rect class="f-yellow" x="170" y="264" width="670" height="40" rx="8"/><text class="t t-b" x="186" y="290">6 · Collect leftover purge and recycle or reuse it in non-visible parts</text>
+      <text class="t-xs t-m" x="20" y="322">Roughly ordered from free and design-based to hardware and effort. Test each change; too little purge leaves color bleed.</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> Cheap measures first. With a dual-nozzle machine such as the X2D, the second nozzle can keep two colors loaded, which reduces swaps on suitable models. See <a href="../x2d/dual-nozzle-printing.html">Dual-nozzle printing</a>.</figcaption>
+  </figure>
+
+  <h3>🔧 Recycling and the PLA myths</h3>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Claim</th><th>Reality (generally)</th></tr></thead>
+    <tbody>
+      <tr><td>"PLA is biodegradable, so I can bin it anywhere."</td><td>PLA is made from plant sugars and is industrially compostable under hot, controlled conditions. It does not reliably degrade in a landfill, a garden compost heap or the sea, and printed objects with dyes and additives behave less predictably than certified packaging.</td></tr>
+      <tr><td>"PLA goes in the plastic recycling."</td><td>Usually not. Common kerbside systems sort a few resin types, and PLA mixed into them can contaminate batches. Check local rules; many places treat it as general waste.</td></tr>
+      <tr><td>"A greener plastic means I can print more."</td><td>The best plastic is the one not wasted. Material choice helps less than printing fewer failures and keeping objects in use.</td></tr>
+      <tr><td>"Recycled filament is just as good."</td><td>Quality ranges widely. Some products are consistent; others vary in diameter and color. Test a spool before trusting it for a long job.</td></tr>
+      <tr><td>"3D printing is always lower impact than manufacturing."</td><td>Printing can cut transport and over-production, but a hobbyist's per-part energy and waste are often higher than injection molding at scale. It depends on the product.</td></tr>
+    </tbody></table></div>
+
+  <h3>Filament recycling options</h3>
+  <ul>
+    <li><strong>Reuse inside your own workflow.</strong> Re-print failed parts as test pieces or fill-in material only where an unseen, consistent result is not needed.</li>
+    <li><strong>Manufacturer or retailer take-back.</strong> Some filament makers and local maker spaces collect spools or scrap. Programs change, so look for current offers.</li>
+    <li><strong>DIY regrinding and re-extrusion.</strong> A shredder plus a filament extruder can turn clean, single-type scrap into new filament. Quality control (diameter, moisture, contamination) is the hard part. Open projects such as Precious Plastic publish ideas for small-scale plastic recycling.</li>
+    <li><strong>Spool reuse.</strong> Reel-to-reel rewinding, refillable spool systems and cardboard spools cut packaging waste.</li>
+    <li><strong>Donate leftovers.</strong> Schools and makerspaces often welcome partial spools.</li>
+  </ul>
+
+  <h3>Health side of the environment: particles and fumes</h3>
+  <p>Printing heated plastic releases ultrafine particles and volatile compounds, and amounts vary by material and printer. Sanding and cutting produce microplastic dust that can drift into wash water and air. The practical advice: print in a ventilated space or an enclosed, filtered machine, wet-sand or use a mask and extraction, collect dust and do not rinse it down the drain, and dispose of waste responsibly. See <a href="../foundations/safety-and-workspace.html">Safety &amp; workspace</a>. The science on long-term effects of home printing is still developing; treat firm claims, whether alarming or dismissive, with caution.</p>
+
+  <div class="callout info"><span class="callout-title">Energy in perspective</span>
+    <p>A 6-hour PLA print at about 150 W uses about 0.9 kWh, comparable to running a hair dryer or a small heater for under an hour. Over a year, a busy hobby printer might use as much electricity as some household appliances; it is worth knowing but seldom the largest lever. Use a plug-in meter and your own bill to check.</p></div>
+
+  <h2 id="ip">Intellectual property: copyright, patents, trademarks and licenses</h2>
+  <div class="callout warn"><span class="callout-title">This is a map, not legal advice</span>
+    <p>Intellectual-property law varies by country and case. The notes below explain common concepts so you can ask better questions. If you plan to sell prints, license designs or respond to a legal complaint, consult a qualified professional.</p></div>
+
+  <h3>🔰 The four things people mix up</h3>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Right</th><th>Protects</th><th>Duration (roughly)</th><th>Relevance to printing</th></tr></thead>
+    <tbody>
+      <tr><td>Copyright</td><td>Original creative expression: sculptures, figurines, artwork, the specific 3D model file, text and images</td><td>Automatic; long, often decades after the author's death</td><td>Most character models, miniatures and artistic designs; also the model file as a work</td></tr>
+      <tr><td>Patent</td><td>New, useful inventions and technical solutions (how a thing works)</td><td>Limited term, often about 20 years from filing</td><td>Functional mechanisms; can apply even to things you print yourself, depending on country and exemptions</td></tr>
+      <tr><td>Trademark</td><td>Names, logos and brand identifiers that indicate source</td><td>Renewable while in use</td><td>Logos, brand names and recognizable brand shapes on products</td></tr>
+      <tr><td>Design rights</td><td>The ornamental appearance of a product in some countries</td><td>Varies</td><td>Shapes of consumer products and spare parts, subject to local rules</td></tr>
+    </tbody></table></div>
+  <p>Purely functional objects often get thinner copyright protection than artistic ones, but "functional" is not a free pass: a patent or design right may still apply. Spare-part rules differ between countries, so a clip that fits a branded device is not automatically safe to sell.</p>
+
+  <h3>🔰 Creative Commons and platform licenses</h3>
+  <p>Most designers share models under licenses that tell you what you may do. The Creative Commons family is common; some platforms also use their own license texts. Always read the actual license on the model page, and remember that a license applies to the file, not to the underlying franchise or brand.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 330" role="img" aria-label="Spectrum of Creative Commons licenses from most permissive to most restrictive with what is allowed: CC0, CC BY, CC BY-SA, CC BY-ND, CC BY-NC, CC BY-NC-SA, CC BY-NC-ND and all rights reserved, showing credit required, sharing modified versions and commercial use">
+      <rect class="f-green" x="18" y="12" width="824" height="26" rx="6"/><text class="t-sm t-b" x="30" y="30">Most permissive</text><text class="t-sm t-b" x="830" y="30" style="text-anchor:end">Most restrictive</text>
+      <path class="d-ink arrow" d="M300 25 H560"/>
+      <g class="t-sm t-b t-c" style="text-anchor:middle">
+        <rect class="f-green" x="18" y="52" width="96" height="40" rx="6"/><text x="66" y="78">CC0</text>
+        <rect class="f-green" x="122" y="52" width="96" height="40" rx="6"/><text x="170" y="78">CC BY</text>
+        <rect class="f-teal" x="226" y="52" width="96" height="40" rx="6"/><text x="274" y="78">CC BY-SA</text>
+        <rect class="f-yellow" x="330" y="52" width="96" height="40" rx="6"/><text x="378" y="78">CC BY-ND</text>
+        <rect class="f-orange" x="434" y="52" width="96" height="40" rx="6"/><text x="482" y="78">CC BY-NC</text>
+        <rect class="f-orange" x="538" y="52" width="96" height="40" rx="6"/><text x="586" y="78">BY-NC-SA</text>
+        <rect class="f-red" x="642" y="52" width="96" height="40" rx="6"/><text x="690" y="78">BY-NC-ND</text>
+        <rect class="f-red" x="746" y="52" width="96" height="40" rx="6"/><text x="794" y="78">All rights</text>
+      </g>
+      <g class="t-sm" style="text-anchor:middle">
+        <text x="66" y="120">no</text><text x="170" y="120">yes</text><text x="274" y="120">yes</text><text x="378" y="120">yes</text><text x="482" y="120">yes</text><text x="586" y="120">yes</text><text x="690" y="120">yes</text><text x="794" y="120">yes</text>
+        <text x="66" y="156">yes</text><text x="170" y="156">yes</text><text x="274" y="156">yes</text><text x="378" y="156">no</text><text x="482" y="156">yes</text><text x="586" y="156">yes</text><text x="690" y="156">no</text><text x="794" y="156">no</text>
+        <text x="66" y="192">yes</text><text x="170" y="192">yes</text><text x="274" y="192">yes</text><text x="378" y="192">yes</text><text x="482" y="192">no</text><text x="586" y="192">no</text><text x="690" y="192">no</text><text x="794" y="192">ask</text>
+      </g>
+      <text class="t-xs t-m" x="18" y="212">Rows, top to bottom: 1 credit required · 2 share your modified version · 3 commercial use, such as selling prints</text>
+      <rect class="d-surface2" x="18" y="228" width="824" height="84" rx="8"/>
+      <text class="t-sm" x="32" y="252">Share-alike (SA) means your remix must carry the same license. No-derivatives (ND) means you may not share changed versions.</text>
+      <text class="t-sm" x="32" y="274">Non-commercial (NC) is commonly read to cover selling prints, even small sales, so treat it as "do not sell".</text>
+      <text class="t-sm" x="32" y="296">"All rights" means ask the owner. Platform-specific licenses can differ, so read the actual text.</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> A simplified view of the licenses you will meet most. The three rows of yes and no are summaries, not the legal text. Read the license itself and keep a screenshot or note of the terms on the day you downloaded.</figcaption>
+  </figure>
+
+  <h3>🔧 Selling prints of other people's models</h3>
+  <ol class="steps">
+    <li><strong>Check the license.</strong> If it says non-commercial, do not sell prints. If it allows commercial use, follow attribution and share-alike conditions.</li>
+    <li><strong>Look for a commercial license.</strong> Many designers sell a separate license for small-scale printing. Paying a small fee is usually cheaper than a dispute.</li>
+    <li><strong>Watch the franchise.</strong> A freely shared fan model of a protected character is still subject to the rights of the character's owner. Free sharing by a fan does not give you the right to sell.</li>
+    <li><strong>Avoid brand logos and trademarks.</strong> Do not print or sell items with another company's logo as if they were genuine.</li>
+    <li><strong>Keep records.</strong> Save the license, the link and the date. If a platform or owner contacts you, respond politely and take items down quickly.</li>
+    <li><strong>When in doubt, make your own.</strong> Original designs avoid most problems and build a lasting asset.</li>
+  </ol>
+
+  <h3>Remix etiquette</h3>
+  <ul>
+    <li>Credit the original designer with a clear link, even when the license does not demand it.</li>
+    <li>Add real value: new function, better print settings, a fix. Do not re-upload an unchanged model under your name.</li>
+    <li>Respect no-derivative and non-commercial terms.</li>
+    <li>Contact the designer when a remix is substantial or commercial. Most are glad to talk.</li>
+    <li>Share your own work under a clear license, and include print settings and a photo of the result.</li>
+  </ul>
+
+  <div class="callout info"><span class="callout-title">Open questions</span><p>Disputes about AI-generated models, scanned objects and trained mesh generators raise new questions about authorship and copyright. Rules are still evolving; check current guidance for your country before relying on them.</p></div>
+
+  <h2 id="weapons">Weapons and dangerous objects: a clear line</h2>
+  <div class="callout danger"><span class="callout-title">Do not print weapons illegally</span>
+    <p>This compendium does not contain, link to or support designs for firearms, firearm parts, devices that convert firearms to automatic fire, suppressors, or any other weapon or tool whose making or possession is illegal where you live. Laws on making weapons at home vary enormously between countries, and between states and regions within countries; in many places unlicensed manufacture is a serious crime. If you are unsure whether something is lawful, do not print it, and check with the competent authority or a lawyer first.</p></div>
+
+  <p>The same boundary applies to many other categories:</p>
+  <ul>
+    <li><strong>Weapon-like items</strong> whose possession is restricted in your area: certain knives, knuckles, batons and similar items.</li>
+    <li><strong>Devices built to defeat security or safety systems:</strong> skimmers, tools meant to bypass locks you have no right to open, keys for restricted systems stamped "do not duplicate", or interlocks removed from machinery.</li>
+    <li><strong>Counterfeits:</strong> fake brand parts, forged badges, ID cards, currency or anything meant to deceive.</li>
+    <li><strong>Items that endanger children:</strong> small parts, sharp edges or toxic finishes in products for very young children.</li>
+  </ul>
+
+  <h3>Platform policies</h3>
+  <p>Model-hosting platforms and many marketplaces forbid firearm files and other dangerous items, and they remove them and may close accounts. Print-on-demand services and payment processors have their own prohibited-goods rules. Read each platform's current terms; they change over time and differ between sites. Printer vendors and slicer makers also publish usage policies, and security researchers are actively discussing whether, and how, printers might detect prohibited prints. Whatever the outcome of that technical debate, the responsibility to stay legal remains with the person who prints.</p>
+
+  <h3>The ethical part</h3>
+  <ul>
+    <li>Legality is the minimum, not the whole standard. Ask who could be hurt if the object is misused.</li>
+    <li>Do not share files or instructions that primarily enable harm, even if they are legal where you are; the internet is global.</li>
+    <li>Report illegal or dangerous uploads to the platform.</li>
+    <li>When a student or newcomer asks about problematic items, point them to legal projects and mentors instead of turning them away silently.</li>
+  </ul>
+  <p>Prop weapons for cosplay and tabletop (obviously fake, labeled or color-marked as required by local rules, and transported sensibly) are a separate topic; see <a href="applications.html#cosplay">cosplay and props</a> for practical considerations and always check venue and local rules.</p>
+
+  <h2 id="safety-critical">Safety-critical parts and counterfeit warnings</h2>
+  <p>3D prints are anisotropic, creep under long loads, soften with heat, age in sunlight and can contain hidden voids. Material data sheets usually report tests on molded specimens, not on your printed parts. That combination is manageable for a phone stand and unacceptable for a climbing carabiner. Use consequence of failure to decide how much care, testing or certification a part needs.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 380" role="img" aria-label="Five level ladder of consequence of failure from decorative objects to safety-critical parts, with recommended action at each level: just print, print and check, test with margin, engineer and test heavily, do not print but buy certified or use a qualified process">
+      <rect class="f-green" x="20" y="14" width="820" height="58" rx="10"/><text class="t t-b" x="36" y="38">Level 1 · Decorative: figurines, planters, desk toys</text><text class="t-sm" x="36" y="58">Failure is an annoyance. Just print and enjoy; choose materials for looks.</text>
+      <rect class="f-teal" x="20" y="80" width="820" height="58" rx="10"/><text class="t t-b" x="36" y="104">Level 2 · Light functional: organizers, clips, covers</text><text class="t-sm" x="36" y="124">Failure is inconvenient. Print, check fit, pick PETG or similar where heat or humidity matter.</text>
+      <rect class="f-yellow" x="20" y="146" width="820" height="58" rx="10"/><text class="t t-b" x="36" y="170">Level 3 · Mechanical household: brackets, hooks, gear housings</text><text class="t-sm" x="36" y="190">Failure damages property. Orient layers for the load, overbuild, test beyond the expected load.</text>
+      <rect class="f-orange" x="20" y="212" width="820" height="58" rx="10"/><text class="t t-b" x="36" y="236">Level 4 · Load-bearing or hot: drone frames, mounts, engine bay, power supplies</text><text class="t-sm" x="36" y="256">Failure could injure or start a fire. Engineer with margin, use suitable materials, inspect and retire parts.</text>
+      <rect class="f-red" x="20" y="278" width="820" height="88" rx="10"/><text class="t t-b" x="36" y="302">Level 5 · Safety-critical: helmets, brakes, climbing, child seats, medical, pressure, gas, mains insulation</text><text class="t-sm" x="36" y="324">Failure can seriously hurt or kill. Do not rely on a home print. Buy certified parts, or use a qualified</text><text class="t-sm" x="36" y="344">process and professional sign-off. This guide cannot make an unqualified print safe.</text>
+    </svg>
+    <figcaption><b>Figure 10.</b> Decide the level before you choose settings. A strong print is not a certified one, and certification involves testing, documentation and traceability that a hobby workflow lacks.</figcaption>
+  </figure>
+
+  <div class="callout warn"><span class="callout-title">Specific things not to rely on a hobby print for</span>
+    <ul>
+      <li>Helmets, protective equipment, harness hardware, climbing and rigging gear.</li>
+      <li>Brake, steering, suspension or other vehicle components that affect control.</li>
+      <li>Child restraints, cots, baby products and anything a young child can chew.</li>
+      <li>Pressure vessels, gas and fuel fittings, and mains-voltage insulation or enclosures that are not rated.</li>
+      <li>Medical implants and devices that touch the body for long periods, unless made within a regulated process.</li>
+      <li>Fire, smoke and safety equipment.</li>
+    </ul></div>
+
+  <h3>Counterfeit parts</h3>
+  <p>Counterfeiting has two faces here. The first is printing a "genuine-looking" replacement for a branded safety or electrical part and passing it off as the real thing; it may violate trademark law and can put a buyer at risk. The second is receiving bad parts: marketplaces sell filament and components with false claims. Defenses: buy filament from known sellers, check actual diameter and moisture behavior, test new batches before important jobs, and label anything you sell with what it is (material, "not for structural use", etc.), not what it imitates. Sell what you make under your own name.</p>
+
+  <h3>Responsible selling of functional parts</h3>
+  <ul>
+    <li>Describe the material, the intended use and the limits honestly.</li>
+    <li>Warn against uses you did not design or test the part for.</li>
+    <li>Do not claim food safety, medical suitability or load ratings without evidence. See <a href="../materials/overview.html">material overview</a> for property ranges, and treat them as ranges.</li>
+    <li>Keep records of materials and settings for repeat orders.</li>
+    <li>Know your local product-liability and consumer-protection rules before selling.</li>
+  </ul>
+
+  <h2 id="accessibility">Accessibility and assistive devices</h2>
+  <p>Some of the best stories in this field are about people making things that no catalog offers: a thicker grip for arthritic hands, a tactile map for a school, an adaptive tool holder, a hearing-aid cleaning tool, braille labels, a switch cap that is easier to press. Printing shines here because needs are individual and small-run, and because a designer who knows the user can iterate quickly.</p>
+  <ul>
+    <li><strong>Co-design.</strong> Make things with the person who will use them. Their needs and preferences decide success.</li>
+    <li><strong>Everyday aids are low risk.</strong> Grips, handles, organizers, labels and mounts usually fall into the household levels in Figure 10.</li>
+    <li><strong>Medical contact is different.</strong> Items that touch skin for long periods, orthoses, prosthetics, dental and surgical items involve hygiene, biocompatibility, fit and regulation. Involve clinicians and follow the rules in your country. Community projects exist, such as volunteer networks that make low-cost prosthetic hands, and they work with guidance and clear limits.</li>
+    <li><strong>Think about materials.</strong> Layer lines trap dirt and bacteria; surface finish, cleaning and material choice matter. TPU and soft materials can cushion, but see <a href="../x2d/tpu-and-flexibles.html">TPU on X2D</a> for printing them reliably.</li>
+    <li><strong>Share designs openly</strong> with a license that allows adaptation, and document dimensions so others can adapt them to different needs.</li>
+  </ul>
+
+  <h2 id="right-to-repair">Right to repair</h2>
+  <p>Printers make small repairs practical: a broken tab, a cracked battery cover, a missing foot. The broader right-to-repair movement argues that owners should be able to fix what they own, with access to parts, tools and documentation. Laws and manufacturer policies are changing quickly, so check the current rules for your product and country.</p>
+  <ul>
+    <li>Start with measurement: calipers, photos, and a test fit in cheap material before the final part (see <a href="../design/tolerances-and-fits.html">Tolerances &amp; fits</a>).</li>
+    <li>Check whether a manufacturer sells the part or publishes the dimensions. Some do, which beats reverse-engineering.</li>
+    <li>Respect the IP of branded designs when you share files; publishing a spare part for personal repair is different from selling copies in bulk.</li>
+    <li>Do not repair safety-critical items by printing; see Figure 10.</li>
+    <li>Share what worked. A repaired appliance diverted from the bin is one of the clearest environmental wins of the hobby.</li>
+    <li>Repair cafés and community workshops are real places to learn and to help others; many cities have them.</li>
+  </ul>
+
+  <h2 id="community">Open-source community and responsible sharing</h2>
+  <p>The hobby exists because people shared. The RepRap project showed the idea of a self-replicating printer; open-source firmware, slicers and hardware projects such as Marlin, Klipper, PrusaSlicer, OrcaSlicer and many others carry on that spirit. Commercial and open work coexist: many popular printers are built on open-source ideas, and many open projects are funded or maintained by companies and volunteers.</p>
+
+  <div class="grid cols-2">
+    <div class="card accent-green"><h4>Give back</h4>
+      <ul>
+        <li>Report bugs with logs and clear steps, not only complaints.</li>
+        <li>Share profiles, models, test results and photos with settings.</li>
+        <li>Answer newcomers kindly; everyone started with a spaghetti pile.</li>
+        <li>Donate or contribute to the tools you rely on, in money or time.</li>
+        <li>Correct this compendium when you find an error; see <a href="resources.html#contribute">how to contribute</a>.</li>
+      </ul></div>
+    <div class="card accent-blue"><h4>Share responsibly</h4>
+      <ul>
+        <li>Use real photos of real prints, and label renders as renders.</li>
+        <li>State material, settings, supports and known limits.</li>
+        <li>Choose a clear license and credit sources and remixes.</li>
+        <li>Add a safety note for functional or child-related items.</li>
+        <li>Do not post weapons, counterfeit designs or others' paid files.</li>
+      </ul></div>
+  </div>
+
+  <h2 id="standards">Standards and certification notes</h2>
+  <p>Standards give a shared language for terms, tests and quality. Most hobbyists will never certify anything, but knowing the landscape helps you read data sheets, product claims and job requirements. Standards documents themselves are often paid; summaries and committee pages are free.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 330" role="img" aria-label="Three columns of the standards landscape: terminology and process standards such as ISO/ASTM 52900, material testing standards such as ISO 527 and UL 94, and end-use compliance such as CE marking, toy safety, food contact and biocompatibility">
+      <rect class="f-blue" x="20" y="14" width="260" height="38" rx="8"/><text class="t t-b" x="150" y="38" style="text-anchor:middle">Language and process</text>
+      <rect class="f-orange" x="300" y="14" width="260" height="38" rx="8"/><text class="t t-b" x="430" y="38" style="text-anchor:middle">Testing the material</text>
+      <rect class="f-green" x="580" y="14" width="260" height="38" rx="8"/><text class="t t-b" x="710" y="38" style="text-anchor:middle">Using it in the world</text>
+      <rect class="d-surface2" x="20" y="60" width="260" height="190" rx="8"/>
+      <text class="t-sm t-b" x="32" y="84">ISO/ASTM 52900</text><text class="t-xs" x="32" y="100">terminology of additive manufacturing</text>
+      <text class="t-sm t-b" x="32" y="128">ISO/ASTM 52910</text><text class="t-xs" x="32" y="144">design for additive manufacturing</text>
+      <text class="t-sm t-b" x="32" y="172">ISO/ASTM 52920</text><text class="t-xs" x="32" y="188">qualification of industrial processes</text>
+      <text class="t-sm t-b" x="32" y="216">ASTM F42 / ISO TC 261</text><text class="t-xs" x="32" y="232">committees that develop them</text>
+      <rect class="d-surface2" x="300" y="60" width="260" height="190" rx="8"/>
+      <text class="t-sm t-b" x="312" y="84">ISO 527</text><text class="t-xs" x="312" y="100">tensile properties of plastics</text>
+      <text class="t-sm t-b" x="312" y="128">ISO 178 · ISO 179</text><text class="t-xs" x="312" y="144">flexural and impact tests</text>
+      <text class="t-sm t-b" x="312" y="172">ISO 75 · ISO 306</text><text class="t-xs" x="312" y="188">heat deflection and softening</text>
+      <text class="t-sm t-b" x="312" y="216">UL 94</text><text class="t-xs" x="312" y="232">flammability classes of plastics</text>
+      <rect class="d-surface2" x="580" y="60" width="260" height="190" rx="8"/>
+      <text class="t-sm t-b" x="592" y="84">CE / UKCA marking</text><text class="t-xs" x="592" y="100">product conformity in Europe and the UK</text>
+      <text class="t-sm t-b" x="592" y="128">EN 71</text><text class="t-xs" x="592" y="144">toy safety requirements</text>
+      <text class="t-sm t-b" x="592" y="172">Food-contact rules</text><text class="t-xs" x="592" y="188">for example EU and FDA frameworks</text>
+      <text class="t-sm t-b" x="592" y="216">ISO 10993</text><text class="t-xs" x="592" y="232">biological evaluation of medical devices</text>
+      <rect class="f-yellow" x="20" y="262" width="820" height="50" rx="8"/>
+      <text class="t-sm" x="34" y="284">A data-sheet number from a molded specimen is not a guarantee for your printed part. Certification applies to a specific</text>
+      <text class="t-sm" x="34" y="302">product and process, with records, not to a material alone.</text>
+    </svg>
+    <figcaption><b>Figure 11.</b> Three layers of standards. Look at which layer a claim belongs to: "tested to a standard" can mean a lab coupon, a finished product, or only a similar material.</figcaption>
+  </figure>
+
+  <ul>
+    <li><strong>"Food safe" filament</strong> usually refers to the raw material. Layer lines, additives, colorants and the nozzle used still matter, and printed surfaces are hard to clean. Treat prints as single-use or short-contact unless you have evidence and a suitable sealed finish.</li>
+    <li><strong>Flame ratings</strong> such as UL 94 describe a tested specimen of a given thickness and color; check that the claim matches your material and thickness before relying on it for an enclosure.</li>
+    <li><strong>Toys and child items</strong> have specific requirements in many regions (small parts, mechanical and chemical safety). Selling them is a regulated activity.</li>
+    <li><strong>Medical and dental</strong> work has its own quality-management and approval rules. Do not treat hobby methods as equivalent.</li>
+    <li><strong>Industrial qualification</strong> involves process control, calibration, traceability and testing; read the relevant ISO/ASTM documents or work with a certified supplier.</li>
+  </ul>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul>
+    <li>A print costs more than its filament: machine use, failures, maintenance and your time are real costs. Use <a href="../tools/calculators.html">the calculators</a> with your own numbers.</li>
+    <li>Print what is custom, rare, urgent or a repair; buy what is cheap, standard or safety-critical.</li>
+    <li>Pricing for sale starts from full cost and ends with a margin that pays for your effort; originality and service beat price wars.</li>
+    <li>Waste is mostly failures, supports and purge; calibrate, design with care and tune color changes.</li>
+    <li>PLA is not a universal "green" material; compost and recycle only where the system truly accepts it.</li>
+    <li>Respect licenses, credit designers and do not sell what you are not allowed to sell.</li>
+    <li>Never print illegal weapons, and never rely on a hobby print for safety-critical duties.</li>
+    <li>Share, repair and teach: the community is the best part of the hobby.</li>
+  </ul>
+  <p>Next: <a href="resources.html">Resources &amp; communities</a> for where to learn more, <a href="applications.html">Applications &amp; project ideas</a> for what to make, and the <a href="faq.html">FAQ</a> for quick answers.</p>
+</main>
+</body>
+</html>

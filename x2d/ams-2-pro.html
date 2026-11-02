@@ -1,0 +1,400 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AMS 2 Pro in depth · 3D Printing Compendium</title>
+  <meta name="description" content="The Bambu Lab AMS 2 Pro explained: four slots, drying modules up to 65 °C, humidity sensing, RFID, filament path and buffer, combining units, routing to the left and right nozzles, drying workflows, loading, error LEDs, maintenance and limits.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="x2d/ams-2-pro.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 6 · Bambu X2D + AMS 2 Pro</div>
+    <h1>AMS 2 Pro in depth</h1>
+    <p class="lead">The AMS 2 Pro is a four-slot spool cabinet that stores, feeds, identifies and dries filament for the X2D. This page covers how it is built, how filament travels through it, how to dry safely, how to combine units, what the lights mean and where it stops being the right tool.</p>
+    <div class="meta"><span class="badge x2d">X2D + AMS 2 Pro</span><span class="badge intermediate">Beginner → Intermediate</span><span class="badge time">⏱ 40 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <ul>
+      <li>What is inside the AMS 2 Pro: feeders, hub, buffer, sensors, drying modules, vents and desiccant.</li>
+      <li>How filament moves from spool to nozzle, and why two feeding stages need a buffer.</li>
+      <li>How to dry spools safely, which mode to pick, and what limits apply.</li>
+      <li>How many units you need for a given number of colors, and how they are connected.</li>
+      <li>How to read the status lights, clear common errors and maintain the unit.</li>
+    </ul>
+  </div>
+
+  <div class="callout x2d"><span class="callout-title">A note on numbers</span>
+    <p>Hardware limits on this page (65 °C, four slots, 6-pin connection, spool dimensions) come from Bambu’s documentation. Bambu does not publish a per-material drying table for the AMS 2 Pro in the sources used here, so any material-specific drying figure below is marked <b>typical</b>: it is a widely used starting point, not an official rating. Always compare it with the label on your spool and the <a href="https://wiki.bambulab.com">Bambu Lab wiki</a>, and see <a href="../materials/drying-and-storage.html">Drying &amp; storage</a> for the underlying principles.</p>
+  </div>
+
+  <h2 id="what">🔰 What the AMS 2 Pro is</h2>
+  <p>The <b>AMS</b> (Automatic Material System) is a hardware accessory that holds several spools, picks the one the print needs, feeds it toward the printer and pulls it back when the job asks for another color. The <b>AMS 2 Pro</b> is the second-generation, four-slot unit for the X2D. Compared with a simple spool rack, it adds five things: motorized feeding, RFID identification of Bambu spools, humidity and temperature sensing, <b>two heater-and-fan drying modules</b> and a sealed, desiccant-backed storage compartment.</p>
+  <p>For a beginner the useful mental model is: <i>a polite spool butler</i>. It does not print and it does not melt anything. It hands the right filament to the printer at the right time, keeps the spools dry, and tells you when something is wrong.</p>
+
+  <div class="stats">
+    <div class="stat"><b>4</b><span>slots per unit</span></div>
+    <div class="stat"><b>65 °C</b><span>maximum drying temperature (needs ambient ≥ 25 °C)</span></div>
+    <div class="stat"><b>2</b><span>drying modules and 2 active vents</span></div>
+    <div class="stat"><b>2</b><span>RFID coils</span></div>
+    <div class="stat"><b>12 / 24</b><span>max units / slots (4 AMS 2 Pro + 8 AMS HT)</span></div>
+    <div class="stat"><b>6-pin</b><span>cable for data and power</span></div>
+  </div>
+
+  <h2 id="anatomy">🔧 Anatomy</h2>
+  <p>Open the lid and the top of the unit shows four spool bays. Behind them, a hub merges the four filament paths into one. Underneath, hidden by the mid-frame, are the two drying modules. A sealing rubber ring under the lid keeps the compartment closed. A humidity and temperature sensor sits at the front, between slot 2 and slot 3, and a color-changing silicone desiccant sits in its own pocket.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 480" role="img" aria-label="Cutaway of the AMS 2 Pro: four spool slots with feeders, a rear hub with Hall sensors and an assist motor, two drying modules under the mid-frame, a humidity sensor between slots two and three, desiccant, active vents at bottom and rear, and two RFID coils">
+      <text class="t-lg" x="20" y="28">AMS 2 Pro cutaway (schematic)</text>
+      <rect class="d-surface" x="40" y="50" width="560" height="380" rx="14"/>
+      <rect class="f-gray" x="60" y="70" width="520" height="38" rx="8" opacity=".7"/><text class="t-sm t-c" x="320" y="94">Lid with sealing rubber ring</text>
+      <circle class="d-plastic" cx="130" cy="190" r="48"/><circle class="d-surface" cx="130" cy="190" r="12"/><text class="t-xs t-c" x="130" y="258">Slot 1</text>
+      <circle class="d-plastic" cx="250" cy="190" r="48"/><circle class="d-surface" cx="250" cy="190" r="12"/><text class="t-xs t-c" x="250" y="258">Slot 2</text>
+      <circle class="d-plastic" cx="370" cy="190" r="48"/><circle class="d-surface" cx="370" cy="190" r="12"/><text class="t-xs t-c" x="370" y="258">Slot 3</text>
+      <circle class="d-plastic" cx="490" cy="190" r="48"/><circle class="d-surface" cx="490" cy="190" r="12"/><text class="t-xs t-c" x="490" y="258">Slot 4</text>
+      <rect class="f-blue" x="292" y="122" width="40" height="22" rx="4"/><text class="t-xs t-c" x="312" y="137">RH/T</text>
+      <rect class="f-yellow" x="60" y="122" width="70" height="22" rx="4"/><text class="t-xs t-c" x="95" y="137">desiccant</text>
+      <rect class="f-orange" x="60" y="290" width="240" height="60" rx="8"/><text class="t-sm t-c t-b" x="180" y="314">Drying module A</text><text class="t-xs t-c" x="180" y="332">heater + fan + NTC</text>
+      <rect class="f-orange" x="320" y="290" width="240" height="60" rx="8"/><text class="t-sm t-c t-b" x="440" y="314">Drying module B</text><text class="t-xs t-c" x="440" y="332">heater + fan + NTC</text>
+      <rect class="f-green" x="140" y="370" width="100" height="40" rx="6"/><text class="t-xs t-c" x="190" y="394">bottom vent</text>
+      <rect class="f-green" x="380" y="370" width="100" height="40" rx="6"/><text class="t-xs t-c" x="430" y="394">rear vent</text>
+      <rect class="f-purple" x="610" y="110" width="190" height="180" rx="10"/>
+      <text class="t-sm t-b t-c" x="705" y="136">Rear hub</text>
+      <text class="t-xs" x="622" y="160">• 4 Hall sensors</text>
+      <text class="t-xs" x="622" y="178">• magnetic rotary encoder</text>
+      <text class="t-xs" x="622" y="196">• brushless assist motor</text>
+      <text class="t-xs" x="622" y="214">• merges 4 paths into 1</text>
+      <text class="t-xs" x="622" y="240">Filament leaves through</text><text class="t-xs" x="622" y="254">one PTFE tube toward the</text><text class="t-xs" x="622" y="268">buffer.</text>
+      <path class="k-teal" d="M130 142 V132 H560 V160 H610"/>
+      <rect class="f-pink" x="610" y="310" width="190" height="104" rx="10"/>
+      <text class="t-sm t-b t-c" x="705" y="334">RFID + sensing</text>
+      <text class="t-xs" x="622" y="356">• 2 RFID coils (read on</text><text class="t-xs" x="622" y="370">  insertion or Re-Read)</text><text class="t-xs" x="622" y="388">• per-slot filament sensor</text><text class="t-xs" x="622" y="402">• humidity + temperature</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> The main blocks of the AMS 2 Pro. Positions are schematic; Bambu documents the parts but not exact coordinates. The two drying modules sit under the mid-frame, with inlets at the front and outlets near the hub.</figcaption>
+  </figure>
+
+  <h3>The slot: feeder, bushings and sensor</h3>
+  <p>Every slot has its own <b>feeder</b> with a motor, drive gears and a filament sensor. The gears run in ceramic-reinforced anti-wear bushings, which keep abrasive filament from eating away the plastic. The feeder is what grabs the filament when you push it in about 2 cm and pulls it back afterwards. The “pre-loading” behavior (filament is grabbed, then retracted slightly so it is ready but not committed) is a convenience of this design.</p>
+
+  <h3>The hub, the assist motor and the buffer</h3>
+  <p>Behind the slots, the <b>hub</b> merges four paths into one. It has four Hall sensors that detect filament, a magnetic rotary encoder that measures how much filament passes, and a brushless <b>assist motor</b> that pushes filament toward the printer. In practice, loading is a <b>two-stage</b> action: the slot feeder moves filament to the hub, then the assist motor carries it onward. Two motors in series must stay in step with the printer’s extruder, which pulls the filament at a speed of its own. The <b>buffer</b>, mounted next to the printer, is the shock absorber that makes this work: a slider on a spring moves when the extruder pulls hard or lets go, and a Hall sensor reports it so the AMS can speed up or slow down. The same slider detects tangles and runouts.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 340" role="img" aria-label="Filament path from spool through feeder, hub with assist motor, PTFE tube to buffer with slider, and to the extruder and nozzle, with arrows showing feedback from the buffer to the AMS motors">
+      <text class="t-lg" x="20" y="28">Spool to nozzle</text>
+      <circle class="d-plastic" cx="80" cy="160" r="48"/><circle class="d-surface" cx="80" cy="160" r="12"/><text class="t-xs t-c" x="80" y="230">spool</text>
+      <rect class="f-teal" x="150" y="130" width="120" height="60" rx="8"/><text class="t-sm t-c t-b" x="210" y="156">Slot feeder</text><text class="t-xs t-c" x="210" y="174">stage 1</text>
+      <rect class="f-purple" x="310" y="130" width="120" height="60" rx="8"/><text class="t-sm t-c t-b" x="370" y="156">Hub + assist</text><text class="t-xs t-c" x="370" y="174">stage 2</text>
+      <rect class="f-orange" x="470" y="130" width="120" height="60" rx="8"/><text class="t-sm t-c t-b" x="530" y="156">Buffer</text><text class="t-xs t-c" x="530" y="174">slider + Hall</text>
+      <rect class="f-blue" x="630" y="130" width="150" height="60" rx="8"/><text class="t-sm t-c t-b" x="705" y="156">Extruder</text><text class="t-xs t-c" x="705" y="174">to hotend</text>
+      <path class="k-teal arrow" d="M128 160 H148"/><path class="k-teal arrow" d="M270 160 H308"/><path class="k-teal arrow" d="M430 160 H468"/><path class="k-teal arrow" d="M590 160 H628"/>
+      <path class="k-red arrow" d="M530 128 C530 70 370 70 370 126"/>
+      <text class="t-xs c-red t-c" x="450" y="66">buffer position tells the AMS to speed up or slow down</text>
+      <path class="d-dash" d="M705 190 V260 H110 V218"/>
+      <text class="t-xs t-m t-c" x="400" y="280">Retract: the extruder lets go, the AMS pulls filament back on to the spool</text>
+      <text class="t-xs t-m t-c" x="400" y="310">PTFE tubes (consumables) link every stage; check the couplers at each spool change.</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> The filament path. The red loop is the key to smooth feeding: it is why the buffer is not an option on the X2D.</figcaption>
+  </figure>
+
+  <h2 id="vs-ams">⚖️ AMS 2 Pro versus earlier AMS units</h2>
+  <p>It helps to see the AMS 2 Pro as one member of a family. According to Bambu’s compatibility notes, the X2D works with the following units, and the differences matter for planning.</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Unit</th><th>On the X2D</th><th>Drying</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><b>AMS 2 Pro</b></td><td><span class="chip green">Native</span></td><td><span class="chip green">Up to 65 °C</span></td><td>Four slots; needs the new 6-pin cable and the buffer</td></tr>
+      <tr><td>AMS HT</td><td><span class="chip green">Supported</span></td><td><span class="chip green">Built-in</span></td><td>One slot per unit; used with the TPU Feed Assist Module as a dryer and feeder</td></tr>
+      <tr><td>First-generation AMS</td><td><span class="chip yellow">Plug and play</span></td><td><span class="chip red">No drying</span></td><td>Works, but without the AMS 2 Pro’s drying features</td></tr>
+      <tr><td>AMS lite</td><td><span class="chip red">Not supported</span></td><td>–</td><td>–</td></tr>
+      <tr><td>AMS hub</td><td><span class="chip red">Not compatible</span></td><td>–</td><td>–</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout x2d"><span class="callout-title">The conceptual difference</span>
+    <p>A plain AMS stores filament; an AMS 2 Pro <i>conditions</i> it. If you print only PLA from fresh sealed spools, the extra drying hardware is a convenience. If you print nylon, PETG, PC or any hygroscopic material (one that absorbs water from the air), it changes what you can reliably do.</p>
+  </div>
+
+  <h2 id="drying">♨️ Drying inside the AMS 2 Pro</h2>
+  <p>Many plastics absorb moisture. When wet filament is heated, the water becomes steam inside the molten plastic and you see bubbles, popping, stringing, rough surfaces and weak parts. Drying warms the spool to drive the water out. In the AMS 2 Pro, each <b>drying module</b> has a heater, a fan and an NTC temperature sensor; the air circulates inside the compartment, entering near the front and leaving near the hub. Two <b>active vents</b> (bottom intake, rear exhaust) exchange humid air with the room. They are closed when the unit is not drying, and open and close once when drying starts as a self-test; they stay closed while the unit heats up and open once the target temperature is reached.</p>
+
+  <div class="grid cols-3">
+    <div class="card accent-orange"><span class="ico">🌡️</span><h3>Maximum 65 °C</h3><p>The ceiling is 65 °C, and it is reached only if the room is at least 25 °C. In a cold room the unit will heat less.</p></div>
+    <div class="card accent-blue"><span class="ico">🔌</span><h3>Needs the 6-pin link</h3><p>Drying only runs with the 6-pin connection to the printer or a power adapter; it is not a standalone dryer.</p></div>
+    <div class="card accent-red"><span class="ico">🚫</span><h3>One unit, one temperature</h3><p>Never dry a high-temperature filament together with low-temperature spools in the same unit, for example ABS with PLA.</p></div>
+  </div>
+
+  <h3>Rotating or static drying</h3>
+  <p>Two modes exist, and the choice depends on where the filament sits:</p>
+  <ul>
+    <li><b>Rotating drying</b> is used when the filament is pulled back into the spool or stored. The spool turns 30° every 5 minutes, which exposes all layers of wound filament.</li>
+    <li><b>Static drying</b> is used when the filament is inserted into the feeder. It is <b>not</b> suitable for filaments whose softening temperature is at or below the drying temperature, such as PLA, PVA, Support PLA/PETG and TPU, because filament held still against the warm feeder can deform.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 460" role="img" aria-label="Decision flowchart for drying in the AMS 2 Pro: is the filament wet, choose a temperature below its softening point and at most 65 degrees, filament stored or loaded, choose rotating or static, never mix temperature classes, start from the printer or Bambu Studio device page, check humidity">
+      <text class="t-lg" x="20" y="28">Drying workflow</text>
+      <rect class="f-blue" x="300" y="44" width="220" height="44" rx="8"/><text class="t-sm t-c t-b" x="410" y="71">Wet or old spool?</text>
+      <rect class="f-yellow" x="300" y="112" width="220" height="56" rx="8"/><text class="t-sm t-c t-b" x="410" y="136">Pick temperature</text><text class="t-xs t-c" x="410" y="154">below softening point, ≤ 65 °C</text>
+      <rect class="f-red" x="300" y="192" width="220" height="56" rx="8"/><text class="t-sm t-c t-b" x="410" y="216">Same class only?</text><text class="t-xs t-c" x="410" y="234">no ABS with PLA in one unit</text>
+      <rect class="f-green" x="60" y="290" width="240" height="64" rx="8"/><text class="t-sm t-c t-b" x="180" y="314">Rotating mode</text><text class="t-xs t-c" x="180" y="332">filament pulled back, 30° / 5 min</text>
+      <rect class="f-orange" x="520" y="290" width="240" height="64" rx="8"/><text class="t-sm t-c t-b" x="640" y="314">Static mode</text><text class="t-xs t-c" x="640" y="332">filament in feeder; not PLA, PVA, TPU</text>
+      <rect class="f-teal" x="300" y="380" width="220" height="56" rx="8"/><text class="t-sm t-c t-b" x="410" y="404">Start drying</text><text class="t-xs t-c" x="410" y="422">touchscreen or Studio device page</text>
+      <path class="d-ink arrow" d="M410 88 V110"/><path class="d-ink arrow" d="M410 168 V190"/>
+      <path class="d-ink arrow" d="M360 248 L220 288"/><path class="d-ink arrow" d="M460 248 L600 288"/>
+      <path class="d-ink arrow" d="M180 354 L340 380"/><path class="d-ink arrow" d="M640 354 L480 380"/>
+      <text class="t-xs t-m" x="20" y="400">Then check: humidity on the</text><text class="t-xs t-m" x="20" y="414">sensor / screen, spool not</text><text class="t-xs t-m" x="20" y="428">deformed, then print.</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> A simple drying decision path. The rules about softening temperature and mixing classes are from Bambu’s documentation; the rest is workflow.</figcaption>
+  </figure>
+
+  <h3>Typical drying targets (guidance, not a specification)</h3>
+  <p>The numbers below are widely used starting points for common filament families, shown against the AMS 2 Pro’s 65 °C ceiling. Many materials with high drying temperatures (nylon, PC and some PETG-CF blends) sit above or near that ceiling, so the AMS 2 Pro dries them gently and slowly or not completely. A heated oven or a dedicated dryer may be better in those cases. For TPU, Bambu itself gives 70 °C for 8 hours in a forced-air oven, or 75–85 °C for 8 hours on a heatbed, which is above the AMS 2 Pro’s ceiling.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 440" role="img" aria-label="Bar chart of typical drying temperatures by material against the 65 degree AMS 2 Pro limit: PLA about 45 to 55, PETG about 60 to 65, ABS and ASA about 70 to 80, PA about 70 to 90, PC about 70 to 90, TPU 70 in an oven per Bambu, PVA about 45 to 55">
+      <text class="t-lg" x="20" y="28">Typical drying temperatures vs the AMS 2 Pro limit</text>
+      <path class="d-grid" d="M170 50 V400 M270 50 V400 M370 50 V400 M470 50 V400 M570 50 V400 M670 50 V400 M770 50 V400"/>
+      <text class="t-xs t-c" x="170" y="418">40 °C</text><text class="t-xs t-c" x="270" y="418">50</text><text class="t-xs t-c" x="370" y="418">60</text><text class="t-xs t-c" x="470" y="418">70</text><text class="t-xs t-c" x="570" y="418">80</text><text class="t-xs t-c" x="670" y="418">90</text><text class="t-xs t-c" x="770" y="418">100</text>
+      <rect class="s-teal" x="170" y="50" width="0" height="0"/>
+      <text class="t-sm" x="30" y="76">PLA</text><rect class="f-green" x="220" y="62" width="100" height="22" rx="4"/><text class="t-xs" x="326" y="78">≈ 45–55 °C</text>
+      <text class="t-sm" x="30" y="116">PVA / Support PLA</text><rect class="f-green" x="220" y="102" width="100" height="22" rx="4"/><text class="t-xs" x="326" y="118">≈ 45–55 °C</text>
+      <text class="t-sm" x="30" y="156">PETG</text><rect class="f-yellow" x="320" y="142" width="100" height="22" rx="4"/><text class="t-xs" x="426" y="158">≈ 55–65 °C</text>
+      <text class="t-sm" x="30" y="196">ABS / ASA</text><rect class="f-orange" x="420" y="182" width="150" height="22" rx="4"/><text class="t-xs" x="576" y="198">≈ 65–80 °C</text>
+      <text class="t-sm" x="30" y="236">TPU (Bambu: oven)</text><rect class="f-orange" x="470" y="222" width="10" height="22" rx="2"/><text class="t-xs" x="486" y="238">70 °C oven · 75–85 °C on heatbed</text>
+      <text class="t-sm" x="30" y="276">PC</text><rect class="f-red" x="470" y="262" width="200" height="22" rx="4"/><text class="t-xs" x="676" y="278">≈ 70–90 °C</text>
+      <text class="t-sm" x="30" y="316">PA (nylon), PA-CF</text><rect class="f-red" x="470" y="302" width="200" height="22" rx="4"/><text class="t-xs" x="676" y="318">≈ 70–90 °C</text>
+      <text class="t-sm" x="30" y="356">Typical drying hours</text><text class="t-xs" x="220" y="356">about 4–12 h; longer for nylon and for very wet spools</text>
+      <path class="d-ink" d="M370 44 V392" style="stroke-dasharray:6 4"/>
+      <text class="t-sm c-red t-b" x="378" y="44">AMS 2 Pro max 65 °C</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> Typical drying temperatures (labeled as typical; not a Bambu specification) against the 65 °C ceiling of the AMS 2 Pro. Anything whose bar crosses the dashed line cannot be fully dried to the usual recipe inside the unit. Use the label on your spool when in doubt.</figcaption>
+  </figure>
+
+  <div class="callout warn"><span class="callout-title">Never dry above the softening point</span>
+    <p>Bambu’s rule is that the drying temperature must not exceed the filament’s softening temperature, and that the pre-feed cooling check will wait if the chamber is hotter than the filament’s softening temperature. A softened spool can fuse its layers into one block. When unsure, choose a lower temperature and a longer time.</p>
+  </div>
+
+  <h3>Power, 6-pin cable and drying while printing</h3>
+  <p>One AMS 2 Pro connected to the printer through the 6-pin cable gets its power from the printer and can dry. On the X2D, however, an AMS that is powered by the printer and is drying will <b>prioritize its drying power</b>, which can limit some printer operations. For <b>“print while drying”</b> (firmware 01.01.00.00 or later), power the extra units from the official <b>Switching Adapter</b> (24 V, 4 A, 96 W; AC input 100–240 V), and make sure the drying temperature does not exceed the filament’s softening temperature. Use the new 6-pin cable (2.5 mm connector pitch); the old cable gives unstable connections. Drying can also be started remotely from the Device page of Bambu Studio. Firmware 01.02.00.00 additionally turns the motors off while drying in the chamber, which helps with noise.</p>
+
+  <h2 id="storing">📦 Storing spools in the AMS 2 Pro</h2>
+  <p>The sealed compartment and desiccant are designed for storage between prints. Keep these points in mind:</p>
+  <ul>
+    <li><b>Remove the desiccant from its bag</b> before installing it. A color-changing silicone desiccant turns from yellow to purple as it saturates; replace or regenerate it when it has changed color. Bambu’s maintenance guide suggests roughly 4–6 weeks of continuous use as a planning interval.</li>
+    <li><b>Spool size</b>: width 50–68 mm, diameter 197–202 mm. Cardboard spools should use plastic spools or the spool adapter.</li>
+    <li><b>Keep the vents unblocked</b> and the lid closed; the sealing ring under the lid is part of the humidity control.</li>
+    <li>The humidity indicator on the screen is a guide, not a lab instrument. If a spool pops and bubbles at the nozzle, dry it regardless of what the number says.</li>
+  </ul>
+
+  <h2 id="rfid">🏷️ RFID, Bambu spools and third-party spools</h2>
+  <p>Bambu spools carry an RFID tag that stores the filament type, color, diameter and other data. Two RFID coils inside the AMS read the tag when the filament is inserted, when the printer starts and when you tap <b>Re-Read</b>. The AMS also estimates the remaining filament from a second read. If a spool runs out in the middle of a print, <b>auto-refill</b> can switch to another spool of the <b>same brand, material and color on the same extruder side</b>.</p>
+  <p>Third-party spools have no tag. The AMS will mark the slot as unknown; you then set the filament type and color manually in the touchscreen, Bambu Studio or Bambu Handy. Setting the right type is not cosmetic: it selects the temperatures, cooling and flow profile used for that slot. Third-party <b>hard or brittle fiber-filled</b> filaments are best avoided in the AMS, because the path has tight bends. Official PLA-CF, PETG-CF and PAHT-CF are optimized for it.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 300" role="img" aria-label="Comparison of what happens with a Bambu RFID spool and a third-party spool: tag read, profile selected, remaining estimate and auto-refill versus manual selection and no estimate">
+      <text class="t-lg" x="20" y="28">RFID spool vs third-party spool</text>
+      <rect class="f-green" x="30" y="50" width="360" height="220" rx="12"/>
+      <text class="t t-b t-c" x="210" y="78">Bambu spool with RFID</text>
+      <text class="t-sm" x="50" y="108">1 Insert filament about 2 cm</text>
+      <text class="t-sm" x="50" y="132">2 Coil reads the tag (type, color)</text>
+      <text class="t-sm" x="50" y="156">3 Matching profile is selected</text>
+      <text class="t-sm" x="50" y="180">4 Remaining amount is estimated</text>
+      <text class="t-sm" x="50" y="204">5 Auto-refill works with identical</text>
+      <text class="t-sm" x="50" y="224">   brand, type and color</text>
+      <text class="t-xs t-m" x="50" y="252">Re-Read after changing the spool or tag.</text>
+      <rect class="f-yellow" x="430" y="50" width="360" height="220" rx="12"/>
+      <text class="t t-b t-c" x="610" y="78">Third-party spool</text>
+      <text class="t-sm" x="450" y="108">1 Insert filament about 2 cm</text>
+      <text class="t-sm" x="450" y="132">2 AMS reports an unknown spool</text>
+      <text class="t-sm" x="450" y="156">3 You choose type and color</text>
+      <text class="t-sm" x="450" y="180">4 No remaining estimate by tag</text>
+      <text class="t-sm" x="450" y="204">5 Auto-refill is not available</text>
+      <text class="t-xs t-m" x="450" y="252">Check the label: set the right nozzle temperature range.</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> The practical difference between tagged and untagged spools. Both work; the tagged ones save you steps and give a better estimate. Auto-refill conditions are stated by Bambu; the “no estimate” remark for untagged spools is expected behavior and should be confirmed for your firmware.</figcaption>
+  </figure>
+
+  <h2 id="loading">📥 Loading and unloading filament</h2>
+  <h3>Loading into a slot</h3>
+  <ol class="steps">
+    <li><strong>Prepare the spool.</strong> Check that the end is cut cleanly (a diagonal cut helps), that the spool is not tangled and that it fits the spool size limits.</li>
+    <li><strong>Seat the spool</strong> in the slot with the filament end facing the feeder.</li>
+    <li><strong>Insert about 2 cm</strong> of filament into the slot’s inlet. The feeder grabs it, and the AMS pulls it slightly back (pre-loading).</li>
+    <li><strong>Check the slot</strong> in the touchscreen or Studio: the type and color of RFID spools appear; for other spools, set the type and color manually.</li>
+    <li><strong>Print.</strong> The AMS loads the right slot automatically when the job calls for it.</li>
+  </ol>
+  <h3>Unloading</h3>
+  <p>At the end of a successful job the AMS automatically retracts the filament. After a <b>cancelled</b> job it does not, so you have to unload manually from the screen. If the filament is stuck, remove the white PTFE tube and pull the filament out by hand; do not pull with force through the hub. For long storage, retract the filament so the spool is sealed in the compartment without a strand hanging into the PTFE.</p>
+
+  <div class="callout x2d"><span class="callout-title">Feed Assist mode</span>
+    <p>When you want filament held at the feeder but the spool not pulled back, the AMS 2 Pro supports a Feed Assist mode. It is also how the TPU Feed Assist Module uses an AMS HT as a feeder, with the TPU bypass port. TPU never goes through the standard AMS path.</p>
+  </div>
+
+  <h2 id="combining">🧩 Combining units</h2>
+  <p>You can connect more than one AMS to the X2D. The rule set is short, but the order matters.</p>
+  <ul>
+    <li>The unit connected directly is <b>AMS A</b>; the next ones are cascaded as <b>B, C, D</b>. They are linked through their own two rear 6-pin ports.</li>
+    <li><b>One or two</b> AMS units (or one AMS and an external spool) connect <b>directly to the buffer</b>, with no adapter.</li>
+    <li><b>Two AMS plus an external spool, or three or more AMS</b>, need the <b>4-in-1 PTFE adapter</b> (FAZ013-N per the brief) between the AMS units and the buffer. The adapter adds resistance, so do not use it with only two units.</li>
+    <li>The maximum is <b>4 AMS 2 Pro plus 8 AMS HT</b>: 12 units, 24 slots. With one external spool that gives <b>25 colors</b>.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 440" role="img" aria-label="Three connection topologies: one or two AMS directly to the buffer upper and lower inlets, two AMS plus an external spool or three or more AMS through the 4-in-1 PTFE adapter, and the maximum configuration with 4 AMS 2 Pro and 8 AMS HT">
+      <text class="t-lg" x="20" y="28">How units connect to the buffer</text>
+      <rect class="d-surface" x="20" y="44" width="240" height="380" rx="10"/><text class="t-sm t-c t-b" x="140" y="70">A · one or two AMS</text>
+      <rect class="f-teal" x="40" y="90" width="90" height="40" rx="6"/><text class="t-xs t-c" x="85" y="114">AMS A</text>
+      <rect class="f-teal" x="150" y="90" width="90" height="40" rx="6"/><text class="t-xs t-c" x="195" y="114">AMS B</text>
+      <rect class="f-purple" x="70" y="240" width="140" height="50" rx="8"/><text class="t-xs t-c" x="140" y="262">Buffer</text><text class="t-xs t-c" x="140" y="276">upper / lower</text>
+      <path class="k-teal arrow" d="M85 130 V240"/><path class="k-teal arrow" d="M195 130 V240"/>
+      <text class="t-xs t-m t-c" x="140" y="330">No adapter. 1 AMS + 1 external</text><text class="t-xs t-m t-c" x="140" y="344">spool also connects directly.</text>
+      <rect class="d-surface" x="290" y="44" width="240" height="380" rx="10"/><text class="t-sm t-c t-b" x="410" y="70">B · three or more</text>
+      <rect class="f-teal" x="305" y="90" width="60" height="36" rx="6"/><text class="t-xs t-c" x="335" y="112">A</text>
+      <rect class="f-teal" x="375" y="90" width="60" height="36" rx="6"/><text class="t-xs t-c" x="405" y="112">B</text>
+      <rect class="f-teal" x="445" y="90" width="60" height="36" rx="6"/><text class="t-xs t-c" x="475" y="112">C</text>
+      <rect class="f-orange" x="340" y="170" width="140" height="44" rx="8"/><text class="t-xs t-c" x="410" y="190">4-in-1 PTFE adapter</text><text class="t-xs t-c" x="410" y="204">between AMS and buffer</text>
+      <rect class="f-purple" x="340" y="260" width="140" height="44" rx="8"/><text class="t-xs t-c" x="410" y="286">Buffer</text>
+      <path class="k-teal arrow" d="M335 126 L370 170"/><path class="k-teal arrow" d="M405 126 V170"/><path class="k-teal arrow" d="M475 126 L450 170"/><path class="k-orange arrow" d="M410 214 V260"/>
+      <text class="t-xs t-m t-c" x="410" y="330">Never install the adapter</text><text class="t-xs t-m t-c" x="410" y="344">the other way round.</text>
+      <rect class="d-surface" x="560" y="44" width="240" height="380" rx="10"/><text class="t-sm t-c t-b" x="680" y="70">C · maximum</text>
+      <rect class="f-teal" x="580" y="90" width="200" height="40" rx="6"/><text class="t-xs t-c" x="680" y="114">4 × AMS 2 Pro = 16 slots</text>
+      <rect class="f-green" x="580" y="144" width="200" height="40" rx="6"/><text class="t-xs t-c" x="680" y="168">8 × AMS HT = 8 slots</text>
+      <rect class="f-yellow" x="580" y="198" width="200" height="40" rx="6"/><text class="t-xs t-c" x="680" y="222">1 external spool</text>
+      <rect class="f-purple" x="620" y="290" width="120" height="44" rx="8"/><text class="t-xs t-c" x="680" y="316">Buffer + adapter</text>
+      <text class="t-sm t-c t-b" x="680" y="266">= 25 colors</text>
+      <text class="t-xs t-m t-c" x="680" y="360">All AMS feed one nozzle;</text><text class="t-xs t-m t-c" x="680" y="374">the external spool uses the other.</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> Three connection patterns. In the maximum set-up all AMS units are bound to one nozzle and the external spool is bound to the other nozzle, which is how 25 colors are reached.</figcaption>
+  </figure>
+
+  <h3>Capacity planning: how many units for N colors?</h3>
+  <p>The usable color count is not just the number of slots. Each unique color (or material) needs its own slot unless you accept re-loading during a print. The table gives the arithmetic for the typical combinations, using only AMS 2 Pro units, then adding the HT and external spool for the maximum.</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Colors needed</th><th>Units (AMS 2 Pro × 4 slots)</th><th>Connection</th><th>Remarks</th></tr></thead>
+    <tbody>
+      <tr><td>1–4</td><td>1</td><td>Direct to buffer</td><td>One unit covers a typical multi-color print</td></tr>
+      <tr><td>5–8</td><td>2</td><td>Direct to buffer (upper and lower)</td><td>Without the track switch, each AMS is tied to one nozzle</td></tr>
+      <tr><td>9–12</td><td>3</td><td>4-in-1 PTFE adapter</td><td>The adapter adds feed resistance</td></tr>
+      <tr><td>13–16</td><td>4</td><td>4-in-1 PTFE adapter</td><td>Maximum of AMS 2 Pro units</td></tr>
+      <tr><td>17–24</td><td>4 + up to 8 AMS HT</td><td>4-in-1 PTFE adapter</td><td>AMS HT has one slot per unit</td></tr>
+      <tr><td>25</td><td>4 + 8 + 1 external spool</td><td>Adapter, external spool on the other nozzle</td><td>The listed maximum</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout warn"><span class="callout-title">Slots are not the same as colors per print</span>
+    <p>If two spools hold the same color and material, they take two slots but count as one color for the print (auto-refill uses them in sequence). Bambu Studio’s filament grouping modes (Filament-Saving, Convenience and Custom) also decide which spools share a nozzle; Convenience and Custom can increase purge waste if you cannot rearrange spools to match.</p>
+  </div>
+
+  <h2 id="routing">🧭 Routing to the left and right nozzles</h2>
+  <p>Without extra hardware, each AMS is permanently bound to one nozzle. In the first-time <b>AMS Setup</b> the printer either detects the mode itself with the Hall sensors (needs filament in the AMS, nothing loaded in the printer and an empty buffer) or you assign Left or Right manually; the choice is greyed out once filament has been sent. With one AMS 2 Pro connected to the buffer’s upper inlet, it feeds the left (main) nozzle, and that is the configuration Bambu recommends as the combination.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 420" role="img" aria-label="Two routing modes: fixed binding where AMS A feeds the left nozzle and AMS B feeds the right nozzle, versus an optional filament track switch where any AMS can feed either nozzle with electromagnet path switching">
+      <text class="t-lg" x="20" y="28">Fixed binding vs filament track switch</text>
+      <rect class="d-surface" x="20" y="44" width="380" height="350" rx="10"/><text class="t-sm t-b t-c" x="210" y="70">Without track switch</text>
+      <rect class="f-teal" x="50" y="90" width="110" height="46" rx="8"/><text class="t-sm t-c" x="105" y="118">AMS A</text>
+      <rect class="f-teal" x="260" y="90" width="110" height="46" rx="8"/><text class="t-sm t-c" x="315" y="118">AMS B</text>
+      <rect class="f-purple" x="140" y="200" width="130" height="46" rx="8"/><text class="t-sm t-c" x="205" y="228">Buffer</text>
+      <rect class="f-blue" x="50" y="310" width="120" height="46" rx="8"/><text class="t-sm t-c" x="110" y="338">Left nozzle</text>
+      <rect class="f-orange" x="240" y="310" width="120" height="46" rx="8"/><text class="t-sm t-c" x="300" y="338">Right nozzle</text>
+      <path class="k-teal arrow" d="M105 136 L160 200"/><path class="k-teal arrow" d="M315 136 L250 200"/>
+      <path class="k-blue arrow" d="M170 246 L120 310"/><path class="k-orange arrow" d="M240 246 L290 310"/>
+      <text class="t-xs t-m" x="40" y="180">upper inlet</text><text class="t-xs t-m" x="300" y="180">lower inlet</text>
+      <rect class="d-surface" x="420" y="44" width="380" height="350" rx="10"/><text class="t-sm t-b t-c" x="610" y="70">With track switch (optional)</text>
+      <rect class="f-teal" x="450" y="90" width="110" height="46" rx="8"/><text class="t-sm t-c" x="505" y="118">AMS A</text>
+      <rect class="f-teal" x="660" y="90" width="110" height="46" rx="8"/><text class="t-sm t-c" x="715" y="118">AMS B</text>
+      <rect class="f-yellow" x="540" y="190" width="140" height="46" rx="8"/><text class="t-sm t-c" x="610" y="212">Track switch</text><text class="t-xs t-c" x="610" y="228">2 in · 2 out</text>
+      <rect class="f-purple" x="540" y="260" width="140" height="34" rx="8"/><text class="t-sm t-c" x="610" y="283">Buffer</text>
+      <rect class="f-blue" x="450" y="330" width="120" height="46" rx="8"/><text class="t-sm t-c" x="510" y="358">Left nozzle</text>
+      <rect class="f-orange" x="650" y="330" width="120" height="46" rx="8"/><text class="t-sm t-c" x="710" y="358">Right nozzle</text>
+      <path class="k-teal arrow" d="M505 136 L580 190"/><path class="k-teal arrow" d="M715 136 L640 190"/><path class="d-dash arrow" d="M505 136 L640 190"/><path class="d-dash arrow" d="M715 136 L580 190"/>
+      <path class="k-yellow arrow" d="M610 236 V260"/>
+      <path class="k-blue arrow" d="M560 294 L520 330"/><path class="k-orange arrow" d="M660 294 L700 330"/>
+    </svg>
+    <figcaption><b>Figure 7.</b> Left: each AMS is tied to one nozzle. Right: the optional Filament Track Switch (sold separately) lets any AMS feed either nozzle by electromagnet path switching. It needs firmware 01.01.00.00 or later, Bambu Studio 2.5.3 or later and Bambu Handy 3.18.0 or later.</figcaption>
+  </figure>
+
+  <div class="callout x2d"><span class="callout-title">Track-switch limits to remember</span>
+    <ul>
+      <li>PTFE from AMS to switch: at most 700 mm; from switch to buffer: at most 115 mm.</li>
+      <li>No external spool support; TPU and several other materials are excluded.</li>
+      <li>High-precision nozzle offset calibration cannot be run with a switch installed.</li>
+      <li>Changing within the same inlet is slow (the filament is fully retracted to the AMS); changing across inlets is fast.</li>
+      <li>With a single AMS plus the switch, feeding is alternating, not simultaneous.</li>
+    </ul>
+  </div>
+
+  <h2 id="leds">💡 Status lights and error cures</h2>
+  <p>Each slot has an LED. Learn the patterns once and most problems diagnose themselves.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 300" role="img" aria-label="Legend of AMS LED patterns: all four red double flash, red breathing, red solid, red single flash, per-slot red double flash, all four red breathing, white flashing in turn, white steady, off, four white breathing">
+      <text class="t-lg" x="20" y="28">LED legend</text>
+      <circle class="s-red" cx="50" cy="66" r="9"/><text class="t-sm" x="70" y="70">4 red, double flash: printer cannot detect the AMS</text>
+      <circle class="s-red" cx="50" cy="96" r="9" opacity=".6"/><text class="t-sm" x="70" y="100">Red breathing: feeder has no filament after the print started</text>
+      <circle class="s-red" cx="50" cy="126" r="9"/><text class="t-sm" x="70" y="130">Red solid: feeder no filament, hub still detects it (broken inside the hub)</text>
+      <circle class="s-red" cx="50" cy="156" r="9" opacity=".8"/><text class="t-sm" x="70" y="160">Red single flash: feeder detects, hub does not (feed failure or PTFE clog)</text>
+      <circle class="s-red" cx="50" cy="186" r="9"/><text class="t-sm" x="70" y="190">Red double flash (one slot): both detect (feed or unload failure)</text>
+      <circle class="s-red" cx="50" cy="216" r="9" opacity=".6"/><text class="t-sm" x="70" y="220">All four red breathing: drying abnormality (NTC, over-temperature)</text>
+      <circle class="d-surface" cx="560" cy="66" r="9"/><text class="t-sm" x="580" y="70">White flashing in turn: initializing</text>
+      <circle class="d-surface" cx="560" cy="96" r="9"/><text class="t-sm" x="580" y="100">White steady: loaded, reading, printing</text>
+      <circle class="d-surface" cx="560" cy="126" r="9" opacity=".5"/><text class="t-sm" x="580" y="130">Off after 15–20 min idle</text>
+      <circle class="d-surface" cx="560" cy="156" r="9"/><text class="t-sm" x="580" y="160">4 white breathing: normal drying</text>
+      <text class="t-xs t-m" x="20" y="268">Patterns are described by Bambu; this legend uses opacity and labels instead of animation.</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> The LED language of the AMS 2 Pro, drawn as a static key.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>What to do</th></tr></thead>
+    <tbody>
+      <tr><td>“Filament broken in path”</td><td>Wet, brittle filament that snapped</td><td>Remove the white PTFE tube, extract the broken piece, dry or replace the spool</td></tr>
+      <tr><td>Feed failure, single red flash</td><td>PTFE clog or a blocked path</td><td>Check the PTFE and couplers; cut the filament end cleanly</td></tr>
+      <tr><td>Red solid</td><td>Filament snapped inside the hub</td><td>Open the hub area, clear debris, check the magnets</td></tr>
+      <tr><td>Printer cannot detect AMS</td><td>Cable, port or power issue</td><td>Reseat the 6-pin cable; use the new cable; check the adapter and buffer connection</td></tr>
+      <tr><td>Drying fault (all red breathing)</td><td>NTC disconnected or air duct too hot</td><td>Stop drying, let it cool, check the vents and firmware</td></tr>
+      <tr><td>Slot not read</td><td>RFID not detected</td><td>Tap Re-Read; clean the tag area; set manually if the spool is third-party</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="maintenance">🧰 Maintenance</h2>
+  <p>The AMS 2 Pro is mostly maintenance-free, but a few items matter. Treat PTFE tubes as consumables and replace them when worn. Check the pneumatic couplers at each spool change. Keep the ceramic funnel and the active support shaft clean, look inside the hub for magnets and debris, refresh the desiccant and update the firmware.</p>
+  <div class="grid cols-2">
+    <div class="card accent-teal"><h3>Each spool change</h3><p>Inspect the PTFE couplers; make sure the filament end is clean; check that nothing hangs on the spool.</p></div>
+    <div class="card accent-blue"><h3>Monthly (typical)</h3><p>Look at the desiccant color; clean the vents of dust; wipe the compartment; keep the lid seal clean.</p></div>
+    <div class="card accent-orange"><h3>When feeding gets rough</h3><p>Clean the ceramic funnel and the support shaft; look for filament dust in the hub; replace a worn PTFE tube.</p></div>
+    <div class="card accent-purple"><h3>Firmware</h3><p>Drying fixes arrived in firmware 01.01.01.00. Keep both the AMS and the printer updated.</p></div>
+  </div>
+
+  <h2 id="not-unloading">🔁 Keeping filament loaded: the “not unloading” trick</h2>
+  <p>Some users keep filament loaded after a print to save the purge that comes from unloading and reloading. On the X2D this is done by editing the machine G-code in Bambu Studio: delete the “pull back filament to AMS” lines (before the <code>G150.3</code> command) in the <b>Machine end G-code</b> and the flush G-code in <b>Machine start G-code</b>. Bambu warns that it carries risks: clogging, and RFID and remaining-estimate features are disabled when filament is left loaded. Restore the default G-code when you change to a new material.</p>
+
+  <h2 id="limits">🚧 Limitations</h2>
+  <ul>
+    <li><b>Flexibles:</b> Do not feed TPU or TPE through the AMS path (except the special “TPU for AMS” profile). Use an external spool or the TPU Feed Assist Module.</li>
+    <li><b>Absorbent PVA</b> should not sit in the AMS for long because it takes up moisture.</li>
+    <li><b>Hard, brittle fibers</b> from third parties can break in the tight bends.</li>
+    <li><b>Drying temperature ceiling</b> of 65 °C leaves nylon and PC under-dried.</li>
+    <li><b>Slots per nozzle:</b> without a track switch, the AMS-to-nozzle binding is fixed.</li>
+    <li><b>Weak points:</b> PTFE tubes, couplers and the buffer’s slider are wear items that need your attention.</li>
+  </ul>
+  <p>See <a href="filament-compatibility.html">Filament compatibility</a> for the per-material view and <a href="tpu-and-flexibles.html">TPU &amp; flexibles</a> for the dedicated feeding set-up.</p>
+
+  <h2 id="takeaways">✅ Key takeaways</h2>
+  <ul>
+    <li>The AMS 2 Pro has four slots, two drying modules (maximum 65 °C, only if ambient ≥ 25 °C), a humidity sensor, active vents, two RFID coils and a color-changing desiccant.</li>
+    <li>Filament moves in two stages (slot feeder, then hub assist motor), and the buffer keeps them in step with the extruder.</li>
+    <li>Never dry a high-temperature spool together with low-temperature spools; never exceed the filament’s softening temperature.</li>
+    <li>One or two AMS connect directly to the buffer; three or more (or two plus an external spool) need the 4-in-1 PTFE adapter, installed between AMS and buffer.</li>
+    <li>The listed maximum is 4 AMS 2 Pro and 8 AMS HT plus one external spool, for 25 colors.</li>
+    <li>Without the optional track switch each AMS is tied to one nozzle.</li>
+    <li>TPU, absorbent PVA and brittle third-party fiber filaments are poor fits for the AMS path.</li>
+  </ul>
+
+</main>
+</body>
+</html>

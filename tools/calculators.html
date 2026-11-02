@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calculators · 3D Printing Compendium</title>
+  <meta name="description" content="A suite of live 3D printing calculators: filament weight and cost, print cost, print time, volumetric flow, layers, drying, shrinkage, tolerances, heat-set inserts, snap fits, beam stiffness, screws, units, spools, nozzles, motion and multi-color waste.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+  <style>
+    .calc-jump { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 8px; margin: 1em 0 1.4em; }
+    .calc-jump button { font: inherit; cursor: pointer; text-align: left; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+    .calc-jump button:hover, .calc-jump button:focus-visible { border-color: var(--brand); }
+    .calc-jump button b { display: block; font-size: 14px; }
+    .calc-jump button span { font-size: 12.5px; color: var(--muted); }
+    .calc-formula { font-family: var(--mono); font-size: 13.5px; background: var(--surface-2); border: 1px solid var(--line); border-left: 4px solid var(--brand); border-radius: 8px; padding: 10px 14px; margin: .9em 0; overflow-x: auto; white-space: pre-wrap; line-height: 1.55; }
+    .calc-note { font-size: 13px; color: var(--muted); margin: .7em 0 0; }
+    .calc-flag { margin: .7em 0 0; padding: 8px 12px; border-radius: 8px; font-size: 14px; border: 1px solid var(--line); }
+    .calc-flag.ok { background: var(--green-s); } .calc-flag.warn { background: var(--yellow-s); } .calc-flag.bad { background: var(--red-s); }
+    .calc-right { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    .calc-right figure.fig { margin: 8px 0 0; padding: 8px; }
+    .calc-conv { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+    .calc-conv .field { margin: 0; }
+    .calc-tool-pair { display: grid; gap: 4px; }
+    .calc-mini th, .calc-mini td { white-space: nowrap; }
+    .field .calc-check { display: flex; justify-content: flex-start; align-items: center; gap: 8px; font-weight: 600; }
+    .field .calc-check input { width: 17px; height: 17px; accent-color: var(--brand); }
+    .calc-stat-row { display: flex; flex-wrap: wrap; gap: 8px; margin: .6em 0; }
+  </style>
+</head>
+<body data-page="tools/calculators.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 8 · Interactive tools</div>
+    <h1>Calculators</h1>
+    <p class="lead">Seventeen live calculators for everything you would otherwise do on the back of an envelope: how much a print costs, how fast the hotend can really go, how big to model a hole, how far a snap fit may bend and how much plastic a color change throws away.</p>
+    <div class="meta"><span class="badge beginner">All levels</span><span class="badge x2d">X2D flush estimator included</span><span class="badge time">⏱ 25 min to explore</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will get from this page</span>
+    <p>Every calculator shows its formula, explains why the formula works and lists the usual traps. Results update as you type, your inputs are remembered in this browser (nothing is uploaded), and every calculator has an illustration that redraws with your numbers. Everything runs offline in plain JavaScript.</p></div>
+
+  <h2>Pick a calculator</h2>
+  <p>Click a tile to jump straight to the tool. The calculators are grouped by the stage of a project in which you usually need them: planning a job, tuning the slicer, designing the part and checking the machine. Material-dependent calculators share one table of typical values, so changing the material in one tab does not silently contradict another.</p>
+
+  <div class="calc-jump" id="calc-jump" role="group" aria-label="Calculator index"></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 270" role="img" aria-label="Map of the calculators grouped into planning, slicing, design and machine stages">
+      <rect class="f-blue" x="10" y="10" width="180" height="250" rx="12"/>
+      <text class="t t-c t-b" x="100" y="36">1 · Plan the job</text>
+      <rect class="d-surface" x="24" y="52" width="152" height="34" rx="8"/><text class="t-sm t-c" x="100" y="74">Filament weight &amp; cost</text>
+      <rect class="d-surface" x="24" y="96" width="152" height="34" rx="8"/><text class="t-sm t-c" x="100" y="118">Print cost</text>
+      <rect class="d-surface" x="24" y="140" width="152" height="34" rx="8"/><text class="t-sm t-c" x="100" y="162">Print time</text>
+      <rect class="d-surface" x="24" y="184" width="152" height="34" rx="8"/><text class="t-sm t-c" x="100" y="206">Spool length / remaining</text>
+      <text class="t-xs t-c" x="100" y="244">"Can I afford / finish it?"</text>
+      <rect class="f-orange" x="204" y="10" width="180" height="250" rx="12"/>
+      <text class="t t-c t-b" x="294" y="36">2 · Tune the slicer</text>
+      <rect class="d-surface" x="218" y="52" width="152" height="34" rx="8"/><text class="t-sm t-c" x="294" y="74">Volumetric flow</text>
+      <rect class="d-surface" x="218" y="96" width="152" height="34" rx="8"/><text class="t-sm t-c" x="294" y="118">Layers &amp; layer height</text>
+      <rect class="d-surface" x="218" y="140" width="152" height="34" rx="8"/><text class="t-sm t-c" x="294" y="162">Nozzle → line width</text>
+      <rect class="d-surface" x="218" y="184" width="152" height="34" rx="8"/><text class="t-sm t-c" x="294" y="206">Drying · Flush waste</text>
+      <text class="t-xs t-c" x="294" y="244">"What should I enter?"</text>
+      <rect class="f-teal" x="398" y="10" width="180" height="250" rx="12"/>
+      <text class="t t-c t-b" x="488" y="36">3 · Design the part</text>
+      <rect class="d-surface" x="412" y="52" width="152" height="28" rx="8"/><text class="t-sm t-c" x="488" y="71">Shrinkage compensation</text>
+      <rect class="d-surface" x="412" y="88" width="152" height="28" rx="8"/><text class="t-sm t-c" x="488" y="107">Tolerance &amp; hole size</text>
+      <rect class="d-surface" x="412" y="124" width="152" height="28" rx="8"/><text class="t-sm t-c" x="488" y="143">Heat-set inserts</text>
+      <rect class="d-surface" x="412" y="160" width="152" height="28" rx="8"/><text class="t-sm t-c" x="488" y="179">Screw clearance</text>
+      <rect class="d-surface" x="412" y="196" width="152" height="28" rx="8"/><text class="t-sm t-c" x="488" y="215">Snap fit · Beam</text>
+      <text class="t-xs t-c" x="488" y="244">"Will it fit and survive?"</text>
+      <rect class="f-purple" x="592" y="10" width="178" height="250" rx="12"/>
+      <text class="t t-c t-b" x="681" y="36">4 · Know the machine</text>
+      <rect class="d-surface" x="606" y="52" width="150" height="34" rx="8"/><text class="t-sm t-c" x="681" y="74">Belt · e-steps · Z</text>
+      <rect class="d-surface" x="606" y="96" width="150" height="34" rx="8"/><text class="t-sm t-c" x="681" y="118">Unit converter</text>
+      <text class="t-xs t-c" x="681" y="244">"What is it doing?"</text>
+      <path class="d-mute arrow" d="M190 135 H204"/><path class="d-mute arrow" d="M384 135 H398"/><path class="d-mute arrow" d="M578 135 H592"/>
+    </svg>
+    <figcaption><b>Figure 1.</b> The calculators follow the life of a project. Arrows show the usual direction: the numbers you plan with (grams, hours) depend on slicer choices (flow, layers), which depend on the geometry you designed (fits, fasteners) and on what the machine can do.</figcaption>
+  </figure>
+
+  <h2>The calculators</h2>
+  <p>Each tab below is self-contained: inputs on the left, live result on the right, an illustration under the result, then the formula and a short field guide. Use <kbd>Tab</kbd> to move between inputs; every field has a label and the results region is announced politely to screen readers.</p>
+
+  <div class="tabs" id="calc-tabs">
+
+    <!-- ===================== FILAMENT ===================== -->
+    <div class="tab" data-title="Filament" data-key="filament">
+      <h4>🔰 Filament weight, length and cost</h4>
+      <p>Slicers report plastic use as grams, meters or cubic millimeters depending on the screen. Spools are sold by weight and priced per kilogram, while a printer's extruder moves <em>length</em>. This calculator converts between all of them for any material in the density table, with an optional waste allowance for purge, supports and failed starts.</p>
+      <div class="tool"><h3>Filament weight, length &amp; cost</h3><div class="tool-body">
+        <div id="f-filament"></div>
+        <div class="calc-right"><div class="result" id="r-filament" aria-live="polite"></div>
+          <figure class="fig"><svg class="diagram" viewBox="0 0 400 230" role="img" aria-label="Chain from filament cross-section area to volume per metre to mass per metre, updated live">
+            <rect class="f-blue" x="8" y="12" width="112" height="78" rx="10"/><text class="t-sm t-c t-b" x="64" y="32">Cross-section</text><text class="t-xs t-c" x="64" y="48">A = π·d² / 4</text><text class="t t-c t-b" id="fl-a" x="64" y="76">2.41 mm²</text>
+            <rect class="f-orange" x="144" y="12" width="112" height="78" rx="10"/><text class="t-sm t-c t-b" x="200" y="32">Volume per metre</text><text class="t-xs t-c" x="200" y="48">V = A × 1000 mm</text><text class="t t-c t-b" id="fl-v" x="200" y="76">2.41 cm³</text>
+            <rect class="f-green" x="280" y="12" width="112" height="78" rx="10"/><text class="t-sm t-c t-b" x="336" y="32">Mass per metre</text><text class="t-xs t-c" x="336" y="48">m = V × ρ</text><text class="t t-c t-b" id="fl-m" x="336" y="76">2.98 g</text>
+            <path class="d-ink arrow" d="M120 51 H142"/><path class="d-ink arrow" d="M256 51 H278"/>
+            <circle class="d-plastic" id="fl-circ" cx="52" cy="160" r="28"/>
+            <text class="t-xs t-c" x="52" y="205">end view</text>
+            <rect class="d-plastic" x="96" y="144" width="290" height="32" rx="16"/>
+            <path class="d-thin" d="M96 190 H386"/><path class="d-thin" d="M96 185 V195"/><path class="d-thin" d="M386 185 V195"/>
+            <text class="t-sm t-c" x="241" y="208">1 metre of filament</text>
+            <text class="t t-c t-b" id="fl-kg" x="241" y="130">1 kg ≈ 335 m</text>
+          </svg><figcaption><b>Figure 2.</b> Mass per metre is just cross-section × density. The thin circle on the left is drawn to scale for the selected diameter.</figcaption></figure></div>
+      </div></div>
+      <div class="calc-formula">mass   m [g]   = ρ [g/cm³] × V [cm³]
+length L [m]   = m / (ρ × π × (d/2)²)   with d in cm, result ÷ 100
+cost           = m / 1000 × price per kg
+1 m of 1.75 mm PLA ≈ 2.41 cm³ ≈ 2.98 g</div>
+      <p><b>How to use it.</b> If the slicer says "Total filament weight 86 g", choose <em>From slicer grams</em>, enter 86, pick the material and the price of your spool. If you only know the volume of the plastic that will actually be deposited (for example from a CAD "volume" multiplied by the share that is solid), choose <em>From plastic volume</em>. The waste field adds a percentage on top, which is where purge lines, brims, skirts, supports that are not in the estimate and the occasional failed first layer live. 3–8 % is a realistic allowance for single-color work; multi-color jobs can be far higher (see the <em>X2D flush</em> tab).</p>
+      <p><b>Why density matters.</b> A 1 kg spool of ABS (1.04 g/cm³) contains about 20 % more length than a 1 kg spool of PETG (1.27 g/cm³) and 16 % more than PLA. Two prints with the same geometry therefore weigh differently, and "grams per print" comparisons between materials are only fair after converting to volume. Carbon- and glass-filled filaments are denser than their base polymer, which shortens the length on the spool.</p>
+      <div class="callout tip"><span class="callout-title">Tip</span><p>Weigh the finished part once and compare it with the slicer's prediction. A consistent 3–5 % error is normal (flow ratio and density tolerance); a 15 % error means your density or flow ratio assumption is off.</p></div>
+    </div>
+
+    <!-- ===================== PRINT COST ===================== -->
+    <div class="tab" data-title="Print cost" data-key="cost">
+      <h4>🔰 Real cost of a print</h4>
+      <p>Plastic is rarely the biggest cost of a print once you count machine wear, electricity, failures and your own time. This calculator builds a complete cost per part and, optionally, a selling price with a margin. Use it to decide whether printing, buying or batching is cheaper.</p>
+      <div class="tool"><h3>Print cost calculator</h3><div class="tool-body">
+        <div id="f-cost"></div>
+        <div class="calc-right"><div class="result" id="r-cost" aria-live="polite"></div>
+          <figure class="fig"><svg class="diagram" viewBox="0 0 400 220" role="img" aria-label="Stacked bar splitting total cost into material, electricity, machine wear, failures, labor and other costs">
+            <text class="t t-b" id="co-tot" x="20" y="30">Total: –</text>
+            <rect class="s-orange" id="co-b0" x="20" y="48" width="100" height="36"/>
+            <rect class="s-yellow" id="co-b1" x="120" y="48" width="30" height="36"/>
+            <rect class="s-teal" id="co-b2" x="150" y="48" width="40" height="36"/>
+            <rect class="s-red" id="co-b3" x="190" y="48" width="30" height="36"/>
+            <rect class="s-purple" id="co-b4" x="220" y="48" width="100" height="36"/>
+            <rect class="s-gray" id="co-b5" x="320" y="48" width="60" height="36"/>
+            <rect class="d-thin" x="20" y="48" width="360" height="36"/>
+            <rect class="s-orange" x="20" y="112" width="12" height="12" rx="2"/><text class="t-sm" id="co-l0" x="38" y="123">Material</text>
+            <rect class="s-yellow" x="20" y="136" width="12" height="12" rx="2"/><text class="t-sm" id="co-l1" x="38" y="147">Electricity</text>
+            <rect class="s-teal" x="20" y="160" width="12" height="12" rx="2"/><text class="t-sm" id="co-l2" x="38" y="171">Machine wear</text>
+            <rect class="s-red" x="205" y="112" width="12" height="12" rx="2"/><text class="t-sm" id="co-l3" x="223" y="123">Failures</text>
+            <rect class="s-purple" x="205" y="136" width="12" height="12" rx="2"/><text class="t-sm" id="co-l4" x="223" y="147">Labor</text>
+            <rect class="s-gray" x="205" y="160" width="12" height="12" rx="2"/><text class="t-sm" id="co-l5" x="223" y="171">Other</text>
+            <text class="t-xs" x="20" y="203">Bar widths are proportional to each cost share.</text>
+          </svg><figcaption><b>Figure 3.</b> Where the money goes. Short prints are dominated by material and labor, very long prints by machine time.</figcaption></figure></div>
+      </div></div>
+      <div class="calc-formula">material    = grams / 1000 × price per kg
+electricity = average watts / 1000 × hours × price per kWh
+wear        = hours × (printer price / lifetime hours + upkeep per hour)
+machine     = (material + electricity + wear) / (1 − failure rate)
+total       = machine + labor + other        price = total × (1 + margin)</div>
+      <p><b>Reading the fields.</b> <em>Average watts</em> is not the printer's rated maximum: heating the bed and chamber peaks high for a few minutes, then the average drops sharply. A cheap plug-in energy meter over one long print gives the best number; 100–250 W averages are typical for an enclosed CoreXY machine running PLA, and engineering materials with a heated chamber run higher. <em>Lifetime hours</em> is how long you expect the machine to stay useful (3,000–8,000 h is a fair planning range). <em>Upkeep per hour</em> covers nozzles, build plates, belts, lubricant and filters.</p>
+      <div class="callout fact"><span class="callout-title">Why the failure rate divides</span><p>If each attempt fails with probability <em>p</em>, the expected number of attempts to get one good part is 1/(1 − <em>p</em>) (a geometric series: 1 + p + p² + …). A 10 % failure rate therefore raises machine cost by 11 %, a 25 % failure rate by 33 %. Labor is not multiplied here because checking and restarting a failed print usually costs less time than the original job; raise the labor minutes if that is not true for you.</p></div>
+      <p>For selling prints, licenses and sustainability see <a href="../reference/economics-and-ethics.html">Economics, licensing &amp; sustainability</a>.</p>
+    </div>
+
+    <!-- ===================== PRINT TIME ===================== -->
+    <div class="tab" data-title="Print time" data-key="time">
+      <h4>🔧 Print time estimator</h4>
+      <p>The slicer's time estimate is better than anything you can do by hand, but it needs a sliced file. This estimator answers the question <em>before</em> slicing: if my part deposits this much plastic, what happens to the time when I change layer height, speed or the flow limit? The chart under the result redraws the time curve across layer heights.</p>
+      <div class="tool"><h3>Print time estimator</h3><div class="tool-body">
+        <div id="f-time"></div>
+        <div class="calc-right"><div class="result" id="r-time" aria-live="polite"></div>
+          <figure class="fig"><svg class="diagram" viewBox="0 0 400 230" role="img" aria-label="Chart of estimated print time against layer height for the entered volume and speed">
+            <path class="d-ink" d="M48 24 V190 H385"/>
+            <g id="ti-chart"></g>
+            <text class="t-sm t-c" x="216" y="222">Layer height (mm)</text>
+            <text class="t-sm" x="6" y="16">Time (h)</text>
+          </svg><figcaption><b>Figure 4.</b> Time versus layer height for the same plastic volume. The curve flattens on the right when the flow limit takes over, and the dot marks your current setting.</figcaption></figure></div>
+      </div></div>
+      <div class="calc-formula">A  = h × (w − h) + π × h² / 4          (extrusion cross-section, mm²)
+Q  = min(A × v, Q_max)               (volumetric flow, mm³/s)
+t  = V / (Q × efficiency) + layers × t_layer + t_warm-up + changes × t_change</div>
+      <p><b>The efficiency factor.</b> A printer almost never moves at its commanded feed rate. Short segments, corners, acceleration ramps, retractions and travel moves eat time. For a mix of outer walls (slow), infill (fast) and small features, 55–75 % of the ideal flow is typical on a fast machine; a plain box with long straight lines can reach 85 %. Calibrate the factor once: slice one of your normal parts, compare the slicer's time with this tool's result at 100 %, then keep the ratio.</p>
+      <div class="callout fact"><span class="callout-title">Acceleration limits speed</span><p>To reach speed <em>v</em> at acceleration <em>a</em> a move needs v²/(2a) of distance. At 300 mm/s and 20,000 mm/s² that is 2.25 mm on the way up and again on the way down, so a 4 mm move never reaches 300 mm/s at all. Small and detailed parts therefore print at a fraction of the headline speed, which is why efficiency drops for miniatures.</p></div>
+      <p>Related: <a href="../techniques/speed-cooling-quality.html">Speed, cooling &amp; quality</a>.</p>
+    </div>
+
+    <!-- ===================== FLOW ===================== -->
+    <div class="tab" data-title="Volumetric flow" data-key="flow">
+      <h4>🔧 Volumetric flow and max-flow check</h4>
+      <p>A hotend is a small melting pump. How fast it can push plastic is measured in cubic millimeters per second (mm³/s), not millimeters per second of travel. Multiply the line width, the layer height and the speed, and you get the demand on the melt zone. If the demand exceeds supply the extruder skips, lines thin out and layers delaminate. This tool shows the demand, compares it with a starting estimate for your hotend and material, and tells you the maximum speed that is safe.</p>
+      <div class="tool"><h3>Volumetric flow checker</h3><div class="tool-body">
+        <div id="f-flow"></div>
+        <div class="calc-right"><div class="result" id="r-flow" aria-live="polite"></div>
+          <figure class="fig"><svg class="diagram" viewBox="0 0 400 230" role="img" aria-label="Cross-section of an extruded line and a gauge showing flow demand against the hotend limit">
+            <path class="d-mute" d="M20 100 H380"/>
+            <rect class="d-plastic" id="fw-bead" x="166" y="68" width="68" height="32" rx="16"/>
+            <path class="d-thin" id="fw-dw" d="M166 112 H234"/>
+            <text class="t-sm t-c" id="fw-w" x="200" y="130">w = 0.42 mm</text>
+            <text class="t-sm" id="fw-h" x="250" y="88">h = 0.20 mm</text>
+            <text class="t-xs" x="20" y="60">line cross-section, to scale</text>
+            <rect class="f-green" x="20" y="158" width="204" height="18"/>
+            <rect class="f-yellow" x="224" y="158" width="36" height="18"/>
+            <rect class="f-red" x="260" y="158" width="120" height="18"/>
+            <path class="d-ink" d="M260 152 V182"/>
+            <path class="d-solid" id="fw-needle" d="M30 150 l-6 -10 h12 z"/>
+            <text class="t-xs t-c" x="122" y="196">comfortable</text><text class="t-xs t-c" x="242" y="196">edge</text><text class="t-xs t-c" x="320" y="196">too fast</text>
+            <text class="t-sm t-c t-b" id="fw-gt" x="200" y="218">–</text>
+            <text class="t-xs" x="226" y="148">100 %</text>
+          </svg><figcaption><b>Figure 5.</b> The line is drawn to scale. The gauge runs from 0 to 150 % of the estimated limit; the needle shows how hard you are pushing the melt zone.</figcaption></figure></div>
+      </div></div>
+      <div class="calc-formula">A (rounded) = h × (w − h) + π × h² / 4        A (rectangle) = w × h
+Q = A × v                                   v_max = Q_max / A
+Q_max ≈ hotend base × material factor</div>
+      <p><b>Where do the limits come from?</b> They are <em>starting estimates</em>. Real limits depend on nozzle temperature (a hotter melt flows faster, until it degrades), filament formulation, nozzle geometry and the length of the melt zone. Slicer filament profiles carry a "max volumetric speed" per material and nozzle; trust those over this table when they differ. The most reliable method is a max-flow test: print a tower whose speed increases every few millimeters, and read the height at which the surface turns ragged or the extruder clicks. Divide by 0.85 for a safety margin.</p>
+      <div class="callout x2d"><span class="callout-title">X2D main versus auxiliary nozzle</span><p>The X2D's auxiliary (right) nozzle is limited to about 200 mm/s and roughly 1,000 mm/s² by Bambu Lab, and it is fed over a longer path from the rear-mounted auxiliary extruder, so treat its flow capacity conservatively and expect it to be best for supports and non-critical surfaces. The entry in the hotend list is a deliberately cautious assumption, not a published specification.</p></div>
+      <p>Why the rounded model? Slicers do not extrude rectangles; squeezed plastic has rounded sides. That is why the rounded area is slightly smaller than w × h. See <a href="../software/slicer-settings.html">Slicer settings explained</a> for the settings that feed this formula.</p>
+    </div>
+
+    <!-- ===================== LAYERS ===================== -->
+    <div class="tab" data-title="Layers" data-key="layers">
+      <h4>🔰 Layer count, layer height and color-change heights</h4>
+      <p>Every print is a stack of layers, and the model height decides how many. This tool shows the layer count, the true top height after rounding, and which layer heights divide your model evenly. It also finds the layer and exact Z-height at which a mid-print color or filament swap will happen.</p>
+      <div class="tool"><h3>Layer counter</h3><div class="tool-body">
+        <div id="f-layers"></div>
+        <div class="calc-right"><div class="result" id="r-layers" aria-live="polite"></div>
+          <figure class="fig"><svg class="diagram" viewBox="0 0 400 240" role="img" aria-label="Stack of printed layers with a thicker first layer and the layer height dimension">
+            <g id="ly-stack"></g>
+            <path class="d-thin" d="M200 214 H20"/>
+            <text class="t-sm" id="ly-n" x="214" y="40">N layers</text>
+            <text class="t-sm" id="ly-h" x="214" y="62">layer height 0.20 mm</text>
+            <text class="t-sm" id="ly-f" x="214" y="84">first layer 0.20 mm</text>
+            <text class="t-xs" x="214" y="112">The stack is drawn schematically: only the</text>
+            <text class="t-xs" x="214" y="126">first layers are shown at true proportion.</text>
+          </svg><figcaption><b>Figure 6.</b> The first layer is often taller than the rest; the remaining layers share the rest of the height equally.</figcaption></figure></div>
+      </div></div>
+      <div class="calc-formula">layers = 1 + round((H − h₁) / h)          top height = h₁ + (layers − 1) × h
+residual = H − top height               (should be ≈ 0)
+layer index for Z:  n = 1 + ceil((Z − h₁) / h)</div>
+      <p><b>Why divisibility matters.</b> If the model height is 20.1 mm and the layer height is 0.2 mm, the slicer must either drop the last 0.1 mm or print a half-thickness layer. Neither is harmful on a plain part, but for functional parts (stack heights, lids, press fits along Z) it changes dimensions. Choose a layer height that divides the height after the first layer, or adjust the model by a tenth of a millimeter.</p>
+      <p><b>Z-resolution "magic numbers".</b> Stepper-driven Z screws move in whole full-steps best. An 8 mm-lead screw with 200 full steps per turn advances 0.04 mm per full step, so layer heights that are multiples of 0.04 mm (0.08, 0.12, 0.16, 0.20, 0.24, 0.28 mm) are exact, and 0.15 mm is not. Check your printer's Z mechanism before worrying: many modern machines hide this with fine microstepping or different mechanics.</p>
+      <div class="callout tip"><span class="callout-title">Color changes at the right height</span><p>A mid-print pause (for a magnet, a nut or a color swap) must start at a layer boundary. Enter the height of the feature in the "pause at Z" field to see the layer that contains it and where that layer ends; pause <em>after</em> the layer that finishes the cavity.</p></div>
+    </div>
+
+    <!-- ===================== DRYING ===================== -->
+    <div class="tab" data-title="Drying" data-key="drying">
+      <h4>🔰 Filament drying temperature and time</h4>
+      <p>Most filaments absorb water from the air. Wet filament hisses, pops, strings and prints weak, rough parts. Drying fixes it, but each material has its own sensible temperature: too cool and nothing happens, too hot and PLA spools soften and tangle. This tool gives a typical temperature and time, scales them for how wet the spool is and for the maximum temperature of <em>your</em> dryer, and warns you when the dryer cannot reach what the material wants.</p>
+      <div class="tool"><h3>Drying lookup</h3><div class="tool-body">
+        <div id="f-drying"></div>
+        <div class="calc-right"><div class="result" id="r-drying" aria-live="polite"></div>
+          <figure class="fig"><svg class="diagram" viewBox="0 0 400 240" role="img" aria-label="Temperature ladder from 30 to 90 degrees Celsius with typical drying temperatures per material, the selected material and the dryer maximum">
+            <g class="d-grid"><path d="M60 220 H390"/><path d="M60 186.7 H390"/><path d="M60 153.3 H390"/><path d="M60 120 H390"/><path d="M60 86.7 H390"/><path d="M60 53.3 H390"/><path d="M60 20 H390"/></g>
+            <path class="d-ink" d="M60 20 V220"/>
+            <g class="t-sm t-r"><text x="52" y="224">30</text><text x="52" y="190.7">40</text><text x="52" y="157.3">50</text><text x="52" y="124">60</text><text x="52" y="90.7">70</text><text x="52" y="57.3">80</text><text x="52" y="24">90 °C</text></g>
+            <g class="s-blue"><circle cx="60" cy="170" r="4"/><circle cx="60" cy="153.3" r="4"/><circle cx="60" cy="136.7" r="4"/><circle cx="60" cy="103.3" r="4"/><circle cx="60" cy="53.3" r="4"/></g>
+            <g class="t-sm"><text x="70" y="174">PVA 45</text><text x="70" y="157">PLA 50</text><text x="70" y="140.7">TPU 55</text><text x="70" y="107">PETG 65</text><text x="70" y="57">ABS · ASA · PC · PA ≈ 80</text></g>
+            <path class="k-green" id="dr-rec" d="M240 153.3 H390" style="stroke-width:3"/>
+            <text class="t-sm t-r t-b" id="dr-rect" x="390" y="147">use 50 °C</text>
+            <path class="k-red d-dash" id="dr-max" d="M240 103.3 H390"/>
+            <text class="t-sm t-r" id="dr-maxt" x="390" y="119">dryer max 65 °C</text>
+          </svg><figcaption><b>Figure 7.</b> Blue dots mark typical drying temperatures. The green line is the temperature used for your material; the dashed red line is what your dryer can deliver.</figcaption></figure></div>
+      </div></div>
+      <div class="calc-formula">t_used  = t_table × wetness × spool-mass factor × 2^((T_wanted − T_used) / 15)
+T_used  = min(T_wanted, T_dryer-max)
+rule of thumb: every ~15 °C below the ideal temperature roughly doubles the time</div>
+      <p><b>How the estimate is built.</b> The table time is for a normally stored 1 kg spool that has been open for a few weeks. A sealed spool with desiccant needs less; a spool that has sat in a humid room for months, or that pops and steams when printing, needs more. Heavy spools dry from the outside in, so mass raises the time moderately. The last term models a dryer that cannot reach the ideal temperature (for example an enclosed multi-spool unit limited to 65 °C): diffusion of water out of the plastic slows down roughly exponentially with lower temperature, so you compensate with time, up to a point. A material that needs 80 °C will <em>not</em> be fully dried by a few extra hours at 60 °C if the target is a very low moisture level.</p>
+      <div class="x2d callout"><span class="callout-title">AMS 2 Pro</span><p>The AMS 2 Pro has two drying modules and a maximum drying temperature of 65 °C, which comfortably covers PLA, PETG, TPU and PVA. Nylon, PC and the strongly water-absorbing engineering grades want hotter, longer drying than 65 °C allows, so dry those in a dedicated dryer first and keep them sealed, then use the AMS mainly to keep them from re-absorbing during a print. The yellow-to-purple desiccant indicator tells you when the silica is saturated; see <a href="../x2d/ams-2-pro.html">AMS 2 Pro deep dive</a>.</p></div>
+      <h4>Reference table (typical values, approximate)</h4>
+      <div id="tbl-dry"></div>
+      <p>For moisture science, dryers and storage see <a href="../materials/drying-and-storage.html">Drying &amp; storage</a>.</p>
+    </div>
+
+    <!-- ===================== SHRINKAGE ===================== -->
+    <div class="tab" data-title="Shrinkage" data-key="shrinkage">
+      <h4>🔧 Shrinkage compensation scale</h4>
+      <p>Plastic is printed hot and measured cold. As it cools below its glass transition it contracts, so a part designed as 100.00 mm comes out slightly smaller, by an amount that depends on the polymer. Semi-crystalline plastics (nylon, PP) shrink most, amorphous ones (PLA, PETG) least. This tool gives a typical scale for each material and, better, a scale calculated from <em>your</em> measured test part.</p>
+      <div class="tool"><h3>Shrinkage compensation</h3><div class="tool-body">
+        <div id="f-shrinkage"></div>
+        <div class="calc-right"><div class="result" id="r-shrinkage" aria-live="polite"></div>
+          <figure class="fig"><svg class="diagram" viewBox="0 0 400 230" role="img" aria-label="Dashed nominal outline and a slightly smaller solid printed outline, shrinkage exaggerated">
+            <rect class="d-plastic" id="sk-act" x="130" y="40" width="140" height="140" rx="6"/>
+            <rect class="d-dash" x="120" y="30" width="160" height="160" rx="6" id="sk-nom"/>
+            <path class="d-ink arrow" d="M96 110 H116"/><path class="d-ink arrow" d="M304 110 H284"/>
+            <text class="t-sm t-c" x="200" y="20">nominal size (dashed)</text>
+            <text class="t-sm t-c t-b" id="sk-t" x="200" y="212">shrinks 0.30 %</text>
+            <text class="t-xs t-c" id="sk-x" x="200" y="226">(difference exaggerated ×25)</text>
+          </svg><figcaption><b>Figure 8.</b> The printed part (orange) ends up inside the intended size (dashed). The compensation scale enlarges the model by the inverse of that shrinkage.</figcaption></figure></div>
+      </div></div>
+      <div class="calc-formula">typical:    scale = 100 % / (1 − s/100)          model size = target / (1 − s/100)
+measured:   new scale = current scale × nominal / measured
+            shrink s  = (1 − measured / (nominal × current scale / 100)) × 100</div>
+      <p><b>Measure, do not guess.</b> Print a calibration cube or, better, a long flat bar at least 100 mm long (accuracy improves with length), let it cool completely, and measure with calipers at several positions. Enter the nominal and measured values and the scale you printed at. A single measurement improves accuracy by an order of magnitude over the table. XY and Z shrink differently, usually Z less; if you only calibrate XY, parts stay accurate across the plate but not in height.</p>
+      <div class="callout warn"><span class="callout-title">Do not use scale to fix a bad flow ratio</span><p>Over-extrusion makes outer dimensions larger and holes smaller; under-extrusion does the opposite. Shrinkage scale corrects a uniform percentage error, flow errors are not uniform (they add a fixed amount per wall). Calibrate flow and temperature first, then shrinkage. Slicers that offer a per-filament "shrinkage" field use different conventions, so read the tooltip in your version before entering the number.</p></div>
+      <h4>Typical shrinkage by material</h4>
+      <div id="tbl-shrink"></div>
+    </div>
+
+    <!-- ===================== TOLERANCE ===================== -->
+    <div class="tab" data-title="Tolerance" data-key="tolerance">
+      <h4>🔧 Tolerance and hole-size recommender</h4>
+      <p>You want a 8 mm rod to slide through a printed hole, or a 8 mm peg to press into one. If you model the hole at exactly 8 mm it will print too small to move, because the first and last perimeters squish outward into the hole and shrinkage pulls the plastic inward. This tool suggests the diameters to <em>model</em> for a chosen fit, based on the mating part's nominal size, hole orientation, material shrinkage and how well tuned your printer is.</p>
+      <div class="tool"><h3>Hole and peg diameters</h3><div class="tool-body">
+        <div id="f-tolerance"></div>
+        <div class="calc-right"><div class="result" id="r-tolerance" aria-live="polite"></div>
+          <figure class="fig"><svg class="diagram" viewBox="0 0 400 230" role="img" aria-label="Top view of a plate with a round hole and a peg, the gap between them drawn live">
+            <rect class="f-gray" x="60" y="10" width="280" height="190" rx="10"/>
+            <circle class="d-surface" id="tl-hole" cx="200" cy="105" r="80"/>
+            <circle class="d-plastic" id="tl-peg" cx="200" cy="105" r="76"/>
+            <text class="t-sm t-c t-b" id="tl-t" x="200" y="218">gap 0.30 mm</text>
+          </svg><figcaption><b>Figure 9.</b> A hole (white) and a peg (orange) seen from above. The ratio of the two circles is drawn to scale, so a snug fit looks almost closed while a loose fit shows a visible ring.</figcaption></figure></div>
+      </div></div>
+      <div class="calc-formula">hole_model = (peg + clearance) × (1 + s) + e_hole × q
+peg_model  = peg × (1 + s) − e_peg × q
+s = material shrinkage,  q = printer-quality factor,  e = squish allowance (mm)</div>
+      <p><b>Why holes shrink more than pegs grow.</b> The outer wall of a hole is a small-radius curve printed as a polygon of straight segments, and the nozzle's rounded bead overhangs the nominal edge by a fraction of the line width. Horizontal holes (axis in the XY plane) also sag at the top where the roof is bridged, so they need more compensation than vertical holes. The quality factor scales those allowances: a tuned printer with calibrated flow needs less, a printer with unknown history more.</p>
+      <div class="callout trick"><span class="callout-title">Pro trick</span><p>Never trust any compensation table, including this one, for a part you will print more than once. Print a <em>coupon</em>: a strip with holes from −0.2 to +0.5 mm in 0.05 mm steps, test with the real mating part, write the winning number into your CAD parameters, and keep it per material and nozzle. See <a href="../design/tolerances-and-fits.html">Tolerances &amp; fits</a> for coupon designs and fit classes.</p></div>
+      <div class="table-wrap"><table class="data compact"><thead><tr><th>Fit</th><th>Diametral clearance</th><th>Typical use</th></tr></thead><tbody>
+        <tr><td>Loose / free</td><td>+0.50 mm</td><td>Hinge pins, parts that rotate freely or must fit despite warping</td></tr>
+        <tr><td>Sliding</td><td>+0.30 mm</td><td>Shafts, guides, axles that slide or rotate with a little play</td></tr>
+        <tr><td>Snug</td><td>+0.15 mm</td><td>Locating pins, bearings with light hand pressure</td></tr>
+        <tr><td>Press</td><td>−0.10 mm</td><td>Press-fit pins and magnets; needs tuned printer and some patience</td></tr>
+        <tr><td>Heavy press</td><td>−0.25 mm</td><td>Permanent joints; risk of cracking brittle plastics</td></tr></tbody></table></div>
+    </div>
+
+    <!-- ===================== INSERTS ===================== -->
+    <div class="tab" data-title="Inserts" data-key="inserts">
+      <h4>🔧 Heat-set insert pockets (M2–M8)</h4>
+      <p>Brass heat-set inserts give plastic parts reusable metal threads. You push the insert into a slightly undersized hole with a heated tip; the plastic around it melts, flows into the knurling and re-solidifies. The pocket has to be the right diameter, deep enough to hold the insert plus the displaced plastic, and surrounded by enough wall. The calculator derives all three from the insert's outer diameter and length.</p>
+      <div class="tool"><h3>Heat-set insert pocket</h3><div class="tool-body">
+        <div id="f-inserts"></div>
+        <div class="calc-right"><div class="result" id="r-inserts" aria-live="polite"></div>
+          <figure class="fig"><svg class="diagram" viewBox="0 0 400 252" role="img" aria-label="Cross-section of a boss with a heat-set insert in a pocket, with diameter, depth and wall dimensions">
+            <rect class="f-gray" x="90" y="70" width="220" height="145"/>
+            <rect class="d-surface" x="165" y="70" width="70" height="125"/>
+            <rect class="d-metal" x="168" y="72" width="64" height="100"/>
+            <path class="d-thin" d="M180 84 l20 6 l20 -6 M180 104 l20 6 l20 -6 M180 124 l20 6 l20 -6 M180 144 l20 6 l20 -6"/>
+            <path class="d-dash" d="M168 172 H232"/>
+            <text class="t-xs t-c" x="200" y="188">melt reservoir</text>
+            <path class="d-ink arrow arrow-start" d="M165 56 H235"/>
+            <text class="t-sm t-c t-b" id="hs-d" x="200" y="46">⌀ 4.0 mm</text>
+            <path class="d-ink arrow arrow-start" d="M138 70 V195"/>
+            <text class="t-sm t-c t-b" id="hs-dep" x="112" y="136" >depth</text>
+            <text class="t-sm t-c" id="hs-dep2" x="112" y="152">6.7 mm</text>
+            <path class="d-ink arrow arrow-start" d="M90 232 H165"/>
+            <text class="t-sm t-c t-b" id="hs-w" x="127" y="248">wall 1.8 mm</text>
+            <text class="t-xs" x="246" y="110">brass insert</text>
+            <text class="t-xs" x="246" y="124">(knurled)</text>
+          </svg><figcaption><b>Figure 10.</b> Cross-section: the hole is a little narrower than the insert's outer diameter, 0.5–1 mm deeper than its length, and surrounded by a minimum wall.</figcaption></figure></div>
+      </div></div>
+      <div class="calc-formula">hole ⌀      = insert OD − interference         (0.2–0.4 mm typical)
+hole depth  = insert length + 0.8 … 1.2 mm
+boss OD     ≥ hole ⌀ + 2 × wall,   wall ≥ max(1.6 mm, 0.4 × insert OD)</div>
+      <p><b>Procedure.</b> Preheat the soldering iron with a tip that fits the insert (usually a dedicated insert tip). Set a temperature a little above the plastic's printing minimum, rest the insert on the hole, and let the tip's weight and warmth sink it; stop when the insert is flush with or 0.2 mm below the surface. Do not push hard, which creates bulging walls and tilted inserts. Let the part cool in place before loading the thread. If plastic oozes out of the hole, the hole is too small or the iron too hot.</p>
+      <p><b>Choosing where to put inserts.</b> Inserts hold best when pulled along the hole axis in a thick, solid boss. Add at least two extra perimeters around the pocket, use higher infill nearby (or modifier regions in the slicer), and orient the part so the insert hole is vertical: the hole axis then runs through the layer stack and the pull-out force is resisted by the full wall perimeter rather than by individual layer lines. See <a href="../design/joints-and-fasteners.html">Joints &amp; fasteners</a>.</p>
+      <h4>Typical sizes (verify with your insert supplier's datasheet)</h4>
+      <div id="tbl-inserts"></div>
+    </div>
+
+    <!-- ===================== SNAP-FIT ===================== -->
+    <div class="tab" data-title="Snap-fit" data-key="snapfit">
+      <h4>🚀 Snap-fit cantilever strain and force</h4>
+      <p>A cantilever snap-fit is a small beam that bends as the mating part slides over its hook and springs back to lock. It works only if the material's strain stays below its elastic limit; otherwise the hook yields, whitens or snaps. This tool computes the maximum strain at the root of the beam from its dimensions and deflection, compares it with a printed-part allowance, estimates the bending force and the mating force, and suggests a maximum safe deflection.</p>
+      <div class="tool"><h3>Cantilever snap-fit</h3><div class="tool-body">
+        <div id="f-snapfit"></div>
+        <div class="calc-right"><div class="result" id="r-snapfit" aria-live="polite"></div>
+          <figure class="fig"><svg class="diagram" viewBox="0 0 400 220" role="img" aria-label="Side view of a snap-fit cantilever beam, undeflected (dashed) and deflected, colored by strain status">
+            <rect class="f-gray" x="8" y="20" width="34" height="180" rx="4"/>
+            <path class="d-dash" id="sn-und" d="M42 60 H320"/>
+            <path class="f-green" id="sn-beam" d="M42 54 L320 54 L320 66 L42 66 Z"/>
+            <path class="s-gray" id="sn-hook" d="M320 54 L336 70 L320 70 Z"/>
+            <path class="d-ink arrow" id="sn-ay" d="M350 60 V100"/>
+            <text class="t-xs" id="sn-yt" x="358" y="84">y</text>
+            <path class="d-thin" id="sn-dl" d="M42 190 H320"/>
+            <text class="t-sm t-c" id="sn-lt" x="181" y="208">L</text>
+            <text class="t-sm t-b" id="sn-st" x="60" y="30">strain –</text>
+          </svg><figcaption><b>Figure 11.</b> The beam is drawn with its true length-to-deflection ratio (thickness is exaggerated for clarity). Green: below the allowance; yellow: within 25 % of it; red: over.</figcaption></figure></div>
+      </div></div>
+      <div class="calc-formula">strain at root  ε = k × h × y / L²    (k = 1.5 constant section, 0.92 taper to h/2, 0.67 taper to h/4)
+bending force   P = b × h² × E × ε / (6 × L)
+mating force    W = P × (μ + tan α) / (1 − μ × tan α)
+max deflection  y_max = ε_allow × L² / (k × h)</div>
+      <p><b>Reading the numbers.</b> Strain scales with <em>thickness</em> and deflection and falls with the <em>square of length</em>. Doubling the beam length therefore cuts strain by a factor of four for the same deflection, which is why long, thin hooks are gentle. The cheapest improvement is almost always length; the second is a taper, which spreads strain along the beam instead of concentrating it at the root; the third is a generous fillet (radius ≥ 0.5 × thickness) at the root, which this simple formula does not capture but which can halve the peak stress.</p>
+      <div class="callout warn"><span class="callout-title">FDM-specific limits</span><p>The allowable strain values in the table are conservative for 3D-printed parts: layer adhesion reduces strain at failure compared with injection-molded data sheets. A hook printed with its axis along Z (layers perpendicular to the beam) bends across the layer lines and breaks at a fraction of the strain it tolerates when printed lying flat. Choose the "upright" orientation in the calculator to see how much margin disappears. Repeated snapping (fatigue) needs a safety factor of 2 or more below the single-snap limit.</p></div>
+      <h4>Typical values used by the calculator</h4>
+      <div id="tbl-snap"></div>
+    </div>
+
+    <!-- ===================== BEAM ===================== -->
+    <div class="tab" data-title="Beam" data-key="beam">
+      <h4>🚀 Beam deflection and bending stiffness</h4>
+      <p>Will this bracket sag under a load, and what happens if I print it on its side? A rectangular beam's stiffness depends on the third power of its depth in the bending direction: doubling the height of a rib makes it eight times stiffer, whereas doubling its width only doubles it. This tool covers five common loading cases, includes the orientation of the cross-section and a knock-down for printed layer direction.</p>
+      <div class="tool"><h3>Rectangular beam</h3><div class="tool-body">
+        <div id="f-beam"></div>
+        <div class="calc-right"><div class="result" id="r-beam" aria-live="polite"></div>
+          <figure class="fig"><svg class="diagram" viewBox="0 0 400 240" role="img" aria-label="Beam with chosen supports and load, deflection exaggerated, and cross-section orientation icons">
+            <g id="bm-sup"></g>
+            <path class="d-dash" id="bm-und" d="M40 80 H360"/>
+            <path class="f-orange" id="bm-beam" d="M40 74 H360 V86 H40 Z"/>
+            <g id="bm-load"></g>
+            <text class="t-sm t-c" id="bm-ex" x="200" y="148">deflection exaggerated</text>
+            <rect class="d-plastic" x="56" y="176" width="70" height="14" rx="2"/>
+            <text class="t-xs t-c" x="91" y="208">flat (b wide, h = thin)</text>
+            <rect class="d-plastic" x="228" y="162" width="14" height="48" rx="2"/>
+            <text class="t-xs t-c" x="235" y="224">on edge: stiffer</text>
+            <text class="t-sm t-b t-c" id="bm-ratio" x="320" y="190">×–</text>
+          </svg><figcaption><b>Figure 12.</b> The beam shape is the true deflection curve for the chosen load case. Below, the same cross-section flat and on edge: orientation changes stiffness by (h/b)².</figcaption></figure></div>
+      </div></div>
+      <div class="calc-formula">I = b × h³ / 12           (h = depth in the bending direction)
+cantilever, end load       δ = P L³ / (3 E I)         M = P L
+cantilever, uniform load   δ = w L⁴ / (8 E I)         M = w L² / 2
+simply supported, center   δ = P L³ / (48 E I)        M = P L / 4
+simply supported, uniform  δ = 5 w L⁴ / (384 E I)     M = w L² / 8
+fixed-fixed, center load   δ = P L³ / (192 E I)       M = P L / 8
+σ = M × (h/2) / I          safety factor = allowable / σ</div>
+      <p><b>What the print direction does.</b> The modulus along a printed line is close to the filament's bulk value, but across layers it is lower and much weaker in tension. A beam printed flat with the load pushing perpendicular to the layers stresses the lines in tension along their length (strong); a beam printed standing upright pulls the layers apart (weak). The calculator applies simple knock-down factors of 1.0 and 0.8 on stiffness and 1.0 and 0.5 on strength, a rough but honest approximation.</p>
+      <div class="callout tip"><span class="callout-title">Design for stiffness</span><p>Make parts deeper, not wider. A 4 mm-thick, 20 mm-wide strip with a 12 mm rib added along the bending direction is many times stiffer than a 20 × 4 mm plate for little extra plastic. Fillets, ribs and sandwich-like shells all follow from the h³ rule. Read more in <a href="../design/strength-and-orientation.html">Strength &amp; orientation</a>.</p></div>
+      <div id="tbl-beam"></div>
+    </div>
+
+    <!-- ===================== SCREWS ===================== -->
+    <div class="tab" data-title="Screws" data-key="screws">
+      <h4>🔰 Screw, nut and counterbore clearances</h4>
+      <p>Fasteners are standardized in metal, but printed holes are not metal-accurate. This tool lists the hole sizes you should <em>model</em> for a metric screw: the clearance hole, the counterbore for a socket-head screw, the countersink, the hexagonal nut trap and the pilot hole for a self-tapping screw into plastic. Pick the size, the hole orientation and how generous you want the fit.</p>
+      <div class="tool"><h3>Metric screw clearances</h3><div class="tool-body">
+        <div id="f-screws"></div>
+        <div class="calc-right"><div class="result" id="r-screws" aria-live="polite"></div>
+          <figure class="fig"><svg class="diagram" viewBox="0 0 400 240" role="img" aria-label="Side section of a counterbored screw hole and a top view of a hexagonal nut trap with live dimensions">
+            <rect class="f-gray" x="20" y="76" width="170" height="124" rx="4"/>
+            <rect class="d-surface" x="60" y="76" width="90" height="34"/>
+            <rect class="d-surface" x="88" y="110" width="34" height="90"/>
+            <rect class="d-metal" x="66" y="82" width="78" height="26" rx="3"/>
+            <rect class="d-metal" x="96" y="108" width="18" height="90"/>
+            <path class="d-thin" d="M96 124 l18 5 M96 140 l18 5 M96 156 l18 5 M96 172 l18 5 M96 188 l18 5"/>
+            <text class="t-sm t-c t-b" id="sc-cb" x="105" y="58">counterbore ⌀ 6.0 × 3.5</text>
+            <path class="d-thin arrow arrow-start" d="M60 66 H150"/>
+            <text class="t-sm t-c" id="sc-ch" x="105" y="222">clearance hole ⌀ 3.4</text>
+            <path class="d-surface2" d="M350 110 L325 153.3 L275 153.3 L250 110 L275 66.7 L325 66.7 Z"/>
+            <circle class="d-surface" cx="300" cy="110" r="17"/>
+            <path class="d-thin arrow arrow-start" d="M236 66.7 V153.3"/>
+            <text class="t-sm t-c t-b" id="sc-af" x="300" y="186">nut trap AF 5.7</text>
+            <text class="t-xs t-c" id="sc-ac" x="300" y="202">across corners 6.6, depth 2.8</text>
+            <text class="t-xs t-c" x="300" y="222">top view of the nut pocket</text>
+          </svg><figcaption><b>Figure 13.</b> Left: section through a plate with a counterbore for a socket-head screw. Right: top view of a hexagonal nut pocket; "AF" is the distance across opposite flats.</figcaption></figure></div>
+      </div></div>
+      <div class="calc-formula">clearance hole = ISO 273 hole (fine/medium/coarse) + print allowance (0.10 vertical, 0.20 horizontal) × q
+counterbore ⌀  = head ⌀ + 0.4 … 0.6 mm          depth = head height + 0.3 mm
+nut pocket AF  = nut AF + 0.25 … 0.4 mm         depth = nut thickness + 0.3 mm
+pilot hole (self-tapping into plastic) ≈ 0.8 × major diameter</div>
+      <p><b>Fit classes.</b> ISO 273 defines <em>fine</em>, <em>medium</em> and <em>coarse</em> clearance holes for metal parts; M3 gives 3.2, 3.4 and 3.6 mm. In 3D printing, "medium" plus the print allowance is usually right for a hole that must align with another part, and "coarse" is the safe choice for holes that only need to let the screw through. Pilot holes for self-tapping screws are tighter than the screw's core; too small cracks the boss, too large strips. A boss for a screw needs a wall of at least one screw diameter all around.</p>
+      <div class="callout tip"><span class="callout-title">Printed threads</span><p>Threads smaller than about M8 rarely print well directly; use a metal screw into a pilot hole or a heat-set insert (see the <em>Inserts</em> tab) for small sizes, and design printed threads for M10 and larger with a pitch of 1.5 mm or more and 0.2–0.3 mm radial clearance between mating threads.</p></div>
+      <h4>Reference sizes (ISO 273, ISO 4762, ISO 4032, typical)</h4>
+      <div id="tbl-screws"></div>
+    </div>
+
+    <!-- ===================== UNITS ===================== -->
+    <div class="tab" data-title="Units" data-key="units">
+      <h4>🔰 Unit converter</h4>
+      <p>Slicers, CAD packages, spool labels and forum posts mix metric and imperial units. Type a value on either side of a row and the other side updates instantly. The rows cover the conversions that come up in printing: lengths, thicknesses, temperatures, masses, speeds and mechanical units.</p>
+      <div class="tool"><h3>Two-way converter</h3><div class="tool-body">
+        <div id="f-units"></div>
+        <div class="calc-right"><div class="result" aria-live="polite">
+          <div class="big">Quick reference</div>
+          <dl><dt>0.4 mm nozzle</dt><dd>0.0157 in</dd><dt>256 mm bed</dt><dd>10.08 in</dd><dt>65 °C chamber</dt><dd>149 °F</dd><dt>300 °C nozzle</dt><dd>572 °F</dd><dt>1 kg spool</dt><dd>35.27 oz</dd><dt>300 mm/s</dt><dd>11.81 in/s</dd><dt>20 000 mm/s²</dt><dd>2.04 g</dd></dl></div>
+          <figure class="fig"><svg class="diagram" viewBox="0 0 400 170" role="img" aria-label="A millimeter ruler above an inch ruler at the same scale">
+            <g id="un-ruler"></g>
+            <text class="t-xs" x="20" y="164">The two scales are drawn at the same physical scale: 25.4 mm = 1 inch.</text>
+          </svg><figcaption><b>Figure 14.</b> Metric and imperial rulers drawn to the same scale.</figcaption></figure>
+          <figure class="fig"><svg class="diagram" viewBox="0 0 400 150" role="img" aria-label="Temperature scale from 0 to 320 degrees Celsius with Fahrenheit equivalents of key printing temperatures">
+            <rect class="s-blue" x="30" y="40" width="75" height="16" rx="3" style="opacity:.55"/>
+            <rect class="s-orange" x="105" y="40" width="190" height="16" style="opacity:.55"/>
+            <rect class="s-red" x="295" y="40" width="65" height="16" rx="3" style="opacity:.55"/>
+            <g class="d-ink"><path d="M57.3 36 V60"/><path d="M101.1 36 V60"/><path d="M259.7 36 V60"/><path d="M358.1 36 V60"/></g>
+            <text class="t-sm t-c" x="57.3" y="30">room</text><text class="t-xs t-c" x="57.3" y="74">25 °C = 77 °F</text>
+            <text class="t-sm t-c" x="108" y="100">chamber max</text><text class="t-xs t-c" x="108" y="114">65 °C = 149 °F</text>
+            <text class="t-sm t-c" x="259.7" y="30">PLA nozzle</text><text class="t-xs t-c" x="259.7" y="74">210 °C = 410 °F</text>
+            <text class="t-sm t-c" x="340" y="100">X2D max nozzle</text><text class="t-xs t-c" x="340" y="114">300 °C = 572 °F</text>
+            <text class="t-xs" x="30" y="140">Scale: 0 – 320 °C</text>
+          </svg><figcaption><b>Figure 15.</b> Where common printing temperatures sit on the Celsius scale, with Fahrenheit equivalents.</figcaption></figure></div>
+      </div></div>
+      <div class="calc-formula">in = mm / 25.4        °F = °C × 9/5 + 32        oz = g / 28.3495
+lb = kg × 2.20462     mm/s = in/s × 25.4        lbf = N × 0.224809        psi = MPa × 145.038</div>
+      <p><b>Temperature differences are not temperatures.</b> A change of 10 °C is a change of 18 °F, not 50 °F. When a spec says "±5 °C", the Fahrenheit tolerance is ±9 °F. The converter treats the fields as absolute temperatures; for differences, multiply or divide by 1.8 only. Also beware of <em>mil</em> versus <em>mm</em> in older documentation: one mil (or "thou") is one thousandth of an inch, 25.4 µm.</p>
+      <p><b>Acceleration in g.</b> 9,807 mm/s² is exactly one standard g, which is a handy mental scale: a printer accelerating at 20,000 mm/s² pushes the toolhead with about 2 g, which is why mass and rigidity matter so much for speed.</p>
+    </div>
+
+    <!-- ===================== SPOOL ===================== -->
+    <div class="tab" data-title="Spool" data-key="spool">
+      <h4>🔰 Spool length, remaining filament and "will it finish?"</h4>
+      <p>Will the filament left on the spool finish a 140 g print? Weigh the spool, subtract the empty spool, and compare. This tool turns the gross weight on the scale into remaining grams and meters, tells you whether the next print fits with a safety margin, and offers a second estimate from the outer diameter of the wound filament when you have no scale at hand.</p>
+      <div class="tool"><h3>Remaining filament (from weight)</h3><div class="tool-body">
+        <div id="f-spool"></div>
+        <div class="calc-right"><div class="result" id="r-spool" aria-live="polite"></div></div>
+      </div></div>
+      <div class="tool"><h3>Remaining filament (from wound diameter)</h3><div class="tool-body">
+        <div id="f-spool2"></div>
+        <div class="calc-right"><div class="result" id="r-spool2" aria-live="polite"></div>
+          <figure class="fig"><svg class="diagram" viewBox="0 0 400 230" role="img" aria-label="Side view of a spool showing flange, wound filament and hub with live proportions">
+            <circle class="d-mute d-dash" id="sp-fl" cx="110" cy="115" r="90"/>
+            <circle class="d-plastic" id="sp-wd" cx="110" cy="115" r="62"/>
+            <circle class="d-surface" id="sp-hub" cx="110" cy="115" r="26"/>
+            <circle class="d-thin" cx="110" cy="115" r="8"/>
+            <text class="t-sm t-b" id="sp-t1" x="220" y="60">remaining –</text>
+            <text class="t-sm" id="sp-t2" x="220" y="84">–</text>
+            <text class="t-xs" x="220" y="108">dashed ring: flange edge</text>
+            <text class="t-xs" x="220" y="122">orange ring: wound filament</text>
+            <text class="t-xs" x="220" y="136">white disc: hub</text>
+            <rect class="f-gray" x="220" y="160" width="160" height="16" rx="8"/>
+            <rect class="s-orange" id="sp-bar" x="220" y="160" width="80" height="16" rx="8"/>
+            <text class="t-xs" x="220" y="196">share of the spool left (by length)</text>
+          </svg><figcaption><b>Figure 16.</b> The wound filament is a ring between hub and flange. Its area, times the spool width and a packing factor, gives the length.</figcaption></figure></div>
+      </div></div>
+      <div class="calc-formula">remaining g = gross weight − empty-spool weight          length = g / (ρ × π × (d/2)²)
+from diameter:  L = η × w × (R² − r²) / (d/2)²     (R, r wound and hub radius, w spool width,
+                                                    η packing 0.80 – 0.87)</div>
+      <p><b>Tare weights.</b> Empty spools vary: refillable plastic spools weigh around 100–250 g, cardboard ones 100–180 g, and "spool-less" refills have only a core. The only reliable number is your own: weigh an empty spool of the same brand once and note it on the spool. Bambu Lab filament carries an RFID tag read by the AMS that estimates the remaining amount; use this tool for non-RFID spools or to double-check the estimate.</p>
+      <p><b>Packing factor.</b> Filament winds in near-hexagonal layers, which would be 90.7 % efficient if perfect, but winding gaps, crossovers and a tilt of each layer reduce it to roughly 80–87 %. The diameter method is therefore good to about ±10 %, enough to decide whether a half-empty spool will survive a small print but not a 12-hour one.</p>
+    </div>
+
+    <!-- ===================== NOZZLE ===================== -->
+    <div class="tab" data-title="Nozzle" data-key="nozzle">
+      <h4>🔰 Nozzle diameter → layer height and line width</h4>
+      <p>The nozzle diameter fixes the range of sensible layer heights and line widths. Too thin a layer wastes time and may clog; too thick a layer cannot be squashed against the layer below and loses strength. This tool gives the recommended windows for any nozzle, shows the extruded line to scale, and converts a desired wall thickness into a whole number of perimeters.</p>
+      <div class="tool"><h3>Nozzle settings guide</h3><div class="tool-body">
+        <div id="f-nozzle"></div>
+        <div class="calc-right"><div class="result" id="r-nozzle" aria-live="polite"></div>
+          <figure class="fig"><svg class="diagram" viewBox="0 0 400 230" role="img" aria-label="Nozzle tip with orifice, extruded bead width and layer height drawn to scale">
+            <path class="d-metal" id="nz-cone" d="M140 8 H260 L224 78 H176 Z"/>
+            <rect class="d-surface" id="nz-hole" x="184" y="8" width="32" height="70"/>
+            <rect class="d-plastic" id="nz-bead" x="176" y="78" width="48" height="26" rx="13"/>
+            <rect class="d-plastic" id="nz-prev" x="176" y="104" width="48" height="26" rx="13" style="opacity:.55"/>
+            <path class="d-ink arrow arrow-start" id="nz-wd" d="M176 150 H224"/>
+            <text class="t-sm t-c t-b" id="nz-t1" x="200" y="170">line width 0.42 mm</text>
+            <text class="t-sm t-c" id="nz-t2" x="200" y="190">layer height 0.20 mm (50 % of nozzle)</text>
+            <text class="t-sm t-c" id="nz-t3" x="200" y="210">orifice ⌀ 0.40 mm</text>
+          </svg><figcaption><b>Figure 17.</b> The bead leaves the orifice and is flattened to the layer height, so it ends up wider than the nozzle hole.</figcaption></figure></div>
+      </div></div>
+      <div class="calc-formula">layer height:   25 % … 75 % of the nozzle diameter  (50 % = good default)
+line width:     100 % … 150 % of the nozzle diameter  (105 – 125 % typical)
+walls n = round(t / w)       t_actual = n × w</div>
+      <p><b>Why layer height has an upper limit.</b> The bead is squeezed between the nozzle tip and the layer below. If the layer is nearly as thick as the orifice, the plastic cannot spread sideways and presses against the nozzle instead of the part; bonding collapses. Below about 20–25 % the extrusion pressure rises sharply and the nozzle begins to scrape the previous layer. A 0.4 mm nozzle is happiest between 0.10 and 0.30 mm.</p>
+      <p><b>Wall thickness is made of lines.</b> A 1.2 mm wall printed with 0.42 mm lines is not 3 lines (1.26 mm) plus a gap but 2.86 lines. The slicer will fill the gap with a thinner line or a gap-fill path; a thickness of exactly <em>n</em> × line width avoids that. Design walls as multiples of the line width: 0.84, 1.26, 1.68 mm and so on for a 0.42 mm line.</p>
+      <div class="callout x2d"><span class="callout-title">X2D nozzles</span><p>The X2D takes tool-free swappable hotends in several diameters. The optional Multi-Size Hotends Kit adds 0.2 mm and 0.6 mm, which are good starting points for fine detail and fast, strong draft parts. Which filaments suit which diameter is summarized in <a href="../x2d/filament-compatibility.html">Filament compatibility</a>.</p></div>
+    </div>
+
+    <!-- ===================== MOTION ===================== -->
+    <div class="tab" data-title="Motion" data-key="motion">
+      <h4>🚀 Belt, pulley, e-steps and rotation distance</h4>
+      <p>If you build, upgrade or tune a Marlin or Klipper printer, you need to know how many motor steps move an axis by one millimeter. Belt axes, the extruder and the Z screw each have a formula. Enclosed, closed-loop machines such as the X2D handle this internally and do not expose these values, but the calculators are good for understanding how the numbers arise and for verifying a DIY machine.</p>
+      <div class="tool"><h3>Belt-driven axis</h3><div class="tool-body">
+        <div id="f-mxy"></div>
+        <div class="calc-right"><div class="result" id="r-mxy" aria-live="polite"></div>
+          <figure class="fig"><svg class="diagram" viewBox="0 0 400 190" role="img" aria-label="Belt loop around a toothed pulley and an idler, tooth count and rotation distance shown live">
+            <path class="d-ink" d="M80 50 H320"/><path class="d-ink" d="M80 130 H320"/>
+            <circle class="d-surface2" cx="80" cy="90" r="40"/>
+            <circle class="d-surface" cx="320" cy="90" r="40"/>
+            <g id="mt-teeth" class="d-thin"></g>
+            <circle class="d-thin" cx="80" cy="90" r="8"/><circle class="d-thin" cx="320" cy="90" r="8"/>
+            <path class="d-ink arrow" d="M150 40 H250"/>
+            <text class="t-sm t-c" x="200" y="30">belt motion</text>
+            <text class="t-sm t-c" x="200" y="92">pulley circumference = teeth × pitch</text>
+            <text class="t-sm t-c t-b" id="mt-t" x="200" y="112">20 × 2 mm = 40 mm / rev</text>
+            <text class="t-xs t-c" x="80" y="150">motor pulley</text><text class="t-xs t-c" x="320" y="150">idler</text>
+            <text class="t-sm t-c t-b" id="mt-s" x="200" y="178">80 steps/mm</text>
+          </svg><figcaption><b>Figure 18.</b> One motor revolution moves the belt by teeth × pitch; steps per millimeter follow from the full steps per revolution and the microstepping.</figcaption></figure></div>
+      </div></div>
+      <div class="tool"><h3>Extruder calibration (measured)</h3><div class="tool-body">
+        <div id="f-mex"></div>
+        <div class="calc-right"><div class="result" id="r-mex" aria-live="polite"></div>
+          <figure class="fig"><svg class="diagram" viewBox="0 0 400 190" role="img" aria-label="Filament pinched between a drive gear and an idler, effective diameter and gear ratio marked">
+            <rect class="d-plastic" x="10" y="86" width="380" height="18" rx="9"/>
+            <circle class="d-metal2" cx="170" cy="62" r="34"/>
+            <circle class="d-metal" cx="170" cy="62" r="8"/>
+            <g class="d-thin"><path d="M170 28 V22 M194 38 L199 33 M204 62 H210 M194 86 L199 91 M146 38 L141 33 M136 62 H130 M146 86 L141 91"/></g>
+            <circle class="d-surface2" cx="170" cy="128" r="30"/>
+            <path class="d-ink arrow" d="M60 76 H110"/>
+            <text class="t-sm" x="214" y="52">hobbed drive gear</text>
+            <text class="t-sm" x="214" y="68">⌀ D (effective)</text>
+            <text class="t-sm" x="214" y="140">idler / pinch roller</text>
+            <text class="t-sm" x="14" y="76">filament</text>
+            <text class="t-sm t-b" x="14" y="170">1 gear turn = π × D / ratio of filament</text>
+          </svg><figcaption><b>Figure 19.</b> The drive gear bites into the filament; its effective diameter D (where the teeth grip) sets how much filament one turn moves.</figcaption></figure></div>
+      </div></div>
+      <div class="tool"><h3>Extruder from hardware</h3><div class="tool-body">
+        <div id="f-mhw"></div>
+        <div class="calc-right"><div class="result" id="r-mhw" aria-live="polite"></div></div>
+      </div></div>
+      <div class="tool"><h3>Z lead screw and layer-height steps</h3><div class="tool-body">
+        <div id="f-mz"></div>
+        <div class="calc-right"><div class="result" id="r-mz" aria-live="polite"></div></div>
+      </div></div>
+      <div class="calc-formula">steps/mm = full steps × microsteps / (pitch × teeth)         rotation_distance = pitch × teeth
+CoreXY belt speed (diagonal worst case) = v × √2            rpm = belt speed × 60 / (pitch × teeth)
+e-steps new = e-steps old × commanded / actual              rot. dist. new = old × actual / commanded
+extruder rotation_distance = π × D_hobb / gear ratio        Z steps/mm = full steps × microsteps / lead</div>
+      <p><b>E-steps calibration procedure.</b> Heat the nozzle to printing temperature, mark the filament 120 mm above the extruder entry, command 100 mm of extrusion at a slow speed (for example 2 mm/s) and measure how far the mark moved. Enter what you commanded (100) and what you measured (for example 96). Marlin: new e-steps = old × 100 / 96. Klipper: new rotation_distance = old × 96 / 100. Repeat until the result is within ±0.5 mm. After that, calibrate the <em>flow ratio</em> with a printed test, because e-steps only ensure that the gear moves the filament correctly, not that the plastic exits at the right rate.</p>
+      <div class="callout fact"><span class="callout-title">Why layer heights like 0.04 mm steps?</span><p>For an 8 mm lead screw and a 1.8° motor, one full step is 8 / 200 = 0.04 mm. Microstepping interpolates between full steps with reduced holding torque and position accuracy, so layer heights that are multiples of the full-step distance (0.08, 0.12, 0.16, 0.20 mm …) are positioned more repeatably than, say, 0.15 mm. This "magic number" idea is why many printer vendors list their default layer heights in 0.04 or 0.08 mm multiples.</p></div>
+    </div>
+
+    <!-- ===================== FLUSH ===================== -->
+    <div class="tab" data-title="X2D flush" data-key="flush">
+      <h4>🚀 Multi-color flush and waste estimator</h4>
+      <div class="callout warn"><span class="callout-title">Conceptual estimator</span><p>This tool estimates the <em>order of magnitude</em> of waste in a multi-color print from three things you can read off the slicer: the number of color changes, the flush volume per change and the number of prime-tower layers. Bambu Studio calculates the exact flush volumes from a per-color-pair matrix, the wipe/prime tower size and your settings; use its final numbers (shown after slicing) whenever you have them. Treat the output below as a planning aid.</p></div>
+      <p>Every time a single nozzle changes color, it must push out the old color until the new one runs pure. That purged plastic goes into a prime tower or purge chute and is lost. Printing many colors on many layers can waste more plastic than the model contains. The Bambu X2D has two nozzles: when consecutive colors are on different nozzles, the machine swaps nozzles instead of purging, which can reduce waste a lot, though not to zero.</p>
+      <div class="tool"><h3>Multi-color waste estimator</h3><div class="tool-body">
+        <div id="f-flush"></div>
+        <div class="calc-right"><div class="result" id="r-flush" aria-live="polite"></div>
+          <figure class="fig"><svg class="diagram" viewBox="0 0 400 230" role="img" aria-label="A striped prime tower and a stacked bar splitting total plastic into model, flushed waste and tower waste">
+            <g id="fx-tower"></g>
+            <rect class="d-thin" x="30" y="30" width="60" height="170" style="fill:none"/>
+            <text class="t-xs t-c" x="60" y="216">prime tower</text>
+            <text class="t-sm t-b" x="130" y="30">Where the plastic goes</text>
+            <rect class="s-blue" id="fx-m" x="130" y="42" width="120" height="26"/>
+            <rect class="s-orange" id="fx-f" x="250" y="42" width="80" height="26"/>
+            <rect class="s-purple" id="fx-t" x="330" y="42" width="40" height="26"/>
+            <rect class="d-thin" x="130" y="42" width="240" height="26" style="fill:none"/>
+            <rect class="s-blue" x="130" y="100" width="12" height="12" rx="2"/><text class="t-sm" id="fx-l1" x="148" y="111">Model</text>
+            <rect class="s-orange" x="130" y="124" width="12" height="12" rx="2"/><text class="t-sm" id="fx-l2" x="148" y="135">Flushed at color changes</text>
+            <rect class="s-purple" x="130" y="148" width="12" height="12" rx="2"/><text class="t-sm" id="fx-l3" x="148" y="159">Tower layers</text>
+            <text class="t-sm t-b" id="fx-l4" x="130" y="190">Waste = –</text>
+          </svg><figcaption><b>Figure 20.</b> Left: a prime tower built from alternating color layers. Right: the total plastic split into the useful model and the two kinds of waste.</figcaption></figure></div>
+      </div></div>
+      <div class="calc-formula">flush waste  = changes × (1 − share handled by nozzle swap) × flush volume × ρ
+tower waste  = tower layers × width × depth × layer height × fill share × ρ
+waste        = flush waste + tower waste        waste ratio = waste / model mass</div>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 780 250" role="img" aria-label="Comparison of a single-nozzle color change with purge and a dual-nozzle swap">
+          <text class="t-lg" x="20" y="28">Single nozzle: purge on every color change</text>
+          <rect class="f-blue" x="20" y="44" width="120" height="40" rx="8"/><text class="t-sm t-c" x="80" y="69">print red</text>
+          <rect class="f-orange" x="146" y="44" width="150" height="40" rx="8"/><text class="t-sm t-c" x="221" y="69">retract · purge · wipe</text>
+          <rect class="f-green" x="302" y="44" width="120" height="40" rx="8"/><text class="t-sm t-c" x="362" y="69">print blue</text>
+          <rect class="f-orange" x="428" y="44" width="150" height="40" rx="8"/><text class="t-sm t-c" x="503" y="69">retract · purge · wipe</text>
+          <rect class="f-blue" x="584" y="44" width="120" height="40" rx="8"/><text class="t-sm t-c" x="644" y="69">print red</text>
+          <text class="t-lg" x="20" y="138">Dual nozzle (X2D): swap nozzles for two colors</text>
+          <rect class="f-blue" x="20" y="154" width="120" height="40" rx="8"/><text class="t-sm t-c" x="80" y="179">left: red</text>
+          <rect class="f-gray" x="146" y="154" width="70" height="40" rx="8"/><text class="t-sm t-c" x="181" y="179">swap</text>
+          <rect class="f-green" x="222" y="154" width="120" height="40" rx="8"/><text class="t-sm t-c" x="282" y="179">right: blue</text>
+          <rect class="f-gray" x="348" y="154" width="70" height="40" rx="8"/><text class="t-sm t-c" x="383" y="179">swap</text>
+          <rect class="f-blue" x="424" y="154" width="120" height="40" rx="8"/><text class="t-sm t-c" x="484" y="179">left: red</text>
+          <text class="t-xs" x="20" y="226">Changes between colors that sit on different nozzles need no flush; a third color on the same nozzle still needs purging.</text>
+        </svg>
+        <figcaption><b>Figure 21.</b> Timeline comparison. The swap time is short and wastes little plastic, which is why dual-nozzle machines print many-color models with less waste than single-nozzle ones.</figcaption>
+      </figure>
+      <p><b>Where the flush volume comes from.</b> In Bambu Studio the flushing volume depends on the pair of colors: going from a dark color to a light one needs a lot more purge than light to dark, because residue of the old color shows through. The slicer builds a matrix from the colors' brightness and lets you edit each pair. A typical value for similar colors is a few hundred mm³; extreme pairs can need several times as much. Enter your average in the calculator. <em>Tower layers</em> counts only the layers in which at least one color change happens: a model with colors in only the lower half needs a tower only up to there, and many slicers can also wipe into infill or objects to reduce waste.</p>
+      <div class="x2d callout"><span class="callout-title">Reducing waste on the X2D</span><p>Group parts by color so that fewer changes occur per layer, assign the two colors that alternate most often to different nozzles, keep the tower small, and let the slicer flush into infill when possible. Read <a href="../techniques/multi-color-and-multi-material.html">Multi-color &amp; multi-material</a> and <a href="../x2d/dual-nozzle-printing.html">Dual-nozzle printing</a> for the strategy, and <a href="../x2d/settings-and-profiles.html">Bambu Studio settings &amp; profiles</a> for the flush settings.</p></div>
+    </div>
+
+  </div>
+
+  <h2>Reference: the material table</h2>
+  <p>The following table is the single source for density, shrinkage, drying, stiffness, strength and strain values used by the calculators above. These are <b>typical, approximate</b> numbers for printed (not injection-molded) parts, collected from public data sheets and common practice. Brands, colors and additives (carbon fiber, glass fiber, impact modifiers) shift every column, so check your filament's data sheet and prefer your own test results.</p>
+  <div id="tbl-mats"></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 230" role="img" aria-label="Bar comparison of typical filament densities">
+      <text class="t-lg" x="20" y="26">Density comparison (g/cm³)</text>
+      <g id="mt-dens"></g>
+    </svg>
+    <figcaption><b>Figure 22.</b> Density ranges from under 1 g/cm³ for polypropylene to about 1.3 for fiber-filled materials; for equal volume the heavy ones cost more per print even at equal price per kilogram.</figcaption>
+  </figure>
+
+  <h2>Accuracy and assumptions</h2>
+  <ul>
+    <li><b>Formulas are exact, inputs are not.</b> Geometry formulas (area, beam deflection, steps per millimeter) are exact for ideal shapes. Material properties are typical values with spreads of ±20 % or more.</li>
+    <li><b>Printed parts are anisotropic.</b> Strength along layer lines is much higher than between layers; the beam and snap-fit calculators apply simple knock-down factors instead of a full model.</li>
+    <li><b>Everything is a starting point.</b> Use the results to set up the first attempt, then measure the real part and adjust. The best calculator is a calibrated printer and a caliper.</li>
+    <li><b>Your data stays in your browser.</b> Inputs are saved with <code>localStorage</code> under the <code>c3d:calc</code> prefix. Use "Reset to defaults" in each tool to clear them.</li>
+  </ul>
+
+  <div class="callout info"><span class="callout-title">Next</span><p>Not sure what to print in? Try the <a href="material-picker.html">Material picker</a>. Want to see why a setting behaves as it does? Open the <a href="visual-lab.html">Visual lab</a>. For practice problems that use these formulas, see the <a href="../exercises/level-2-intermediate.html">Level 2 exercises</a>.</p></div>
+
+  <h2>Key takeaways</h2>
+  <ul>
+    <li>Material mass is <b>density × volume</b>; the same part weighs 20 % less in ABS than in PETG.</li>
+    <li>Real print cost includes electricity, machine wear, failures (÷(1 − p)) and your time.</li>
+    <li>Flow demand is <b>w × h × v</b> (use the rounded cross-section); keep it at or below roughly 85 % of the tested limit.</li>
+    <li>Drying temperature is capped by your dryer: if it cannot reach the ideal temperature, dry longer, or use a hotter dryer for nylon and PC.</li>
+    <li>Shrinkage and hole compensation are best measured with a coupon, not copied from a table.</li>
+    <li>Snap-fit strain is ε = 1.5 h y / L²; lengthen the beam before you thin it.</li>
+    <li>Stiffness grows with the cube of depth: make the part deeper, not wider.</li>
+    <li>Flush waste scales with color changes × flush volume plus the tower: group colors and use both nozzles of the X2D.</li>
+  </ul>
+
+  <!-- SCRIPT-HERE -->
+<script>
+document.addEventListener("c3d:ready", function () {
+  "use strict";
+  var $ = C3D.$, $$ = C3D.$$, store = C3D.store, PI = Math.PI;
+
+  /* ---------- helpers ---------- */
+  function fmt(x, d) {
+    if (x == null || !isFinite(x)) return "–";
+    if (d == null) d = 2;
+    if (d < 0) { var a = Math.abs(x); d = a >= 100 ? 0 : a >= 10 ? 1 : a >= 1 ? 2 : 3; }
+    if (Math.abs(x) < Math.pow(10, -d) / 2) x = 0;
+    return Number(x).toLocaleString("en-US", { maximumFractionDigits: d });
+  }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
+  function setT(id, t) { var e = document.getElementById(id); if (e) e.textContent = t; }
+  function setA(id, o) { var e = document.getElementById(id); if (!e) return; for (var k in o) e.setAttribute(k, o[k]); }
+  function hm(sec) { if (!isFinite(sec)) return "–"; var m = Math.round(sec / 60), h = Math.floor(m / 60); m = m % 60; return h > 0 ? h + " h " + m + " min" : m + " min"; }
+  function R(big, rows, note) {
+    return '<div class="big">' + big + '</div>' +
+      (rows && rows.length ? '<dl>' + rows.map(function (r) { return '<dt>' + r[0] + '</dt><dd>' + r[1] + '</dd>'; }).join("") + '</dl>' : "") +
+      (note ? '<p class="calc-note">' + note + '</p>' : "");
+  }
+  function flag(kind, text) { return '<div class="calc-flag ' + kind + '">' + text + '</div>'; }
+  function table(head, rows) {
+    return '<div class="table-wrap"><table class="data compact"><thead><tr>' + head.map(function (h) { return "<th>" + h + "</th>"; }).join("") +
+      "</tr></thead><tbody>" + rows.map(function (r) { return "<tr>" + r.map(function (c) { return "<td>" + c + "</td>"; }).join("") + "</tr>"; }).join("") + "</tbody></table></div>";
+  }
+  function dots(n, max) { var s = '<span class="rate g" aria-label="' + n + ' of ' + (max || 5) + '">'; for (var i = 0; i < (max || 5); i++) s += '<i' + (i < n ? ' class="on"' : "") + "></i>"; return s + "</span>"; }
+
+  /* ---------- material data (typical, approximate) ----------
+     d density g/cm³, sh shrinkage %, dc drying °C, dh drying hours (1 kg), cap max safe dryer °C, hy moisture sensitivity 1-5,
+     E modulus MPa (printed, in-plane), s strength MPa, eps snap-fit strain allowance %, ff flow factor vs PLA */
+  var MATS = [
+    { n: "PLA", d: 1.24, sh: 0.3, dc: 50, dh: 6, cap: 55, hy: 2, E: 3000, s: 50, eps: 1.5, ff: 1.0 },
+    { n: "PLA Tough / PLA+", d: 1.24, sh: 0.3, dc: 50, dh: 6, cap: 55, hy: 2, E: 2500, s: 45, eps: 2.5, ff: 1.0 },
+    { n: "Silk PLA", d: 1.25, sh: 0.3, dc: 50, dh: 6, cap: 55, hy: 2, E: 2800, s: 40, eps: 1.2, ff: 0.6 },
+    { n: "PLA-CF", d: 1.30, sh: 0.2, dc: 55, dh: 6, cap: 60, hy: 2, E: 5000, s: 55, eps: 0.8, ff: 0.7 },
+    { n: "PETG", d: 1.27, sh: 0.4, dc: 65, dh: 6, cap: 70, hy: 2, E: 2100, s: 45, eps: 3.0, ff: 0.65 },
+    { n: "PETG-CF", d: 1.30, sh: 0.3, dc: 65, dh: 6, cap: 70, hy: 2, E: 4000, s: 55, eps: 1.2, ff: 0.6 },
+    { n: "ABS", d: 1.04, sh: 0.7, dc: 80, dh: 4, cap: 85, hy: 1, E: 2000, s: 38, eps: 2.0, ff: 0.8 },
+    { n: "ASA", d: 1.07, sh: 0.6, dc: 80, dh: 4, cap: 85, hy: 1, E: 2000, s: 40, eps: 2.0, ff: 0.8 },
+    { n: "PC", d: 1.20, sh: 0.7, dc: 80, dh: 8, cap: 90, hy: 4, E: 2100, s: 55, eps: 3.0, ff: 0.55 },
+    { n: "PA6 (nylon)", d: 1.14, sh: 1.2, dc: 80, dh: 12, cap: 90, hy: 5, E: 1800, s: 50, eps: 4.0, ff: 0.55 },
+    { n: "PA12 / PA11", d: 1.02, sh: 1.0, dc: 70, dh: 8, cap: 80, hy: 4, E: 1400, s: 40, eps: 4.5, ff: 0.6 },
+    { n: "PA-CF (PAHT-CF)", d: 1.25, sh: 0.4, dc: 80, dh: 12, cap: 90, hy: 5, E: 5500, s: 80, eps: 1.2, ff: 0.6 },
+    { n: "PET-CF", d: 1.30, sh: 0.3, dc: 80, dh: 8, cap: 90, hy: 3, E: 5000, s: 70, eps: 1.0, ff: 0.55 },
+    { n: "TPU 95A", d: 1.21, sh: 0.8, dc: 55, dh: 6, cap: 60, hy: 3, E: 50, s: 30, eps: 15, ff: 0.18 },
+    { n: "TPU 85A", d: 1.19, sh: 1.0, dc: 55, dh: 6, cap: 60, hy: 3, E: 20, s: 20, eps: 25, ff: 0.1 },
+    { n: "PVA", d: 1.23, sh: 0.3, dc: 45, dh: 6, cap: 50, hy: 5, E: 2000, s: 30, eps: 1.0, ff: 0.35 },
+    { n: "HIPS", d: 1.04, sh: 0.6, dc: 60, dh: 4, cap: 70, hy: 1, E: 2000, s: 30, eps: 1.5, ff: 0.7 },
+    { n: "PP", d: 0.90, sh: 1.8, dc: 55, dh: 6, cap: 70, hy: 1, E: 1100, s: 25, eps: 6.0, ff: 0.6 }
+  ];
+  var MATOPTS = MATS.map(function (m, i) { return [i, m.n]; });
+  var Q_OPT = [["0.7", "Well-tuned printer"], ["1", "Typical"], ["1.5", "Uncalibrated / rough"]];
+
+  /* ---------- generic field builder ---------- */
+  function fieldHTML(key, f) {
+    var id = key + "-" + f.id, lab = f.l + (f.u ? " (" + f.u + ")" : ""), h = '<div class="field">';
+    if (f.t === "sel") {
+      h += '<label for="' + id + '">' + lab + '</label><select id="' + id + '">' + f.o.map(function (o) {
+        var v = Array.isArray(o) ? o[0] : o, t = Array.isArray(o) ? o[1] : o;
+        return '<option value="' + v + '"' + (String(v) === String(f.v) ? " selected" : "") + ">" + t + "</option>";
+      }).join("") + "</select>";
+    } else if (f.t === "check") {
+      h += '<label class="calc-check" for="' + id + '"><input type="checkbox" id="' + id + '"' + (f.v ? " checked" : "") + "> " + f.l + "</label>";
+    } else if (f.t === "range") {
+      h += '<label for="' + id + '">' + lab + ' <output id="' + id + '-o">' + f.v + (f.u ? " " + f.u : "") + '</output></label><input type="range" id="' + id + '" min="' + f.min + '" max="' + f.max + '" step="' + (f.step || 1) + '" value="' + f.v + '">';
+    } else if (f.t === "text") {
+      h += '<label for="' + id + '">' + lab + '</label><input type="text" id="' + id + '" maxlength="' + (f.max || 4) + '" value="' + esc(f.v) + '">';
+    } else {
+      h += '<label for="' + id + '">' + lab + '</label><input type="number" inputmode="decimal" id="' + id + '" value="' + f.v + '"' + (f.min != null ? ' min="' + f.min + '"' : "") + (f.max != null ? ' max="' + f.max + '"' : "") + ' step="' + (f.step || "any") + '">';
+    }
+    if (f.h) h += "<small>" + f.h + "</small>";
+    return h + "</div>";
+  }
+
+  function mount(key, defs, compute) {
+    var host = $("#f-" + key), res = $("#r-" + key);
+    if (!host || !res) return;
+    host.innerHTML = defs.map(function (f) { return fieldHTML(key, f); }).join("") +
+      '<div class="btn-row"><button type="button" class="btn ghost" data-reset>Reset to defaults</button></div>';
+    var els = {}, byId = {};
+    function setVal(f, e, val) {
+      if (f.t === "check") e.checked = (val === "1" || val === true);
+      else if (f.t === "sel") { e.value = val; if (e.selectedIndex < 0) e.value = f.v; }
+      else e.value = val;
+      if (f.t === "range") setT(e.id + "-o", e.value + (f.u ? " " + f.u : ""));
+    }
+    function save(f, e) { store.set("calc:" + key + ":" + f.id, f.t === "check" ? (e.checked ? "1" : "0") : e.value); }
+    defs.forEach(function (f) {
+      var e = $("#" + key + "-" + f.id); els[f.id] = e; byId[f.id] = f;
+      var sv = store.get("calc:" + key + ":" + f.id);
+      if (sv != null) setVal(f, e, sv);
+    });
+    function read() {
+      var p = {}, bad = null;
+      defs.forEach(function (f) {
+        var e = els[f.id];
+        if (f.t === "sel" || f.t === "text") p[f.id] = e.value;
+        else if (f.t === "check") p[f.id] = e.checked;
+        else {
+          var x = parseFloat(e.value);
+          if (!isFinite(x)) bad = bad || f.l;
+          else if (f.min != null && x < f.min) bad = bad || (f.l + " (minimum " + f.min + ")");
+          p[f.id] = x;
+        }
+      });
+      return { p: p, bad: bad };
+    }
+    function run() {
+      var rd = read();
+      if (rd.bad) { res.innerHTML = "<p><b>Check the inputs:</b> " + rd.bad + ".</p>"; return; }
+      try { res.innerHTML = compute(rd.p); } catch (err) { res.innerHTML = "<p>Cannot compute: " + esc(err.message) + "</p>"; }
+    }
+    function onChange(ev) {
+      var e = ev.target, f = byId[e.id.slice(key.length + 1)];
+      if (!f) return;
+      save(f, e);
+      if (f.t === "range") setT(e.id + "-o", e.value + (f.u ? " " + f.u : ""));
+      run();
+    }
+    host.addEventListener("input", onChange);
+    host.addEventListener("change", onChange);
+    $("[data-reset]", host).addEventListener("click", function () {
+      defs.forEach(function (f) { setVal(f, els[f.id], f.v); store.del("calc:" + key + ":" + f.id); });
+      run();
+    });
+    run();
+    return run;
+  }
+
+  /* ---------- 1 · Filament ---------- */
+  mount("filament", [
+    { id: "mode", t: "sel", l: "Input", o: [["g", "From slicer grams"], ["v", "From plastic volume (cm³)"]], v: "g" },
+    { id: "amt", t: "num", l: "Amount", u: "g or cm³", v: 100, min: 0 },
+    { id: "mat", t: "sel", l: "Material", o: MATOPTS, v: 0 },
+    { id: "dia", t: "sel", l: "Filament diameter", o: [["1.75", "1.75 mm"], ["2.85", "2.85 / 3 mm"]], v: "1.75" },
+    { id: "waste", t: "num", l: "Extra waste allowance", u: "%", v: 5, min: 0, h: "Purge, brim, skirt, supports, failed starts." },
+    { id: "price", t: "num", l: "Price per kg", v: 22, min: 0 },
+    { id: "spool", t: "num", l: "Spool size", u: "kg", v: 1, min: 0.01 }
+  ], function (p) {
+    var m = MATS[+p.mat], d = +p.dia, area = PI * d * d / 4;
+    var g = p.mode === "g" ? p.amt : p.amt * m.d, gt = g * (1 + p.waste / 100), vol = gt / m.d, len = vol / area, cost = gt / 1000 * p.price, perM = area * m.d;
+    setT("fl-a", fmt(area, 2) + " mm²"); setT("fl-v", fmt(area, 2) + " cm³"); setT("fl-m", fmt(perM, 2) + " g"); setT("fl-kg", "1 kg ≈ " + fmt(1000 / perM, 0) + " m");
+    setA("fl-circ", { r: clamp(d * 16, 12, 48) });
+    return R(fmt(gt, 1) + " g", [["Plastic volume", fmt(vol, 1) + " cm³"], ["Filament length", fmt(len, 1) + " m"], ["Cost", fmt(cost, 2) + " (price units)"],
+      ["Share of one spool", fmt(gt / (p.spool * 1000) * 100, 1) + " %"], ["Mass per metre", fmt(perM, 2) + " g/m"]],
+      "Density used: " + m.d + " g/cm³ (" + esc(m.n) + "). The mass includes the waste allowance.");
+  });
+
+  /* ---------- 2 · Print cost ---------- */
+  mount("cost", [
+    { id: "g", t: "num", l: "Filament used", u: "g", v: 150, min: 0 },
+    { id: "price", t: "num", l: "Filament price per kg", v: 22, min: 0 },
+    { id: "h", t: "num", l: "Print time", u: "h", v: 6, min: 0 },
+    { id: "w", t: "num", l: "Average power draw", u: "W", v: 180, min: 0, h: "Measure with a plug-in energy meter; peaks are much higher." },
+    { id: "kwh", t: "num", l: "Electricity price per kWh", v: 0.30, min: 0 },
+    { id: "pp", t: "num", l: "Printer price", v: 1500, min: 0 },
+    { id: "life", t: "num", l: "Expected lifetime", u: "h", v: 5000, min: 1 },
+    { id: "up", t: "num", l: "Upkeep per hour", v: 0.15, min: 0, h: "Nozzles, plates, belts, filters, lubricant." },
+    { id: "fail", t: "range", l: "Failure rate", u: "%", v: 5, min: 0, max: 60 },
+    { id: "lmin", t: "num", l: "Labor per print", u: "min", v: 10, min: 0 },
+    { id: "lrate", t: "num", l: "Labor rate per hour", v: 20, min: 0 },
+    { id: "other", t: "num", l: "Post-processing & packaging", v: 0.5, min: 0 },
+    { id: "margin", t: "num", l: "Margin on top", u: "%", v: 0, min: 0 },
+    { id: "cur", t: "text", l: "Currency symbol", v: "$", max: 3 }
+  ], function (p) {
+    var c = esc(p.cur);
+    function money(x) { return c + x.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+    var mat = p.g / 1000 * p.price, el = p.w / 1000 * p.h * p.kwh, wear = p.h * (p.pp / p.life + p.up);
+    var base = mat + el + wear, mach = base / (1 - p.fail / 100), failc = mach - base, labor = p.lmin / 60 * p.lrate, other = p.other, total = mach + labor + other, sell = total * (1 + p.margin / 100);
+    var parts = [mat, el, wear, failc, labor, other], names = ["Material", "Electricity", "Machine wear", "Failures", "Labor", "Other"], x = 20;
+    parts.forEach(function (v, i) {
+      var w = total > 0 ? v / total * 360 : 0;
+      setA("co-b" + i, { x: x.toFixed(1), width: w.toFixed(1) }); x += w;
+      setT("co-l" + i, names[i] + "  " + money(v));
+    });
+    setT("co-tot", "Total: " + money(total));
+    var rows = parts.map(function (v, i) { return [names[i], money(v) + " (" + fmt(total > 0 ? v / total * 100 : 0, 0) + " %)"]; });
+    rows.push(["Cost per gram", money(p.g > 0 ? total / p.g : 0)]);
+    if (p.margin > 0) rows.push(["Selling price (+" + p.margin + " %)", money(sell)]);
+    var big = flag(sell < total ? "warn" : "ok", "Machine time is " + fmt(p.h > 0 ? (wear + el) / p.h : 0, 2) + " " + c + " per hour before failures.");
+    return R(money(total), rows) + big;
+  });
+
+  /* ---------- 3 · Print time ---------- */
+  mount("time", [
+    { id: "vol", t: "num", l: "Plastic volume deposited", u: "cm³", v: 40, min: 0.01, h: "Slicer: filament weight ÷ density." },
+    { id: "H", t: "num", l: "Model height", u: "mm", v: 50, min: 0.1 },
+    { id: "lh", t: "num", l: "Layer height", u: "mm", v: 0.2, min: 0.04, step: 0.01 },
+    { id: "w", t: "num", l: "Line width", u: "mm", v: 0.42, min: 0.1, step: 0.01 },
+    { id: "v", t: "num", l: "Average print speed", u: "mm/s", v: 150, min: 1 },
+    { id: "qmax", t: "num", l: "Max volumetric flow", u: "mm³/s", v: 21, min: 1 },
+    { id: "eff", t: "range", l: "Motion efficiency", u: "%", v: 65, min: 20, max: 100, step: 1 },
+    { id: "tl", t: "num", l: "Time per layer change", u: "s", v: 4, min: 0 },
+    { id: "warm", t: "num", l: "Heat-up & prep", u: "min", v: 6, min: 0 },
+    { id: "nc", t: "num", l: "Color / filament changes", v: 0, min: 0 },
+    { id: "tchg", t: "num", l: "Time per change", u: "s", v: 60, min: 0 }
+  ], function (p) {
+    function area(lh) { return Math.max(lh * (p.w - lh) + PI * lh * lh / 4, 0.01); }
+    function tsec(lh) {
+      var Q = Math.min(area(lh) * p.v, p.qmax) * p.eff / 100;
+      return p.vol * 1000 / Q + Math.ceil(p.H / lh) * p.tl + p.warm * 60 + p.nc * p.tchg;
+    }
+    var Qraw = area(p.lh) * p.v, Q = Math.min(Qraw, p.qmax), limited = Qraw > p.qmax;
+    var tExt = p.vol * 1000 / (Q * p.eff / 100), layers = Math.ceil(p.H / p.lh), total = tsec(p.lh);
+    var lo = Math.min(0.05, p.lh), hi = Math.max(0.8 * p.w, p.lh * 1.1, lo + 0.1), pts = [], N = 14, tmax = 0, i;
+    for (i = 0; i <= N; i++) { var x = lo + (hi - lo) * i / N, t = tsec(x) / 3600; pts.push([x, t]); tmax = Math.max(tmax, t); }
+    tmax = Math.max(tmax * 1.1, 0.1);
+    function X(v) { return 60 + (v - lo) / (hi - lo) * 315; }
+    function Y(t) { return 190 - t / tmax * 160; }
+    var g = "";
+    for (i = 0; i <= 4; i++) { var tv = tmax * i / 4; g += '<path class="d-grid" d="M48 ' + Y(tv).toFixed(1) + ' H385"/><text class="t-xs t-r" x="44" y="' + (Y(tv) + 3).toFixed(1) + '">' + fmt(tv, tv < 10 ? 1 : 0) + '</text>'; }
+    for (i = 0; i <= 4; i++) { var xv = lo + (hi - lo) * i / 4; g += '<text class="t-xs t-c" x="' + X(xv).toFixed(1) + '" y="204">' + fmt(xv, 2) + '</text>'; }
+    g += '<path class="k-orange" style="stroke-width:3" d="M' + pts.map(function (q) { return X(q[0]).toFixed(1) + " " + Y(q[1]).toFixed(1); }).join(" L") + '"/>';
+    g += '<circle class="s-red" cx="' + X(p.lh).toFixed(1) + '" cy="' + Y(total / 3600).toFixed(1) + '" r="6"/>';
+    setT("ti-chart", ""); $("#ti-chart").innerHTML = g;
+    var rows = [["Cross-section area", fmt(area(p.lh), 3) + " mm²"], ["Flow demand at speed", fmt(Qraw, 1) + " mm³/s"], ["Flow actually used", fmt(Q, 1) + " mm³/s"],
+      ["Effective deposition rate", fmt(Q * p.eff / 100, 1) + " mm³/s"], ["Layers", fmt(layers, 0)], ["Extrusion time", hm(tExt)], ["Layer changes", hm(layers * p.tl)],
+      ["Heat-up & color changes", hm(p.warm * 60 + p.nc * p.tchg)]];
+    return R(hm(total), rows) + (limited ? flag("warn", "Flow-limited: the hotend, not the motion system, sets the speed here. Raising speed will not shorten the print.") : flag("ok", "Speed-limited: the flow limit is not reached, so higher speed or acceleration would still help.")) +
+      '<p class="calc-note">Estimates are good to roughly ±20 %. The slicer, which knows the real toolpath, is the final authority.</p>';
+  });
+
+  /* ---------- 4 · Volumetric flow ---------- */
+  var HOTENDS = [
+    ["generic", "Generic 0.4 mm hotend (V6-style)", 11],
+    ["std04", "Bambu-class standard 0.4 mm", 21],
+    ["hf04", "High-flow 0.4 mm", 30],
+    ["std06", "Standard 0.6 mm", 30],
+    ["std08", "Standard 0.8 mm", 40],
+    ["aux", "X2D auxiliary nozzle (conservative guess)", 12]
+  ];
+  mount("flow", [
+    { id: "w", t: "num", l: "Line width", u: "mm", v: 0.42, min: 0.1, step: 0.01 },
+    { id: "h", t: "num", l: "Layer height", u: "mm", v: 0.2, min: 0.02, step: 0.01 },
+    { id: "v", t: "num", l: "Print speed", u: "mm/s", v: 200, min: 1 },
+    { id: "hot", t: "sel", l: "Hotend", o: HOTENDS.map(function (x) { return [x[0], x[1]]; }), v: "std04" },
+    { id: "mat", t: "sel", l: "Material", o: MATOPTS, v: 0 },
+    { id: "mod", t: "sel", l: "Cross-section model", o: [["r", "Rounded (slicer-style)"], ["b", "Rectangle w × h"]], v: "r" }
+  ], function (p) {
+    var m = MATS[+p.mat], base = 0, hot = p.hot;
+    HOTENDS.forEach(function (x) { if (x[0] === hot) base = x[2]; });
+    var A = p.mod === "r" ? Math.max(p.h * (p.w - p.h) + PI * p.h * p.h / 4, 0.001) : p.w * p.h;
+    var Q = A * p.v, Qmax = base * m.ff, util = Q / Qmax, vmax = Qmax / A;
+    var k = Math.min(150, 300 / Math.max(p.w, 0.1), 80 / Math.max(p.h, 0.02)), W = p.w * k, H = p.h * k;
+    setA("fw-bead", { x: (200 - W / 2).toFixed(1), y: (100 - H).toFixed(1), width: W.toFixed(1), height: H.toFixed(1), rx: p.mod === "r" ? Math.min(H / 2, W / 2).toFixed(1) : 1 });
+    setA("fw-dw", { d: "M" + (200 - W / 2).toFixed(1) + " 112 H" + (200 + W / 2).toFixed(1) });
+    setT("fw-w", "w = " + fmt(p.w, 2) + " mm"); setT("fw-h", "h = " + fmt(p.h, 2) + " mm");
+    setA("fw-h", { x: Math.min(200 + W / 2 + 8, 300), y: (100 - H / 2 + 4).toFixed(1) });
+    var nx = 20 + clamp(util, 0, 1.5) / 1.5 * 360;
+    setA("fw-needle", { d: "M" + nx.toFixed(1) + " 157 l-6 -10 h12 z" });
+    setT("fw-gt", fmt(Q, 1) + " of ~" + fmt(Qmax, 0) + " mm³/s (" + fmt(util * 100, 0) + " %)");
+    var rows = [["Line cross-section", fmt(A, 3) + " mm²"], ["Flow demand", fmt(Q, 1) + " mm³/s"], ["Estimated limit", fmt(Qmax, 1) + " mm³/s"], ["Utilization", fmt(util * 100, 0) + " %"],
+      ["Max speed at 85 % utilization", fmt(vmax * 0.85, 0) + " mm/s"], ["Max speed at 100 %", fmt(vmax, 0) + " mm/s"]];
+    var f = util > 1 ? flag("bad", "Demand exceeds the estimated limit: expect under-extrusion, clicking or weak layers. Lower the speed to about " + fmt(vmax * 0.85, 0) + " mm/s or raise temperature slightly.")
+      : util > 0.85 ? flag("warn", "Close to the limit: fine for a draft, risky for quality or for small flow variations.") : flag("ok", "Comfortable margin below the estimated limit.");
+    if (hot === "aux" && p.v > 200) f += flag("bad", "The X2D auxiliary nozzle is limited to about 200 mm/s; slicer profiles will cap the speed.");
+    return R(fmt(Q, 1) + " mm³/s", rows) + f + '<p class="calc-note">Limit = hotend base value (' + base + ' mm³/s for PLA) × material factor ' + m.ff + ' for ' + esc(m.n) + '. Starting estimate only: run a max-flow test.</p>';
+  });
+
+  /* ---------- 5 · Layers ---------- */
+  mount("layers", [
+    { id: "H", t: "num", l: "Model height", u: "mm", v: 60, min: 0.1 },
+    { id: "lh", t: "num", l: "Layer height", u: "mm", v: 0.2, min: 0.02, step: 0.01 },
+    { id: "first", t: "num", l: "First layer height", u: "mm", v: 0.2, min: 0.02, step: 0.01 },
+    { id: "zc", t: "num", l: "Pause / color change at Z (0 = off)", u: "mm", v: 0, min: 0 }
+  ], function (p) {
+    var n = p.H > p.first ? 1 + Math.round((p.H - p.first) / p.lh) : 1, top = p.first + (n - 1) * p.lh, res = p.H - top;
+    var cand = [0.04, 0.05, 0.06, 0.08, 0.1, 0.12, 0.15, 0.16, 0.2, 0.24, 0.28, 0.3, 0.32, 0.36, 0.4], ex = [];
+    cand.forEach(function (c) { var r = (p.H - p.first) / c; if (r >= 1 && Math.abs(r - Math.round(r)) * c < 0.005) ex.push(c.toFixed(2) + " (" + (Math.round(r) + 1) + ")"); });
+    var rows = [["Layers", fmt(n, 0)], ["Top height", fmt(top, 2) + " mm"], ["Residual to model", fmt(res, 3) + " mm"], ["Layers if height +1 layer", fmt(n + 1, 0)],
+      ["Exact layer heights (layers)", ex.length ? ex.slice(0, 6).join(", ") : "none in list"]];
+    if (p.zc > 0) {
+      var nz = p.zc <= p.first ? 1 : 1 + Math.ceil((p.zc - p.first) / p.lh - 1e-9), zend = p.first + (nz - 1) * p.lh;
+      rows.push(["Z = " + fmt(p.zc, 2) + " lies in layer", fmt(nz, 0)], ["Pause after that layer, at Z", fmt(zend, 2) + " mm"]);
+    }
+    var g = "", y = 214, shown = Math.min(n, 12), unit = 14, i;
+    for (i = 1; i <= shown; i++) {
+      var hpx = i === 1 ? clamp(unit * p.first / p.lh, 8, 30) : unit;
+      y -= hpx;
+      g += '<rect class="' + (i % 2 ? "d-plastic" : "f-orange") + '" x="30" y="' + y.toFixed(1) + '" width="150" height="' + hpx.toFixed(1) + '" rx="2"/>';
+    }
+    if (n > shown) g += '<text class="t t-c" x="105" y="' + (y - 4).toFixed(1) + '">⋮</text>';
+    $("#ly-stack").innerHTML = g;
+    setT("ly-n", fmt(n, 0) + " layers · top at " + fmt(top, 2) + " mm"); setT("ly-h", "layer height " + fmt(p.lh, 2) + " mm"); setT("ly-f", "first layer " + fmt(p.first, 2) + " mm");
+    var fl = Math.abs(res) < 0.005 ? flag("ok", "The height divides evenly: the last layer ends exactly at the model top.") : flag("warn", "The model top and the last layer differ by " + fmt(Math.abs(res), 3) + " mm. Change the height by that amount or pick one of the exact layer heights above.");
+    return R(fmt(n, 0) + " layers", rows) + fl;
+  });
+
+  /* ---------- 6 · Drying ---------- */
+  mount("drying", [
+    { id: "mat", t: "sel", l: "Material", o: MATOPTS, v: 0 },
+    { id: "wet", t: "sel", l: "How wet is it?", o: [["0.6", "Sealed / just opened"], ["1", "Opened a few weeks ago"], ["1.6", "Stored humid or slightly damp"], ["2.2", "Popping, steaming, very wet"]], v: "1" },
+    { id: "mass", t: "num", l: "Spool filament mass", u: "g", v: 1000, min: 50 },
+    { id: "dmax", t: "num", l: "Dryer maximum temperature", u: "°C", v: 65, min: 30, max: 120, h: "AMS 2 Pro: 65 °C. Dedicated dryers often reach 70–80 °C or more." }
+  ], function (p) {
+    var m = MATS[+p.mat], T = m.dc, Tu = Math.min(T, p.dmax), mf = clamp(0.7 + 0.3 * p.mass / 1000, 0.6, 1.6);
+    var tt = m.dh * (+p.wet) * mf * Math.pow(2, (T - Tu) / 15), tr = Math.round(tt * 2) / 2;
+    function Y(t) { return 220 - (clamp(t, 30, 90) - 30) * (200 / 60); }
+    var yr = Y(Tu), ym = Y(p.dmax), recAbove = yr <= ym;
+    setA("dr-rec", { d: "M240 " + yr.toFixed(1) + " H390" }); setA("dr-max", { d: "M240 " + ym.toFixed(1) + " H390" });
+    setT("dr-rect", "use " + fmt(Tu, 0) + " °C"); setA("dr-rect", { y: (recAbove ? yr - 6 : yr + 16).toFixed(1) });
+    setT("dr-maxt", "dryer max " + fmt(p.dmax, 0) + " °C"); setA("dr-maxt", { y: (recAbove ? ym + 16 : ym - 6).toFixed(1) });
+    var rows = [["Typical target", fmt(T, 0) + " °C"], ["Use in your dryer", fmt(Tu, 0) + " °C"], ["Drying time", fmt(tr, 1) + " h"], ["Moisture sensitivity", dots(m.hy)],
+      ["Store afterwards at", m.hy >= 4 ? "below 10–15 % RH" : "below 20 % RH"]];
+    var f = "";
+    if (T > p.dmax) f += flag(T - p.dmax > 15 ? "bad" : "warn", "Your dryer reaches only " + fmt(p.dmax, 0) + " °C, below the typical " + fmt(T, 0) + " °C for " + esc(m.n) + ". The time above is extended to compensate, but very hygroscopic materials may not reach a low moisture level. A hotter dedicated dryer is the safer choice.");
+    else f += flag("ok", "The dryer can reach the typical temperature for this material.");
+    if (p.dmax > m.cap) f += flag("warn", "Do not set the dryer above about " + fmt(m.cap, 0) + " °C for " + esc(m.n) + ": the filament and spool can soften and tangle.");
+    if (tr > 36) f += flag("warn", "More than 36 h is rarely practical; consider a fresh spool or a hotter dryer.");
+    return R(fmt(tr, 1) + " h at " + fmt(Tu, 0) + " °C", rows) + f + '<p class="calc-note">Typical values; always follow the maker\'s instructions on the spool label.</p>';
+  });
+
+  /* ---------- 7 · Shrinkage ---------- */
+  mount("shrinkage", [
+    { id: "mode", t: "sel", l: "Method", o: [["typ", "Typical value for material"], ["meas", "From my measured test part"]], v: "typ" },
+    { id: "mat", t: "sel", l: "Material (typical method)", o: MATOPTS, v: 0 },
+    { id: "nom", t: "num", l: "Nominal dimension (measured method)", u: "mm", v: 100, min: 0.1 },
+    { id: "meas", t: "num", l: "Measured dimension", u: "mm", v: 99.6, min: 0.1 },
+    { id: "cur", t: "num", l: "Scale you printed at", u: "%", v: 100, min: 50 },
+    { id: "tgt", t: "num", l: "Target dimension to model", u: "mm", v: 80, min: 0.1 }
+  ], function (p) {
+    var m = MATS[+p.mat], s, scale;
+    if (p.mode === "typ") { s = m.sh; scale = 100 / (1 - s / 100); }
+    else { s = (1 - p.meas / (p.nom * p.cur / 100)) * 100; scale = p.cur * p.nom / p.meas; }
+    var fv = clamp(s / 100 * 40, -0.1, 0.25), S = 160 * (1 - fv);
+    setA("sk-act", { x: (200 - S / 2).toFixed(1), y: (110 - S / 2).toFixed(1), width: S.toFixed(1), height: S.toFixed(1) });
+    setT("sk-t", (s >= 0 ? "shrinks " : "grows ") + fmt(Math.abs(s), 2) + " %"); setT("sk-x", "(difference exaggerated ×40)");
+    var model = p.tgt * scale / 100 * (p.mode === "typ" ? 1 : 100 / p.cur);
+    var rows = [["Shrinkage", fmt(s, 2) + " %"], ["Scale to apply", fmt(scale, 2) + " %"], ["Model for " + fmt(p.tgt, 1) + " mm target", fmt(model, 2) + " mm"],
+      ["Error on a 100 mm part (uncorrected)", fmt(s, 2) + " mm"]];
+    var f = Math.abs(s) > 3 ? flag("warn", "A shrinkage of more than 3 % points to a measuring error, a wrong scale or a different problem (flow, elephant foot, warping).") : "";
+    return R(fmt(scale, 2) + " %", rows) + f + '<p class="calc-note">Apply the scale to XY only unless you have also measured Z. Measure again after correcting to confirm.</p>';
+  });
+
+  /* ---------- 8 · Tolerance ---------- */
+  mount("tolerance", [
+    { id: "peg", t: "num", l: "Mating part diameter (rod, pin, bolt)", u: "mm", v: 8, min: 0.5, step: 0.05 },
+    { id: "fit", t: "sel", l: "Fit", o: [["0.5", "Loose / free (+0.50)"], ["0.3", "Sliding (+0.30)"], ["0.15", "Snug (+0.15)"], ["-0.1", "Press (−0.10)"], ["-0.25", "Heavy press (−0.25)"]], v: "0.3" },
+    { id: "ori", t: "sel", l: "Hole orientation", o: [["v", "Vertical (axis along Z)"], ["h", "Horizontal (axis in XY)"]], v: "v" },
+    { id: "q", t: "sel", l: "Printer quality", o: Q_OPT, v: "1" },
+    { id: "mat", t: "sel", l: "Material", o: MATOPTS, v: 0 }
+  ], function (p) {
+    var m = MATS[+p.mat], s = m.sh / 100, q = +p.q, cl = +p.fit;
+    var eh = ((p.ori === "v" ? 0.10 : 0.20) + (p.peg < 4 ? 0.05 : 0)) * q, ep = 0.05 * q;
+    var holeT = p.peg + cl, holeM = holeT * (1 + s) + eh, pegM = p.peg * (1 + s) - ep;
+    var R0 = 80, rp = clamp(R0 * p.peg / holeT, 20, 100);
+    setA("tl-peg", { r: rp.toFixed(1) });
+    setT("tl-t", (cl >= 0 ? "gap " : "interference ") + fmt(Math.abs(cl), 2) + " mm on diameter");
+    var rows = [["Hole to model", fmt(holeM, 2) + " mm"], ["Peg to model (if printed)", fmt(pegM, 2) + " mm"], ["Expected printed hole", fmt(holeT, 2) + " mm"], ["Hole compensation", "+" + fmt(holeM - holeT, 2) + " mm"], ["Fit clearance", fmt(cl, 2) + " mm"]];
+    var f = cl < 0 ? flag("warn", "Press fits depend heavily on your printer and material. Print a coupon with several sizes before committing.") : "";
+    if (p.ori === "h") f += flag("warn", "Horizontal holes sag at the top. Consider teardrop or diamond shapes for holes larger than ~6 mm, or print the part on its side.");
+    return R(fmt(holeM, 2) + " mm", rows) + f;
+  });
+
+  /* ---------- 9 · Heat-set inserts ---------- */
+  var INS = [
+    { s: "M2", od: 3.2, l: 3.0 }, { s: "M2.5", od: 3.6, l: 4.0 }, { s: "M3", od: 4.6, l: 5.7 }, { s: "M4", od: 5.6, l: 8.1 },
+    { s: "M5", od: 6.4, l: 9.5 }, { s: "M6", od: 8.0, l: 12.7 }, { s: "M8", od: 9.6, l: 12.7 }
+  ];
+  var FAM = [["PLA", "200–220 °C"], ["PETG", "220–240 °C"], ["ABS / ASA", "230–250 °C"], ["PC", "240–260 °C"], ["Nylon (PA)", "230–260 °C"]];
+  mount("inserts", [
+    { id: "s", t: "sel", l: "Thread size", o: INS.map(function (x, i) { return [i, x.s]; }), v: 2 },
+    { id: "odo", t: "num", l: "Insert OD override (0 = typical)", u: "mm", v: 0, min: 0, step: 0.05 },
+    { id: "lo", t: "num", l: "Insert length override (0 = typical)", u: "mm", v: 0, min: 0, step: 0.1 },
+    { id: "if", t: "num", l: "Interference", u: "mm", v: 0.3, min: 0, step: 0.05, h: "How much narrower the hole is than the insert OD." },
+    { id: "ex", t: "num", l: "Extra depth for melted plastic", u: "mm", v: 1, min: 0, step: 0.1 },
+    { id: "fam", t: "sel", l: "Plastic", o: FAM.map(function (x, i) { return [i, x[0]]; }), v: 0 }
+  ], function (p) {
+    var I = INS[+p.s], od = p.odo > 0 ? p.odo : I.od, len = p.lo > 0 ? p.lo : I.l, hole = od - p.if, depth = len + p.ex, wall = Math.max(1.6, 0.4 * od), boss = hole + 2 * wall;
+    setT("hs-d", "⌀ " + fmt(hole, 2) + " mm"); setT("hs-dep", "depth"); setT("hs-dep2", fmt(depth, 1) + " mm"); setT("hs-w", "wall ≥ " + fmt(wall, 1) + " mm");
+    var rows = [["Hole diameter", fmt(hole, 2) + " mm"], ["Hole depth", fmt(depth, 1) + " mm"], ["Min wall around hole", fmt(wall, 1) + " mm"], ["Min boss outer ⌀", fmt(boss, 1) + " mm"],
+      ["Soldering-tip temperature", FAM[+p.fam][1]], ["Insert length / OD", fmt(len, 1) + " / " + fmt(od, 1) + " mm"]];
+    return R("⌀ " + fmt(hole, 2) + " mm × " + fmt(depth, 1) + " mm", rows) + flag(p.if < 0.15 ? "warn" : "ok", p.if < 0.15 ? "Very little interference: the insert may spin out when torqued." : "Tip: press slowly and stop when the insert is flush; let it cool before loading.");
+  });
+
+  /* ---------- 10 · Snap-fit ---------- */
+  mount("snapfit", [
+    { id: "L", t: "num", l: "Beam length L", u: "mm", v: 15, min: 1 },
+    { id: "h", t: "num", l: "Thickness at root h", u: "mm", v: 1.5, min: 0.2, step: 0.05 },
+    { id: "b", t: "num", l: "Width b", u: "mm", v: 5, min: 0.2, step: 0.1 },
+    { id: "y", t: "num", l: "Deflection y (hook height)", u: "mm", v: 1.2, min: 0, step: 0.05 },
+    { id: "tp", t: "sel", l: "Beam shape", o: [["1.5", "Constant thickness"], ["0.92", "Tapered to h/2"], ["0.67", "Tapered to h/4"]], v: "1.5" },
+    { id: "mat", t: "sel", l: "Material", o: MATOPTS, v: 4 },
+    { id: "ori", t: "sel", l: "Print orientation", o: [["1", "Beam lies flat (axis in layer plane)"], ["0.4", "Beam stands upright (axis along Z)"]], v: "1" },
+    { id: "rep", t: "check", l: "Repeated snapping (apply safety factor 2)", v: false },
+    { id: "al", t: "num", l: "Lead-in angle α", u: "°", v: 30, min: 5, max: 80 },
+    { id: "mu", t: "num", l: "Friction coefficient μ", v: 0.3, min: 0, step: 0.05 }
+  ], function (p) {
+    var m = MATS[+p.mat], k = +p.tp, ori = +p.ori, eps = k * p.h * p.y / (p.L * p.L), allow = m.eps / 100 * ori * (p.rep ? 0.5 : 1);
+    var E = m.E * (ori < 1 ? 0.8 : 1), P = p.b * p.h * p.h * E * eps / (6 * p.L), ta = Math.tan(p.al * PI / 180), den = 1 - p.mu * ta;
+    var W = den > 0.05 ? P * (p.mu + ta) / den : Infinity, ymax = allow * p.L * p.L / (k * p.h), ratio = allow > 0 ? eps / allow : Infinity;
+    var Lmin = Math.sqrt(k * p.h * p.y / allow);
+    var sc = 278 / p.L, hpx = clamp(p.h * sc, 5, 26), ypx = clamp(p.y * sc, 0, 110), tpr = k === 1.5 ? 1 : (k === 0.92 ? 0.5 : 0.25), top = [], bot = [], i;
+    for (i = 0; i <= 10; i++) {
+      var xi = i / 10, xc = 42 + 278 * xi, yc = 60 + ypx * (3 * xi * xi - xi * xi * xi) / 2, th = hpx * (1 - (1 - tpr) * xi) / 2;
+      top.push(xc.toFixed(1) + " " + (yc - th).toFixed(1)); bot.unshift(xc.toFixed(1) + " " + (yc + th).toFixed(1));
+    }
+    var endT = top[top.length - 1].split(" "), endB = bot[0].split(" ");
+    setA("sn-beam", { d: "M" + top.join(" L") + " L" + bot.join(" L") + " Z", "class": ratio > 1 ? "f-red" : ratio > 0.75 ? "f-yellow" : "f-green" });
+    setA("sn-hook", { d: "M" + endT[0] + " " + endT[1] + " L" + (+endT[0] + 16) + " " + (+endB[1] + 4) + " L" + endB[0] + " " + endB[1] + " Z" });
+    setA("sn-ay", { d: "M352 60 V" + (60 + ypx).toFixed(1) }); setA("sn-yt", { y: (60 + ypx / 2 + 4).toFixed(1) });
+    setT("sn-yt", "y " + fmt(p.y, 2)); setT("sn-lt", "L = " + fmt(p.L, 1) + " mm"); setT("sn-st", "strain " + fmt(eps * 100, 2) + " % (allow " + fmt(allow * 100, 2) + " %)");
+    var rows = [["Strain at root", fmt(eps * 100, 2) + " %"], ["Allowed strain (printed)", fmt(allow * 100, 2) + " %"], ["Use of allowance", fmt(ratio * 100, 0) + " %"], ["Max safe deflection", fmt(ymax, 2) + " mm"],
+      ["Beam force at tip", fmt(P, 2) + " N"], ["Mating (insertion) force", isFinite(W) ? fmt(W, 2) + " N" : "self-locking"], ["Min length for this y", fmt(Lmin, 1) + " mm"]];
+    var f = ratio > 1 ? flag("bad", "Strain is above the allowance: the hook will crack or yield. Lengthen the beam to at least " + fmt(Lmin, 1) + " mm, thin it, reduce y or switch to a more ductile material.")
+      : ratio > 0.75 ? flag("warn", "Within 25 % of the limit: acceptable for one-time assembly, risky for repeated use.") : flag("ok", "Strain is comfortably within the printed-part allowance.");
+    return R(fmt(eps * 100, 2) + " % strain", rows) + f;
+  });
+
+  /* ---------- 11 · Beam ---------- */
+  function bshape(cs, x) {
+    switch (cs) {
+      case "c1": return (3 * x * x - x * x * x) / 2;
+      case "c2": return x * x * (6 - 4 * x + x * x) / 3;
+      case "c3": x = x > 0.5 ? 1 - x : x; return x * (3 - 4 * x * x);
+      case "c4": return 3.2 * (x - 2 * x * x * x + x * x * x * x);
+      default: x = x > 0.5 ? 1 - x : x; return 4 * x * x * (3 - 4 * x);
+    }
+  }
+  mount("beam", [
+    { id: "cs", t: "sel", l: "Support and load", o: [["c1", "Cantilever, load at the tip"], ["c2", "Cantilever, uniform load"], ["c3", "Simply supported, center load"], ["c4", "Simply supported, uniform load"], ["c5", "Fixed both ends, center load"]], v: "c1" },
+    { id: "L", t: "num", l: "Length L", u: "mm", v: 100, min: 1 },
+    { id: "b", t: "num", l: "Width b", u: "mm", v: 20, min: 0.1, step: 0.1 },
+    { id: "h", t: "num", l: "Height h", u: "mm", v: 5, min: 0.1, step: 0.1 },
+    { id: "or", t: "sel", l: "Cross-section orientation", o: [["as", "As entered: h is the bending depth"], ["rot", "Rotated 90°: b is the bending depth"]], v: "as" },
+    { id: "mat", t: "sel", l: "Material", o: MATOPTS, v: 0 },
+    { id: "dir", t: "sel", l: "Print direction", o: [["flat", "Beam printed lying flat"], ["up", "Beam printed standing upright"]], v: "flat" },
+    { id: "P", t: "num", l: "Total load", u: "N", v: 20, min: 0, h: "1 kg ≈ 9.81 N" }
+  ], function (p) {
+    var m = MATS[+p.mat], up = p.dir === "up", bb = p.or === "rot" ? p.h : p.b, hh = p.or === "rot" ? p.b : p.h;
+    var I = bb * Math.pow(hh, 3) / 12, E = m.E * (up ? 0.8 : 1), EI = E * I, L = p.L, P = p.P, d, M;
+    switch (p.cs) {
+      case "c1": d = P * Math.pow(L, 3) / (3 * EI); M = P * L; break;
+      case "c2": d = P * Math.pow(L, 3) / (8 * EI); M = P * L / 2; break;
+      case "c3": d = P * Math.pow(L, 3) / (48 * EI); M = P * L / 4; break;
+      case "c4": d = 5 * P * Math.pow(L, 3) / (384 * EI); M = P * L / 8; break;
+      default: d = P * Math.pow(L, 3) / (192 * EI); M = P * L / 8;
+    }
+    var sig = M * (hh / 2) / I, allow = m.s * (up ? 0.5 : 1), sf = sig > 0 ? allow / sig : Infinity, kst = d > 0 ? P / d : Infinity;
+    var Lpx = 320, y0 = 80, real = d / L * Lpx, ex = real > 0 ? clamp(36 / real, 1, 200) : 1, dp = clamp(real * ex, 0, 70), ptsT = [], ptsB = [], i;
+    for (i = 0; i <= 20; i++) { var xi = i / 20, yy = y0 + dp * bshape(p.cs, xi); ptsT.push((40 + Lpx * xi).toFixed(1) + " " + (yy - 6).toFixed(1)); ptsB.unshift((40 + Lpx * xi).toFixed(1) + " " + (yy + 6).toFixed(1)); }
+    setA("bm-beam", { d: "M" + ptsT.join(" L") + " L" + ptsB.join(" L") + " Z", "class": sf < 1 ? "f-red" : sf < 2 ? "f-yellow" : "f-orange" });
+    var sup = "", ld = "", cant = p.cs === "c1" || p.cs === "c2", fixed = p.cs === "c5";
+    if (cant || fixed) sup += '<rect class="f-gray" x="22" y="40" width="18" height="90"/>';
+    if (fixed) sup += '<rect class="f-gray" x="360" y="40" width="18" height="90"/>';
+    if (p.cs === "c3" || p.cs === "c4") sup += '<path class="d-surface" d="M40 86 L30 104 H50 Z"/><path class="d-surface" d="M360 86 L350 104 H370 Z"/>';
+    function arrow(xi, lab) { var yy = y0 + dp * bshape(p.cs, xi) - 8; return '<path class="d-ink arrow" d="M' + (40 + Lpx * xi).toFixed(1) + ' 36 V' + yy.toFixed(1) + '"/>' + (lab ? '<text class="t-sm t-c t-b" x="' + (40 + Lpx * xi).toFixed(1) + '" y="28">' + lab + '</text>' : ""); }
+    if (p.cs === "c1") ld = arrow(1, "P"); else if (p.cs === "c3" || p.cs === "c5") ld = arrow(0.5, "P");
+    else { for (i = 1; i <= 7; i++) ld += arrow(i / 8, i === 4 ? "w" : ""); }
+    $("#bm-sup").innerHTML = sup; $("#bm-load").innerHTML = ld;
+    setT("bm-ex", ex > 1.5 ? "deflection exaggerated ×" + fmt(ex, 0) : "deflection at true scale");
+    var rs = Math.max(p.b, p.h) / Math.min(p.b, p.h); setT("bm-ratio", "×" + fmt(rs * rs, 1) + " stiffer");
+    var rows = [["Max deflection", fmt(d, 3) + " mm"], ["Deflection / length", d > 0 ? "L / " + fmt(L / d, 0) : "–"], ["Stiffness P/δ", isFinite(kst) ? fmt(kst, 1) + " N/mm" : "–"], ["Max bending stress", fmt(sig, 2) + " MPa"],
+      ["Allowable (printed)", fmt(allow, 1) + " MPa"], ["Safety factor", isFinite(sf) ? fmt(sf, 2) : "∞"], ["Second moment I", fmt(I, 1) + " mm⁴"], ["Flat vs on-edge stiffness", "×" + fmt(rs * rs, 1)]];
+    var f = sf < 1 ? flag("bad", "Bending stress exceeds the allowable strength: the beam is expected to break or yield.") : sf < 2 ? flag("warn", "Safety factor below 2: marginal for a printed part (layer adhesion varies).") : flag("ok", "Safety factor above 2 for the chosen print direction.");
+    if (d > L / 10) f += flag("warn", "Deflection above L/10: the small-deflection formulas lose accuracy. Treat the result as an upper bound for stiff parts only.");
+    return R(fmt(d, 2) + " mm", rows) + f;
+  });
+
+  /* ---------- 12 · Screws ---------- */
+  var SCR = [
+    { s: "M2", p: 0.4, f: 2.2, m: 2.4, c: 2.6, hd: 3.8, hh: 2.0, af: 4.0, nt: 1.6, pil: 1.6 },
+    { s: "M2.5", p: 0.45, f: 2.7, m: 2.9, c: 3.1, hd: 4.5, hh: 2.5, af: 5.0, nt: 2.0, pil: 2.1 },
+    { s: "M3", p: 0.5, f: 3.2, m: 3.4, c: 3.6, hd: 5.5, hh: 3.0, af: 5.5, nt: 2.4, pil: 2.5 },
+    { s: "M4", p: 0.7, f: 4.3, m: 4.5, c: 4.8, hd: 7.0, hh: 4.0, af: 7.0, nt: 3.2, pil: 3.3 },
+    { s: "M5", p: 0.8, f: 5.3, m: 5.5, c: 5.8, hd: 8.5, hh: 5.0, af: 8.0, nt: 4.7, pil: 4.2 },
+    { s: "M6", p: 1.0, f: 6.4, m: 6.6, c: 7.0, hd: 10, hh: 6.0, af: 10, nt: 5.2, pil: 5.0 },
+    { s: "M8", p: 1.25, f: 8.4, m: 9.0, c: 10, hd: 13, hh: 8.0, af: 13, nt: 6.8, pil: 6.8 },
+    { s: "M10", p: 1.5, f: 10.5, m: 11, c: 12, hd: 16, hh: 10, af: 16, nt: 8.4, pil: 8.5 }
+  ];
+  mount("screws", [
+    { id: "s", t: "sel", l: "Screw size", o: SCR.map(function (x, i) { return [i, x.s]; }), v: 2 },
+    { id: "fit", t: "sel", l: "ISO 273 clearance class", o: [["f", "Fine"], ["m", "Medium"], ["c", "Coarse"]], v: "m" },
+    { id: "ori", t: "sel", l: "Hole orientation", o: [["0.10", "Vertical (axis along Z)"], ["0.20", "Horizontal (axis in XY)"]], v: "0.10" },
+    { id: "q", t: "sel", l: "Printer quality", o: Q_OPT, v: "1" }
+  ], function (p) {
+    var S = SCR[+p.s], q = +p.q, d = parseFloat(S.s.slice(1)), hole = S[p.fit] + (+p.ori) * q, cbD = S.hd + 0.4 + 0.1 * q, cbH = S.hh + 0.3, csD = 2 * d + 0.4;
+    var af = S.af + 0.2 + 0.1 * q, ac = af * 1.1547 + 0.1, nd = S.nt + 0.3, boss = Math.max(2.5 * d, S.pil + 3.2), eng = 2 * d;
+    setT("sc-cb", "counterbore ⌀ " + fmt(cbD, 1) + " × " + fmt(cbH, 1)); setT("sc-ch", "clearance hole ⌀ " + fmt(hole, 2));
+    setT("sc-af", "nut trap AF " + fmt(af, 2)); setT("sc-ac", "across corners " + fmt(ac, 1) + ", depth " + fmt(nd, 1));
+    var rows = [["Clearance hole", fmt(hole, 2) + " mm"], ["Counterbore (socket head)", "⌀ " + fmt(cbD, 1) + " × " + fmt(cbH, 1) + " mm"], ["Countersink (flat head)", "⌀ ≈ " + fmt(csD, 1) + " mm"],
+      ["Nut pocket, across flats", fmt(af, 2) + " mm"], ["Nut pocket, across corners", fmt(ac, 1) + " mm"], ["Nut pocket depth", fmt(nd, 1) + " mm"], ["Self-tapping pilot hole", fmt(S.pil, 1) + " mm"],
+      ["Min boss ⌀ / engagement", fmt(boss, 1) + " / " + fmt(eng, 0) + " mm"], ["Thread pitch (coarse)", S.p + " mm"]];
+    return R(S.s + " → ⌀ " + fmt(hole, 2) + " mm", rows, "Values are typical for printed parts; verify the nut and head dimensions of your own hardware (DIN/ISO differences are common).");
+  });
+
+  /* ---------- 13 · Units ---------- */
+  var UN = [
+    ["Length", "mm", "in", function (a) { return a / 25.4; }, function (b) { return b * 25.4; }, 100],
+    ["Thickness", "µm", "mil (thou)", function (a) { return a / 25.4; }, function (b) { return b * 25.4; }, 200],
+    ["Length", "m", "ft", function (a) { return a / 0.3048; }, function (b) { return b * 0.3048; }, 1],
+    ["Temperature", "°C", "°F", function (a) { return a * 9 / 5 + 32; }, function (b) { return (b - 32) * 5 / 9; }, 210],
+    ["Mass", "g", "oz", function (a) { return a / 28.3495; }, function (b) { return b * 28.3495; }, 100],
+    ["Mass", "kg", "lb", function (a) { return a * 2.20462; }, function (b) { return b / 2.20462; }, 1],
+    ["Speed", "mm/s", "in/s", function (a) { return a / 25.4; }, function (b) { return b * 25.4; }, 200],
+    ["Speed", "mm/s", "m/min", function (a) { return a * 0.06; }, function (b) { return b / 0.06; }, 300],
+    ["Acceleration", "mm/s²", "g", function (a) { return a / 9806.65; }, function (b) { return b * 9806.65; }, 20000],
+    ["Force", "N", "lbf", function (a) { return a * 0.224809; }, function (b) { return b / 0.224809; }, 10],
+    ["Stress", "MPa", "psi", function (a) { return a * 145.038; }, function (b) { return b / 145.038; }, 50],
+    ["Volume", "cm³", "in³", function (a) { return a / 16.3871; }, function (b) { return b * 16.3871; }, 100]
+  ];
+  (function () {
+    var host = $("#f-units"); if (!host) return;
+    function nice(x) { return isFinite(x) ? String(parseFloat(x.toPrecision(7))) : ""; }
+    host.innerHTML = UN.map(function (r, i) {
+      return '<div class="calc-conv"><div class="field"><label for="un-' + i + 'a">' + r[0] + ": " + r[1] + '</label><input type="number" inputmode="decimal" step="any" id="un-' + i + 'a" value="' + r[5] + '"></div>' +
+        '<div class="field"><label for="un-' + i + 'b">' + r[2] + '</label><input type="number" inputmode="decimal" step="any" id="un-' + i + 'b" value="' + nice(r[3](r[5])) + '"></div></div>';
+    }).join("");
+    host.addEventListener("input", function (ev) {
+      var m = /^un-(\d+)([ab])$/.exec(ev.target.id); if (!m) return;
+      var r = UN[+m[1]], x = parseFloat(ev.target.value), other = $("#un-" + m[1] + (m[2] === "a" ? "b" : "a"));
+      other.value = isFinite(x) ? nice(m[2] === "a" ? r[3](x) : r[4](x)) : "";
+    });
+    var g = '<rect class="f-gray" x="20" y="14" width="360" height="32"/><rect class="f-gray" x="20" y="84" width="361" height="32"/>', i;
+    for (i = 0; i <= 100; i++) {
+      var x = 20 + i * 3.6, len = i % 10 === 0 ? 18 : i % 5 === 0 ? 12 : 6;
+      g += '<path class="d-thin" d="M' + x.toFixed(1) + ' 14 v' + len + '"/>';
+      if (i % 10 === 0) g += '<text class="t-xs t-c" x="' + x.toFixed(1) + '" y="62">' + i + '</text>';
+    }
+    for (i = 0; i <= 63; i++) {
+      var xi = 20 + i * 91.44 / 16, li = i % 16 === 0 ? 20 : i % 8 === 0 ? 15 : i % 4 === 0 ? 10 : 5;
+      g += '<path class="d-thin" d="M' + xi.toFixed(1) + ' 84 v' + li + '"/>';
+      if (i % 16 === 0) g += '<text class="t-xs t-c" x="' + xi.toFixed(1) + '" y="132">' + (i / 16) + '</text>';
+    }
+    g += '<text class="t-xs" x="20" y="9">millimeters</text><text class="t-xs" x="20" y="79">inches</text>';
+    $("#un-ruler").innerHTML = g;
+  })();
+
+  /* ---------- 14 · Spool ---------- */
+  mount("spool", [
+    { id: "mat", t: "sel", l: "Material", o: MATOPTS, v: 0 },
+    { id: "dia", t: "sel", l: "Filament diameter", o: [["1.75", "1.75 mm"], ["2.85", "2.85 / 3 mm"]], v: "1.75" },
+    { id: "net", t: "num", l: "Filament on a new spool", u: "g", v: 1000, min: 1 },
+    { id: "gross", t: "num", l: "Spool weight now (with spool)", u: "g", v: 640, min: 0 },
+    { id: "tare", t: "num", l: "Empty spool weight", u: "g", v: 250, min: 0, h: "Weigh an empty spool of the same brand." },
+    { id: "need", t: "num", l: "Print needs (from slicer)", u: "g", v: 85, min: 0 },
+    { id: "mar", t: "num", l: "Safety margin", u: "%", v: 5, min: 0 }
+  ], function (p) {
+    var m = MATS[+p.mat], area = PI * Math.pow(+p.dia, 2) / 4, rem = Math.max(p.gross - p.tare, 0), len = rem / (m.d * area), need = p.need * (1 + p.mar / 100), left = rem - need;
+    var rows = [["Remaining filament", fmt(rem, 0) + " g"], ["Remaining length", fmt(len, 0) + " m"], ["Share of a new spool", fmt(rem / p.net * 100, 0) + " %"], ["Needed incl. margin", fmt(need, 0) + " g"], ["Left after print", fmt(left, 0) + " g"], ["Full spool length", fmt(p.net / (m.d * area), 0) + " m"]];
+    return R(fmt(rem, 0) + " g left", rows) + (left >= 0 ? flag("ok", "Enough filament for the print with a " + fmt(p.mar, 0) + " % margin.") : flag("bad", "Short by about " + fmt(-left, 0) + " g: plan a swap or a new spool.")) +
+      '<p class="calc-note">Spool weights vary; this is accurate to the quality of your empty-spool value.</p>';
+  });
+  mount("spool2", [
+    { id: "mat", t: "sel", l: "Material", o: MATOPTS, v: 0 },
+    { id: "dia", t: "sel", l: "Filament diameter", o: [["1.75", "1.75 mm"], ["2.85", "2.85 / 3 mm"]], v: "1.75" },
+    { id: "hub", t: "num", l: "Hub (core) diameter", u: "mm", v: 55, min: 10 },
+    { id: "fl", t: "num", l: "Flange outer diameter", u: "mm", v: 200, min: 50 },
+    { id: "wd", t: "num", l: "Winding width between flanges", u: "mm", v: 60, min: 5 },
+    { id: "wound", t: "num", l: "Outer diameter of wound filament", u: "mm", v: 140, min: 10 },
+    { id: "eta", t: "num", l: "Packing factor", v: 0.84, min: 0.5, max: 0.91, step: 0.01 }
+  ], function (p) {
+    var m = MATS[+p.mat], d = +p.dia, Rw = p.wound / 2, r = p.hub / 2, ok = Rw > r;
+    var len = ok ? p.eta * p.wd * (Rw * Rw - r * r) / Math.pow(d / 2, 2) / 1000 : 0, g = len * PI * d * d / 4 * m.d;
+    var full = Math.pow(p.fl / 2 - 3, 2) - r * r, share = ok ? clamp((Rw * Rw - r * r) / full, 0, 1) : 0, sc = 90 / (p.fl / 2);
+    setA("sp-wd", { r: clamp(Rw * sc, 0, 90).toFixed(1) }); setA("sp-hub", { r: (r * sc).toFixed(1) });
+    setT("sp-t1", "≈ " + fmt(g, 0) + " g left"); setT("sp-t2", "≈ " + fmt(len, 0) + " m of " + d + " mm filament"); setA("sp-bar", { width: (160 * share).toFixed(1) });
+    return R("≈ " + fmt(g, 0) + " g", [["Estimated length", fmt(len, 0) + " m"], ["Share of full winding", fmt(share * 100, 0) + " %"]]) +
+      (Rw * 2 > p.fl ? flag("warn", "The wound diameter is larger than the flange: check your numbers.") : flag("ok", "Accuracy is about ±10 %.")) +
+      '<p class="calc-note">Good for a quick look; weigh the spool for a better answer.</p>';
+  });
+
+  /* ---------- 15 · Nozzle ---------- */
+  mount("nozzle", [
+    { id: "nz", t: "num", l: "Nozzle diameter", u: "mm", v: 0.4, min: 0.1, step: 0.05 },
+    { id: "lhp", t: "range", l: "Layer height", u: "% of nozzle", v: 50, min: 10, max: 90 },
+    { id: "lwp", t: "range", l: "Line width", u: "% of nozzle", v: 105, min: 80, max: 170 },
+    { id: "t", t: "num", l: "Wall thickness wanted", u: "mm", v: 1.2, min: 0.1, step: 0.05 }
+  ], function (p) {
+    var nz = p.nz, lh = nz * p.lhp / 100, lw = nz * p.lwp / 100, A = Math.max(lh * (lw - lh) + PI * lh * lh / 4, 0.001);
+    var k = Math.min(130, 60 / (2 * lh), 160 / lw, 150 / nz), W = lw * k, H = lh * k, dn = nz * k, tw = dn + 30;
+    setA("nz-cone", { d: "M" + (200 - 70) + " 8 H" + (200 + 70) + " L" + (200 + tw / 2).toFixed(1) + " 78 H" + (200 - tw / 2).toFixed(1) + " Z" });
+    setA("nz-hole", { x: (200 - dn / 2).toFixed(1), width: dn.toFixed(1) });
+    setA("nz-bead", { x: (200 - W / 2).toFixed(1), y: 78, width: W.toFixed(1), height: H.toFixed(1), rx: Math.min(H / 2, W / 2).toFixed(1) });
+    setA("nz-prev", { x: (200 - W / 2).toFixed(1), y: (78 + H).toFixed(1), width: W.toFixed(1), height: H.toFixed(1), rx: Math.min(H / 2, W / 2).toFixed(1) });
+    setA("nz-wd", { d: "M" + (200 - W / 2).toFixed(1) + " 150 H" + (200 + W / 2).toFixed(1) });
+    setT("nz-t1", "line width " + fmt(lw, 2) + " mm"); setT("nz-t2", "layer height " + fmt(lh, 2) + " mm (" + fmt(p.lhp, 0) + " % of nozzle)"); setT("nz-t3", "orifice ⌀ " + fmt(nz, 2) + " mm");
+    var n = Math.max(1, Math.round(p.t / lw)), rows = [["Layer height window", fmt(nz * 0.25, 2) + " – " + fmt(nz * 0.75, 2) + " mm"], ["Good default (50 %)", fmt(nz * 0.5, 2) + " mm"], ["Fine / draft", fmt(nz * 0.3, 2) + " / " + fmt(nz * 0.65, 2) + " mm"],
+      ["Line width window", fmt(nz, 2) + " – " + fmt(nz * 1.5, 2) + " mm"], ["Typical line width", fmt(nz * 1.05, 2) + " – " + fmt(nz * 1.25, 2) + " mm"], ["First-layer height", fmt(nz * 0.5, 2) + " – " + fmt(nz * 0.75, 2) + " mm"],
+      ["Chosen layer × width", fmt(lh, 2) + " × " + fmt(lw, 2) + " mm"], ["Flow demand at 100 mm/s", fmt(A * 100, 1) + " mm³/s"], ["Walls for " + fmt(p.t, 2) + " mm", n + " lines → " + fmt(n * lw, 2) + " mm"],
+      ["Wall thickness steps", [1, 2, 3, 4].map(function (i) { return fmt(i * lw, 2); }).join(" · ") + " mm"]];
+    var f = p.lhp > 75 ? flag("bad", "Above 75 % of the nozzle diameter the bead cannot be squeezed against the layer below; expect weak layers.") : p.lhp < 20 ? flag("warn", "Below 20 % the nozzle tends to drag through the previous layer and clog.") : flag("ok", "Layer height is in the healthy range.");
+    if (p.lwp < 100 || p.lwp > 150) f += flag("warn", "Line widths outside 100–150 % of the nozzle often cause gaps or blobs.");
+    return R(fmt(lh, 2) + " × " + fmt(lw, 2) + " mm", rows) + f;
+  });
+
+  /* ---------- 16 · Motion ---------- */
+  mount("mxy", [
+    { id: "full", t: "sel", l: "Motor full steps per revolution", o: [["200", "200 (1.8°)"], ["400", "400 (0.9°)"]], v: "200" },
+    { id: "micro", t: "sel", l: "Microsteps", o: [8, 16, 32, 64, 128, 256], v: 16 },
+    { id: "pitch", t: "num", l: "Belt pitch", u: "mm", v: 2, min: 0.5, step: 0.5, h: "GT2 = 2 mm, GT3 = 3 mm" },
+    { id: "teeth", t: "num", l: "Pulley teeth", v: 20, min: 6, step: 1 },
+    { id: "v", t: "num", l: "Top toolhead speed", u: "mm/s", v: 500, min: 1 },
+    { id: "geo", t: "sel", l: "Kinematics", o: [["1.4142", "CoreXY (diagonal worst case)"], ["1", "Cartesian / single axis"]], v: "1.4142" }
+  ], function (p) {
+    var rd = p.pitch * p.teeth, full = +p.full, mic = +p.micro, spm = full * mic / rd, bs = p.v * (+p.geo), rpm = bs * 60 / rd, rate = bs * spm;
+    var g = "", n = Math.min(Math.round(p.teeth), 60), i;
+    for (i = 0; i < n; i++) { var a = 2 * PI * i / n; g += "M" + (80 + 40 * Math.cos(a)).toFixed(1) + " " + (90 + 40 * Math.sin(a)).toFixed(1) + " L" + (80 + 46 * Math.cos(a)).toFixed(1) + " " + (90 + 46 * Math.sin(a)).toFixed(1) + " "; }
+    $("#mt-teeth").innerHTML = '<path d="' + g + '"/>';
+    setT("mt-t", fmt(p.teeth, 0) + " × " + fmt(p.pitch, 1) + " mm = " + fmt(rd, 1) + " mm / rev"); setT("mt-s", fmt(spm, 2) + " steps/mm");
+    var rows = [["Steps per mm", fmt(spm, 3)], ["Klipper rotation_distance", fmt(rd, 2) + " mm"], ["Full-step distance", fmt(rd / full * 1000, 1) + " µm"], ["Microstep distance", fmt(rd / full / mic * 1000, 2) + " µm"],
+      ["Belt speed (worst case)", fmt(bs, 0) + " mm/s"], ["Motor speed", fmt(rpm, 0) + " rpm"], ["Step rate", fmt(rate / 1000, 1) + " kHz"]];
+    return R(fmt(spm, 2) + " steps/mm", rows) + (rate > 200000 ? flag("warn", "Step rates above ~200 kHz can overload slower control boards; reduce microsteps or use interpolation.") : flag("ok", "Step rate is within the range of typical modern boards.")) +
+      (rpm > 1500 ? flag("warn", "Above ~1,500 rpm most stepper motors lose torque quickly; expect missed steps at high acceleration.") : "");
+  });
+  mount("mex", [
+    { id: "mode", t: "sel", l: "Firmware", o: [["marlin", "Marlin: e-steps/mm"], ["klipper", "Klipper: rotation_distance"]], v: "marlin" },
+    { id: "cur", t: "num", l: "Current value", v: 93, min: 0.01 },
+    { id: "cmd", t: "num", l: "Commanded extrusion", u: "mm", v: 100, min: 1 },
+    { id: "act", t: "num", l: "Measured extrusion", u: "mm", v: 96.5, min: 1 }
+  ], function (p) {
+    var nv = p.mode === "marlin" ? p.cur * p.cmd / p.act : p.cur * p.act / p.cmd, err = (p.act - p.cmd) / p.cmd * 100;
+    return R(fmt(nv, 3), [["Firmware", p.mode === "marlin" ? "Marlin e-steps/mm" : "Klipper rotation_distance"], ["Current", fmt(p.cur, 3)], ["Extrusion error", fmt(err, 2) + " %"]]) +
+      (Math.abs(err) > 10 ? flag("warn", "A 10 % error or more suggests slipping, a wrong baseline value or a measuring mistake. Measure again.") : Math.abs(err) < 1 ? flag("ok", "Within 1 %: no change needed.") : flag("ok", "Apply the new value and repeat until the error is below 1 %.")) +
+      '<p class="calc-note">Heat the nozzle, extrude slowly (about 2 mm/s) and mark the filament 120 mm above the extruder.</p>';
+  });
+  mount("mhw", [
+    { id: "full", t: "sel", l: "Motor full steps per revolution", o: [["200", "200 (1.8°)"], ["400", "400 (0.9°)"]], v: "200" },
+    { id: "micro", t: "sel", l: "Microsteps", o: [8, 16, 32, 64], v: 16 },
+    { id: "D", t: "num", l: "Effective drive-gear diameter", u: "mm", v: 7.3, min: 3, step: 0.05, h: "Hobbed gear: about 7–8 mm." },
+    { id: "ratio", t: "num", l: "Gear ratio (motor : gear)", v: 3, min: 0.5, step: 0.05, h: "Direct drive = 1, 3:1 geared = 3" }
+  ], function (p) {
+    var rd = PI * p.D / p.ratio, spm = +p.full * +p.micro / rd;
+    return R(fmt(rd, 3) + " mm", [["Klipper rotation_distance", fmt(rd, 3) + " mm"], ["Marlin e-steps/mm", fmt(spm, 2)], ["Filament per microstep", fmt(rd / p.full / p.micro * 1000, 2) + " µm"]], "Hardware numbers are only a starting point: calibrate with the measured method.");
+  });
+  mount("mz", [
+    { id: "lead", t: "num", l: "Lead screw lead", u: "mm / rev", v: 8, min: 0.5, step: 0.5, h: "T8×8: 8 mm; T8×2: 2 mm; belt Z: pitch × teeth" },
+    { id: "full", t: "sel", l: "Motor full steps per revolution", o: [["200", "200 (1.8°)"], ["400", "400 (0.9°)"]], v: "200" },
+    { id: "micro", t: "sel", l: "Microsteps", o: [8, 16, 32, 64], v: 16 }
+  ], function (p) {
+    var fs = p.lead / p.full, ms = fs / p.micro, spm = p.full * p.micro / p.lead, list = [], i;
+    for (i = 1; i <= 10 && fs * i <= 0.4001; i++) list.push(fmt(fs * i, 3));
+    return R(fmt(spm, 1) + " steps/mm", [["Full-step distance", fmt(fs * 1000, 1) + " µm"], ["Microstep distance", fmt(ms * 1000, 2) + " µm"], ["Layer heights on full steps", list.length ? list.join(", ") + " mm" : "step larger than 0.4 mm"]], "Layer heights that are multiples of the full-step distance are positioned most repeatably.");
+  });
+
+  /* ---------- 17 · X2D flush ---------- */
+  (function () {
+    var cols = ["s-blue", "s-orange", "s-green", "s-purple"], g = "", i;
+    for (i = 0; i < 14; i++) g += '<rect class="' + cols[i % 4] + '" style="opacity:.75" x="30" y="' + (30 + i * 170 / 14).toFixed(1) + '" width="60" height="' + (170 / 14 + 0.3).toFixed(1) + '"/>';
+    var t = $("#fx-tower"); if (t) t.innerHTML = g;
+  })();
+  mount("flush", [
+    { id: "n", t: "num", l: "Number of color changes in the print", v: 40, min: 0, step: 1 },
+    { id: "vol", t: "num", l: "Flush volume per change", u: "mm³", v: 300, min: 0, h: "Read the average from Bambu Studio's flushing-volume matrix." },
+    { id: "swap", t: "range", l: "Share of changes done by nozzle swap (no flush)", u: "%", v: 0, min: 0, max: 100, step: 5 },
+    { id: "tl", t: "num", l: "Prime-tower layers", v: 100, min: 0, step: 1, h: "Layers in which at least one change happens." },
+    { id: "tw", t: "num", l: "Tower width", u: "mm", v: 35, min: 5 },
+    { id: "td", t: "num", l: "Tower depth", u: "mm", v: 35, min: 5 },
+    { id: "lh", t: "num", l: "Layer height", u: "mm", v: 0.2, min: 0.04, step: 0.01 },
+    { id: "tf", t: "range", l: "Tower solidity (plastic share of footprint)", u: "%", v: 30, min: 10, max: 100, step: 5 },
+    { id: "mat", t: "sel", l: "Material", o: MATOPTS, v: 0 },
+    { id: "price", t: "num", l: "Price per kg", v: 22, min: 0 },
+    { id: "model", t: "num", l: "Model weight (slicer, without waste)", u: "g", v: 200, min: 0 },
+    { id: "tc", t: "num", l: "Time per purged change", u: "s", v: 45, min: 0 }
+  ], function (p) {
+    var m = MATS[+p.mat], purged = p.n * (1 - p.swap / 100), fl = purged * p.vol * m.d / 1000, tw = p.tl * p.tw * p.td * p.lh * p.tf / 100 * m.d / 1000, waste = fl + tw, total = p.model + waste, ratio = p.model > 0 ? waste / p.model : 0;
+    var w1 = total > 0 ? 240 * p.model / total : 240, w2 = total > 0 ? 240 * fl / total : 0, w3 = total > 0 ? 240 * tw / total : 0;
+    setA("fx-m", { width: w1.toFixed(1) }); setA("fx-f", { x: (130 + w1).toFixed(1), width: w2.toFixed(1) }); setA("fx-t", { x: (130 + w1 + w2).toFixed(1), width: w3.toFixed(1) });
+    setT("fx-l1", "Model  " + fmt(p.model, 0) + " g"); setT("fx-l2", "Flushed  " + fmt(fl, 0) + " g"); setT("fx-l3", "Tower  " + fmt(tw, 0) + " g"); setT("fx-l4", "Waste " + fmt(waste, 0) + " g (" + fmt(ratio * 100, 0) + " % of model)");
+    var rows = [["Flushed at changes", fmt(fl, 1) + " g"], ["Prime-tower layers", fmt(tw, 1) + " g"], ["Total plastic", fmt(total, 0) + " g"], ["Waste / model", fmt(ratio * 100, 0) + " %"], ["Waste cost", fmt(waste / 1000 * p.price, 2) + " (price units)"],
+      ["Purged changes", fmt(purged, 0)], ["Extra time for purging", hm(purged * p.tc)]];
+    var f = ratio > 1 ? flag("bad", "More waste than model. Group colors, reduce changes per layer or move colors to different nozzles.") : ratio > 0.3 ? flag("warn", "Waste above 30 % of the model: worth optimizing the color layout.") : flag("ok", "Waste is moderate.");
+    return R(fmt(waste, 0) + " g waste", rows) + f + '<p class="calc-note">Conceptual estimate: Bambu Studio computes exact flush and tower amounts after slicing; use its figures when available.</p>';
+  });
+
+  /* ---------- reference tables ---------- */
+  function put(id, html) { var e = document.getElementById(id); if (e) e.innerHTML = html; }
+  put("tbl-mats", table(["Material", "Density g/cm³", "Shrink %", "Dry °C · h", "Modulus MPa", "Strength MPa", "Snap strain %", "Flow factor"],
+    MATS.map(function (m) { return [m.n, m.d.toFixed(2), m.sh, m.dc + " · " + m.dh, m.E, m.s, m.eps, m.ff]; })));
+  put("tbl-dry", table(["Material", "Typical °C", "Time for 1 kg", "Max safe °C", "Moisture sensitivity"], MATS.map(function (m) { return [m.n, m.dc, m.dh + " h", m.cap, dots(m.hy)]; })));
+  put("tbl-shrink", table(["Material", "Typical shrinkage", "Comment"], MATS.map(function (m) {
+    return [m.n, m.sh + " %", m.sh >= 1 ? "high: use an enclosure and expect warping" : m.sh >= 0.5 ? "moderate: enclosure helps" : "low"];
+  })));
+  put("tbl-snap", table(["Material", "Modulus MPa", "Allowed strain % (flat print)"], MATS.map(function (m) { return [m.n, m.E, m.eps]; })));
+  put("tbl-beam", table(["Cross-section (mm)", "Relative stiffness (20 × 4 flat = 1)"], [[20, 4], [20, 6], [20, 8], [20, 12], [40, 4], [4, 20]].map(function (s) {
+    return [s[0] + " wide × " + s[1] + " deep" + (s[1] > s[0] ? " (on edge)" : ""), fmt(s[0] * Math.pow(s[1], 3) / (20 * 64), 2)];
+  })));
+  put("tbl-inserts", table(["Size", "Insert OD", "Length", "Hole ⌀ (OD − 0.3)", "Hole depth (L + 1)", "Min boss ⌀"], INS.map(function (x) {
+    var hole = x.od - 0.3; return [x.s, x.od + " mm", x.l + " mm", fmt(hole, 2) + " mm", fmt(x.l + 1, 1) + " mm", fmt(hole + 2 * Math.max(1.6, 0.4 * x.od), 1) + " mm"];
+  })));
+  put("tbl-screws", table(["Size", "Pitch", "Hole fine / medium / coarse", "Socket head ⌀ × height", "Nut AF × thickness", "Pilot (self-tap)"], SCR.map(function (x) {
+    return [x.s, x.p, x.f + " / " + x.m + " / " + x.c, x.hd + " × " + x.hh, x.af + " × " + x.nt, x.pil];
+  })));
+  var dens = MATS.slice().sort(function (a, b) { return a.d - b.d; });
+  put("mt-dens", '<div class="bars"><div class="bars-title">Density (g/cm³)</div>' + dens.map(function (m) {
+    return '<div class="bar' + (m.d > 1.25 ? " blue" : m.d < 1.05 ? " green" : "") + '"><span>' + esc(m.n) + '</span><i style="--v:' + (m.d / 1.4 * 100).toFixed(0) + '%"></i><em>' + m.d.toFixed(2) + "</em></div>";
+  }).join("") + "</div>");
+
+  /* ---------- tabs: deep links and jump tiles ---------- */
+  var tabsEl = $("#calc-tabs"), btns = $$(".tab-list button", tabsEl), panes = $$(":scope > .tab", tabsEl), keys = panes.map(function (t) { return t.getAttribute("data-key"); });
+  var DESC = { filament: "weight · length · cost", cost: "material to margin", time: "volume and flow", flow: "mm³/s check", layers: "count and Z", drying: "°C and hours", shrinkage: "scale %", tolerance: "hole and peg", inserts: "M2 – M8", snapfit: "strain and force", beam: "deflection", screws: "holes and nuts", units: "mm · in · °C · °F", spool: "what is left", nozzle: "layer and width", motion: "steps and rotation", flush: "multi-color waste" };
+  function show(key) { var i = keys.indexOf(key); if (i >= 0) btns[i].click(); }
+  btns.forEach(function (b, i) {
+    b.addEventListener("click", function () {
+      store.set("calc:tab", keys[i]);
+      try { history.replaceState(null, "", "#calc=" + keys[i]); } catch (e) { /* ignore */ }
+    });
+  });
+  var jump = $("#calc-jump");
+  jump.innerHTML = panes.map(function (t, i) { return '<button type="button" data-go="' + keys[i] + '"><b>' + t.getAttribute("data-title") + "</b><span>" + (DESC[keys[i]] || "") + "</span></button>"; }).join("");
+  jump.addEventListener("click", function (ev) {
+    var b = ev.target.closest("button[data-go]"); if (!b) return;
+    show(b.getAttribute("data-go")); tabsEl.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  function fromHash() { var m = /^#calc=([a-z0-9]+)/.exec(location.hash); if (m && keys.indexOf(m[1]) >= 0) { show(m[1]); return true; } return false; }
+  window.addEventListener("hashchange", fromHash);
+  if (!fromHash()) { var last = store.get("calc:tab"); if (last) show(last); }
+});
+</script>
+</main>
+</body>
+</html>

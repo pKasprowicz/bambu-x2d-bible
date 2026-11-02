@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flexibles &amp; specialty filaments · 3D Printing Compendium</title>
+  <meta name="description" content="TPU and TPE hardness, printing flexibles, soluble and breakaway supports, dual-material interfaces, and a field guide to wood, metal, glow, conductive, foaming, recycled and other specialty filaments.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="materials/flexibles-and-specialty.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 2 · Materials</div>
+    <h1>Flexibles &amp; specialty filaments</h1>
+    <p class="lead">Rubber-like TPU, soluble supports, glowing, color-changing, wood-filled, conductive and foaming filaments: what each one really is, how to run it, and the specific quirk that will bite you.</p>
+    <div class="meta"><span class="badge intermediate">Intermediate</span><span class="badge time">⏱ 40 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <ul>
+      <li>Read the Shore A / Shore D hardness scale and pick the right TPU.</li>
+      <li>Print flexibles reliably: path, speed, retraction, drying and AMS limits.</li>
+      <li>Use soluble, breakaway and interface supports and understand why dual-material interfaces work.</li>
+      <li>Handle each specialty filament’s pitfalls, with a quick “weird filaments” cheat chart.</li>
+    </ul>
+  </div>
+
+  <h2 id="flex">🧽 Flexible filaments: TPU, TPE and friends</h2>
+  <p><b>TPU</b> (thermoplastic polyurethane) and <b>TPE</b> (thermoplastic elastomer, a broader family that includes TPU, TPC and SEBS-based blends) are rubbery at room temperature but melt like any thermoplastic. They consist of hard, crystalline segments that act as physical crosslinks and soft, stretchy segments that give the elasticity. A higher proportion of soft segments gives a softer, more stretchy material and a harder print job.</p>
+  <ul>
+    <li><b>Strengths:</b> abrasion resistance, impact and fatigue resistance, grip, vibration damping, good chemical resistance to oils and greases, hydrolysis resistance (for polyether grades).</li>
+    <li><b>Limits:</b> low stiffness, creep, difficult to print fast, strongly hygroscopic, low heat resistance (softens around 80–100 °C, depending on grade), sticky on some build plates.</li>
+    <li><b>Typical uses:</b> phone cases, gaskets, bumpers, wheels and tires for RC cars, belts, vibration feet, grips, hinges, protective covers.</li>
+  </ul>
+
+  <h3>Shore hardness</h3>
+  <p>Flexible plastics are rated by <b>Shore durometer</b>: a spring-loaded indenter is pushed into the material and the depth is read as 0–100. <b>Shore A</b> covers soft to medium rubbers; <b>Shore D</b> covers harder plastics. The scales overlap loosely and are not exactly convertible: 95A is roughly 45D.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 260" role="img" aria-label="Shore hardness scale from soft gel and rubber band at 20A through TPU 85A, 95A and 60D up to PLA at 80D, with example objects for each range">
+      <rect class="f-blue" x="40" y="70" width="700" height="22" rx="11" fill-opacity=".35"/>
+      <path class="d-ink" d="M40 110 H740"/>
+      <path class="d-ink" d="M40 104 V116 M215 104 V116 M390 104 V116 M565 104 V116 M740 104 V116"/>
+      <text class="t-xs t-c" x="40" y="132">20A</text><text class="t-xs t-c" x="215" y="132">60A</text><text class="t-xs t-c" x="390" y="132">90A ≈ 40D</text><text class="t-xs t-c" x="565" y="132">95A ≈ 50D</text><text class="t-xs t-c" x="740" y="132">80D</text>
+      <text class="t-sm t-b t-c" x="130" y="62">Very soft</text><text class="t-sm t-b t-c" x="300" y="62">Soft</text><text class="t-sm t-b t-c" x="480" y="62">Semi-rigid</text><text class="t-sm t-b t-c" x="650" y="62">Rigid</text>
+      <circle class="s-orange" cx="85" cy="86" r="6"/><text class="t-xs t-c" x="85" y="164">gel, soft silicone</text>
+      <circle class="s-orange" cx="215" cy="86" r="6"/><text class="t-xs t-c" x="215" y="164">rubber band</text><text class="t-xs t-c" x="215" y="180">TPE 60A</text>
+      <circle class="s-orange" cx="330" cy="86" r="6"/><text class="t-xs t-c" x="330" y="164">shoe sole</text><text class="t-xs t-c" x="330" y="180">TPU 85A</text>
+      <circle class="s-orange" cx="440" cy="86" r="6"/><text class="t-xs t-c" x="440" y="164">TPU 90A</text><text class="t-xs t-c" x="440" y="180">(skateboard wheel)</text>
+      <circle class="s-orange" cx="565" cy="86" r="6"/><text class="t-xs t-c" x="565" y="164">TPU 95A</text><text class="t-xs t-c" x="565" y="180">(AMS-friendly)</text>
+      <circle class="s-orange" cx="700" cy="86" r="6"/><text class="t-xs t-c" x="700" y="164">PLA / PETG</text><text class="t-xs t-c" x="700" y="180">(≈ 80D)</text>
+      <text class="t-xs" x="40" y="230">Harder = easier to print (stiffer filament pushes through the path); softer = better elasticity.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> Shore scale with typical examples. Datasheets sometimes quote A and D interchangeably, so check the letter.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Grade</th><th>Feel</th><th>Print difficulty</th><th>Nozzle / bed (°C)</th><th>Speed (typical)</th><th>Typical use</th></tr></thead>
+    <tbody>
+    <tr><td><b>TPU 98A–64D</b></td><td>Semi-flexible, “tough plastic”</td><td><span class="chip green">Easy</span></td><td>220–240 / 30–60</td><td>60–120 mm/s</td><td>Hinges, brackets, protective cases</td></tr>
+    <tr><td><b>TPU 95A</b></td><td>Firm rubber</td><td><span class="chip green">Easy–medium</span></td><td>220–240 / 30–60</td><td>30–80 mm/s</td><td>Gaskets, belts, wheels</td></tr>
+    <tr><td><b>TPU 90A</b></td><td>Rubber</td><td><span class="chip yellow">Medium</span></td><td>215–235 / 30–60</td><td>20–50 mm/s</td><td>Phone cases, feet</td></tr>
+    <tr><td><b>TPU 85A</b></td><td>Soft rubber</td><td><span class="chip red">Hard</span></td><td>210–230 / 30–60</td><td>10–35 mm/s</td><td>Seals, grips, soft toys</td></tr>
+    <tr><td><b>TPE 60A–80A</b></td><td>Very soft</td><td><span class="chip red">Very hard</span></td><td>200–230 / 30–60</td><td>10–25 mm/s</td><td>Specialty pads; often needs direct feed from an external spool</td></tr>
+    </tbody></table></div>
+
+  <h2 id="printing-flex">🛠️ Printing flexibles</h2>
+  <p>The difficulty is not melting TPU but <b>pushing it</b>. A soft filament behaves like a noodle: it compresses and buckles between the extruder gear and the nozzle whenever there is a gap or high resistance. The fix is a short, fully constrained filament path.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 300" role="img" aria-label="Comparison of a Bowden extruder with a long free tube where soft filament buckles, versus a direct-drive extruder with a short constrained path where TPU feeds reliably">
+      <rect class="d-surface" x="10" y="30" width="370" height="250" rx="12"/><rect class="d-surface" x="400" y="30" width="370" height="250" rx="12"/>
+      <text class="t-b t-c" x="195" y="22">Long, loose path (Bowden)</text><text class="t-b t-c" x="585" y="22">Short, constrained path (direct drive)</text>
+      <rect class="d-metal" x="30" y="70" width="60" height="50" rx="6"/><text class="t-xs t-c" x="60" y="100">extruder</text>
+      <path class="d-plastic" d="M90 95 C150 95 180 190 240 190 S300 110 340 110" fill="none" stroke-width="6"/>
+      <path class="k-red" d="M130 125 c10 20 20 40 40 40"/>
+      <rect class="d-metal" x="320" y="120" width="40" height="70" rx="6"/><text class="t-xs t-c" x="340" y="210">hotend</text>
+      <text class="t-xs t-c" x="195" y="250">Soft filament buckles in the tube</text>
+      <rect class="d-metal" x="470" y="70" width="70" height="60" rx="6"/><text class="t-xs t-c" x="505" y="104">extruder</text>
+      <path class="d-plastic" d="M540 100 H600 V140" fill="none" stroke-width="6"/>
+      <rect class="d-metal" x="580" y="140" width="40" height="70" rx="6"/><text class="t-xs t-c" x="600" y="228">hotend</text>
+      <text class="t-xs t-c" x="585" y="256">Only a few millimeters unsupported</text>
+      <text class="t-xs t-c" x="585" y="272">→ push is transmitted</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> Path length is everything. Direct drive handles even 85A TPU slowly; long Bowden systems struggle below 95A.</figcaption>
+  </figure>
+
+  <h3>Core settings</h3>
+  <ul>
+    <li><b>Speed:</b> limit volumetric flow to about 2–6 mm³/s for 85–95A TPU (a 0.4 mm nozzle with 0.2 mm layers at 0.45 mm line width is roughly 35–65 mm/s at 3–6 mm³/s). Bambu’s high-flow TPU 95A HF is the exception and will reach higher flow rates.</li>
+    <li><b>Retraction:</b> keep it small (0.5–1.5 mm) and slow, or disable it for very soft grades. Large, fast retractions pull the soft filament into a wad (“tangle” inside the extruder).</li>
+    <li><b>Temperature:</b> 210–240 °C. Hotter lowers viscosity and reduces stringing but can degrade the polymer.</li>
+    <li><b>Cooling:</b> 30–100 % fan works fine for TPU: it solidifies quickly and sheds heat poorly. Use more cooling for overhangs.</li>
+    <li><b>Bed:</b> 30–60 °C; TPU can stick extremely well to PEI. Use a release layer on smooth plates, or a textured plate without glue (see below).</li>
+    <li><b>Infill:</b> gyroid at 10–30 % for flexible parts gives a springy, isotropic feel; rectilinear gives directional stiffness. More walls = stiffer part.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 260" role="img" aria-label="Chart of recommended print speed against Shore hardness: softer TPU needs slower speeds, from about 15 mm per second for 85A to about 100 for 98A">
+      <path class="d-ink" d="M80 20 V210 H730"/><path class="d-grid" d="M80 60 H730 M80 110 H730 M80 160 H730"/>
+      <text class="t-sm" x="26" y="170" transform="rotate(-90 26 170)">Speed (mm/s) →</text>
+      <text class="t-xs t-r" x="74" y="214">0</text><text class="t-xs t-r" x="74" y="164">30</text><text class="t-xs t-r" x="74" y="114">60</text><text class="t-xs t-r" x="74" y="64">90</text>
+      <text class="t-xs t-c" x="140" y="228">60A</text><text class="t-xs t-c" x="260" y="228">80A</text><text class="t-xs t-c" x="380" y="228">85A</text><text class="t-xs t-c" x="500" y="228">90A</text><text class="t-xs t-c" x="620" y="228">95A</text><text class="t-xs t-c" x="710" y="228">98A+</text>
+      <path class="k-orange" d="M140 195 L260 180 L380 170 L500 140 L620 95 L710 52"/>
+      <circle class="s-orange" cx="140" cy="195" r="4"/><circle class="s-orange" cx="260" cy="180" r="4"/><circle class="s-orange" cx="380" cy="170" r="4"/><circle class="s-orange" cx="500" cy="140" r="4"/><circle class="s-orange" cx="620" cy="95" r="4"/><circle class="s-orange" cx="710" cy="52" r="4"/>
+      <text class="t-xs" x="300" y="40">Illustrative guideline, not a measured result.</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> Soft filaments set a lower speed ceiling. Start slow and increase until you see under-extrusion or grinding.</figcaption>
+  </figure>
+
+  <h3>Bed adhesion, drying, and storage</h3>
+  <p>TPU welds to PEI. Do not add glue on textured PEI (it over-bonds and may tear the plate), but apply a thin layer of glue or a release agent on smooth PEI, engineering or high-temperature plates. Dry TPU before use (typical 50–70 °C for 4–8 h; Bambu’s own guidance for its TPU is 70 °C for 8 h in a forced-air oven, with warnings that spools expand and may deform) and store below ≈ 20 % RH in a sealed box with desiccant. TPU swells with moisture and prints foamy and stringy. Read the <a href="drying-and-storage.html">drying chapter</a>.</p>
+
+  <div class="callout x2d"><span class="callout-title">Bambu X2D and TPU</span>
+    <p>On the X2D, print TPU on the <b>main nozzle only</b>: the right auxiliary extruder has higher feed resistance and does not support TPU. Hardness and hotend rules (for example TPU 85A needs a 0.6 mm or larger hotend; 90A can use 0.4 mm; high-flow 95A HF and “TPU for AMS” run on 0.4–0.8 mm) are in the official guide summarized in <a href="../x2d/tpu-and-flexibles.html">TPU &amp; flexibles on the X2D</a>. Only the stiffer grades labeled for the AMS belong in it; feed everything softer from the external spool.</p>
+  </div>
+
+  <h3>AMS and flexibles</h3>
+  <p>The AMS pushes and pulls filament along a PTFE tube with a defined friction budget. TPU 95A and “TPU for AMS” grades are formulated for this and have a stiffer, slicker body. Softer grades (85A–90A) can be used with the AMS only when the vendor specifically says so; otherwise they kink and jam in the buffer. Keep spools dry and keep tubing curves gentle. Details: <a href="../x2d/ams-2-pro.html">AMS 2 Pro</a> and <a href="../x2d/filament-compatibility.html">Filament compatibility</a>.</p>
+
+  <h3>Troubleshooting TPU</h3>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
+    <tbody>
+    <tr><td>Filament tangled at the extruder gear</td><td>Fast or long retraction; gap between gear and PTFE; worn gear</td><td>Reduce retraction to ≤ 1 mm; slow down; check extruder gap.</td></tr>
+    <tr><td>Under-extrusion on long runs</td><td>Wet TPU; flow too high; clogged nozzle</td><td>Dry; limit volumetric flow; cold-pull.</td></tr>
+    <tr><td>Strings everywhere</td><td>Wet or too hot</td><td>Dry; lower 5–10 °C; add some retraction.</td></tr>
+    <tr><td>Part will not peel from plate</td><td>Over-adhesion</td><td>Cool bed; release layer; flex plate.</td></tr>
+    <tr><td>Layers look “melted” on overhangs</td><td>Low cooling</td><td>Raise fan; slow the layer time.</td></tr>
+    </tbody></table></div>
+
+  <h2 id="supports">🧱 Support materials</h2>
+  <p>Complex geometry needs support structures. On a multi-material printer you can print supports in a <b>different material</b> that separates cleanly or dissolves away. That works for overhangs, internal channels, and ultra-fine details that would be damaged by manual removal.</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Support</th><th>Removed by</th><th>Pairs with</th><th>Pros</th><th>Cons</th></tr></thead>
+    <tbody>
+    <tr><td><b>PVA</b></td><td>Water (hours)</td><td>PLA, PETG (low temp)</td><td>Clean surface; dissolves in warm water.</td><td>Extremely hygroscopic, clogs; expensive; smells when wet.</td></tr>
+    <tr><td><b>BVOH</b></td><td>Water (faster than PVA)</td><td>PLA, PETG, PA (grades)</td><td>Prints at higher temperatures; less clogging; dissolves fast.</td><td>Very moisture sensitive; cost.</td></tr>
+    <tr><td><b>HIPS</b></td><td>d-Limonene</td><td>ABS, ASA</td><td>Stiff, matches ABS temperature.</td><td>Limonene use; slower; smell.</td></tr>
+    <tr><td><b>Breakaway (PLA / PETG interface-type)</b></td><td>Hand</td><td>PLA, PETG, ABS (depends on grade)</td><td>Cheap, no wait.</td><td>Leaves a rough surface; only suits open geometry.</td></tr>
+    <tr><td><b>Support-for-PA / PET</b></td><td>Hand or water</td><td>PA, PET-CF (specific)</td><td>Designed to bond poorly.</td><td>Brand-specific; check compatibility.</td></tr>
+    </tbody></table></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 300" role="img" aria-label="Cross-section showing model material on top of a support interface layer with a small gap, which sits on a normal support body, with a soluble or breakaway interface making peeling easy">
+      <rect class="d-surface" x="20" y="20" width="740" height="260" rx="10"/>
+      <rect class="d-plastic" x="140" y="50" width="500" height="50"/><text class="t-sm t-b t-c" x="390" y="80">Model (overhang)</text>
+      <rect class="f-purple" x="140" y="100" width="500" height="14"/><text class="t-xs" x="652" y="112">interface layers (PVA / BVOH / breakaway)</text>
+      <rect class="f-yellow" x="140" y="114" width="500" height="10" fill-opacity=".45"/><text class="t-xs" x="652" y="124">air gap (0.1–0.2 mm)</text>
+      <rect class="d-cool" x="140" y="124" width="500" height="90"/><text class="t-sm t-c" x="390" y="170">support body (same filament as model or cheap)</text>
+      <rect class="d-metal" x="100" y="214" width="580" height="14" rx="3"/><text class="t-xs t-c" x="390" y="244">build plate</text>
+      <path class="k-red arrow" d="M760 140 H700"/><text class="t-xs" x="640" y="256">Clean separation here</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> The “interface” is a thin, differently-behaving layer between model and support. Either it bonds weakly or it dissolves, so the support comes away.</figcaption>
+  </figure>
+
+  <h3>Dual-material interface mechanics</h3>
+  <p>When two polymers touch, three things decide whether they bond: <b>chemical compatibility</b> (similar polarity and solubility parameters mix and entangle), <b>temperature at the interface</b> (hot melt diffuses across a boundary only above Tg), and <b>surface contact</b> (gap, flow, and layer time). Designers use that:</p>
+  <ul>
+    <li><b>Want to bond:</b> two chemically similar materials printed at similar temperatures bond strongly, such as PLA+PLA of different colors, or TPU on TPU. TPU on PETG often bonds surprisingly well; TPU on PLA is weaker.</li>
+    <li><b>Want to release:</b> pair incompatible polymers (PLA with PETG, PETG with PA) and add a small gap and low interface adhesion. PETG support under a PLA overhang releases cleanly; PLA support under PETG fuses.</li>
+    <li><b>Mechanical locks:</b> where chemistry will not bond, design a dovetail, hole or undercut so the materials physically interlock. This is how multi-material gaskets and over-molded grips stay put.</li>
+  </ul>
+  <p>Multi-material setup, purge volumes and prime towers are described in <a href="../techniques/multi-color-and-multi-material.html">Multi-color &amp; multi-material</a>, and the support settings in <a href="../techniques/supports-bridges-overhangs.html">Supports, bridges &amp; overhangs</a>. The X2D’s dual nozzles (see <a href="../x2d/dual-nozzle-printing.html">dual-nozzle printing</a>) reduce the purge needed to switch materials, which is especially helpful for expensive soluble supports.</p>
+
+  <h3>Handling soluble supports</h3>
+  <ul>
+    <li>PVA and BVOH are <b>the</b> most moisture-hungry filaments. Keep them in a sealed box with desiccant, ideally dried during printing (a heated dry box).</li>
+    <li>Dissolve them in room-temperature to warm (≤ 40 °C) water, stirring occasionally. Change the water as it saturates. Do not pour dissolved PVA down a drain in large amounts.</li>
+    <li>Use a separate nozzle or purge thoroughly; PVA burnt in a hotend carbonizes and blocks it.</li>
+    <li>Print support interface layers 0.1–0.2 mm away from the model to keep surface quality.</li>
+  </ul>
+
+  <h2 id="specialty">🎨 Specialty and effect filaments</h2>
+  <p>Most “effect” filaments are a base polymer (usually PLA, sometimes PETG or ABS) plus a pigment, filler or additive. They print nearly like the base polymer, with some predictable side effects: abrasion from hard fillers, clogging from large particles, brittleness from high filler loading, and heat sensitivity from organic fillers. A good rule is: <b>use the base polymer’s profile, then slow down, enlarge the nozzle, and test.</b></p>
+
+  <h3>Silk, gradient and dual-color</h3>
+  <p><b>Silk</b> PLA has a polymer blend and additives that give a pearly, metallic-like sheen. It prints slightly hotter (215–235 °C) and slower, strings more, is weaker between layers than plain PLA and shows overhang defects clearly. <b>Gradient</b> and <b>dual-color (“co-extruded”)</b> filaments are made of two or more colors co-extruded side by side so that the color changes along the spool or with the viewing angle. They print like silk. The color transition occurs along the filament, so the pattern depends on the model’s path, not on its geometry; expect surprises and wasted color on prime towers. Use them for single-color-looking prints where a decorative effect is welcome. Multi-material printing with real AMS color changes gives you control instead (see <a href="../techniques/multi-color-and-multi-material.html">Multi-color</a>).</p>
+
+  <h3>Wood, stone and metal fills</h3>
+  <p>These are PLA (sometimes PETG) mixed with fine wood flour, ground stone or metal powder, usually 10–40 % by weight:</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Type</th><th>Filler</th><th>Nozzle (°C)</th><th>Quirks</th><th>Finishing</th></tr></thead>
+    <tbody>
+    <tr><td><b>Wood-fill</b></td><td>Wood fiber/cork</td><td>190–220 (stay below 230)</td><td>Cooks and burns if heated too long; use ≥ 0.4 mm, ideally 0.6 mm nozzle; clog-prone; varying tone with temperature.</td><td>Sand, stain, wax.</td></tr>
+    <tr><td><b>Stone / marble / granite</b></td><td>Mineral powder</td><td>200–220</td><td>Mildly abrasive; matte; brittle.</td><td>Sand, seal.</td></tr>
+    <tr><td><b>Metal-fill (bronze, copper, steel)</b></td><td>Metal powder (up to 80 % by weight)</td><td>200–230</td><td>Heavy, very abrasive; brittle; clogs; hardened nozzle.</td><td>Tumble, polish, patina.</td></tr>
+    <tr><td><b>Ceramic / sand-like</b></td><td>Fine minerals</td><td>200–230</td><td>Highly abrasive; textured surface.</td><td>Paint.</td></tr>
+    </tbody></table></div>
+  <div class="callout warn"><span class="callout-title">Use a hardened nozzle for metal and stone</span>
+    <p>Brass wears fast with metal and ceramic powders, and wood fill will clog a 0.2–0.3 mm nozzle. Choose a 0.6 mm hardened nozzle and print slowly with a low retraction. Do not leave a nozzle full of wood-fill hot, because it will char. Purge with PLA at the end of the job.</p>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 280" role="img" aria-label="Chart showing wood-fill filament color getting darker as nozzle temperature rises from 190 to 240 degrees, with burning risk above 230">
+      <path class="d-ink" d="M70 30 H730 V210 H70 Z" fill="none"/>
+      <defs><linearGradient id="woodgrad" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#d9b88a"/><stop offset=".5" stop-color="#a77446"/><stop offset="1" stop-color="#3a2415"/></linearGradient></defs>
+      <rect x="70" y="60" width="660" height="60" fill="url(#woodgrad)"/>
+      <text class="t-xs t-c" x="70" y="232">190 °C</text><text class="t-xs t-c" x="290" y="232">205 °C</text><text class="t-xs t-c" x="510" y="232">220 °C</text><text class="t-xs t-c" x="730" y="232">240 °C</text>
+      <text class="t-sm t-b t-c" x="190" y="48">Light, pale grain</text><text class="t-sm t-b t-c" x="610" y="48">Dark, burnt risk</text>
+      <text class="t-sm t-c" x="400" y="160">Use the same filament at different temperatures to vary shade (“temperature tower” for wood).</text>
+      <path class="k-red" d="M600 190 H730"/><text class="t-xs c-red t-r" x="728" y="184">clogs / char</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> Wood-fill darkens as it gets hotter. Some makers exploit this with temperature changes between layers for “growth-ring” effects.</figcaption>
+  </figure>
+
+  <h3>Glow-in-the-dark, photochromic and thermochromic</h3>
+  <ul>
+    <li><b>Glow (phosphorescent):</b> strontium aluminate pigment charges under light and releases it slowly. It is very abrasive (hardened nozzle). Brightness depends on wall thickness: thin parts glow weakly. Charge with a UV or strong white lamp for a few minutes. Glow filaments can jam some filament switches and tracks; Bambu’s documentation lists glow among the filaments that have trouble on certain filament-track mechanisms of the X2D, so check <a href="../x2d/filament-compatibility.html">compatibility</a>.</li>
+    <li><b>Photochromic:</b> pigment that changes color under UV (outdoor sunlight) and returns indoors. Colors fade after many cycles. Works best on thin, light-colored walls.</li>
+    <li><b>Thermochromic:</b> changes color at a set temperature (often 28–31 °C, “body heat”, or ~45 °C). It is sensitive to nozzle temperature: prints that are too hot permanently damage the pigment. Use the lowest recommended nozzle temperature.</li>
+  </ul>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 260" role="img" aria-label="Glow-in-the-dark brightness versus time: strong charge, rapid decay over minutes, then a long dim tail over hours">
+      <path class="d-ink" d="M80 20 V210 H730"/><path class="d-grid" d="M80 70 H730 M80 120 H730 M80 170 H730"/>
+      <text class="t-sm" x="26" y="150" transform="rotate(-90 26 150)">Brightness →</text><text class="t-sm t-c" x="405" y="246">Time after charging →</text>
+      <path class="k-green" d="M90 30 C110 120 140 170 200 185 C300 195 450 200 720 204"/>
+      <text class="t-xs t-c" x="90" y="226">0</text><text class="t-xs t-c" x="200" y="226">10 min</text><text class="t-xs t-c" x="400" y="226">1 h</text><text class="t-xs t-c" x="700" y="226">8 h</text>
+      <text class="t-xs" x="320" y="60">Illustrative shape: bright for minutes, faint for hours.</text>
+      <path class="d-dash" d="M80 185 H730"/><text class="t-xs" x="560" y="180">threshold of dark-adapted visibility</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> Glow decays exponentially-ish. Thicker walls store more light, and fully dark-adapted eyes see far longer than a lit room suggests.</figcaption>
+  </figure>
+
+  <h3>Conductive, ESD-safe and magnetic</h3>
+  <ul>
+    <li><b>Conductive PLA / TPU (carbon black)</b>: volume resistivity of roughly 10²–10⁴ Ω·cm. It works for touch sensors, pressure pads and simple capacitive buttons, not for carrying current: expect hundreds to thousands of ohms per centimeter of trace. Layer-to-layer contact varies, so measure results.</li>
+    <li><b>ESD-safe (static-dissipative)</b>: carbon-filled PETG, ABS, PC or PA with surface resistivity of 10⁴–10⁹ Ω. Use it for electronics trays, fixtures and tool holders to bleed static. It is abrasive and brittle at higher loading.</li>
+    <li><b>Magnetic (iron-filled PLA)</b>: attracted by magnets but not magnetic on its own. It is heavy, abrasive, and often rusts if polished, which some people use deliberately.</li>
+  </ul>
+
+  <h3>Foaming and lightweight filaments</h3>
+  <p>These filaments contain microspheres or a chemical foaming agent that expands in the hotend. The result is a part up to 50 % lighter than solid, with a matte texture and reduced layer lines. They are popular for RC aircraft. Key points: tune <b>flow ratio</b> and temperature, since the expansion depends on temperature (at e.g. 230 °C vs 200 °C you get different densities); expect weak parts compared to ordinary PLA. Bambu’s documentation lists PLA Aero as one of the materials that can cause trouble on the X2D filament-track switch, so confirm in <a href="../x2d/filament-compatibility.html">compatibility notes</a> before loading it in the AMS.</p>
+
+  <h3>Transparent and translucent</h3>
+  <p>Clear PETG, PC, PMMA and some PLA grades produce translucent parts, but 3D printing leaves tiny air gaps between lines that scatter light, so “clear” prints look frosted. Tricks: print with a high flow (105–110 %), thin layers (0.05–0.1 mm), a hot nozzle, slow speed and no infill gaps (100 % solid), then sand and clear-coat or flame-polish. Natural, undyed filaments are typically the clearest but lose color. Expect translucent, not transparent.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 240" role="img" aria-label="Light passing through a printed clear part: gaps between lines scatter light, while a sanded and clear-coated surface lets more light through">
+      <rect class="d-surface" x="20" y="20" width="360" height="190" rx="10"/><rect class="d-surface" x="400" y="20" width="360" height="190" rx="10"/>
+      <text class="t-b t-c" x="200" y="14">As printed</text><text class="t-b t-c" x="580" y="14">Sanded + clear coat</text>
+      <rect class="d-plastic" x="80" y="80" width="240" height="70" fill-opacity=".4"/>
+      <path class="d-thin" d="M80 98 H320 M80 116 H320 M80 134 H320"/>
+      <path class="k-orange arrow" d="M120 40 V78"/><path class="k-orange arrow" d="M160 40 V78"/><path class="k-orange arrow" d="M200 40 V78"/>
+      <path class="k-orange arrow" d="M150 152 L110 190"/><path class="k-orange arrow" d="M200 152 L230 190"/><path class="k-orange arrow" d="M250 152 L300 180"/>
+      <text class="t-xs t-c" x="200" y="205">light scatters (frosted)</text>
+      <rect class="d-plastic" x="460" y="80" width="240" height="70" fill-opacity=".25"/>
+      <path class="k-orange arrow" d="M500 40 V78"/><path class="k-orange arrow" d="M540 40 V78"/><path class="k-orange arrow" d="M580 40 V78"/>
+      <path class="k-orange arrow" d="M500 152 V190"/><path class="k-orange arrow" d="M540 152 V190"/><path class="k-orange arrow" d="M580 152 V190"/>
+      <text class="t-xs t-c" x="580" y="205">more light passes straight through</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> Surface and gap scattering make printed “clear” parts frosted; finishing the surface helps most.</figcaption>
+  </figure>
+
+  <h3>Recycled and bio-based filaments</h3>
+  <p>Recycled PETG (rPETG), recycled PLA, ocean-plastic filaments and bio-based PA (e.g. PA11 from castor oil) are chemically similar to their virgin counterparts but can vary batch to batch in color, impurities and moisture. They print fine at the base polymer’s settings; test a new batch with a temperature tower. “Bio-based” means feedstock, not biodegradable. Wood-fill and coffee-fill are filler composites, not compostable plastics. See also <a href="everyday-plastics.html#myths">biodegradability myths</a> and the <a href="../reference/economics-and-ethics.html">economics and ethics</a> reference.</p>
+
+  <h3>Wax and casting filaments</h3>
+  <p>Special <b>casting filaments</b> (PMMA-like, wax-like, and burnout PLA) vaporize or melt out cleanly of an investment mold, leaving a cavity that a jeweler or foundry fills with metal. They print slowly, with a low temperature, at fine layer heights. Expect needed supports to be small. Use the filament maker’s burnout schedule, and test with a sacrificial piece. Regular PLA leaves ash and is not suitable for fine jewelry casting.</p>
+
+  <h3>Specialty “engineering” lines</h3>
+  <p>Makers sell proprietary grades: flame-retardant ABS/PC (UL94 V-0), food-contact-grade PP, medical-grade PA, electro-conductive PEEK, and radiation-shielding fills. These behave like the base polymer but are tuned to a certification or datasheet. Buy them for the property you need, check the paperwork (and what the certification covers, such as the filament but not the printed part), and follow the vendor’s print profile. See <a href="engineering-plastics.html">Engineering plastics</a> for the base materials.</p>
+
+  <h2 id="cheat-chart">🧾 Weird filaments cheat chart</h2>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Filament</th><th>Nozzle</th><th>Typical temp (°C)</th><th>Quirk</th><th>Pitfall</th></tr></thead>
+    <tbody>
+    <tr><td>Silk PLA</td><td>Brass</td><td>215–235</td><td>Pearlescent sheen</td><td>Weak layers, strings; slow down.</td></tr>
+    <tr><td>Gradient / dual-color</td><td>Brass</td><td>210–230</td><td>Color changes along spool</td><td>Unpredictable color placement.</td></tr>
+    <tr><td>Wood-fill</td><td>≥ 0.4, ideally 0.6</td><td>190–220</td><td>Wood smell, darkens when hotter</td><td>Burns and clogs; low retraction.</td></tr>
+    <tr><td>Stone / marble</td><td>Hardened</td><td>200–220</td><td>Matte, mineral</td><td>Abrasive, brittle.</td></tr>
+    <tr><td>Metal-fill</td><td>Hardened ≥ 0.6</td><td>200–230</td><td>Heavy, polishable</td><td>Very abrasive; clogs; brittle.</td></tr>
+    <tr><td>Glow-in-the-dark</td><td>Hardened</td><td>200–225</td><td>Charges with light</td><td>Abrasive; jams tracks.</td></tr>
+    <tr><td>Photochromic</td><td>Brass</td><td>190–215</td><td>Changes under UV</td><td>Fades; heat sensitive.</td></tr>
+    <tr><td>Thermochromic</td><td>Brass</td><td>190–215</td><td>Changes with warmth</td><td>Overheating kills color.</td></tr>
+    <tr><td>Conductive</td><td>Hardened</td><td>200–230</td><td>Carbon-loaded, black</td><td>High resistance; brittle.</td></tr>
+    <tr><td>ESD-safe</td><td>Hardened</td><td>per base</td><td>Static-dissipative</td><td>Do not trust for mains voltage.</td></tr>
+    <tr><td>Magnetic</td><td>Hardened</td><td>200–225</td><td>Attracted by magnets</td><td>Rust if exposed to water; weak magnetism.</td></tr>
+    <tr><td>Foaming / aero</td><td>Brass</td><td>190–260</td><td>Light, matte</td><td>Flow and density vary; track issues on some Bambu mechanisms.</td></tr>
+    <tr><td>Transparent</td><td>Brass</td><td>per base</td><td>Translucent</td><td>Frosted unless post-processed.</td></tr>
+    <tr><td>Recycled</td><td>Brass</td><td>per base</td><td>Eco story</td><td>Batch variation.</td></tr>
+    <tr><td>Casting wax</td><td>Brass</td><td>190–215</td><td>Burn-out for casting</td><td>Needs vendor burnout schedule.</td></tr>
+    <tr><td>PVA / BVOH</td><td>Dedicated</td><td>185–230</td><td>Water-soluble support</td><td>Hygroscopic; clogs; keep dry.</td></tr>
+    </tbody></table></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 260" role="img" aria-label="Chart of relative nozzle wear for different filaments: PLA near zero, wood small, glow and metal high, carbon fiber highest, ruby tip shown as long-lived">
+      <path class="d-ink" d="M130 20 V220 H740"/>
+      <text class="t-sm t-r" x="122" y="42">PLA / PETG</text><rect class="f-green" x="130" y="30" width="20" height="16"/>
+      <text class="t-sm t-r" x="122" y="72">Wood / cork</text><rect class="f-yellow" x="130" y="60" width="60" height="16"/>
+      <text class="t-sm t-r" x="122" y="102">Silk / matte</text><rect class="f-teal" x="130" y="90" width="40" height="16"/>
+      <text class="t-sm t-r" x="122" y="132">Glow-in-the-dark</text><rect class="f-orange" x="130" y="120" width="360" height="16"/>
+      <text class="t-sm t-r" x="122" y="162">Metal / stone fill</text><rect class="f-red" x="130" y="150" width="460" height="16"/>
+      <text class="t-sm t-r" x="122" y="192">Carbon / glass fiber</text><rect class="f-purple" x="130" y="180" width="560" height="16"/>
+      <text class="t-xs" x="140" y="244">Relative abrasiveness to a brass nozzle (illustrative). Use hardened steel or ruby tips for the lower bars.</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> Nozzle wear guide for specialty fills. Track hours on hardened nozzles too; they wear more slowly, not never.</figcaption>
+  </figure>
+
+  <h2 id="design-flex">📐 Designing for flexible materials</h2>
+  <p>A good flexible part is designed, not just printed in a soft material. Elastomers deform under load, so the geometry controls how they behave:</p>
+  <ul>
+    <li><b>Wall count sets stiffness.</b> Two perimeters with 10 % gyroscopic infill feel squishy; four perimeters with 40 % feel nearly solid. Change the walls first, then the infill, when tuning “feel”.</li>
+    <li><b>Infill pattern matters.</b> Gyroid and cubic give even compression in all directions; grid and rectilinear are springier in one direction. Lightning infill is too fragile for TPU unless the part is mostly shell.</li>
+    <li><b>Avoid thin, tall unsupported posts.</b> Soft TPU columns wobble while printing, ruin accuracy and deflect under the nozzle. Print them thicker than you would in PLA or support them with a rib.</li>
+    <li><b>Use generous fillets.</b> Elastomers concentrate stress in sharp corners and tear from them; a 1–2 mm radius dramatically improves life.</li>
+    <li><b>Design tight press fits and interference.</b> A seal or gasket should be 3–10 % undersized relative to what it grips; TPU tolerates a lot of stretch without cracking.</li>
+    <li><b>Print orientation:</b> layer lines are weakest in tension perpendicular to the layers, but TPU’s intrinsic toughness hides this far better than in rigid plastics. Orient for best surface finish and fewest supports.</li>
+    <li><b>Overhangs and bridging:</b> TPU bridges surprisingly well when cooled aggressively, but overhangs droop; limit them to about 45° or use thin supports.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 260" role="img" aria-label="Stress and strain curves comparing rigid PLA, TPU 95A and TPU 85A: PLA is steep and breaks early, TPU curves stretch far, softer TPU stretches farthest at low stress">
+      <path class="d-ink" d="M80 20 V210 H730"/><path class="d-grid" d="M80 70 H730 M80 120 H730 M80 170 H730"/>
+      <text class="t-sm" x="26" y="150" transform="rotate(-90 26 150)">Stress →</text><text class="t-sm t-c" x="405" y="246">Strain (stretch) →</text>
+      <path class="k-green" d="M80 210 L130 50 L145 40"/><text class="t-sm c-green" x="150" y="46">PLA (stiff, brittle)</text>
+      <path class="k-blue" d="M80 210 C140 140 230 120 330 100 C450 85 560 60 640 30"/><text class="t-sm c-blue" x="500" y="48">TPU 95A</text>
+      <path class="k-orange" d="M80 210 C180 190 300 180 420 160 C540 140 640 110 720 70"/><text class="t-sm c-orange" x="560" y="124">TPU 85A</text>
+      <text class="t-xs" x="320" y="200">Illustrative curves, not datasheet values.</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> Why elastomers behave so differently: a gentle slope (low modulus) and enormous stretch before breaking.</figcaption>
+  </figure>
+
+  <h3>A reliable TPU workflow</h3>
+  <ol class="steps">
+    <li><strong>Dry the spool</strong>Follow the maker’s temperature (many people use 55–70 °C for 6–8 h), then print from a dry box or sealed feed.</li>
+    <li><strong>Check the path</strong>Remove slack and long PTFE runs; use an external spool holder for very soft grades and make sure the filament unspools freely.</li>
+    <li><strong>Pick the nozzle</strong>0.4 mm for 90A–95A; 0.6 mm for 85A. Make sure the hotend is clean (cold-pull with PLA or PETG first).</li>
+    <li><strong>Print a 20 mm test cube slowly</strong>Start at 20–30 mm/s and 220 °C, then increase speed until under-extrusion appears and back off 20 %.</li>
+    <li><strong>Tune retraction last</strong>Raise it from zero in 0.2 mm steps until stringing is acceptable, no further.</li>
+    <li><strong>Remove carefully</strong>Cool the plate and peel gently from an edge so that the elastic part does not tear.</li>
+  </ol>
+
+  <h2 id="choosing">🧭 Choosing between flexible options</h2>
+  <div class="grid cols-3">
+    <div class="card accent-green"><h3>Need a gasket or pad</h3><p>TPU 90A–95A, 3–4 perimeters, gyroid infill. If it has to seal against oil, check the datasheet for the chemical resistance of the base polymer (polyether grades resist hydrolysis better).</p></div>
+    <div class="card accent-blue"><h3>Need a grippy shell</h3><p>TPU 95A over a rigid PETG or PLA core using multi-material printing, with a dovetail or interlocking pattern for security.</p></div>
+    <div class="card accent-orange"><h3>Need something stretchy</h3><p>TPU 85A or softer, slow on the main nozzle with direct feed. If the part must survive millions of flexes, consider TPC (copolyester elastomer) for fatigue life.</p></div>
+  </div>
+  <div class="callout tip"><span class="callout-title">Flexible part over rigid core</span>
+    <p>If you want a rubbery surface on a firm part, print the core in PETG or PLA and the skin in TPU as a second material. Prime tower and purge volumes for TPU are small. Avoid putting TPU in the AMS with soft grades and use the matching profile. A plain overlap of 0.4–0.8 mm with a few mechanical ribs holds better than a flat interface.</p>
+  </div>
+
+  <h2 id="takeaways">✅ Key takeaways</h2>
+  <ul>
+    <li><b>Hardness decides difficulty</b>: 95A TPU is easy; 85A and softer need slow direct-drive printing and, on the X2D, the main nozzle only.</li>
+    <li>Short, constrained filament path, small slow retraction, dry filament: the three basics of flexibles.</li>
+    <li>Soluble supports give clean cavities but demand dryness and clean nozzles. Pair incompatible polymers (PLA vs PETG) for easy release.</li>
+    <li>Specialty fills inherit the base polymer’s settings, plus <b>abrasion</b>, <b>brittleness</b> and <b>clog</b> risks. Use hardened nozzles for glow, metal, stone and fiber.</li>
+    <li>Check the vendor’s datasheet and the <a href="../x2d/filament-compatibility.html">compatibility list</a> before loading anything unusual into the AMS.</li>
+    <li>Compare options in the <a href="../tools/material-picker.html">material picker</a>, then try the <a href="../exercises/level-2-intermediate.html">Level 2 exercises</a>.</li>
+  </ul>
+</main>
+</body>
+</html>

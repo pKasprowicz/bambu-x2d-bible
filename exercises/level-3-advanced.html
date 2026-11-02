@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Level 3 · Advanced exercises · 3D Printing Compendium</title>
+  <meta name="description" content="Fifteen advanced 3D printing exercises: pressure advance, input shaping, volumetric flow, print-in-place hinges, snap-fit strain, threads, filament profiles, low-waste multi-material, annealing, CAD scripting, gears, mechanisms, time versus strength, finishing and G-code.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="exercises/level-3-advanced.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 7 · Practice &amp; exercises</div>
+    <h1>Level 3 · Advanced</h1>
+    <p class="lead">Engineering-grade projects. You will tune the machine's dynamics, design mechanisms that work straight off the bed, calculate instead of guess, script your CAD and read the G-code your slicer produces.</p>
+    <div class="meta"><span class="badge advanced">Advanced</span><span class="badge time">⏱ about 50 hours in total</span><span class="badge time">15 exercises</span></div>
+  </header>
+
+  <div class="progress-summary" data-prefix="L3-" data-total="15" data-label="Level 3 progress"></div>
+
+  <h2>Prerequisites and mindset</h2>
+  <p>Complete most of <a href="level-2-intermediate.html">Level 2</a> first, in particular the temperature, flow and tolerance exercises (L2-1, L2-3, L2-6). Level 3 assumes you have a trustworthy profile for at least one filament, your own tolerance table and some CAD practice.</p>
+  <p>The mindset changes from <em>"what setting works?"</em> to <em>"what is the physical reason, and can I predict it?"</em>. Many exercises therefore contain a short calculation you can check against a measurement. Keep the numbers in your <a href="index.html#journal">print journal</a>.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 260" role="img" aria-label="Skill map of Level 3 grouped into four tracks: machine tuning, mechanical design, materials and process, and software and automation, with the exercise numbers in each track">
+      <rect class="f-blue" x="10" y="20" width="180" height="200" rx="12"/>
+      <text class="t t-b t-c" x="100" y="48">Machine tuning</text>
+      <text class="t-sm t-c" x="100" y="82">L3-1 Pressure advance</text><text class="t-sm t-c" x="100" y="106">L3-2 Ringing</text><text class="t-sm t-c" x="100" y="130">L3-3 Volumetric flow</text><text class="t-sm t-c" x="100" y="154">L3-13 Time vs strength</text>
+      <rect class="f-green" x="205" y="20" width="180" height="200" rx="12"/>
+      <text class="t t-b t-c" x="295" y="48">Mechanical design</text>
+      <text class="t-sm t-c" x="295" y="82">L3-4 Hinge</text><text class="t-sm t-c" x="295" y="106">L3-5 Snap-fit</text><text class="t-sm t-c" x="295" y="130">L3-6 Threads</text><text class="t-sm t-c" x="295" y="154">L3-11 Gears</text><text class="t-sm t-c" x="295" y="178">L3-12 Mechanism</text>
+      <rect class="f-orange" x="400" y="20" width="180" height="200" rx="12"/>
+      <text class="t t-b t-c" x="490" y="48">Materials and process</text>
+      <text class="t-sm t-c" x="490" y="82">L3-7 Filament profile</text><text class="t-sm t-c" x="490" y="106">L3-8 Low-waste multi-material</text><text class="t-sm t-c" x="490" y="130">L3-9 Annealing</text><text class="t-sm t-c" x="490" y="154">L3-14 Finishing</text>
+      <rect class="f-purple" x="595" y="20" width="175" height="200" rx="12"/>
+      <text class="t t-b t-c" x="682" y="48">Software</text>
+      <text class="t-sm t-c" x="682" y="82">L3-10 CAD scripting</text><text class="t-sm t-c" x="682" y="106">L3-15 G-code</text>
+      <text class="t-sm t-c t-m" x="390" y="246">Do the tracks in any order. Within a track the numbers rise in difficulty.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> The fifteen exercises sorted into four skill tracks.</figcaption>
+  </figure>
+
+  <h2>Overview of all fifteen exercises</h2>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>#</th><th>Exercise</th><th>Core skill</th><th>Time</th><th>Model / file</th></tr></thead>
+    <tbody>
+      <tr><td><a href="#L3-1">L3-1</a></td><td>Pressure advance tuning</td><td>Dynamics</td><td>2 h</td><td>slicer calibration</td></tr>
+      <tr><td><a href="#L3-2">L3-2</a></td><td>Input shaping and ringing analysis</td><td>Dynamics</td><td>3 h</td><td><a href="models/ringing_tower.scad">ringing_tower.scad</a></td></tr>
+      <tr><td><a href="#L3-3">L3-3</a></td><td>Volumetric flow test</td><td>Hotend limits</td><td>2 h</td><td>vase-mode tower</td></tr>
+      <tr><td><a href="#L3-4">L3-4</a></td><td>Print-in-place hinge</td><td>Design / clearance</td><td>3 h</td><td><a href="models/hinge_test.scad">hinge_test.scad</a></td></tr>
+      <tr><td><a href="#L3-5">L3-5</a></td><td>Snap-fit with strain calculation</td><td>Design / mechanics</td><td>3 h</td><td><a href="models/snap_fit_test.scad">snap_fit_test.scad</a></td></tr>
+      <tr><td><a href="#L3-6">L3-6</a></td><td>Thread design</td><td>Design</td><td>3 h</td><td>CAD</td></tr>
+      <tr><td><a href="#L3-7">L3-7</a></td><td>Custom filament profile</td><td>Process</td><td>4 h</td><td>several tests</td></tr>
+      <tr><td><a href="#L3-8">L3-8</a></td><td>Multi-material with minimal waste</td><td>Process</td><td>3 h</td><td>two-color part</td></tr>
+      <tr><td><a href="#L3-9">L3-9</a></td><td>Annealing experiment</td><td>Materials</td><td>4 h</td><td>test bars</td></tr>
+      <tr><td><a href="#L3-10">L3-10</a></td><td>CAD scripting (OpenSCAD / CadQuery)</td><td>Software</td><td>4 h</td><td><a href="models/parametric_box.scad">parametric_box.scad</a></td></tr>
+      <tr><td><a href="#L3-11">L3-11</a></td><td>Gear design</td><td>Design</td><td>4 h</td><td>CAD</td></tr>
+      <tr><td><a href="#L3-12">L3-12</a></td><td>Designing a mechanism</td><td>Design</td><td>5 h</td><td>four-bar linkage</td></tr>
+      <tr><td><a href="#L3-13">L3-13</a></td><td>Optimizing print time vs strength</td><td>Optimization</td><td>5 h</td><td>test bars</td></tr>
+      <tr><td><a href="#L3-14">L3-14</a></td><td>Vapor smoothing / finishing project</td><td>Post-processing</td><td>4 h</td><td>any ABS/ASA part</td></tr>
+      <tr><td><a href="#L3-15">L3-15</a></td><td>G-code reading and custom start G-code</td><td>Software</td><td>3 h</td><td>text editor</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>🔧 Exercises</h2>
+
+  <section class="exercise" id="L3-1">
+    <header><span class="badge advanced">Level 3 · Hard</span><h3>Exercise 1 — Pressure advance tuning</h3><span class="badge time">⏱ 2 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Tune pressure advance (Bambu Studio calls the same effect <em>flow dynamics</em>, with a K value) so that corners are sharp and line width stays constant during acceleration and deceleration. Plastic in the nozzle is compressible; pressure advance pushes a little extra before a speed-up and relieves it before a slow-down.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>The calibration function of your slicer (line or pattern test), or a manual test pattern</li>
+        <li>Dry filament with a tuned temperature (L2-1) and flow (L2-3)</li>
+        <li>A magnifier or macro photo</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 260" role="img" aria-label="Three corners printed with too little, correct and too much pressure advance: bulging corner, sharp corner, and gap or rounded corner, with the extrusion rate drawn above">
+          <g>
+            <path class="d-plastic" d="M30 150 V80 H150" style="stroke-width:14;fill:none;stroke:var(--orange)"/>
+            <circle class="s-red" cx="30" cy="80" r="8" style="opacity:.8"/>
+            <text class="t-sm t-c t-b" x="90" y="36">K too low</text><text class="t-sm t-c" x="90" y="190">bulging corner,</text><text class="t-sm t-c" x="90" y="208">thin start of line</text>
+          </g>
+          <g>
+            <path d="M300 150 V80 H420" style="stroke-width:14;fill:none;stroke:var(--green);stroke-linejoin:miter"/>
+            <text class="t-sm t-c t-b" x="360" y="36">K correct</text><text class="t-sm t-c" x="360" y="190">sharp corner,</text><text class="t-sm t-c" x="360" y="208">constant width</text>
+          </g>
+          <g>
+            <path d="M570 150 V90 Q570 80 580 80 H690" style="stroke-width:14;fill:none;stroke:var(--blue);stroke-linejoin:round"/>
+            <text class="t-sm t-c t-b" x="630" y="36">K too high</text><text class="t-sm t-c" x="630" y="190">rounded corner,</text><text class="t-sm t-c" x="630" y="208">gaps in corners</text>
+          </g>
+          <text class="t-sm t-c t-m" x="380" y="240">Top view of a corner, filament drawn as a thick line</text>
+        </svg>
+        <figcaption><b>Figure 2.</b> Effect of pressure advance on a corner. Too little leaves a bulge, too much starves the corner.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Write down the current K</strong> (or pressure advance) for the filament. Check the slicer's calibration help; typical values for direct-drive extruders are small (of the order of 0.02–0.1 in Marlin/Klipper units), but the unit and scale differ between firmwares.</li>
+        <li><strong>Run the calibration print</strong> (line pattern or tower) with acceleration and speed at your production values.</li>
+        <li><strong>Pick the best K</strong> from the pattern: the line where corner bulge and thin starts both disappear. Photograph it.</li>
+        <li><strong>Verify on a real part</strong> with sharp corners and long straights (a box with a 90° notch) at production speed. Compare with the old value.</li>
+        <li><strong>Test at a second speed.</strong> If K must change a lot when speed doubles, your flow ratio or temperature is probably wrong.</li>
+        <li><strong>Store K per filament and per nozzle.</strong> The auxiliary nozzle on the X2D is fed through a tube; do not assume the same value as for the main nozzle.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>Calibration print photographed with the chosen K marked</li>
+        <li>Verification part shows sharp corners with no bulge and no gaps</li>
+        <li>K stored in the filament profile under a clear name</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Pressure advance interacts with temperature, because hotter plastic is less viscous, and with flow ratio. Always calibrate flow first. If the best line is at the extreme end of the range, extend the range instead of accepting the edge value.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>Example: PLA, direct drive, test range 0.00–0.06 in steps of 0.005. At K = 0 corners bulge; at 0.04 corners are crisp; at 0.06 the inside of corners shows gaps. Choose 0.04. Check: a 0.4 mm box shows constant 0.42 mm lines at 100 and 200 mm/s. If K differs strongly between two spools of the same plastic, one of them probably holds moisture. See <a href="../techniques/calibration.html">Calibration playbook</a> and <a href="../techniques/speed-cooling-quality.html">Speed, cooling &amp; quality</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L3-2">
+    <header><span class="badge advanced">Level 3 · Hard</span><h3>Exercise 2 — Input shaping and ringing analysis</h3><span class="badge time">⏱ 3 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Measure the ripple (ringing, ghosting) pattern next to sharp features, calculate the resonance frequency of your printer from the ripple spacing and see how acceleration and speed change it. Input shaping cancels that resonance in firmware and lets you print faster at the same quality.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li><a href="models/ringing_tower.scad">ringing_tower.scad</a> (30 × 30 × 50 mm block with a notch and X/Y letters)</li>
+        <li>Calipers or a ruler and a good light; the printer's acceleration and speed settings</li>
+        <li>Optional: the vibration compensation or resonance calibration your printer provides (check your model's documentation)</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 270" role="img" aria-label="Side view of a block face with ripples after a sharp notch, with the ripple distance d, and the formula for resonance frequency f equals speed divided by distance">
+          <rect class="d-plastic" x="60" y="40" width="200" height="190"/>
+          <rect class="d-surface" x="150" y="40" width="30" height="190" style="stroke-width:1"/>
+          <g class="k-orange" style="stroke-width:1.5"><path d="M190 40 V230 M200 40 V230 M210 40 V230 M220 40 V230 M230 40 V230 M240 40 V230"/></g>
+          <g class="d-thin arrow arrow-start"><path d="M190 250 H200"/></g>
+          <text class="t-sm t-c" x="195" y="266">d</text>
+          <text class="t-sm t-c t-b" x="110" y="28">notch</text>
+          <text class="t-sm t-c" x="215" y="28">ripples decay</text>
+          <rect class="f-teal" x="330" y="40" width="410" height="190" rx="12"/>
+          <text class="t t-b" x="350" y="70">Reading the ripples</text>
+          <text class="t-sm t-mono" x="350" y="104">f = v / d</text>
+          <text class="t-sm" x="350" y="126">v = speed of the outer wall (mm/s)</text>
+          <text class="t-sm" x="350" y="146">d = distance between ripple peaks (mm)</text>
+          <text class="t-sm t-b" x="350" y="176">Example: v = 200 mm/s, d = 2.5 mm</text>
+          <text class="t-sm t-mono" x="350" y="198">f = 200 / 2.5 = 80 Hz</text>
+          <text class="t-sm t-m" x="350" y="220">Many desktop printers resonate between 30 and 100 Hz.</text>
+        </svg>
+        <figcaption><b>Figure 3.</b> The distance between ripples, together with the speed at which the wall was printed, gives the resonance frequency.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Print the tower</strong> at your normal outer-wall speed and acceleration. Note both values.</li>
+        <li><strong>Measure ripple spacing</strong> d on the X face and on the Y face with calipers across 5–6 ripples (divide the total by the count to improve accuracy).</li>
+        <li><strong>Calculate f = v / d</strong> for both axes. X and Y often differ because of different moving mass.</li>
+        <li><strong>Change one parameter:</strong> halve the acceleration, reprint and compare ripple height. Then halve the speed and check that ripple <em>spacing</em> shrinks in proportion (so f stays constant).</li>
+        <li><strong>Enable or run the resonance compensation</strong> of your printer if available and print again. Compare ripple amplitude with the first print.</li>
+        <li><strong>Record the highest acceleration</strong> at which ripples remain acceptable for each setting.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>Ripple spacing measured on both axes, resonance frequencies calculated</li>
+        <li>Verified that frequency stays constant when speed changes while spacing does not</li>
+        <li>Before/after photos with and without compensation, and a chosen acceleration limit</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Ripples that follow a feature are ringing; ripples that start at the bottom and exist on blank surfaces are something else (z-wobble, bad belts, loose parts). Make sure the printer sits on a firm surface, as a table that shakes lowers measured frequency and increases the amplitude.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>Example: X face d = 2.4 mm at 200 mm/s → 83 Hz; Y face d = 3.1 mm → 65 Hz. At half speed the spacing is 1.2 and 1.55 mm, so the frequencies are unchanged, which proves a mechanical resonance. Ripple height drops with lower acceleration and drops further with input shaping; the allowed acceleration can then be raised, which reduces print time on small parts. Some printers (including the X2D) run an automatic resonance compensation, so the measured ripple may already be small; in that case compare different accelerations instead. See <a href="../techniques/speed-cooling-quality.html">Speed, cooling &amp; quality</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L3-3">
+    <header><span class="badge advanced">Level 3 · Hard</span><h3>Exercise 3 — Volumetric flow test</h3><span class="badge time">⏱ 2 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Find the maximum volumetric flow (mm³/s) your hotend can melt with a particular filament. Slicers limit speed with this number: print speed alone does not matter, only the volume of plastic per second.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>A vase-mode (spiral) cylinder, or a slicer calibration for max flow, plus a speed ramp; or any wall tower sliced so that speed increases with height</li>
+        <li>Calipers, a camera, dry filament and the temperature you want to test (higher temperature allows higher flow)</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 260" role="img" aria-label="A vase-mode tower with a speed ramp from low at the bottom to high at the top, showing a clean section, the onset of under-extrusion and the failure region, and the volumetric flow formula">
+          <path class="d-plastic" d="M60 230 H200 V40 H60 z" style="fill:none"/>
+          <rect x="60" y="150" width="140" height="80" style="fill:var(--green-s);stroke:var(--ink);stroke-width:2"/>
+          <rect x="60" y="100" width="140" height="50" style="fill:var(--yellow-s);stroke:var(--ink);stroke-width:2"/>
+          <rect x="60" y="40" width="140" height="60" style="fill:var(--red-s);stroke:var(--ink);stroke-width:2"/>
+          <text class="t-sm t-c" x="130" y="194">smooth</text><text class="t-sm t-c" x="130" y="130">rough, matte</text><text class="t-sm t-c" x="130" y="74">gaps / skipping</text>
+          <path class="d-ink arrow" d="M30 230 V50"/><text class="t-sm" x="8" y="30">speed ↑</text>
+          <path class="d-thin arrow arrow-start" d="M215 100 H240"/><text class="t-sm" x="245" y="104">onset: height h</text>
+          <rect class="f-blue" x="330" y="40" width="410" height="180" rx="12"/>
+          <text class="t t-b" x="350" y="70">Volumetric flow</text>
+          <text class="t-sm t-mono" x="350" y="102">Q = layer_height × line_width × speed</text>
+          <text class="t-sm" x="350" y="130">Example: 0.2 mm × 0.45 mm × 200 mm/s</text>
+          <text class="t-sm t-mono" x="350" y="152">Q = 18 mm³/s</text>
+          <text class="t-sm" x="350" y="180">Use ~80–85 % of the onset value as the limit in</text>
+          <text class="t-sm" x="350" y="198">the filament profile (safety margin).</text>
+        </svg>
+        <figcaption><b>Figure 4.</b> The speed ramps up with height. The first height where the walls turn rough or thin gives the maximum flow.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Prepare the test</strong>: single wall, 0.2 mm layer height, line width 0.45 mm. Use a speed ramp from about 8 to 30 mm³/s, or use your slicer's max-flow calibration.</li>
+        <li><strong>Print it</strong> with cooling set to your normal value and observe: at high flow the extruder may click or skip steps.</li>
+        <li><strong>Find the onset height</strong> where under-extrusion becomes visible (rough, thin, matte). Convert the height to speed or flow using the ramp definition.</li>
+        <li><strong>Set the limit</strong> to about 80–85 % of that value in the filament's "max volumetric speed" field.</li>
+        <li><strong>Repeat at +10 °C</strong> to see how much temperature helps. Record the gain in mm³/s per 10 °C.</li>
+        <li><strong>Check a real print</strong>: a 0.4 mm-layer part will hit the limit at a much lower speed than a 0.12 mm part.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>An onset value in mm³/s for two temperatures</li>
+        <li>A maximum flow set with a safety margin in the filament profile</li>
+        <li>A table that converts layer height and line width to the maximum speed</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>To convert back: speed = Q / (layer height × line width). With Q = 15 mm³/s, line 0.45 mm and layer 0.2 mm the speed limit is 15 / 0.09 = 167 mm/s. Using a 0.4 mm layer would allow only 83 mm/s. The nozzle size changes the limit too: a high-flow hotend or a larger nozzle melts more plastic per second.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>Example: standard PLA, 0.4 mm nozzle, 220 °C. Walls are smooth up to 20 mm³/s, matte at 23 mm³/s, with gaps from 27. Limit = 0.85 × 23 ≈ 19.5 mm³/s. At 230 °C the onset moves to ~26 mm³/s. Table: 0.12 mm layer × 0.42 mm → 387 mm/s max; 0.20 × 0.45 → 217 mm/s; 0.28 × 0.45 → 155 mm/s. Real printers also limit by acceleration, so the slicer will not reach these speeds on short moves. See <a href="../techniques/speed-cooling-quality.html">Speed, cooling &amp; quality</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L3-4">
+    <header><span class="badge advanced">Level 3 · Hard</span><h3>Exercise 4 — Print-in-place hinge</h3><span class="badge time">⏱ 3 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Print a hinge that moves right off the bed, with no assembly. You will determine the clearance that separates the moving parts and design a hinge that fits your own printer and material.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li><a href="models/hinge_test.scad">hinge_test.scad</a>: five knuckles, pin radius 2 mm, clearance 0.4 mm; edit <code>clearance</code> to 0.25, 0.3, 0.4, 0.5</li>
+        <li>Your tolerance table from L2-6, a thin spatula or a hobby knife (carefully) for loosening</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 270" role="img" aria-label="Cross section of a print-in-place hinge with a pin, knuckle, radial clearance, and an axial gap, with printing orientation on the bed and a 45 degree chamfer to avoid overhang">
+          <rect class="d-metal2" x="20" y="230" width="340" height="8"/>
+          <circle class="d-plastic" cx="190" cy="140" r="80"/>
+          <circle class="d-surface" cx="190" cy="140" r="38"/>
+          <circle class="f-orange" cx="190" cy="140" r="28"/>
+          <path class="d-thin arrow arrow-start" d="M218 140 H228"/>
+          <text class="t-sm" x="236" y="144">clearance c</text>
+          <path class="d-plastic" d="M270 190 H350 V222 H270 z" style="fill:var(--surface-2)"/>
+          <text class="t-sm t-c" x="310" y="210">leaf</text>
+          <text class="t-sm t-c t-b" x="190" y="32">Hinge axis along Y (into the page)</text>
+          <text class="t-sm t-c" x="190" y="256">Printed lying flat: the pin circle is an overhang</text>
+          <g transform="translate(420 40)">
+            <text class="t t-b" x="0" y="0">Design rules</text>
+            <text class="t-sm" x="0" y="30">• Radial clearance 0.3–0.5 mm (test!)</text>
+            <text class="t-sm" x="0" y="54">• Axial gap between knuckles equal to c</text>
+            <text class="t-sm" x="0" y="78">• Pin diameter ≥ 4 mm for strength</text>
+            <text class="t-sm" x="0" y="102">• Use a diamond or teardrop pin to avoid</text>
+            <text class="t-sm" x="0" y="120">  support in the bore (45° roof)</text>
+            <text class="t-sm" x="0" y="144">• No supports inside the gap</text>
+            <text class="t-sm" x="0" y="168">• Flex the hinge by hand to break the bonds</text>
+          </g>
+        </svg>
+        <figcaption><b>Figure 5.</b> Cross section of a hinge. The clearance <i>c</i> must be large enough that neighboring surfaces do not fuse, and small enough that the hinge does not wobble.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Print four hinges</strong> with clearance 0.25, 0.3, 0.4 and 0.5 mm on one plate, no supports, no brim touching the knuckles.</li>
+        <li><strong>Free the hinge</strong>: flex it back and forth gently 10–20 times. Record how much force was needed ("free", "stiff", "stuck").</li>
+        <li><strong>Check wobble</strong>: hold one leaf and move the other sideways. Measure the play at the leaf tip with calipers or a feeler gauge.</li>
+        <li><strong>Choose the smallest clearance</strong> that frees without a tool. Reprint your final hinge with that value.</li>
+        <li><strong>Cycle test</strong>: open and close 500 times and note any wear, noise or cracking.</li>
+        <li><strong>Improve</strong>: replace the round bore with a teardrop shape and check if you can print with a smaller clearance and better surface.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>Four clearances tested with notes on freedom and play</li>
+        <li>A chosen clearance that frees by hand and passes the 500-cycle test</li>
+        <li>A note on which direction the hinge fails first (pin, knuckle or leaf)</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Horizontal holes are always smaller and more oval than vertical holes. Printing the hinge with its axis along the bed's X or Y direction places the pin circle in the plane of the layers, and the pin's top and bottom are the weakest surfaces. A fast, cool first layer under the knuckles also reduces fusing: keep first-layer squish moderate.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>Typical result for a 0.4 mm nozzle, 0.2 mm layers: 0.25 mm fused; 0.3 mm freed with force; 0.4 mm freed easily with 0.3 mm of play at a 25 mm leaf; 0.5 mm was sloppy. Choose 0.35 mm for a good compromise. A teardrop bore removed the rough roof in the bore. For a tighter hinge, print a pin with 45° flats and a cone-shaped end that self-centres. Read <a href="../design/design-patterns.html">Design patterns &amp; recipes</a> and <a href="../design/joints-and-fasteners.html">Joints &amp; fasteners</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L3-5">
+    <header><span class="badge advanced">Level 3 · Hard</span><h3>Exercise 5 — Snap-fit with strain calculation</h3><span class="badge time">⏱ 3 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Design a cantilever snap-fit so that the maximum strain in the beam stays below a safe limit for the material, then print it and test it for 100 cycles. You will use a one-line formula to choose the beam dimensions instead of trial and error.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li><a href="models/snap_fit_test.scad">snap_fit_test.scad</a>, which prints the strain with <code>echo()</code> for any beam values</li>
+        <li>PETG or nylon (PLA is brittle) and optionally PLA to compare</li>
+        <li>Calipers and a pen to record the number of cycles</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 270" role="img" aria-label="Cantilever beam with a hook deflected by h, with length L and thickness t, and the strain formula; below, a strain limit bar chart for PLA, PETG and nylon">
+          <rect class="d-plastic" x="40" y="100" width="40" height="110"/>
+          <path class="d-plastic" d="M80 110 H190 V126 H206 L190 142 H80 z"/>
+          <path class="d-dash" d="M80 110 C 140 90, 170 80, 200 70"/>
+          <path class="d-thin arrow arrow-start" d="M215 100 V76"/>
+          <text class="t-sm" x="222" y="92">h</text>
+          <path class="d-thin arrow arrow-start" d="M80 160 H190"/>
+          <text class="t-sm t-c" x="135" y="178">L</text>
+          <rect class="f-teal" x="260" y="40" width="240" height="130" rx="10"/>
+          <text class="t-sm t-b" x="276" y="66">Root strain (rectangular beam)</text>
+          <text class="t t-mono" x="276" y="104">ε = 1.5 · h · t / L²</text>
+          <text class="t-sm" x="276" y="132">h = deflection (mm)</text>
+          <text class="t-sm" x="276" y="150">t = thickness, L = free length (mm)</text>
+          <g transform="translate(530 40)">
+            <path class="d-ink" d="M0 0 V130 H200"/>
+            <rect class="s-red" x="20" y="90" width="40" height="40"/><rect class="s-orange" x="80" y="60" width="40" height="70"/><rect class="s-green" x="140" y="30" width="40" height="100"/>
+            <text class="t-sm t-c" x="40" y="150">PLA</text><text class="t-sm t-c" x="100" y="150">PETG</text><text class="t-sm t-c" x="160" y="150">PA</text>
+            <text class="t-xs t-m" x="0" y="172">Rough allowable strain, repeated use (a guide only)</text>
+          </g>
+          <text class="t-sm t-c" x="380" y="230">Example: h = 1 mm, t = 1.6 mm, L = 14 mm → ε = 1.5 × 1 × 1.6 / 196 = 1.2 %</text>
+        </svg>
+        <figcaption><b>Figure 6.</b> A cantilever snap-fit and its strain formula. A longer or thinner beam lowers the strain; the hook height raises it.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Choose the material</strong> and a permissible strain from a datasheet or the file comment (rough guide: PLA ~1.5 %, PETG ~3 %, nylon 4 %+; apply a safety factor of 2 for repeated use).</li>
+        <li><strong>Calculate</strong> the strain for the default beam using the formula, then change beam length L and thickness t in OpenSCAD until ε is below the limit. Remember the strength drops when layers cross the beam.</li>
+        <li><strong>Print</strong> the clip lying on its side so layer lines run along the beam. Print the socket at the same time.</li>
+        <li><strong>Cycle test</strong>: snap in and out 10 times, then 100 times. Note any whitening (stress), cracks or loosening.</li>
+        <li><strong>Break it on purpose</strong> with a design with ε about twice the limit and compare. This tells you how much margin you really have.</li>
+        <li><strong>Write down</strong> the allowed strain you validated for your material and printer.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>Strain calculation for at least three beam variants, with the formula written out</li>
+        <li>100 successful cycles for the chosen design</li>
+        <li>An over-strained variant that fails, proving the limit</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>The strain is linear in thickness and inverse to length squared. Doubling the beam length reduces the strain by a factor of four, which is by far the cheapest fix. Tapering the beam from root to tip spreads the strain better, and a fillet at the root removes the stress concentration.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>Default beam: ε = 1.5 × 1.0 × 1.6 / 14² = 1.22 %. Safe for PETG (limit about 3 %, factor 2 gives 1.5 %), borderline for PLA. A PLA design with L = 20 mm and t = 1.6 mm has ε = 1.5 × 1.0 × 1.6 / 400 = 0.6 %, which survived 100 cycles in practice. With h = 2 mm and L = 14 mm the strain is 2.4 %: the PLA beam cracked after 3 cycles, PETG whitened at the root. See <a href="../design/joints-and-fasteners.html">Joints &amp; fasteners</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L3-6">
+    <header><span class="badge advanced">Level 3 · Hard</span><h3>Exercise 6 — Thread design</h3><span class="badge time">⏱ 3 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Design a printable screw thread pair (a jar-style lid or a bolt and nut) with a profile and clearance that work on your printer, and find the smallest pitch that prints reliably. ISO metric threads are too fine for most FDM printing at small sizes; coarse trapezoidal threads work much better.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>A CAD tool that can make a helical sweep (Fusion coil, FreeCAD helix, OpenSCAD <code>linear_extrude</code> with <code>twist</code>)</li>
+        <li>Calipers, your tolerance table (L2-6), a 0.4 mm nozzle and 0.12–0.2 mm layers</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 270" role="img" aria-label="Three thread profiles in section: sharp 60 degree ISO, trapezoidal with flat crest and root, and square thread, each with pitch P and a clearance gap between mating threads">
+          <g>
+            <path class="d-plastic" d="M30 150 L50 90 L70 150 L90 90 L110 150 L130 90 L150 150 V180 H30 z"/>
+            <path class="d-dash" d="M30 160 L50 100 L70 160 L90 100 L110 160 L130 100 L150 160"/>
+            <text class="t-sm t-c t-b" x="90" y="40">60° ISO V-thread</text>
+            <text class="t-sm t-c" x="90" y="206">crests wear and overhang 30°</text>
+            <text class="t-sm t-c" x="90" y="224">fine pitch = poor print</text>
+          </g>
+          <g>
+            <path class="d-plastic" d="M280 150 L300 100 H320 L340 150 H360 L380 100 H400 L420 150 V180 H280 z"/>
+            <text class="t-sm t-c t-b" x="350" y="40">Trapezoidal / 45° buttress</text>
+            <text class="t-sm t-c" x="350" y="206">flanks ≤ 45°: no support needed</text>
+            <text class="t-sm t-c" x="350" y="224">pitch 2–4 mm for Ø 20–60</text>
+          </g>
+          <g>
+            <path class="d-plastic" d="M570 150 V100 H590 V150 H610 V100 H630 V150 H650 V100 H670 V150 V180 H570 z"/>
+            <text class="t-sm t-c t-b" x="620" y="40">Square thread</text>
+            <text class="t-sm t-c" x="620" y="206">strong, but 90° overhang</text>
+            <text class="t-sm t-c" x="620" y="224">needs support or vertical print</text>
+          </g>
+          <path class="d-thin arrow arrow-start" d="M300 80 H340"/><text class="t-sm t-c" x="320" y="72">P</text>
+        </svg>
+        <figcaption><b>Figure 7.</b> Thread profiles. A flank angle of 45° or less avoids supports; the coarser the pitch, the more forgiving the thread is to printing errors.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Choose the profile</strong>: trapezoidal, 45° flanks, pitch about 3 mm for a 30 mm diameter lid. For a small bolt use the standard M8 × 1.25 only if you are going to print a dedicated test.</li>
+        <li><strong>Model both parts</strong> from the same parametric profile, and add a radial clearance <code>c</code> to the nut (try 0.2, 0.3 and 0.4 mm).</li>
+        <li><strong>Print vertically</strong> (the axis is Z) so the thread is made of full rings. Use 0.12–0.16 mm layers for small pitches.</li>
+        <li><strong>Test</strong>: Does the nut start by hand? Does it spin freely, with wobble, or bind? Count turns until fully seated.</li>
+        <li><strong>Torque test</strong>: tighten by hand with a lever until the thread strips and note whether the bolt or the nut fails.</li>
+        <li><strong>Add a lead-in chamfer</strong> and a thread start relief (the first half turn cut flat) so it does not cross-thread.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>A bolt/nut or lid/jar pair that closes smoothly by hand</li>
+        <li>A table of clearance vs feel, with the best value highlighted</li>
+        <li>A minimum pitch for your printer and a design note (profile, clearance, orientation)</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>A vertical thread's accuracy depends on the XY accuracy of the printer, so keep the thread diameter large. If the nut binds only at one point, the thread is out of round because a seam sits in the thread; move the seam to the least visible position and print a few perimeter rings with "avoid crossing walls" off.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>Example for a 30 mm lid in PETG: trapezoidal profile, pitch 3 mm, thread depth 1.5 mm, radial clearance 0.3 mm. With 0.2 mm the lid needed force, with 0.4 mm it wobbled slightly but sealed. Selected 0.3 mm, 3 turns to close. Also test the O-ring or rubber seal if you need waterproof behavior: printed threads are not watertight without a gasket. Rule: ISO threads below about M6 should be tapped or heat-set (see <a href="level-2-intermediate.html#L2-14">L2-14</a>); above M12 or in custom coarse form they print well. More in <a href="../design/joints-and-fasteners.html">Joints &amp; fasteners</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L3-7">
+    <header><span class="badge advanced">Level 3 · Hard</span><h3>Exercise 7 — Custom filament profile</h3><span class="badge time">⏱ 4 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Create a complete, shareable filament profile for a spool that has no factory profile: temperature, flow, pressure advance, cooling, maximum volumetric speed, drying temperature and retraction, all validated by tests. Name it clearly and document the test results.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>A spool of a filament without a ready-made profile (brand-specific PETG, a silk PLA, a matte PLA or a composite)</li>
+        <li>The results and models of exercises L2-1, L2-2, L2-3, L3-1 and L3-3</li>
+        <li>Your slicer's profile export function</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 780 260" role="img" aria-label="Flow chart of profile creation: start from a similar profile, then dry, temperature, flow, pressure advance, volumetric speed, cooling, retraction, validation print, save and document">
+          <g>
+            <rect class="f-gray" x="10" y="20" width="120" height="50" rx="8"/><text class="t-sm t-c" x="70" y="50">Clone similar</text>
+            <rect class="f-blue" x="150" y="20" width="110" height="50" rx="8"/><text class="t-sm t-c" x="205" y="50">Dry &amp; check</text>
+            <rect class="f-orange" x="280" y="20" width="110" height="50" rx="8"/><text class="t-sm t-c" x="335" y="50">Temperature</text>
+            <rect class="f-green" x="410" y="20" width="110" height="50" rx="8"/><text class="t-sm t-c" x="465" y="50">Flow ratio</text>
+            <rect class="f-purple" x="540" y="20" width="110" height="50" rx="8"/><text class="t-sm t-c" x="595" y="50">Pressure adv.</text>
+            <rect class="f-teal" x="670" y="20" width="100" height="50" rx="8"/><text class="t-sm t-c" x="720" y="50">Max flow</text>
+            <path class="d-ink arrow" d="M130 45 H148 M260 45 H278 M390 45 H408 M520 45 H538 M650 45 H668"/>
+          </g>
+          <g>
+            <rect class="f-yellow" x="10" y="130" width="120" height="50" rx="8"/><text class="t-sm t-c" x="70" y="160">Cooling</text>
+            <rect class="f-pink" x="150" y="130" width="110" height="50" rx="8"/><text class="t-sm t-c" x="205" y="160">Retraction</text>
+            <rect class="f-red" x="280" y="130" width="110" height="50" rx="8"/><text class="t-sm t-c" x="335" y="160">Validate</text>
+            <rect class="f-green" x="410" y="130" width="110" height="50" rx="8"/><text class="t-sm t-c" x="465" y="160">Save &amp; name</text>
+            <rect class="f-blue" x="540" y="130" width="230" height="50" rx="8"/><text class="t-sm t-c" x="655" y="160">Document &amp; share</text>
+            <path class="d-ink arrow" d="M130 155 H148 M260 155 H278 M390 155 H408 M520 155 H538"/>
+          </g>
+          <path class="d-ink arrow" d="M720 70 V100 H70 V128"/>
+          <text class="t-sm t-c t-m" x="390" y="224">Always change one group of values at a time and re-run the validation print at the end.</text>
+        </svg>
+        <figcaption><b>Figure 8.</b> A profile is the end of a chain of small tests. Skipping a step usually forces you to repeat it later.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Clone</strong> the closest existing profile (same polymer family) and rename it: <em>Brand · Type · Color · Version</em>.</li>
+        <li><strong>Run the tests in order</strong> (dry, temperature, flow, pressure advance, volumetric flow, cooling, retraction) and enter each result immediately.</li>
+        <li><strong>Check special properties</strong>: silk and metallic filaments want lower speed and higher temperature, matte filaments often prefer less cooling, CF and GF composites need a hardened nozzle (see <a href="../materials/engineering-plastics.html">Engineering plastics</a>).</li>
+        <li><strong>Validate</strong> with a demanding part: bridges, fine text, a snap-fit or a large flat area, and compare with a print from the base profile.</li>
+        <li><strong>Document</strong> the spool (brand, lot, color, diameter measured at five points), the values, the test photos and the date in a short text file saved next to the exported profile.</li>
+        <li><strong>Export</strong> the profile and re-import it on a clean install to confirm nothing is missing.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>A named profile with all values filled in and verified by a test for each</li>
+        <li>A validation print that equals or beats the base profile</li>
+        <li>An exported file and a one-page note describing the test results</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Measure the real filament diameter (mean of 5 positions and 2 directions) and enter it. A 1.70 mm spool declared as 1.75 mm causes 5 % under-extrusion. Colors of the same brand can have different temperature requirements because pigments change flow and cooling behavior, so keep color in the profile name.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>Example documentation entry: "Brand SilkPLA Gold v1, lot 25-03, Ø 1.74 ± 0.02. Nozzle 225 °C, bed 55 °C, flow 0.96, K 0.035, max flow 12 mm³/s, fan 60 %, retraction 0.8 mm at 30 mm/s, dry 50 °C for 6 h. Validated with a vase and a bridge test; strings: none; layer bond: weaker than standard PLA, avoid load-bearing parts." This level of detail enables a repeat later. See <a href="../x2d/settings-and-profiles.html">Bambu Studio settings &amp; profiles</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L3-8">
+    <header><span class="badge advanced">Level 3 · Hard</span><h3>Exercise 8 — Multi-material with minimal waste</h3><span class="badge time">⏱ 3 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Reduce the waste of a multi-color print by at least 50 % without damaging quality, using color order, flush volume tuning, design changes and the ability of the printer to flush into infill or sacrificial objects.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>A part with 3 colors that change many times (a logo tile with text and a border works), plus a baseline print from <a href="level-2-intermediate.html#L2-15">L2-15</a></li>
+        <li>A multi-filament system (AMS or AMS 2 Pro) and a kitchen scale (0.1 g)</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 260" role="img" aria-label="Stacked bars comparing waste: baseline with large purge tower, optimized with merged color changes and flushing into infill, and the effect of each measure in grams">
+          <path class="d-ink" d="M60 30 V210 H430"/>
+          <g class="t-sm t-r"><text x="52" y="214">0</text><text x="52" y="164">5</text><text x="52" y="114">10</text><text x="52" y="64">15</text></g>
+          <rect class="s-red" x="100" y="40" width="70" height="170"/>
+          <rect class="s-orange" x="220" y="110" width="70" height="100"/>
+          <rect class="s-green" x="340" y="160" width="70" height="50"/>
+          <text class="t-sm t-c" x="135" y="230">Baseline</text><text class="t-sm t-c" x="255" y="230">Color order + volumes</text><text class="t-sm t-c" x="375" y="230">+ design changes</text>
+          <text class="t-sm t-c t-b" x="135" y="34">17 g</text><text class="t-sm t-c t-b" x="255" y="104">9 g</text><text class="t-sm t-c t-b" x="375" y="154">4 g</text>
+          <g transform="translate(470 40)">
+            <text class="t t-b" x="0" y="0">Waste reduction levers</text>
+            <text class="t-sm" x="0" y="28">1. Fewer color changes per layer</text>
+            <text class="t-sm" x="0" y="50">2. Light → dark order where possible</text>
+            <text class="t-sm" x="0" y="72">3. Lower flush volume for similar colors</text>
+            <text class="t-sm" x="0" y="94">4. Flush into infill or a sacrificial part</text>
+            <text class="t-sm" x="0" y="116">5. Merge small color regions by design</text>
+            <text class="t-sm" x="0" y="138">6. Smaller or no prime tower where allowed</text>
+            <text class="t-xs t-m" x="0" y="168">Bar values are example figures.</text>
+          </g>
+        </svg>
+        <figcaption><b>Figure 9.</b> Waste can often be cut to a quarter of the default by combining several small measures.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Measure the baseline</strong>: slice with default flush settings, note the slicer's waste estimate and the number of filament changes, print, and weigh the flushed material (or read it from the slicer's statistics).</li>
+        <li><strong>Reorder the colors</strong> in the slots and check the effect in the slicer's flush matrix. Pairs such as dark → light need more flush than light → dark.</li>
+        <li><strong>Edit the flush volumes</strong> for similar colors (e.g. two blues) lower, but never to zero when you can see color bleeding.</li>
+        <li><strong>Use "flush into infill" or "flush into objects"</strong> if your slicer offers it, so that purge material becomes part of hidden internal structure.</li>
+        <li><strong>Redesign</strong> the part: place color transitions at layer boundaries, make regions of one color tall instead of thin and widely separated.</li>
+        <li><strong>Print the optimized version</strong> and compare weight, time and appearance with the baseline.</li>
+      </ol>
+      <div class="callout x2d"><span class="callout-title">X2D note</span><p>With two nozzles, each nozzle holds one filament, so assigning the two main colors to the two nozzles removes most changes of those colors. The remaining colors still need flushing. See <a href="../x2d/dual-nozzle-printing.html">Dual-nozzle printing</a> for the rules for which material can go where.</p></div>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>Baseline and optimized waste in grams, with the percent reduction</li>
+        <li>A comparison photo showing no visible color contamination in the optimized print</li>
+        <li>A list of the measures that gave the biggest gains</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>The number of color changes is more important than the volume of one change. If your model has a color on every layer, the changes multiply with layer count: 200 layers × 2 changes is 400 flushes. A model where the color changes at only 10 layers needs about 10 flushes.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>Example: logo tile with 3 colors, 60 layers. Baseline 17 g waste, 180 changes. Reordering colors cut 3 g, reducing flush volumes for two similar colors another 2 g, enabling "flush into infill" saved 3 g, redesigning the text as thick raised letters (fewer color layers) saved 5 g; final 4 g. Quality is equal. Rule: before touching settings, look at the model. Read <a href="../techniques/multi-color-and-multi-material.html">Multi-color &amp; multi-material</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L3-9">
+    <header><span class="badge advanced">Level 3 · Hard</span><h3>Exercise 9 — Annealing experiment</h3><span class="badge time">⏱ 4 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Anneal printed parts (heat them below the melting point so the polymer crystallizes more) and measure the change in heat resistance, stiffness and dimensions. The effect varies widely between materials and brands, so you test your own.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>Four identical parts or bars of a crystallizable material (PLA of a type marked for annealing, PETG is not typically annealed, nylon or PA usually after drying); mark each with a number</li>
+        <li>An oven with a reliable thermometer (separate from the oven display), a baking tray and sand or salt for support, calipers</li>
+        <li>A kitchen oven is not suitable for food after use with plastic: use a dedicated one or a filament dryer that reaches the required temperature</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 260" role="img" aria-label="Annealing temperature schedule: ramp up, hold at annealing temperature above glass transition and below melting, and slow cool, plus a table of measured shrinkage and heat deflection before and after">
+          <path class="d-ink" d="M40 30 V200 H380"/>
+          <path class="d-dash" d="M40 80 H380"/><text class="t-xs" x="48" y="74">glass transition Tg (PLA ≈ 60 °C)</text>
+          <path class="d-dash" d="M40 40 H380"/><text class="t-xs" x="48" y="34">melting range</text>
+          <polyline class="k-orange" points="40,200 100,200 150,100 300,100 340,190 360,198"/>
+          <text class="t-sm t-c" x="125" y="220">ramp</text><text class="t-sm t-c" x="225" y="220">hold 30–60 min</text><text class="t-sm t-c" x="335" y="220">slow cool</text>
+          <text class="t-sm t-c t-b" x="225" y="90">anneal temperature (e.g. 80–100 °C)</text>
+          <g transform="translate(420 30)">
+            <text class="t t-b" x="0" y="0">Record for every part</text>
+            <text class="t-sm" x="0" y="26">• Length, width, height before / after (mm)</text>
+            <text class="t-sm" x="0" y="48">• Warping or distortion (photo)</text>
+            <text class="t-sm" x="0" y="70">• Hardness / stiffness: bend by hand</text>
+            <text class="t-sm" x="0" y="92">• Heat test: temperature of first sag</text>
+            <text class="t-sm t-b" x="0" y="118">Typical findings (verify!)</text>
+            <text class="t-sm" x="0" y="140">• 1–5 % shrinkage in some directions</text>
+            <text class="t-sm" x="0" y="162">• Higher heat resistance</text>
+            <text class="t-sm" x="0" y="184">• More brittle for some filaments</text>
+          </g>
+        </svg>
+        <figcaption><b>Figure 10.</b> The annealing schedule: slow ramp, hold above Tg and well below the melting point, then cool slowly in the oven.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Check the material data</strong> for the recommended annealing temperature. Never exceed it: parts soften and sag. Stay well below the melt temperature.</li>
+        <li><strong>Measure all parts</strong> in three directions and weigh them. Keep one part as an unannealed control.</li>
+        <li><strong>Embed parts</strong> in a tray of sand or salt to hold their shape (hollow parts need support).</li>
+        <li><strong>Heat</strong> as in Figure 10. Try two hold times (30 and 60 min) or two temperatures on different parts.</li>
+        <li><strong>Cool slowly</strong> by switching off the oven and leaving the door shut until the parts are near room temperature.</li>
+        <li><strong>Measure again</strong> and compare shrinkage. Test heat resistance on a control and an annealed bar in warm water or an oven at a set temperature, and a bend test as in L2-9.</li>
+      </ol>
+      <div class="callout warn"><span class="callout-title">Safety</span><p>Work in a ventilated space, do not use a food oven unless you accept the contamination, and never heat plastics near their decomposition range. Let hot sand cool before handling.</p></div>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>Dimension table before and after for each annealing condition</li>
+        <li>Heat resistance and bend result of annealed vs control</li>
+        <li>A conclusion on whether annealing helps your material, and a rule to compensate shrinkage in CAD</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>If a feature has to fit after annealing, print it larger by the measured shrinkage factor (scale in one direction only if the shrinkage is anisotropic). Annealing works best with thick, solid parts: thin-walled hollow parts distort and gain little.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>Example: PLA bars annealed at 90 °C for 45 min in sand. Length change −0.8 %, height +0.3 %, sand-supported parts stay straight. Heat test: the control sagged in 60 °C water, the annealed bar kept its shape up to about 90 °C. Bend test: annealed bar failed at a slightly higher load with a more brittle break. Conclusion: use annealing only when heat resistance is the priority and scale holes by +0.8 %. For high-temperature use, engineering materials in the heated X2D chamber are an alternative (<a href="../x2d/engineering-and-chamber.html">Engineering materials &amp; chamber</a>); see also <a href="../techniques/post-processing.html">Post-processing</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L3-10">
+    <header><span class="badge advanced">Level 3 · Hard</span><h3>Exercise 10 — CAD scripting (OpenSCAD or CadQuery)</h3><span class="badge time">⏱ 4 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Write a part as code, with parameters, loops and conditionals, so you can generate a whole family of parts (for example a screwdriver-bit holder with N slots) from one file and keep it under version control.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>OpenSCAD (free) or Python with CadQuery</li>
+        <li>A text editor, a version-control tool (git) is recommended</li>
+        <li>The reference <a href="models/parametric_box.scad">parametric_box.scad</a></li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 290" role="img" aria-label="A code snippet on the left generating a bit holder with a for loop and a preview of the holder with six hex holes on the right">
+          <rect class="d-surface" x="10" y="10" width="420" height="270" rx="8"/>
+          <g class="t-sm t-mono">
+            <text x="24" y="38" class="t-m">// bit_holder.scad</text>
+            <text x="24" y="60">n = 6;  pitch = 14;  bit = 6.35;</text>
+            <text x="24" y="82">h = 20; wall = 3; clr = 0.25;</text>
+            <text x="24" y="112">difference() {</text>
+            <text x="40" y="134">cube([n*pitch+wall, 2*wall+bit, h]);</text>
+            <text x="40" y="156">for (i = [0:n-1])</text>
+            <text x="56" y="178">translate([wall+pitch/2+i*pitch,</text>
+            <text x="56" y="200">  wall+bit/2, wall])</text>
+            <text x="72" y="222">cylinder(d=bit+clr, h=h, $fn=6);</text>
+            <text x="24" y="250">}</text>
+          </g>
+          <rect class="f-blue" x="460" y="60" width="290" height="80" rx="8"/>
+          <g class="s-white"><circle cx="500" cy="100" r="11" style="fill:var(--surface)"/><circle cx="540" cy="100" r="11" style="fill:var(--surface)"/><circle cx="580" cy="100" r="11" style="fill:var(--surface)"/><circle cx="620" cy="100" r="11" style="fill:var(--surface)"/><circle cx="660" cy="100" r="11" style="fill:var(--surface)"/><circle cx="700" cy="100" r="11" style="fill:var(--surface)"/></g>
+          <text class="t-sm t-c t-b" x="605" y="44">Result: n = 6 holes</text>
+          <text class="t-sm t-c" x="605" y="170">change n and pitch: the block grows</text>
+          <text class="t-sm t-c" x="605" y="192">print: one file, any size</text>
+          <text class="t-sm t-c" x="605" y="224">CadQuery: same idea in Python</text>
+          <text class="t-sm t-c t-mono" x="605" y="248">cq.Workplane().rarray(14,1,6,1).polygon(6,6.6)</text>
+        </svg>
+        <figcaption><b>Figure 11.</b> A loop replaces six copy-and-paste operations. The code is the design.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Pick a part</strong> with repeated features: a bit holder, a battery organizer, a hex-key holder, a pegboard hook set or a gear tooth ring.</li>
+        <li><strong>Put every number</strong> at the top as a named parameter with units and a comment.</li>
+        <li><strong>Generate repeated features</strong> with a loop and conditionals (e.g. only add a label if <code>label != ""</code>).</li>
+        <li><strong>Add input checks</strong>: <code>assert(wall &gt;= 1.2, "wall too thin")</code>.</li>
+        <li><strong>Export two or more variants</strong> by changing parameters from the command line (<code>openscad -D n=8 -o out.stl file.scad</code>) or by editing CadQuery variables.</li>
+        <li><strong>Commit</strong> the file with a message; tag the version you printed.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>One script producing at least three different valid parts through parameters</li>
+        <li>Input checks that block invalid combinations</li>
+        <li>An STL printed from the script, and the script saved in version control</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Test the extremes: n = 1, n = 20, the smallest wall and the largest diameter. If the preview works but the export fails with a non-manifold error, a shape probably touches another exactly on a face; extend one by 0.01 mm so they overlap. Keep each module small and name it after what it makes.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>A good solution has: parameters at the top, a <code>module bit_slot()</code>, a loop over slots, a label text engraved on the front, an assertion that the wall is at least 1.2 mm and a comment block explaining each parameter. The loop in Figure 11 gives a six-slot holder; with <code>n = 10</code> it automatically grows. Compare with the structure of <a href="models/parametric_box.scad">parametric_box.scad</a>. A CadQuery version uses a <code>Workplane</code> and <code>rarray</code>. Background: <a href="../design/parametric-cad-workflow.html">Parametric CAD workflow</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L3-11">
+    <header><span class="badge advanced">Level 3 · Hard</span><h3>Exercise 11 — Gear design</h3><span class="badge time">⏱ 4 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Design and print a pair of spur gears with a chosen ratio, correct center distance and enough backlash to run smoothly, then measure how well they mesh. Gears show every error in your printer's accuracy.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>A gear generator or script: an OpenSCAD involute-gear module you write or any open-source library for your CAD tool (you may use libraries in your own work; this site's models use none)</li>
+        <li>Two M3 or M4 screws as axles and a baseplate with two holes at the calculated distance</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 270" role="img" aria-label="Two meshing spur gears with pitch circles tangent, labelled module, tooth counts, center distance, and a table of formulas">
+          <circle class="d-surface" cx="130" cy="135" r="90"/>
+          <circle class="d-dash" cx="130" cy="135" r="80"/>
+          <circle class="d-surface2" cx="274" cy="135" r="54"/>
+          <circle class="d-dash" cx="274" cy="135" r="46"/>
+          <circle class="d-solid" cx="130" cy="135" r="5"/><circle class="d-solid" cx="274" cy="135" r="5"/>
+          <path class="d-thin arrow arrow-start" d="M130 250 H274"/>
+          <text class="t-sm t-c" x="202" y="266">a = center distance</text>
+          <text class="t-sm t-c t-b" x="130" y="30">z₁ = 20</text><text class="t-sm t-c t-b" x="274" y="60">z₂ = 12</text>
+          <g transform="translate(400 30)">
+            <rect class="f-teal" x="0" y="0" width="350" height="210" rx="10"/>
+            <text class="t t-b" x="14" y="28">Spur gear formulas (module m)</text>
+            <text class="t-sm t-mono" x="14" y="58">pitch diameter  d  = m · z</text>
+            <text class="t-sm t-mono" x="14" y="80">outside diameter da = m · (z + 2)</text>
+            <text class="t-sm t-mono" x="14" y="102">root diameter  df = m · (z − 2.5)</text>
+            <text class="t-sm t-mono" x="14" y="124">center distance a = m · (z₁ + z₂) / 2</text>
+            <text class="t-sm t-mono" x="14" y="146">ratio i = z₂ / z₁</text>
+            <text class="t-sm" x="14" y="176">Example m = 2: z₁ = 20, z₂ = 12 → a = 32 mm,</text>
+            <text class="t-sm" x="14" y="196">ratio 0.6 (output turns 1.67× faster).</text>
+          </g>
+        </svg>
+        <figcaption><b>Figure 12.</b> Two meshing spur gears. The pitch circles (dashed) touch at the contact point; the center distance follows from the module and tooth counts.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Choose the module</strong> m = 1.5 to 2 for a 0.4 mm nozzle (module 1 teeth are only 2.2 mm tall and small-detailed). Choose tooth counts for your ratio; avoid fewer than 12 teeth to avoid undercut.</li>
+        <li><strong>Calculate</strong> d, da and a with the formulas in Figure 12.</li>
+        <li><strong>Add backlash</strong> by increasing the center distance by 0.1–0.3 mm or by thinning teeth slightly. Print three baseplates with a = nominal, +0.15, +0.3 mm.</li>
+        <li><strong>Print gears flat</strong> so that the teeth are in the XY plane (best accuracy and strongest teeth).</li>
+        <li><strong>Test</strong>: turn by hand; feel for binding, count backlash by rocking one gear. Run for a few minutes and check for wear or noise.</li>
+        <li><strong>Try a variation</strong>: herringbone or helical gears for quieter running, or a rack and pinion.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>A calculation sheet for both gears and the center distance</li>
+        <li>A baseplate that turns smoothly with small backlash</li>
+        <li>A note of the best center-distance addition for your printer</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>If the gears bind at some positions only, the bore is off-center or the gear is not round (check the first-layer squish). If they run smoothly but click, the center distance is too large. A bore with a clearance of 0.2–0.3 mm on an axle of known diameter is better than a press fit for the test.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>Example: m = 2, z₁ = 20, z₂ = 12: d₁ = 40, d₂ = 24, a = 32 mm. The nominal plate bound slightly; a = 32.2 mm gave smooth running with about 1° of backlash; a = 32.4 mm was loud. Final choice 32.2 mm. Use PETG or nylon for wear resistance or add a small amount of lubricant (dry silicone or PTFE) suitable for plastics. See <a href="../design/design-patterns.html">Design patterns &amp; recipes</a> for more mechanism recipes.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L3-12">
+    <header><span class="badge advanced">Level 3 · Hard</span><h3>Exercise 12 — Designing a mechanism</h3><span class="badge time">⏱ 5 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Design a working four-bar linkage (for example a gripper, a parallel clamp or a walking leg) starting from a sketch and angle calculation, print it with pins or print-in-place joints, and compare the motion with your simulation.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>Graph paper or a 2D CAD sketch with constraints, or a free linkage simulator</li>
+        <li>3 mm filament offcuts or M3 screws as pins, a drill for cleaning holes</li>
+        <li>Your clearance values from L3-4</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 270" role="img" aria-label="A four-bar linkage with fixed ground link, input crank, coupler and rocker at two positions, with link lengths a, b, c and d and the Grashof condition">
+          <circle class="d-solid" cx="100" cy="200" r="7"/><circle class="d-solid" cx="320" cy="200" r="7"/>
+          <path class="d-ink" d="M100 200 H320"/>
+          <path class="k-blue" d="M100 200 L140 110"/>
+          <path class="k-green" d="M140 110 L270 90"/>
+          <path class="k-orange" d="M270 90 L320 200"/>
+          <circle class="s-blue" cx="140" cy="110" r="6"/><circle class="s-orange" cx="270" cy="90" r="6"/>
+          <path class="d-dash" d="M100 200 L180 160"/><path class="d-dash" d="M180 160 L300 150"/><path class="d-dash" d="M300 150 L320 200"/>
+          <text class="t-sm t-c" x="210" y="222">d (ground)</text><text class="t-sm" x="104" y="150">a (crank)</text><text class="t-sm t-c" x="215" y="76">b (coupler)</text><text class="t-sm" x="298" y="140">c (rocker)</text>
+          <g transform="translate(400 30)">
+            <rect class="f-purple" x="0" y="0" width="350" height="210" rx="10"/>
+            <text class="t t-b" x="14" y="28">Check before printing</text>
+            <text class="t-sm" x="14" y="56">Grashof: s + l ≤ p + q</text>
+            <text class="t-sm" x="14" y="74">(shortest + longest ≤ the other two)</text>
+            <text class="t-sm" x="14" y="100">→ at least one link can rotate fully.</text>
+            <text class="t-sm" x="14" y="128">Example a = 30, b = 80, c = 60, d = 90:</text>
+            <text class="t-sm t-mono" x="14" y="150">30 + 90 = 120 ≤ 80 + 60 = 140 ✓</text>
+            <text class="t-sm" x="14" y="178">Also check: no singular position and</text>
+            <text class="t-sm" x="14" y="196">transmission angle between 40° and 140°.</text>
+          </g>
+        </svg>
+        <figcaption><b>Figure 13.</b> Four-bar linkage in two positions (solid and dashed). The Grashof rule predicts whether the shortest link can rotate completely.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Define the motion</strong> you need (output angle range, force direction). Sketch the linkage and choose link lengths.</li>
+        <li><strong>Check the Grashof condition</strong> and the transmission angle at the extreme positions. Simulate in 2D CAD by dragging the constrained sketch.</li>
+        <li><strong>Design joints</strong>: pin joints with 0.2–0.3 mm clearance around a 3 mm pin, or print-in-place pins (L3-4). Add stops to limit the travel.</li>
+        <li><strong>Print one link at a time</strong> as a test to check hole sizes before the full assembly.</li>
+        <li><strong>Assemble and measure</strong> the real positions of the output at 5 input angles. Compare with the calculation.</li>
+        <li><strong>Iterate</strong>: if it binds at an extreme angle, the transmission angle there is too small; lengthen a link or move a pivot.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>A sketch with link lengths and a Grashof check</li>
+        <li>A working mechanism that moves through its full intended range without binding</li>
+        <li>A table comparing predicted and measured output angles within a few degrees</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Printed holes and links bend and flex: widen links in the plane of motion, and add a washer or spacer so links do not rub on each other in the Z direction. Keep joints in the same plane as the build plate so the pin holes print accurately.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>The example 30 / 80 / 60 / 90 mm linkage meets Grashof (120 ≤ 140) so the 30 mm crank can rotate fully while the rocker oscillates about 70°. Predicted and measured output angles agreed within about 3° at five positions; the deviation came from 0.3 mm joint clearance. Add a 1 mm spacer between the layers of links to avoid rubbing. Design patterns for hinges and joints are in <a href="../design/design-patterns.html">Design patterns &amp; recipes</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L3-13">
+    <header><span class="badge advanced">Level 3 · Hard</span><h3>Exercise 13 — Optimizing print time vs strength</h3><span class="badge time">⏱ 5 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Find the best trade-off between print time and strength for one bracket by varying wall count, infill density and layer height, then show the results on a time-versus-strength chart (the Pareto front). You will learn which settings give a lot of strength per minute.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>A simple test part: a 100 × 15 × 10 mm bar or the L-bracket from L2-12</li>
+        <li>The load rig from L2-9, a kitchen scale and your slicer's time estimate</li>
+        <li>Nine to twelve parts: three levels each of two variables, e.g. walls 2/4/6 and infill 10/25/50 % (a small DoE; see <a href="level-4-expert.html#L4-6">L4-6</a> for the full method)</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 270" role="img" aria-label="Scatter plot of print time against failure load for nine parts, with the Pareto front line connecting the efficient points and dominated points shown in gray">
+          <path class="d-grid" d="M80 40 H460 M80 90 H460 M80 140 H460 M80 190 H460 M80 40 V230 M175 40 V230 M270 40 V230 M365 40 V230 M460 40 V230"/>
+          <path class="d-ink" d="M80 40 V230 H460"/>
+          <text class="t-sm t-c" x="270" y="256">print time (min) →</text>
+          <text class="t-sm" x="8" y="30">failure load ↑</text>
+          <g class="s-gray"><circle cx="140" cy="200" r="6"/><circle cx="200" cy="170" r="6"/><circle cx="240" cy="210" r="6"/><circle cx="330" cy="150" r="6"/><circle cx="410" cy="120" r="6"/></g>
+          <g class="s-green"><circle cx="110" cy="186" r="7"/><circle cx="170" cy="120" r="7"/><circle cx="260" cy="80" r="7"/><circle cx="380" cy="56" r="7"/></g>
+          <polyline class="k-green" style="stroke-dasharray:6 4" points="110,186 170,120 260,80 380,56"/>
+          <text class="t-sm" x="116" y="178">fast &amp; weak</text><text class="t-sm" x="177" y="112">sweet spot</text><text class="t-sm" x="386" y="52">slow &amp; strong</text>
+          <g transform="translate(500 50)">
+            <text class="t t-b" x="0" y="0">How to read it</text>
+            <text class="t-sm" x="0" y="28">Green: no other part is both</text>
+            <text class="t-sm" x="0" y="46">faster and stronger (Pareto front).</text>
+            <text class="t-sm" x="0" y="74">Gray: dominated; drop these settings.</text>
+            <text class="t-sm" x="0" y="102">Typical finding: walls add strength</text>
+            <text class="t-sm" x="0" y="120">more cheaply than infill, and infill</text>
+            <text class="t-sm" x="0" y="138">above ~30 % has little effect.</text>
+            <text class="t-xs t-m" x="0" y="170">Illustrative data, not measurements.</text>
+          </g>
+        </svg>
+        <figcaption><b>Figure 14.</b> Every test part is a point. Only the points on the green front are worth printing; all others are beaten by a faster or stronger one.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Define the load case</strong> (bending across the bar) and the response (failure load).</li>
+        <li><strong>Make a table</strong> of nine setting combinations and record slicer time and weight for each.</li>
+        <li><strong>Print</strong> in random order on random plate positions to avoid systematic errors.</li>
+        <li><strong>Test every part</strong> and record the load at failure and the failure type.</li>
+        <li><strong>Plot</strong> time vs load as in Figure 14, mark the Pareto front, and compute strength per gram and per minute.</li>
+        <li><strong>Choose the settings</strong> for three situations: fastest acceptable, best compromise, strongest.</li>
+      </ol>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>A complete table of settings, time, mass and load</li>
+        <li>A scatter plot with the Pareto front identified</li>
+        <li>Three named presets saved in your slicer (e.g. "Draft", "Standard", "Strong")</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>For a bar in bending, the outer walls carry the largest stresses, so each extra wall adds more strength than the same extra material put into infill. Check wall count before infill density. For tension along the part, solid infill matters more.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <div class="table-wrap"><table class="data compact">
+          <thead><tr><th>Walls</th><th>Infill</th><th>Time</th><th>Mass</th><th>Load</th></tr></thead>
+          <tbody>
+            <tr><td>2</td><td>10 %</td><td>24 min</td><td>8 g</td><td>150 N</td></tr>
+            <tr><td>4</td><td>10 %</td><td>29 min</td><td>11 g</td><td>290 N</td></tr>
+            <tr><td>4</td><td>25 %</td><td>33 min</td><td>13 g</td><td>320 N</td></tr>
+            <tr><td>6</td><td>25 %</td><td>41 min</td><td>16 g</td><td>440 N</td></tr>
+            <tr><td>6</td><td>50 %</td><td>52 min</td><td>21 g</td><td>460 N</td></tr>
+          </tbody>
+        </table></div>
+        <p>Example only. The 4 walls / 10 % row almost doubles the strength of 2 walls for 5 minutes more; going to 50 % infill costs 11 minutes for 4 % more load. "Standard" preset: 4 walls, 15 %. Read <a href="../design/strength-and-orientation.html">Strength &amp; orientation</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L3-14">
+    <header><span class="badge advanced">Level 3 · Hard</span><h3>Exercise 14 — Vapor smoothing and finishing project</h3><span class="badge time">⏱ 4 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Take a printed part from rough to presentation-grade: sand, fill, prime and paint, or (for ABS and ASA only) vapor smooth. Document the surface quality at each stage with macro photos and measure the dimensional change.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>An ABS or ASA print (or PLA if you choose the sand-and-paint route), 6–8 cm tall with curved and flat surfaces and a snap or press-fit feature to check dimensions</li>
+        <li>Sandpaper 120–800 grit, filler primer, putty, paint and clear coat; for vapor smoothing: acetone, a sealed glass or metal container and a way to hold the part above the liquid</li>
+        <li>Nitrile gloves, respirator rated for organic vapors, ventilation or outdoors, safety glasses</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 270" role="img" aria-label="Surface cross-section at four finishing stages: as printed with layer steps, sanded, primed and filled, and vapor smoothed or painted with a smooth surface, with a roughness trend bar">
+          <g>
+            <path class="d-plastic" d="M30 180 V120 h20 v10 h10 v-10 h20 v10 h10 v-10 h20 v10 h10 v-10 h20 V180 z" style="stroke-width:2"/>
+            <text class="t-sm t-c t-b" x="90" y="36">1 · As printed</text><text class="t-sm t-c" x="90" y="214">visible layer steps</text>
+          </g>
+          <g>
+            <path class="d-plastic" d="M230 180 V124 h20 l10 2 h10 l10 -2 h20 l10 2 h10 l10 -2 V180 z"/>
+            <text class="t-sm t-c t-b" x="290" y="36">2 · Sanded</text><text class="t-sm t-c" x="290" y="214">120 → 400 grit</text>
+          </g>
+          <g>
+            <path class="d-plastic" d="M430 180 V126 H550 V180 z"/>
+            <path class="d-plastic" d="M430 126 h20 l10 3 h10 l10 -3 h20 l10 3 h10 l10 -3 V120 H430 z" style="fill:var(--surface-2)"/>
+            <text class="t-sm t-c t-b" x="490" y="36">3 · Primed</text><text class="t-sm t-c" x="490" y="214">filler primer fills grooves</text>
+          </g>
+          <g>
+            <path class="d-plastic" d="M630 180 V122 C 650 118, 670 124, 690 122 C 710 120, 730 124, 750 122 V180 z"/>
+            <text class="t-sm t-c t-b" x="690" y="36">4 · Smoothed</text><text class="t-sm t-c" x="690" y="214">vapor or paint + clear coat</text>
+          </g>
+          <path class="d-ink arrow" d="M40 245 H720"/><text class="t-sm t-c t-m" x="380" y="262">roughness decreases, size changes by ~0.05–0.3 mm per stage</text>
+        </svg>
+        <figcaption><b>Figure 15.</b> Cross sections of a surface during finishing. Each stage removes or fills the layer steps further, but also changes dimensions.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Measure and photograph</strong> the raw part: three critical dimensions, one macro photo of a curved surface.</li>
+        <li><strong>Sand</strong> through the grits wet or dry as the material allows; photograph again and measure again.</li>
+        <li><strong>Prime and fill</strong>: apply a thin coat, sand with 400 grit, repeat until the layer lines no longer show.</li>
+        <li><strong>Alternative for ABS/ASA:</strong> vapor smoothing: suspend the part above a small amount of acetone in a closed container for a short time (minutes, not hours; start with 5–10 min), then remove and let it dry in ventilated space for 24 h. The part is soft and easily damaged while wet.</li>
+        <li><strong>Paint and clear-coat</strong>, or leave the smoothed surface as is.</li>
+        <li><strong>Final inspection</strong>: compare dimensions at each stage and check if the snap or press-fit still works. Write down the dimension change you must add to the design next time.</li>
+      </ol>
+      <div class="callout danger"><span class="callout-title">Safety</span><p>Acetone is highly flammable and its vapor can ignite from a spark or a heater. Work outdoors or in a strongly ventilated space away from ignition sources, never use a heated chamber, wear protective gloves and eye protection, and keep quantities small. PLA and PETG do not smooth with acetone. Follow the safety data sheet of the chemical you use.</p></div>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>Photos and three measurements at each stage</li>
+        <li>A finished surface without visible layer lines at arm's length</li>
+        <li>A list of dimensional corrections for next time (e.g. "+0.1 mm on press-fit holes if primed")</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Thick primer layers fill detail; thin and repeated coats keep it. Start sanding with the coarsest grit that does not leave scratches you cannot remove, and avoid sanding through the shell on thin-walled parts. For vapor smoothing, cleaner results come from a clean, dry part and a short exposure repeated twice rather than one long exposure.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>Example: ASA vase, height 70 mm. After sanding to 400 grit the diameter dropped by 0.2 mm, primer added back 0.15 mm, and paint plus clear another 0.05 mm. The vapor-smoothed twin lost nearly all layer lines but rounded sharp edges by about 0.3 mm and shrank by 0.1 mm. Conclusion: design press-fit features after finishing allowances, mask them, or finish the mating faces separately. Details in <a href="../techniques/post-processing.html">Post-processing</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L3-15">
+    <header><span class="badge advanced">Level 3 · Hard</span><h3>Exercise 15 — G-code reading and custom start G-code</h3><span class="badge time">⏱ 3 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Goal</span>
+      <p>Open a G-code file in a text editor, identify what each command block does, calculate the filament use by hand for one line, and add a safe custom start or layer-change snippet (for example a message or a pause at a layer). G-code is the language your printer actually speaks.</p>
+      <span class="ex-label">You will need</span>
+      <ul>
+        <li>A sliced file as plain G-code (for Bambu printers: extract the G-code from a <code>.gcode.3mf</code> project, which is a zip archive, or export plain G-code)</li>
+        <li>A text editor that opens large files (VS Code, Notepad++)</li>
+        <li>The <a href="../software/gcode-and-firmware.html">G-code, firmware &amp; ecosystem</a> page for command references</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 780 290" role="img" aria-label="Annotated G-code excerpt with comments describing temperature setting, homing, moves and extrusion, and the E value formula for extrusion per millimeter of line">
+          <rect class="d-surface" x="10" y="10" width="440" height="270" rx="8"/>
+          <g class="t-sm t-mono">
+            <text x="24" y="38" class="t-m">; start of file</text>
+            <text x="24" y="60">M104 S220      </text>
+            <text x="24" y="82">G28            </text>
+            <text x="24" y="104">M109 S220      </text>
+            <text x="24" y="126">G92 E0         </text>
+            <text x="24" y="148">G1 Z0.2 F600   </text>
+            <text x="24" y="170">G1 X10 Y10 F6000</text>
+            <text x="24" y="192">G1 X50 Y10 E1.6 F1800</text>
+            <text x="24" y="214">G1 X50 Y50 E3.2</text>
+            <text x="24" y="236">M106 S255      </text>
+            <text x="24" y="258">G1 Z0.4 F600   </text>
+          </g>
+          <g class="t-sm">
+            <text x="220" y="60">set nozzle 220 °C, continue (no wait)</text>
+            <text x="220" y="82">home all axes</text>
+            <text x="220" y="104">set 220 °C and wait until reached</text>
+            <text x="220" y="126">reset extruder position to 0</text>
+            <text x="220" y="148">move nozzle to 0.2 mm height</text>
+            <text x="220" y="170">travel (no E value = no extrusion)</text>
+            <text x="220" y="192">print a 40 mm line, extrude 1.6 mm</text>
+            <text x="220" y="214">next 40 mm line, E now 3.2 (absolute)</text>
+            <text x="220" y="236">fan on at full speed</text>
+            <text x="220" y="258">next layer height</text>
+          </g>
+          <rect class="f-teal" x="470" y="40" width="300" height="200" rx="10"/>
+          <text class="t t-b" x="486" y="68">Extrusion per move</text>
+          <text class="t-sm" x="486" y="96">E = L · h · w / A</text>
+          <text class="t-sm" x="486" y="118">L length, h layer height, w width,</text>
+          <text class="t-sm" x="486" y="136">A = π·(d/2)² of the filament</text>
+          <text class="t-sm" x="486" y="166">L = 40, h = 0.2, w = 0.42, d = 1.75:</text>
+          <text class="t-sm t-mono" x="486" y="188">E = 40·0.2·0.42/2.405 = 1.40 mm</text>
+          <text class="t-sm t-m" x="486" y="216">The file says 1.6 mm → flow ratio ≈ 1.14</text>
+        </svg>
+        <figcaption><b>Figure 16.</b> A tiny G-code excerpt, annotated. Every print is a long list of lines like these. The E value links line length to the plastic pushed through the nozzle.</figcaption>
+      </figure>
+      <span class="ex-label">Steps</span>
+      <ol class="steps">
+        <li><strong>Find the structure</strong>: start block (heating, homing, bed leveling, purge), per-layer blocks (look for layer-change comments), end block (cool, park). Note the line numbers.</li>
+        <li><strong>Decode ten commands</strong> using the reference: M104/M109, M140/M190, G28, G90/G91, M82/M83, G92, G0/G1, M106/M107, M204 (acceleration). For each, write down its purpose.</li>
+        <li><strong>Calculate</strong> by hand the extrusion for one 20 mm outer-wall line and compare with the number in the file (as Figure 16). Explain differences with the flow ratio and line width.</li>
+        <li><strong>Customize</strong>: in the slicer's machine settings, add a harmless line to the start G-code, such as a status message or a short beep (for a printer that supports it), or a pause at a chosen layer through the slicer's layer-change field.</li>
+        <li><strong>Test on the printer</strong> with a short print. Check that the new command appears in the exported file and behaves as intended.</li>
+        <li><strong>Restore</strong> the original block afterwards if the change was only for the experiment and keep a copy of the original start G-code.</li>
+      </ol>
+      <div class="callout warn"><span class="callout-title">Careful with start G-code</span><p>Bambu and other modern printers use vendor-specific macros in the start and end blocks for calibration, filament handling and safety. Do not delete lines you do not understand; add your own lines after the existing ones, and test with the printer attended. A wrong temperature, move or missing homing command can damage the machine.</p></div>
+      <span class="ex-label">Success criteria</span>
+      <ul class="checklist">
+        <li>A commented list of at least ten commands from your file</li>
+        <li>A hand calculation of extrusion for one move with the comparison to the file</li>
+        <li>A custom snippet tested on a short print without problems</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Absolute and relative extrusion differ: with M82 the E value is the total filament pushed since the last G92 E0; with M83 each E is a delta. Check which mode the file uses before computing. Search for comments such as <code>; LAYER_CHANGE</code> or <code>;TYPE:</code> to navigate quickly.</p></details>
+      <details class="solution"><summary>Worked solution / what good looks like</summary>
+        <p>In Figure 16 the line length 40 mm at 0.2 mm × 0.42 mm needs 40 × 0.2 × 0.42 / 2.405 = 1.40 mm of filament. A file value of 1.6 mm indicates a flow ratio of about 1.14, or a wider line. Real files differ by a few percent from the ideal formula because of the flow ratio, line shape (rounded ends) and pressure advance. A harmless custom snippet: <code>M117 My profile v3</code> (display message, if supported) at the end of the start block. A pause at layer 12 is typically inserted via the slicer's "custom G-code at layer change" with the printer's pause command; check your firmware's command first.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <h2>Key takeaways</h2>
+  <ul>
+    <li>Pressure advance, flow and temperature interact; tune them in order and recheck after any change.</li>
+    <li>Use formulas to design (strain, flow rate, gear distance, linkage geometry) and tests to confirm.</li>
+    <li>Clearance values belong in a table that comes from your own printer, not from the internet.</li>
+    <li>The cheapest strength usually comes from walls, orientation and geometry, not infill.</li>
+    <li>Reading G-code removes the "magic" from the slicer: you can verify and fix what it does.</li>
+    <li>Document every experiment so that you can reproduce and share your results.</li>
+  </ul>
+
+  <h2>Next steps</h2>
+  <div class="grid cols-3">
+    <a class="card accent-purple" href="level-4-expert.html"><h3>Level 4 · Expert</h3><p>Capstone projects: compliant mechanisms, SPC, DoE, jigs, casting and open-source release.</p></a>
+    <a class="card accent-blue" href="quizzes.html"><h3>Quizzes</h3><p>Check what you have learned with instant feedback.</p></a>
+    <a class="card accent-green" href="models.html"><h3>Test models</h3><p>Ringing tower, hinge, snap-fit and other OpenSCAD files.</p></a>
+  </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Strength &amp; orientation · 3D Printing Compendium</title>
+  <meta name="description" content="Why FDM parts are weaker between layers and how to design around it: orientation, load paths, walls vs infill, stress concentrations, beam stiffness I = bh³/12, creep and heat, home testing, safety factors, annealing, fibre reinforcement and failure analysis.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+  <style>
+    .so-eq { font-family: var(--mono, ui-monospace, Consolas, monospace); background: var(--surface-2, rgba(127,127,127,.12)); padding: 2px 8px; border-radius: 6px; }
+    .so-table td:first-child { white-space: nowrap; font-weight: 600; }
+    .so-note { color: var(--muted); font-size: 13px; }
+  </style>
+</head>
+<body data-page="design/strength-and-orientation.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 5 · Design for printing</div>
+    <h1>Strength &amp; orientation</h1>
+    <p class="lead">A printed part is a stack of welded lines, strong along the line and weaker between layers. Learn to orient, shape and reinforce parts so the loads follow the strong direction, and learn how to find out (cheaply) whether a design is strong enough.</p>
+    <div class="meta"><span class="badge intermediate">Intermediate</span><span class="badge time">⏱ 50 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <p>What anisotropy means for FDM, how to choose a build orientation from the load path, why walls matter more than infill, how stiffness depends on <span class="so-eq">I = b·h³/12</span>, how creep, heat and fatigue limit printed parts, how to test a design at home, which safety factors to use and how to read a broken part. Numbers marked <em>indicative</em> are typical ranges, not test data: always test your own material and printer.</p></div>
+
+  <h2 id="anisotropy">🔰 Anisotropy: the Z direction is weak</h2>
+  <p>An FDM part is made of <b>lines</b> (extruded beads) laid side by side in <b>layers</b>. Inside one line the plastic is continuous and strong. Between two neighbouring lines in the same layer, and between two layers, the plastic is only <em>welded</em> while still warm. The weld is good but not perfect: it has the strength of the polymer minus whatever the cooling, speed and temperature took away. This gives a part <b>direction-dependent strength</b>, called <b>anisotropy</b>. The tensile strength <b>across layers (Z)</b> is typically only <b>40–80 %</b> of the strength <b>along the lines (XY)</b>, and impact and fatigue strength across layers are worse than that.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 280" role="img" aria-label="A layered block pulled along layers (strong) and across layers (weak), with indicative Z strength ranges by material">
+      <text class="t-sm t-b" x="30" y="24">Layered block</text>
+      <rect class="d-plastic" x="40" y="70" width="220" height="18"/><rect class="d-plastic" x="40" y="88" width="220" height="18"/><rect class="d-plastic" x="40" y="106" width="220" height="18"/><rect class="d-plastic" x="40" y="124" width="220" height="18"/><rect class="d-plastic" x="40" y="142" width="220" height="18"/><rect class="d-plastic" x="40" y="160" width="220" height="18"/>
+      <path class="d-ink arrow" d="M262 124 H304"/>
+      <text class="t-xs c-green t-b" x="266" y="112">XY: strong</text>
+      <path class="d-ink arrow" d="M150 68 V36" style="stroke:var(--red)"/><path class="d-ink arrow" d="M150 180 V212" style="stroke:var(--red)"/>
+      <text class="t-xs t-b" x="160" y="52" style="fill:var(--red)">Z: weak</text>
+      <text class="t-xs" x="40" y="240">Each band is one 0.2 mm layer; the bond between bands is the weak link.</text>
+      <text class="t-sm t-b" x="380" y="24">Z strength as % of XY (indicative)</text>
+      <path class="d-thin" d="M400 40 V250 M540 40 V250 M680 40 V250"/>
+      <text class="t-xs" x="396" y="266">0</text><text class="t-xs" x="530" y="266">50 %</text><text class="t-xs" x="664" y="266">100 %</text>
+      <text class="t-xs" x="330" y="64">PLA</text><rect class="f-blue" x="512" y="50" width="84" height="20" rx="3"/>
+      <text class="t-xs" x="330" y="102">PETG</text><rect class="f-green" x="526" y="88" width="84" height="20" rx="3"/>
+      <text class="t-xs" x="330" y="140">ABS / ASA</text><rect class="f-orange" x="540" y="126" width="98" height="20" rx="3"/>
+      <text class="t-xs" x="330" y="178">Nylon</text><rect class="f-purple" x="512" y="164" width="112" height="20" rx="3"/>
+      <text class="t-xs" x="330" y="216">CF-filled</text><rect class="f-red" x="456" y="202" width="84" height="20" rx="3"/>
+      <text class="t-xs t-m" x="380" y="246">Ranges shown are typical, vary with temperature, speed and cooling.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> Pull along the layers and the part is as strong as the plastic; pull across them and it is only as strong as the weld. Filled filaments lose the most because fibres align in the line direction and do not bridge layers.</figcaption>
+  </figure>
+
+  <p>Two practical points follow. First, <b>layer adhesion is improvable</b>: a hotter nozzle, a slower print, less part cooling and a warm chamber (up to 65 °C in the X2D) all increase the weld. Second, <b>the weakness is a design question</b>: you do not fix it by turning knobs, you avoid loading the part across the layers. The next sections show how.</p>
+
+  <div class="callout x2d"><span class="callout-title">X2D note</span>
+    <p>An actively heated chamber improves layer bonding in ABS, ASA, PC and nylon, which is the main reason enclosed printers produce stronger engineering parts. For the temperatures and materials, see <a href="../x2d/engineering-and-chamber.html">Engineering materials &amp; chamber</a> and <a href="../materials/engineering-plastics.html">Engineering plastics</a>.</p></div>
+
+  <h2 id="load-paths">🔰 Load paths</h2>
+  <p>A load travels through a part from where it is applied to where it is supported, along the <b>stiffest available path</b>, a bit like water flowing downhill. Draw that path (a pencil line on the sketch is enough). Wherever the path turns a sharp corner, passes through a thin neck or crosses a layer interface, that spot will be the first to fail. Your goals are to <b>keep the path short and smooth</b>, <b>put material along it</b> and <b>make sure the plastic is strong in the direction the path pulls it</b>.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 260" role="img" aria-label="Shelf bracket with a load arrow, load path line to the wall and tension and compression regions at the root">
+      <rect class="d-surface2" x="30" y="30" width="24" height="200"/>
+      <rect class="d-plastic" x="54" y="60" width="20" height="140"/><rect class="d-plastic" x="74" y="180" width="230" height="20"/>
+      <polygon class="d-plastic" points="74,180 74,110 140,180"/>
+      <path class="d-ink arrow" d="M280 120 V176" style="stroke:var(--red);stroke-width:3"/><text class="t-sm t-b" x="248" y="112" style="fill:var(--red)">Load F</text>
+      <path class="d-dash" d="M280 176 H150 Q74 176 66 130 V70" style="stroke:var(--orange);stroke-width:2"/>
+      <text class="t-xs" x="100" y="224">tension in the top fibre, compression in the bottom</text>
+      <text class="t-xs" x="320" y="176">arm: bending</text>
+      <text class="t-xs" x="84" y="56">plate: tension + peel</text>
+      <rect class="f-blue" x="400" y="20" width="310" height="220" rx="10"/>
+      <text class="t t-b" x="416" y="46">Reading the load path</text>
+      <text class="t-xs" x="416" y="70">• Orange dashes show how the force reaches the wall</text>
+      <text class="t-xs" x="416" y="88">• The corner at the root sees the highest stress:</text><text class="t-xs" x="432" y="104">add a large fillet or a gusset (triangle)</text>
+      <text class="t-xs" x="416" y="124">• The top of the arm is in tension: layers should run</text><text class="t-xs" x="432" y="140">along the arm, not stack up its height</text>
+      <text class="t-xs" x="416" y="160">• Screw holes in the plate are loaded in peel:</text><text class="t-xs" x="432" y="176">use a washer or a metal insert</text>
+      <text class="t-xs" x="416" y="196">• Do not hang the load from a thin skin or an infill-only area</text>
+      <text class="t-xs" x="416" y="216">• Break the part where the load path is short, not long</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> A shelf bracket, its load path and the tension and compression zones. The gusset shortens the stiff path and shifts the highest stress away from the corner.</figcaption>
+  </figure>
+
+  <h2 id="orientation">🔧 Orientation strategy</h2>
+  <p>Orientation is the <b>cheapest strength upgrade</b>: it costs nothing. The rule: <b>orient the part so the highest tensile stress runs along the lines and in the layer plane, never across layers</b>. Typically that means laying the part so its longest or most loaded dimension is flat on the bed. The price is support material or a worse surface on the faces that now overhang; for many parts that is a fair trade.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 270" role="img" aria-label="An L bracket printed standing with layers across the root and printed flat with the profile in the layer plane, with relative strength">
+      <text class="t-sm t-b" x="30" y="24" style="fill:var(--red)">A · Standing upright</text>
+      <polygon class="d-plastic" points="30,40 54,40 54,118 140,118 140,140 30,140"/>
+      <path class="d-thin" d="M30 48 H54 M30 56 H54 M30 64 H54 M30 72 H54 M30 80 H54 M30 88 H54 M30 96 H54 M30 104 H54 M30 112 H54 M30 124 H140 M30 132 H140"/>
+      <path class="d-ink" d="M54 108 l6 -4 l6 6" style="stroke:var(--red)"/>
+      <text class="t-xs" x="30" y="164">Root is pulled across layers</text><text class="t-xs" x="30" y="180">Strength ≈ 40–70 % of XY</text><text class="t-xs c-green" x="30" y="196">no supports, best top surface</text>
+      <text class="t-sm t-b" x="270" y="24" style="fill:var(--green)">B · Flat on its back</text>
+      <polygon class="d-plastic" points="270,40 294,40 294,118 380,118 380,140 270,140"/>
+      <polygon class="d-dash" points="274,44 290,44 290,122 376,122 376,136 274,136" style="fill:none"/>
+      <text class="t-xs" x="270" y="164">Layers stack out of the page; lines follow</text><text class="t-xs" x="270" y="180">the profile: the load follows the line</text><text class="t-xs c-green" x="270" y="196">Strength ≈ 100 % of XY</text>
+      <rect class="f-blue" x="500" y="20" width="210" height="150" rx="10"/>
+      <text class="t-sm t-b" x="514" y="44">Choosing</text>
+      <text class="t-xs" x="514" y="66">1. Find the highest stress</text>
+      <text class="t-xs" x="514" y="84">2. Find its direction</text>
+      <text class="t-xs" x="514" y="102">3. Lay the part so this runs</text><text class="t-xs" x="528" y="118">along lines in XY</text>
+      <text class="t-xs" x="514" y="138">4. Check overhangs and</text><text class="t-xs" x="528" y="154">choose the support face</text>
+      <rect class="d-surface" x="30" y="212" width="680" height="44" rx="8"/>
+      <text class="t-xs" x="46" y="232">Compromise: if both orientations have drawbacks, print the part standing but add a metal insert or a through-bolt in the weak direction,</text><text class="t-xs" x="46" y="248">or split it into two pieces that you glue and pin.</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> The same L-bracket in two orientations. Standing, the root is loaded across layers; flat, the lines run around the bend and carry the load. The dashed outline in B suggests perimeters following the profile.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact so-table">
+    <thead><tr><th>Part type</th><th>Orient so that…</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Hook, clip, snap arm</td><td>Layers run along the arm</td><td>Bending stress is along the arm</td></tr>
+      <tr><td>Bracket, shelf</td><td>The bent profile is flat on the bed</td><td>The root is loaded in tension within the layer plane</td></tr>
+      <tr><td>Round shaft, pin</td><td>Axis horizontal for torsion; vertical for compression only</td><td>Torsion uses shear in layers; layer rings around a vertical pin resist bending, but its axis is weak in tension</td></tr>
+      <tr><td>Gear, pulley</td><td>Axis vertical (flat gear)</td><td>Teeth bend within layers; round shape stays accurate</td></tr>
+      <tr><td>Tube, pressure vessel</td><td>Axis vertical (hoop stress in layers)</td><td>Hoop stress is carried along lines</td></tr>
+      <tr><td>Thin plate, panel</td><td>Flat on the bed</td><td>Good adhesion, no warping from thin vertical cross-sections</td></tr>
+      <tr><td>Threaded or insert boss</td><td>Axis vertical (Z) when possible</td><td>Thread teeth sit in rings, inserts avoid layer pull-out</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="walls-infill">🔧 Walls vs infill</h2>
+  <p>Beginners increase infill to make a part stronger. It helps, but not much. For most loads (bending, torsion) the stress is highest at the <b>outer surface</b>, so the <b>perimeters</b> do the work, while the infill acts as a lightweight filling that keeps the walls apart and supports the top layers. Doubling the walls from 2 to 4 adds far more strength than doubling the infill from 15 to 30 %, and costs less time.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 290" role="img" aria-label="Two indicative bar charts: relative strength versus number of walls and versus infill percentage">
+      <text class="t-sm t-b" x="30" y="24">Walls (infill 15 %)</text>
+      <path class="d-thin" d="M30 240 H340"/>
+      <rect class="f-blue" x="42" y="174" width="40" height="66"/><text class="t-xs t-c" x="62" y="168">55</text><text class="t-xs t-c" x="62" y="258">1</text>
+      <rect class="f-blue" x="98" y="144" width="40" height="96"/><text class="t-xs t-c" x="118" y="138">80</text><text class="t-xs t-c" x="118" y="258">2</text>
+      <rect class="f-blue" x="154" y="120" width="40" height="120"/><text class="t-xs t-c" x="174" y="114">100</text><text class="t-xs t-c" x="174" y="258">3</text>
+      <rect class="f-blue" x="210" y="98" width="40" height="142"/><text class="t-xs t-c" x="230" y="92">118</text><text class="t-xs t-c" x="230" y="258">4</text>
+      <rect class="f-blue" x="266" y="72" width="40" height="168"/><text class="t-xs t-c" x="286" y="66">140</text><text class="t-xs t-c" x="286" y="258">6</text>
+      <text class="t-sm t-b" x="400" y="24">Infill (3 walls)</text>
+      <path class="d-thin" d="M400 240 H710"/>
+      <rect class="f-orange" x="412" y="130" width="40" height="110"/><text class="t-xs t-c" x="432" y="124">92</text><text class="t-xs t-c" x="432" y="258">10 %</text>
+      <rect class="f-orange" x="468" y="120" width="40" height="120"/><text class="t-xs t-c" x="488" y="114">100</text><text class="t-xs t-c" x="488" y="258">15 %</text>
+      <rect class="f-orange" x="524" y="110" width="40" height="130"/><text class="t-xs t-c" x="544" y="104">108</text><text class="t-xs t-c" x="544" y="258">30 %</text>
+      <rect class="f-orange" x="580" y="98" width="40" height="142"/><text class="t-xs t-c" x="600" y="92">118</text><text class="t-xs t-c" x="600" y="258">50 %</text>
+      <rect class="f-orange" x="636" y="84" width="40" height="156"/><text class="t-xs t-c" x="656" y="78">130</text><text class="t-xs t-c" x="656" y="258">100 %</text>
+      <text class="t-xs t-m" x="30" y="280">Index: 3 walls and 15 % infill = 100. Illustrative of the trend in bending tests, not measured data for your part.</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> Indicative relative strength: the extra shell adds more than extra infill. Different geometry, material and load will change the numbers, but the order of the effects is robust.</figcaption>
+  </figure>
+
+  <div class="callout tip"><span class="callout-title">Perimeters first</span>
+    <p>Spend your print time in this order: <b>(1) orientation</b>, <b>(2) wall count</b> (at least 3 for functional parts, 4–6 for loaded ones), <b>(3) top and bottom layers</b> (4–6 at 0.2 mm), then <b>(4) infill</b> (15–30 % gyroid or cubic is enough for most parts). Raise infill above 50 % only for threaded or insert regions and where a screw must bite.</p></div>
+
+  <h2 id="material-load">🔧 Material choice vs load type</h2>
+  <p>The right material depends on <em>how</em> the part is loaded and for how long, not on a single "strength" number. A stiff, brittle material (PLA) is superb for a static desk stand and terrible for a clip that is dropped. A tough one (PETG, ABS, PC, nylon) forgives overloads. For more on the families, see <a href="../materials/overview.html">Materials overview</a>.</p>
+
+  <div class="table-wrap"><table class="data compact so-table">
+    <thead><tr><th>Need</th><th>Good choices</th><th>Avoid</th><th>Reason</th></tr></thead>
+    <tbody>
+      <tr><td>Stiffness, low load</td><td>PLA, PLA-CF, PETG-CF</td><td>TPU</td><td>High modulus keeps deflection small</td></tr>
+      <tr><td>Impact, drops</td><td>PC, ABS, nylon, PETG, TPU</td><td>PLA, CF-filled</td><td>Tough materials absorb energy</td></tr>
+      <tr><td>Snap-fits, hinges</td><td>PETG, nylon, PP, ABS</td><td>PLA</td><td>High strain at yield</td></tr>
+      <tr><td>Constant load (creep)</td><td>PC, PA-CF, ASA, ABS</td><td>PLA, PETG, TPU</td><td>Higher glass transition temperature, less creep</td></tr>
+      <tr><td>Heat (car dashboard, near a motor)</td><td>ASA, PC, PA-CF, PPS-CF</td><td>PLA, PETG</td><td>PLA softens near 55–60 °C</td></tr>
+      <tr><td>Outdoor / UV</td><td>ASA, PETG, PA (dry), PP</td><td>PLA, ABS</td><td>UV and moisture degrade them</td></tr>
+      <tr><td>Wear, sliding</td><td>Nylon, PETG, TPU, PTFE-filled</td><td>PLA</td><td>Low friction, good fatigue</td></tr>
+      <tr><td>Chemicals, oils</td><td>PP, PETG, nylon</td><td>PC, ABS (solvents)</td><td>Check each solvent individually</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="impact-stiffness">🔧 Impact vs stiffness</h2>
+  <p>Strength is a family of properties. <b>Stiffness</b> (Young's modulus E) tells you how little the part bends; <b>toughness</b> tells you how much energy it absorbs before breaking; <b>strength</b> tells you the load at which it yields or breaks. A material that is strong and stiff, like PLA, often has low toughness: it breaks suddenly. Nylon and PC combine good strength with high toughness, but are less stiff than PLA.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 300" role="img" aria-label="Scatter diagram of printed materials: stiffness on the horizontal axis and toughness on the vertical axis">
+      <path class="d-ink arrow" d="M60 260 H410"/><path class="d-ink arrow" d="M60 260 V20"/>
+      <text class="t-xs" x="220" y="284">Stiffness (higher →)</text>
+      <text class="t-xs" x="66" y="30">Toughness ↑</text>
+      <circle class="f-red" cx="90" cy="60" r="9"/><text class="t-xs" x="104" y="64">TPU</text>
+      <circle class="f-purple" cx="190" cy="76" r="9"/><text class="t-xs" x="204" y="80">Nylon (dry)</text>
+      <circle class="f-yellow" cx="240" cy="96" r="9"/><text class="t-xs" x="254" y="100">PC</text>
+      <circle class="f-orange" cx="230" cy="126" r="9"/><text class="t-xs" x="244" y="130">ABS / ASA</text>
+      <circle class="f-green" cx="270" cy="150" r="9"/><text class="t-xs" x="284" y="154">PETG</text>
+      <circle class="f-blue" cx="320" cy="224" r="9"/><text class="t-xs" x="334" y="228">PLA</text>
+      <circle class="f-teal" cx="372" cy="186" r="9"/><text class="t-xs" x="296" y="196">PA-CF</text>
+      <circle class="f-blue" cx="392" cy="240" r="9"/><text class="t-xs" x="350" y="258">PLA-CF</text>
+      <rect class="d-surface" x="440" y="30" width="270" height="240" rx="10"/>
+      <text class="t-sm t-b" x="456" y="56">How to read it</text>
+      <text class="t-xs" x="456" y="80">• Top left: tough and flexible</text><text class="t-xs" x="456" y="96">  (grips, bumpers, hinges)</text>
+      <text class="t-xs" x="456" y="118">• Top middle: tough and fairly stiff</text><text class="t-xs" x="456" y="134">  (brackets, housings, gears)</text>
+      <text class="t-xs" x="456" y="156">• Bottom right: stiff but brittle</text><text class="t-xs" x="456" y="172">  (display models, jigs, static)</text>
+      <text class="t-xs" x="456" y="194">• Filled filaments: stiffer, less tough,</text><text class="t-xs" x="456" y="210">  strongly direction-dependent</text>
+      <text class="t-xs t-m" x="456" y="240">Qualitative positions only; grades vary.</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> A qualitative map of printed materials: stiffness versus toughness. Pick from the top of the chart for anything that might be dropped, hit or flexed.</figcaption>
+  </figure>
+
+  <h2 id="creep-fatigue-heat">🔧 Creep, fatigue and heat</h2>
+  <p><b>Creep</b> is slow deformation under a constant load: a PLA shelf that holds a book today sags over weeks. It gets rapidly worse as the temperature approaches the glass transition. <b>Fatigue</b> is cracking from repeated loading far below the static strength: a snap-fit that works 5 times fails on the 50th. <b>Heat</b> reduces stiffness and strength long before the part melts. Three simple rules cover most designs: keep long-term stress under about <b>20–25 % of the short-term strength</b> for PLA/PETG, use material with a higher glass transition for hot places, and give every repeatedly loaded feature a generous radius.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 270" role="img" aria-label="Creep curves for low, medium and high load, and typical maximum service temperatures of printed materials">
+      <path class="d-ink arrow" d="M50 230 H330"/><path class="d-ink arrow" d="M50 230 V30"/>
+      <text class="t-xs" x="50" y="252">time (log scale) →</text><text class="t-xs" x="56" y="28">strain ↑</text>
+      <path class="d-ink" d="M50 205 Q100 190 320 182" style="stroke:var(--green);fill:none"/><text class="t-xs c-green" x="240" y="174">low load: stable</text>
+      <path class="d-ink" d="M50 190 Q100 150 320 108" style="stroke:var(--orange);fill:none"/><text class="t-xs" x="220" y="124" style="fill:var(--orange)">medium: keeps creeping</text>
+      <path class="d-ink" d="M50 170 Q90 120 150 80 L200 40" style="stroke:var(--red);fill:none"/><text class="t-xs" x="206" y="46" style="fill:var(--red)">high: creep rupture</text>
+      <text class="t-sm t-b" x="390" y="24">Practical max service temperature (indicative, °C)</text>
+      <path class="d-thin" d="M470 36 V240"/>
+      <text class="t-xs" x="396" y="64">PLA</text><rect class="f-blue" x="470" y="50" width="75" height="20" rx="3"/><text class="t-xs" x="552" y="64">50</text>
+      <text class="t-xs" x="396" y="94">PETG</text><rect class="f-green" x="470" y="80" width="98" height="20" rx="3"/><text class="t-xs" x="575" y="94">65</text>
+      <text class="t-xs" x="396" y="124">ABS / ASA</text><rect class="f-orange" x="470" y="110" width="128" height="20" rx="3"/><text class="t-xs" x="605" y="124">85</text>
+      <text class="t-xs" x="396" y="154">Nylon (dry)</text><rect class="f-purple" x="470" y="140" width="135" height="20" rx="3"/><text class="t-xs" x="612" y="154">90</text>
+      <text class="t-xs" x="396" y="184">PC</text><rect class="f-yellow" x="470" y="170" width="165" height="20" rx="3"/><text class="t-xs" x="642" y="184">110</text>
+      <text class="t-xs" x="396" y="214">PA-CF</text><rect class="f-red" x="470" y="200" width="195" height="20" rx="3"/><text class="t-xs" x="672" y="214">130</text>
+      <text class="t-xs t-m" x="390" y="252">Under load. Annealing PLA/PETG raises these; it also shrinks the part.</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> Left: creep under three constant loads. Right: practical service temperatures under load, well below the datasheet melting point.</figcaption>
+  </figure>
+
+  <h2 id="stress-concentrations">🔧 Stress concentrations</h2>
+  <p>Stress is not uniform. Wherever the geometry changes abruptly, such as a hole, a sharp inside corner, a thread root or a layer notch, the local stress is a <b>multiple (Kt)</b> of the average. A round hole in a plate under tension has <b>Kt ≈ 3</b>: the plastic at the edge sees three times the load that the rest of the plate sees. A sharp 90° inside corner is worse. The fix is cheap: <b>a fillet radius of at least 0.25 × the wall thickness</b> cuts Kt to about 1.5, and a radius of half the thickness to about 1.25.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 260" role="img" aria-label="Stress flow lines crowding around a hole in a plate and a curve of stress concentration factor versus fillet radius over thickness">
+      <rect class="d-plastic" x="40" y="50" width="200" height="130"/><circle class="d-surface" cx="140" cy="115" r="22"/>
+      <path class="d-dash" d="M40 62 H240 M40 78 H100 Q140 68 180 78 H240 M40 94 H112 Q140 88 168 94 H240" style="stroke:var(--orange)"/>
+      <path class="d-dash" d="M40 168 H240 M40 152 H100 Q140 162 180 152 H240 M40 136 H112 Q140 142 168 136 H240" style="stroke:var(--orange)"/>
+      <path class="d-ink arrow" d="M38 115 H18" style="stroke:var(--red)"/><path class="d-ink arrow" d="M242 115 H262" style="stroke:var(--red)"/>
+      <text class="t-xs" x="40" y="204">Flow lines crowd at the hole:</text><text class="t-xs t-b" x="40" y="220">Kt ≈ 3 at the edge</text>
+      <path class="d-ink arrow" d="M420 230 H700"/><path class="d-ink arrow" d="M420 230 V30"/>
+      <text class="t-xs" x="470" y="252">fillet radius r / thickness h →</text><text class="t-xs" x="426" y="24">Kt ↑</text>
+      <path class="d-ink" d="M420 70 Q432 90 446 110 Q460 130 472 150 Q495 170 524 182 Q550 192 576 198 Q630 206 680 210" style="stroke:var(--blue);fill:none"/>
+      <path class="d-thin" d="M420 150 H700" style="stroke-dasharray:3 3"/>
+      <text class="t-xs" x="520" y="146">Kt = 2</text>
+      <text class="t-xs" x="446" y="98">r/h 0.05: Kt ≈ 2.5</text><text class="t-xs" x="534" y="176">r/h 0.25: ≈ 1.5</text><text class="t-xs" x="600" y="194">0.5: ≈ 1.25</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> Stress concentrates at holes and sharp corners. Indicative Kt values for a shoulder under tension; real parts add the layer-line notch effect on top.</figcaption>
+  </figure>
+
+  <div class="callout warn"><span class="callout-title">Printed notches</span>
+    <p>Layer lines are tiny notches that print into every surface. A 0.2 mm layer line already imposes some stress concentration at the surface, so printed parts are <b>more notch-sensitive</b> than the same plastic injection moulded. That is why generous fillets matter more in print than in the datasheet.</p></div>
+
+  <h2 id="beam-math">🔧 Beam stiffness: why height matters</h2>
+  <p>When a beam bends, stiffness depends on its cross-section through the <b>second moment of area I</b>. For a rectangle of width <b>b</b> and height <b>h</b> (measured in the direction of the bending load) <span class="so-eq">I = b·h³/12</span>. The cube on h is the key: doubling the height makes the beam <b>8 times stiffer</b>, while doubling the width only doubles it. The tip deflection of a cantilever of length L under force F is <span class="so-eq">δ = F·L³ / (3·E·I)</span> and the peak surface stress is <span class="so-eq">σ = 6·F·L / (b·h²)</span>.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 280" role="img" aria-label="Three beam cross-sections: flat 20 by 10, on edge 10 by 20, and hollow 20 by 20, with second moment of area values">
+      <rect class="d-plastic" x="40" y="80" width="80" height="40"/>
+      <text class="t-sm t-b" x="40" y="60">Flat (b 20 × h 10)</text><text class="t-xs" x="40" y="146">I = 1,667 mm⁴ (1×)</text>
+      <rect class="d-plastic" x="190" y="60" width="40" height="80"/>
+      <text class="t-sm t-b" x="170" y="40">On edge (b 10 × h 20)</text><text class="t-xs" x="170" y="160">I = 6,667 mm⁴ (4×)</text>
+      <rect class="d-plastic" x="310" y="40" width="80" height="80"/><rect class="d-surface" x="319.6" y="49.6" width="60.8" height="60.8"/>
+      <text class="t-sm t-b" x="310" y="24">Hollow 20 × 20, wall 2.4</text><text class="t-xs" x="310" y="146">I = 8,885 mm⁴ (5.3×)</text><text class="t-xs" x="310" y="162">42 % of solid area; 67 % of its I</text>
+      <path class="d-ink arrow" d="M110 200 V232" style="stroke:var(--red)"/><text class="t-xs" x="120" y="222">F (bending direction: ↓)</text>
+      <rect class="f-blue" x="430" y="20" width="280" height="240" rx="10"/>
+      <text class="t t-b" x="446" y="46">Worked example</text>
+      <text class="t-xs" x="446" y="68">Cantilever L = 100 mm, b = 20, F = 10 N</text>
+      <text class="t-xs" x="446" y="84">E ≈ 2,000 MPa (typical printed PLA)</text>
+      <text class="t-xs" x="446" y="108">h = 5 mm: I = 208 → δ = 8.0 mm</text>
+      <text class="t-xs" x="446" y="126">h = 10 mm: I = 1,667 → δ = 1.0 mm</text>
+      <text class="t-xs" x="446" y="144">h = 20 mm: I = 13,333 → δ = 0.13 mm</text>
+      <text class="t-xs t-b" x="446" y="172">Double the height, 8× the stiffness.</text>
+      <text class="t-xs" x="446" y="196">Peak stress at h = 10:</text><text class="t-xs" x="446" y="212">σ = 6·10·100 / (20·100) = 3 MPa</text>
+      <text class="t-xs t-m" x="446" y="238">Well below ~30 MPa safe working stress.</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> The second moment of area for three sections. Putting material far from the neutral axis (tall, or hollow) is the cheapest stiffness there is.</figcaption>
+  </figure>
+
+  <p>This also explains <b>orientation for stiffness</b>: a shelf bracket printed with its 10 mm dimension vertical bends 4 times less than one printed with the 20 mm dimension vertical... but remember that the strong direction for strength is separate from the tall direction for stiffness. In the model, make the section tall <em>and</em> orient the layers along the load.</p>
+
+  <h2 id="ribs-hollow">🔧 Ribs, hollow vs solid</h2>
+  <p>Ribs are the practical application of I = bh³/12: a rib adds height at a tiny cost in material. In the comparison below a 20 mm wide, 2 mm thick plate becomes <b>29 times stiffer</b> with a 2 × 8 mm rib, using 40 % more material, and it is 3.6 times stiffer than a plate twice as thick that uses 43 % more material than the ribbed one.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 250" role="img" aria-label="Three sections: thin plate, double-thickness plate and a plate with a rib, with stiffness and area values">
+      <rect class="d-plastic" x="50" y="100" width="120" height="12"/>
+      <text class="t-sm t-b" x="50" y="60">Thin plate 20 × 2</text><text class="t-xs" x="50" y="140">I = 13 mm⁴</text><text class="t-xs" x="50" y="156">area 40 mm²</text><text class="t-xs" x="50" y="172">1× stiffness</text>
+      <rect class="d-plastic" x="260" y="100" width="120" height="24"/>
+      <text class="t-sm t-b" x="260" y="60">Thick plate 20 × 4</text><text class="t-xs" x="260" y="152">I = 107 mm⁴</text><text class="t-xs" x="260" y="168">area 80 mm²</text><text class="t-xs" x="260" y="184">8× stiffness</text>
+      <rect class="d-plastic" x="470" y="100" width="120" height="12"/><rect class="d-plastic" x="524" y="112" width="12" height="48"/>
+      <text class="t-sm t-b" x="470" y="60">Plate + rib (T)</text><text class="t-xs" x="470" y="188">I = 384 mm⁴</text><text class="t-xs" x="470" y="204">area 56 mm²</text><text class="t-xs c-green t-b" x="470" y="220">29× stiffness</text>
+      <text class="t-xs t-m" x="50" y="236">20 mm wide, 6 px per mm in the drawing. Rib 2 mm thick, 8 mm high (4× its thickness).</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> A rib is the best way to add stiffness to a plate. Keep rib height ≤ 4–5 × its thickness and fillet the root.</figcaption>
+  </figure>
+
+  <p><b>Hollow vs solid:</b> in printing, an infill-less shell is already "hollow", and the infill is the filling that stops the walls from buckling. A hollow section made of 3–4 walls has most of the stiffness of the solid one (Figure 8: 67 % of I at 42 % of the area). For loads that bend the part, thicker walls and lower infill beat thin walls and high infill, at the same weight.</p>
+
+  <h2 id="infill-patterns">🔧 Infill patterns by application</h2>
+  <p>The infill pattern changes how the load is shared and how quickly the print goes. Gyroid and cubic are the default recommendations: they have no long straight weak planes. Pick a different pattern only for a reason.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 260" role="img" aria-label="Five infill patterns: grid, triangles, honeycomb, gyroid and concentric">
+      <rect class="d-surface" x="20" y="50" width="120" height="120"/><path class="d-thin" d="M44 50 V170 M68 50 V170 M92 50 V170 M116 50 V170 M20 74 H140 M20 98 H140 M20 122 H140 M20 146 H140"/>
+      <rect class="d-surface" x="160" y="50" width="120" height="120"/><path class="d-thin" d="M160 74 H280 M160 98 H280 M160 122 H280 M160 146 H280 M160 110 L220 50 M160 170 L280 50 M220 170 L280 110 M160 50 L280 170 M160 110 L220 170 M220 50 L280 110"/>
+      <rect class="d-surface" x="300" y="50" width="120" height="120"/>
+      <polygon class="d-thin" points="352,80 341,99 319,99 308,80 319,61 341,61" style="fill:none"/><polygon class="d-thin" points="352,118 341,137 319,137 308,118 319,99 341,99" style="fill:none"/>
+      <polygon class="d-thin" points="385,99 374,118 352,118 341,99 352,80 374,80" style="fill:none"/><polygon class="d-thin" points="385,137 374,156 352,156 341,137 352,118 374,118" style="fill:none"/>
+      <polygon class="d-thin" points="418,80 407,99 385,99 374,80 385,61 407,61" style="fill:none"/><polygon class="d-thin" points="418,118 407,137 385,137 374,118 385,99 407,99" style="fill:none"/>
+      <rect class="d-surface" x="440" y="50" width="120" height="120"/><path class="d-thin" d="M440 80 q30 -24 60 0 t60 0 M440 110 q30 24 60 0 t60 0 M440 140 q30 -24 60 0 t60 0 M470 50 q-24 30 0 60 t0 60 M530 50 q24 30 0 60 t0 60"/>
+      <rect class="d-surface" x="580" y="50" width="120" height="120"/><rect class="d-thin" x="588" y="58" width="104" height="104" rx="8" style="fill:none"/><rect class="d-thin" x="602" y="72" width="76" height="76" rx="6" style="fill:none"/><rect class="d-thin" x="616" y="86" width="48" height="48" rx="4" style="fill:none"/><rect class="d-thin" x="630" y="100" width="20" height="20" rx="2" style="fill:none"/>
+      <text class="t-sm t-b" x="20" y="194">Grid</text><text class="t-xs" x="20" y="210">fast, strong in X and Y,</text><text class="t-xs" x="20" y="224">weak in diagonals</text>
+      <text class="t-sm t-b" x="160" y="194">Triangles</text><text class="t-xs" x="160" y="210">strong in-plane,</text><text class="t-xs" x="160" y="224">heavy on slicing</text>
+      <text class="t-sm t-b" x="300" y="194">Honeycomb</text><text class="t-xs" x="300" y="210">good in-plane,</text><text class="t-xs" x="300" y="224">slow, many turns</text>
+      <text class="t-sm t-b" x="440" y="194">Gyroid / cubic</text><text class="t-xs" x="440" y="210">near-isotropic; the best</text><text class="t-xs" x="440" y="224">general-purpose choice</text>
+      <text class="t-sm t-b" x="580" y="194">Concentric</text><text class="t-xs" x="580" y="210">follows the outline;</text><text class="t-xs" x="580" y="224">flexible parts, TPU</text>
+    </svg>
+    <figcaption><b>Figure 10.</b> Five infill patterns. 15–25 % gyroid or cubic is enough for most parts; use 100 % infill only in small, heavily loaded regions (use a modifier).</figcaption>
+  </figure>
+
+  <h2 id="load-types">🔧 Five kinds of load</h2>
+  <p>Every force on a part is a combination of five basic loads. Identify which one dominates each feature before you choose the orientation.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 250" role="img" aria-label="Five load types: tension, compression, shear, bending and torsion, each with an example part">
+      <text class="t-sm t-b" x="20" y="22">Tension</text>
+      <rect class="d-plastic" x="65" y="60" width="30" height="90"/><path class="d-ink arrow" d="M80 58 V32" style="stroke:var(--red)"/><path class="d-ink arrow" d="M80 152 V178" style="stroke:var(--red)"/>
+      <text class="t-sm t-b" x="160" y="22">Compression</text>
+      <rect class="d-plastic" x="205" y="80" width="30" height="60"/><path class="d-ink arrow" d="M220 32 V78" style="stroke:var(--red)"/><path class="d-ink arrow" d="M220 178 V142" style="stroke:var(--red)"/>
+      <text class="t-sm t-b" x="300" y="22">Shear</text>
+      <rect class="d-plastic" x="320" y="60" width="50" height="40"/><rect class="d-plastic" x="350" y="100" width="50" height="40"/><path class="d-ink arrow" d="M322 80 H304" style="stroke:var(--red)"/><path class="d-ink arrow" d="M398 120 H416" style="stroke:var(--red)"/>
+      <text class="t-sm t-b" x="440" y="22">Bending</text>
+      <rect class="d-plastic" x="450" y="100" width="100" height="14"/><polygon class="d-surface2" points="450,114 442,134 458,134"/><polygon class="d-surface2" points="550,114 542,134 558,134"/>
+      <path class="d-ink arrow" d="M500 60 V98" style="stroke:var(--red)"/><path class="d-dash" d="M450 107 Q500 120 550 107"/>
+      <text class="t-sm t-b" x="580" y="22">Torsion</text>
+      <rect class="d-plastic" x="590" y="90" width="100" height="30" rx="4"/>
+      <path class="d-ink arrow" d="M586 80 Q574 105 586 130" style="stroke:var(--red)"/><path class="d-ink arrow" d="M694 80 Q706 105 694 130" style="stroke:var(--red)"/>
+      <text class="t-xs" x="20" y="208">tie rod, hook</text><text class="t-xs" x="160" y="208">foot, leg, post</text><text class="t-xs" x="300" y="208">bolt, pin, clip</text><text class="t-xs" x="440" y="208">shelf, bracket</text><text class="t-xs" x="580" y="208">shaft, knob</text>
+      <text class="t-xs t-m" x="20" y="232">Printed parts: tension and bending put layers at risk; compression and shear are more forgiving but slender parts buckle.</text>
+    </svg>
+    <figcaption><b>Figure 11.</b> The five basic loads. A real part usually sees two at once: a bracket sees bending and shear, a shaft sees torsion and bending.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact so-table">
+    <thead><tr><th>Load</th><th>How the printed part fails</th><th>Design response</th></tr></thead>
+    <tbody>
+      <tr><td>Tension</td><td>Delaminates across layers if loaded along Z</td><td>Orient lines along the load; thicker cross-section; metal rod for the critical case</td></tr>
+      <tr><td>Compression</td><td>Slender parts buckle; layers slip if thin and tall</td><td>Keep height ≤ 5 × width; add ribs; use infill ≥ 20 %</td></tr>
+      <tr><td>Shear</td><td>Layers slide, especially in screw holes and pins</td><td>Use a metal pin, add edge distance ≥ 2 × hole Ø, place pins in vertical holes</td></tr>
+      <tr><td>Bending</td><td>Cracks start on the tension side at the root</td><td>Tall section (I = bh³/12), root fillet ≥ 3 mm, layers along the beam</td></tr>
+      <tr><td>Torsion</td><td>Twist and crack along layer lines</td><td>Round or tubular sections, shaft vertical, wall count ≥ 4</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="testing">🚀 Testing strength at home</h2>
+  <p>You can test a printed part without a lab. All you need is a bucket of water (or a hanging weight), a luggage scale and a repeatable procedure. The goal is not an exact number but a <b>comparison</b>: is revision B stronger than revision A, and how much margin does the design have against the load it needs to carry?</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 260" role="img" aria-label="A bending test rig with a printed beam on two supports and a bucket hanging from the centre, and a list of test methods">
+      <rect class="d-plastic" x="60" y="150" width="280" height="18"/>
+      <polygon class="d-surface2" points="90,168 78,200 102,200"/><polygon class="d-surface2" points="310,168 298,200 322,200"/>
+      <path class="d-ink" d="M200 168 V196" style="stroke-width:2"/>
+      <rect class="d-metal" x="170" y="196" width="60" height="44" rx="4"/>
+      <text class="t-xs t-c" x="200" y="222">bucket</text>
+      <path class="d-thin arrow arrow-start" d="M90 134 H310"/><text class="t-xs t-c" x="200" y="128">span 200 mm</text>
+      <text class="t-xs" x="40" y="250">Add water slowly; weigh the bucket at failure.</text>
+      <rect class="f-blue" x="380" y="20" width="330" height="230" rx="10"/>
+      <text class="t t-b" x="396" y="46">Test methods</text>
+      <text class="t-xs" x="396" y="70">• Bucket-and-water: bending, hook, or tension test</text>
+      <text class="t-xs" x="396" y="88">• Luggage scale: pull until it breaks, read the peak</text>
+      <text class="t-xs" x="396" y="106">• Torque wrench or a lever with a weight: torsion</text>
+      <text class="t-xs" x="396" y="124">• Cycle test: 1,000 repeats by hand or a motor</text>
+      <text class="t-xs" x="396" y="142">• Drop test from 1 m onto concrete</text>
+      <text class="t-xs" x="396" y="160">• Heat soak at the service temperature, then load</text>
+      <text class="t-xs" x="396" y="178">• Hold a constant load for 24–72 h and re-measure</text>
+      <text class="t-xs t-b" x="396" y="204">Rules: print 5 samples, use the same filament,</text><text class="t-xs t-b" x="396" y="220">vary one variable only, and wear safety glasses.</text>
+    </svg>
+    <figcaption><b>Figure 12.</b> A simple bending rig. For repeatable results, always load at the same speed, keep the span fixed and print every specimen in the same orientation.</figcaption>
+  </figure>
+
+  <h3>Safety factors</h3>
+  <p>A <b>safety factor</b> divides the failure load you measure by the load you allow in service. Printed parts have large scatter and unknowns (layer quality, humidity, temperature), so factors are larger than for machined metals.</p>
+
+  <div class="table-wrap"><table class="data compact so-table">
+    <thead><tr><th>Situation</th><th>Safety factor</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>Static, measured failure, one-off use</td><td>2</td><td>Ideal case: measure the failure load of your own part</td></tr>
+      <tr><td>Static, from calculation only</td><td>3–4</td><td>Datasheet values do not apply to layered parts</td></tr>
+      <tr><td>Repeated loading (fatigue)</td><td>4–6</td><td>Or keep stress below ~20 % of static strength</td></tr>
+      <tr><td>Impact, shock</td><td>5–10</td><td>Use tough materials, add fillets</td></tr>
+      <tr><td>Long-term constant load (creep)</td><td>3–5</td><td>Plus a temperature margin of 20 °C</td></tr>
+      <tr><td>Warm or outdoor service</td><td>× 1.5–2</td><td>Multiplies the factors above</td></tr>
+      <tr><td>Safety-critical (people, pressure, fire)</td><td colspan="2">Do not rely on a printed part unless it is professionally engineered and tested</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="annealing">🔧 Annealing</h2>
+  <p><b>Annealing</b> is controlled heating of a printed part to let the polymer chains relax and, for semi-crystalline polymers, crystallise. The result is a <b>higher heat-deflection temperature</b> and often stronger layer bonds. The price is <b>dimensional change</b> (0.5–3 % shrinkage, sometimes warp), so do it only on parts you can afford to scale in CAD, and keep tolerances in mind. Use a kitchen oven checked with a separate thermometer. Do it in a filament maker's instructions window when they specify one.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 240" role="img" aria-label="Annealing profile: ramp up, hold at about 80 to 100 degrees Celsius for 30 to 60 minutes, then slow cooling inside the oven">
+      <path class="d-ink arrow" d="M50 200 H400"/><path class="d-ink arrow" d="M50 200 V30"/>
+      <text class="t-xs" x="50" y="222">time →</text><text class="t-xs" x="56" y="28">temperature ↑</text>
+      <path class="d-ink" d="M50 190 L120 80 H260 L380 185" style="stroke:var(--orange);stroke-width:3;fill:none"/>
+      <text class="t-xs t-c" x="85" y="130">1 · heat</text><text class="t-xs t-c" x="190" y="72">2 · hold 30–60 min</text><text class="t-xs t-c" x="330" y="140">3 · cool slowly</text>
+      <path class="d-thin" d="M50 80 H120" style="stroke-dasharray:3 3"/><text class="t-xs" x="8" y="84">≈90 °C</text>
+      <rect class="f-orange" x="430" y="20" width="280" height="200" rx="10"/>
+      <text class="t t-b" x="446" y="46">Typical windows (check yours)</text>
+      <text class="t-xs" x="446" y="70">PLA: 80–100 °C, 30–60 min (HT-PLA benefits most)</text>
+      <text class="t-xs" x="446" y="88">ABS / ASA: 85–95 °C, stress relief only</text>
+      <text class="t-xs" x="446" y="106">Nylon: dry, 80–120 °C, 1–2 h</text>
+      <text class="t-xs" x="446" y="124">PETG: little benefit; not recommended</text>
+      <text class="t-xs t-b" x="446" y="148">Packing a part in salt or sand keeps its shape.</text>
+      <text class="t-xs" x="446" y="170">Warm slowly: ≤ 2 °C/min above 60 °C</text>
+      <text class="t-xs" x="446" y="188">Cool inside the oven with the door shut</text>
+      <text class="t-xs t-m" x="446" y="208">Never use the same oven for food afterwards.</text>
+    </svg>
+    <figcaption><b>Figure 13.</b> An annealing profile. Heating slowly and cooling slowly matter as much as the hold temperature: fast changes warp the part.</figcaption>
+  </figure>
+
+  <h2 id="fibre">🔧 Fibre-reinforced designs and continuous fibre</h2>
+  <p><b>Chopped-fibre filaments</b> (carbon or glass, typically 5–25 % by weight) are stiffer and creep less than their base polymer, but they are less tough, strongly anisotropic (fibres align with the line) and abrasive: they need a hardened or abrasion-resistant nozzle. Check <a href="../x2d/filament-compatibility.html">X2D filament compatibility</a> before using them. Their effect on design: make arms and ribs longer, bigger fillets, and never use them for snap-fits or living hinges.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 230" role="img" aria-label="Chopped fibres aligned in a printed bead, continuous fibre strand through a layer, and an embedded carbon rod in a pocket">
+      <rect class="d-plastic" x="30" y="50" width="200" height="34" rx="17"/>
+      <path class="d-thin" d="M50 62 h14 M80 70 h12 M110 60 h14 M140 72 h12 M170 62 h14 M196 70 h12 M60 76 h12 M130 78 h12 M180 78 h12"/>
+      <text class="t-sm t-b" x="30" y="34">Chopped fibre</text><text class="t-xs" x="30" y="106">short fibres align with the bead</text><text class="t-xs" x="30" y="122">stiffer, brittler, 2–4× in XY</text>
+      <rect class="d-plastic" x="270" y="50" width="200" height="34" rx="17"/>
+      <path class="d-ink" d="M280 67 H460" style="stroke:var(--orange);stroke-width:3"/>
+      <text class="t-sm t-b" x="270" y="34">Continuous fibre</text><text class="t-xs" x="270" y="106">a full-length strand carries the load</text><text class="t-xs" x="270" y="122">in-plane strength near aluminium</text>
+      <rect class="d-plastic" x="510" y="40" width="190" height="60"/><rect class="d-metal" x="516" y="62" width="178" height="16" rx="8"/>
+      <text class="t-sm t-b" x="510" y="34">Embedded rod</text><text class="t-xs" x="510" y="116">pocket for carbon or steel rod,</text><text class="t-xs" x="510" y="132">glued in; cheap and effective</text>
+      <rect class="d-surface" x="30" y="160" width="670" height="52" rx="8"/>
+      <text class="t-xs" x="46" y="182">Put fibre (or rods) where the tension is, along the load direction, near the outer surface of a beam. Continuous-fibre printers are specialised</text><text class="t-xs" x="46" y="198">machines; on a standard printer an embedded rod gives much of the benefit.</text>
+    </svg>
+    <figcaption><b>Figure 14.</b> Three ways to add fibre: chopped in the filament, continuous in the layer, or an embedded rod in a pocket. The rod is the home-workshop route.</figcaption>
+  </figure>
+
+  <h2 id="topology">🚀 Topology optimisation and lattices</h2>
+  <p><b>Topology optimisation</b> software starts from a block of material, applies your loads and supports and removes everything that carries little stress. The result looks organic: struts and arches along the load paths. It saves 30–60 % of the mass at the same stiffness. It suits 3D printing well because complex shapes cost nothing extra, but remember the usual rules (overhang ≤ 45°, minimum feature 0.8–1.2 mm, orientation along the load). <b>Lattices</b> (gyroid, octet, honeycomb) can replace infill or lighten a part intentionally, and <b>graded lattices</b> put denser cells where stress is high.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 230" role="img" aria-label="A solid cantilever bracket, a topology-optimised truss version and a graded lattice">
+      <rect class="d-plastic" x="30" y="60" width="140" height="110"/><path class="d-ink arrow" d="M170 60 V34" style="stroke:var(--red)"/>
+      <text class="t-sm t-b" x="30" y="40">Solid</text><text class="t-xs" x="30" y="190">mass 100 %</text>
+      <rect class="d-dash" x="250" y="60" width="140" height="110" style="fill:none"/>
+      <path class="d-ink" d="M250 60 L390 110 M250 170 L390 110 M250 60 V170 M250 115 L390 110" style="stroke-width:6;stroke-linecap:round"/>
+      <path class="d-ink arrow" d="M390 110 V84" style="stroke:var(--red)"/>
+      <text class="t-sm t-b" x="250" y="40">Optimised</text><text class="t-xs" x="250" y="190">mass ≈ 40–60 %</text>
+      <rect class="d-surface" x="480" y="60" width="140" height="110"/>
+      <path class="d-ink" d="M500 60 V170" style="stroke-width:5"/><path class="d-ink" d="M530 60 V170" style="stroke-width:4"/><path class="d-ink" d="M560 60 V170" style="stroke-width:3"/><path class="d-ink" d="M590 60 V170" style="stroke-width:2"/>
+      <path class="d-ink" d="M480 90 H620" style="stroke-width:2"/><path class="d-ink" d="M480 120 H620" style="stroke-width:2"/><path class="d-ink" d="M480 150 H620" style="stroke-width:2"/>
+      <text class="t-sm t-b" x="480" y="40">Graded lattice</text><text class="t-xs" x="480" y="190">denser where stress is high</text>
+      <text class="t-xs t-m" x="30" y="220">Optimised shapes still need ≥ 0.8 mm struts and 45° overhang slopes for a 0.4 mm nozzle.</text>
+    </svg>
+    <figcaption><b>Figure 15.</b> Solid, optimised and graded-lattice versions of a cantilever bracket. All have the same load direction (arrow).</figcaption>
+  </figure>
+
+  <h2 id="bosses-threads">🔧 Designing printed threads and bosses</h2>
+  <p>Threads and bosses are where layer direction bites hardest. A <b>vertical boss</b> (axis along Z) has thread teeth in rings that hold well in shear, and hoop stress runs along the layers. But if the boss is pulled out along Z, it breaks off at its base across layers: add a fillet and gussets. A <b>horizontal boss</b> (axis in XY) has its layers parallel to the screw axis, so the teeth shear along layer interfaces: it strips easily. Use heat-set inserts if a horizontal boss is unavoidable. Detailed dimensions are in <a href="joints-and-fasteners.html#bosses">Joints &amp; fasteners</a>.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 220" role="img" aria-label="Vertical boss with horizontal layers resists tooth shear but pulls off at the base; horizontal boss has layers parallel to the axis and strips easily">
+      <rect class="d-plastic" x="40" y="160" width="140" height="18"/><rect class="d-plastic" x="90" y="60" width="40" height="100"/>
+      <path class="d-thin" d="M90 70 H130 M90 80 H130 M90 90 H130 M90 100 H130 M90 110 H130 M90 120 H130 M90 130 H130 M90 140 H130 M90 150 H130"/>
+      <path class="d-ink" d="M90 158 l8 -4 l8 4" style="stroke:var(--red)"/>
+      <text class="t-sm t-b" x="40" y="40">Vertical boss</text><text class="t-xs" x="40" y="198">good teeth, strong hoop;</text><text class="t-xs" x="40" y="212">weak base if pulled: add fillet</text>
+      <rect class="d-plastic" x="300" y="150" width="100" height="40"/><rect class="d-plastic" x="400" y="150" width="14" height="40"/>
+      <path class="d-thin" d="M308 154 V186 M320 154 V186 M332 154 V186 M344 154 V186 M356 154 V186 M368 154 V186 M380 154 V186 M392 154 V186"/>
+      <path class="d-ink arrow" d="M300 170 H260" style="stroke:var(--red)"/>
+      <text class="t-sm t-b" x="300" y="40">Horizontal boss</text><text class="t-xs" x="300" y="110">teeth shear along layer planes:</text><text class="t-xs" x="300" y="126">strips quickly: use an insert</text>
+      <rect class="f-green" x="500" y="30" width="200" height="170" rx="10"/>
+      <text class="t-sm t-b" x="514" y="54">Boss rules</text>
+      <text class="t-xs" x="514" y="76">• Axis vertical if possible</text><text class="t-xs" x="514" y="94">• Fillet 1–2 mm at the base</text><text class="t-xs" x="514" y="112">• 2–4 gussets</text><text class="t-xs" x="514" y="130">• Wall ≥ 4 lines (1.6 mm)</text><text class="t-xs" x="514" y="148">• Heat-set insert for repeated use</text><text class="t-xs" x="514" y="166">• Boss height ≤ 3 × Ø</text>
+    </svg>
+    <figcaption><b>Figure 16.</b> Layer lines in a boss. The thread teeth survive best in a vertical boss; the base joint is the weak point.</figcaption>
+  </figure>
+
+  <h2 id="failure-analysis">🔧 Failure analysis: reading a broken part</h2>
+  <p>A broken part is the best teacher. Look at <em>where</em> it broke, the <em>surface of the break</em> and the <em>shape around it</em>. Six patterns cover nearly every failure of a printed part.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 320" role="img" aria-label="Six failure types: delamination, brittle fracture, ductile necking, fatigue with beach marks, creep sag and tear-out at a hole">
+      <g transform="translate(20,10)"><text class="t-sm t-b" x="0" y="14">1 · Delamination</text>
+        <rect class="d-plastic" x="0" y="30" width="200" height="22"/><rect class="d-plastic" x="0" y="56" width="200" height="22"/><path class="d-ink" d="M0 54 H200" style="stroke:var(--red);stroke-width:3"/>
+        <text class="t-xs" x="0" y="98">flat split along a layer line</text><text class="t-xs" x="0" y="112">fix: orientation, hotter, slower</text></g>
+      <g transform="translate(260,10)"><text class="t-sm t-b" x="0" y="14">2 · Brittle fracture</text>
+        <rect class="d-plastic" x="0" y="32" width="94" height="40"/><rect class="d-plastic" x="106" y="32" width="94" height="40"/><polygon class="d-surface" points="94,32 106,32 100,44"/>
+        <text class="t-xs" x="0" y="98">clean snap at a sharp corner</text><text class="t-xs" x="0" y="112">fix: fillet, tougher material</text></g>
+      <g transform="translate(500,10)"><text class="t-sm t-b" x="0" y="14">3 · Ductile necking</text>
+        <polygon class="d-plastic" points="0,32 70,32 100,44 130,32 200,32 200,72 130,72 100,60 70,72 0,72"/>
+        <text class="t-xs" x="0" y="98">stretched, white, narrowed</text><text class="t-xs" x="0" y="112">fix: overload; thicker section</text></g>
+      <g transform="translate(20,160)"><text class="t-sm t-b" x="0" y="14">4 · Fatigue</text>
+        <rect class="d-plastic" x="0" y="32" width="200" height="40"/><polygon class="d-surface" points="96,32 104,32 100,44"/>
+        <path class="d-ink" d="M100 44 Q108 52 116 46 M100 44 Q112 62 126 48" style="stroke:var(--orange);fill:none"/>
+        <text class="t-xs" x="0" y="98">curved beach marks from a notch</text><text class="t-xs" x="0" y="112">fix: lower strain, bigger fillet</text></g>
+      <g transform="translate(260,160)"><text class="t-sm t-b" x="0" y="14">5 · Creep or heat sag</text>
+        <path class="d-ink" d="M0 40 Q100 70 200 86" style="stroke-width:14;fill:none;stroke-linecap:round"/>
+        <text class="t-xs" x="0" y="106">bends, no break</text><text class="t-xs" x="0" y="120">fix: higher-Tg material, ribs, anneal</text></g>
+      <g transform="translate(500,160)"><text class="t-sm t-b" x="0" y="14">6 · Tear-out</text>
+        <rect class="d-plastic" x="0" y="30" width="200" height="50"/><circle class="d-surface" cx="26" cy="55" r="10"/><path class="d-ink" d="M16 55 H0" style="stroke:var(--red);stroke-width:3"/>
+        <path class="d-ink arrow" d="M26 55 H8" style="stroke:var(--orange)"/>
+        <text class="t-xs" x="0" y="98">crack from a hole to the edge</text><text class="t-xs" x="0" y="112">fix: edge distance ≥ 2 × Ø</text></g>
+    </svg>
+    <figcaption><b>Figure 17.</b> Six common failure patterns. The shape of the crack and its position relative to layers tell you what to change.</figcaption>
+  </figure>
+
+  <h2 id="vs-molded">🔧 Printed vs injection-moulded parts</h2>
+  <p>A printed part is never a drop-in copy of a moulded one. Injection moulding gives isotropic properties, a smooth surface and tight tolerance, but needs a mould that costs thousands. Printing gives complete freedom of shape for no tooling. The break-even point depends on size and complexity, usually a few hundred to a few thousand parts.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 260" role="img" aria-label="Total cost versus quantity for printing and injection moulding, with the break-even point">
+      <path class="d-ink arrow" d="M60 230 H410"/><path class="d-ink arrow" d="M60 230 V24"/>
+      <text class="t-xs" x="170" y="252">quantity (parts) →</text><text class="t-xs" x="66" y="22">total cost ↑</text>
+      <path class="d-ink" d="M60 230 L400 60" style="stroke:var(--blue);stroke-width:3;fill:none"/><text class="t-xs c-blue t-b" x="260" y="170">printing: no tooling, constant per-part cost</text>
+      <path class="d-ink" d="M60 100 L400 82" style="stroke:var(--orange);stroke-width:3;fill:none"/><text class="t-xs t-b" x="170" y="72" style="fill:var(--orange)">injection moulding: tooling, low per-part</text>
+      <circle class="f-green" cx="349" cy="88" r="7"/><text class="t-xs" x="308" y="116">break-even</text>
+      <rect class="d-surface" x="440" y="30" width="270" height="200" rx="10"/>
+      <text class="t-sm t-b" x="456" y="56">Printing wins when…</text>
+      <text class="t-xs" x="456" y="78">• quantity is under a few hundred</text><text class="t-xs" x="456" y="94">• the design is still changing</text><text class="t-xs" x="456" y="110">• the shape has internal channels</text><text class="t-xs" x="456" y="126">• every part is different</text>
+      <text class="t-sm t-b" x="456" y="156">Moulding wins when…</text>
+      <text class="t-xs" x="456" y="178">• quantity is in the thousands</text><text class="t-xs" x="456" y="194">• tolerance and finish are strict</text><text class="t-xs" x="456" y="210">• strength must be isotropic</text>
+    </svg>
+    <figcaption><b>Figure 18.</b> Schematic cost versus quantity. The numbers are illustrative only; use real quotes for a decision.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact so-table">
+    <thead><tr><th>Property</th><th>FDM printed</th><th>Injection moulded</th></tr></thead>
+    <tbody>
+      <tr><td>Strength</td><td>Anisotropic; Z is 40–80 % of XY</td><td>Isotropic (some orientation near the gate)</td></tr>
+      <tr><td>Tolerance</td><td>±0.1–0.3 mm (IT13–IT15)</td><td>±0.05–0.1 mm</td></tr>
+      <tr><td>Wall thickness</td><td>0.8–10 mm, any variation</td><td>1–4 mm uniform (sink marks)</td></tr>
+      <tr><td>Surface</td><td>Layer lines; sanding or smoothing</td><td>Smooth or textured from the tool</td></tr>
+      <tr><td>Undercuts, internal voids</td><td>Free</td><td>Slides and cores: expensive</td></tr>
+      <tr><td>Snap-fit and hinge life</td><td>Limited by layer notches</td><td>Excellent (PP living hinges: millions)</td></tr>
+      <tr><td>Lead time</td><td>Hours</td><td>Weeks (tooling)</td></tr>
+      <tr><td>Part cost at 1 / 100 / 10,000</td><td>Low / medium / high</td><td>Very high / medium / very low</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul>
+    <li>FDM is anisotropic: the Z direction has 40–80 % of the XY strength. Never put the main tensile load across layers.</li>
+    <li>Orient first, add walls second (≥ 3, loaded parts 4–6), infill last (15–30 % gyroid or cubic).</li>
+    <li>Stiffness depends on I = bh³/12: double the height, get 8× the stiffness. Use ribs, tall sections and hollow shapes.</li>
+    <li>Round every inside corner (r ≥ 0.25 × thickness) and give holes edge distance ≥ 2 × Ø.</li>
+    <li>Use tough materials for impact, high-Tg ones for heat and constant load; PLA creeps and softens near 55–60 °C.</li>
+    <li>Test your design: failure load ÷ working load ≥ 2 for static, 4–6 for fatigue; use metal for anything safety-critical.</li>
+    <li>Read failures: delamination = orientation, brittle snap = corner, necking = overload, beach marks = fatigue.</li>
+  </ul>
+  <p>Next: <a href="design-patterns.html">Design patterns</a> shows complete parts built with these rules, and <a href="joints-and-fasteners.html">Joints &amp; fasteners</a> has the dimensions for every connection. Practice with <a href="../exercises/level-2-intermediate.html">Level 2 exercises</a>.</p>
+
+</main>
+</body>
+</html>

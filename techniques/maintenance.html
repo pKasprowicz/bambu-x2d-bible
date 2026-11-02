@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Printer maintenance · 3D Printing Compendium</title>
+  <meta name="description" content="Generic FDM printer maintenance guide: routine schedule and calendar, cleaning, lubrication, belts, fans, hotend and nozzle replacement, PTFE tubes, extruder gears, filters, firmware, storage, shipping and a maintenance log template.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="techniques/maintenance.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 4 · Techniques</div>
+    <h1>Printer maintenance</h1>
+    <p class="lead">A 3D printer is a small robot that heats plastic to 250 °C, moves a toolhead at hundreds of millimeters per second and runs for hours unattended. Fifteen minutes of care a week keeps it accurate, quiet and safe. This page is a generic schedule that fits almost any FDM machine; the X2D-specific steps live on a dedicated page.</p>
+    <div class="meta"><span class="badge beginner">Beginner</span><span class="badge time">⏱ 35 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <p>What to do after every print, weekly, monthly, quarterly and yearly; how to clean and lubricate correctly (and what not to lubricate); how to judge belt tension, wear and consumable life; how to store or ship a printer; and how to keep a log so you catch problems early.</p></div>
+
+  <div class="callout x2d"><span class="callout-title">Using a Bambu Lab X2D?</span>
+    <p>This page stays generic on purpose. For the X2D procedures (dual-nozzle hotends, auxiliary extruder, AMS 2 Pro, carbon filter, cutter) see <a href="../x2d/maintenance-and-troubleshooting.html">X2D maintenance &amp; troubleshooting</a>. The principles below still apply.</p></div>
+
+  <div class="callout danger"><span class="callout-title">Power off and cool down first</span>
+    <p>Switch the printer off and unplug it before touching wiring, the toolhead board, heater cartridges or thermistors. Let the nozzle and bed cool below 40 °C before working near them. A short circuit from a loose wire can destroy the mainboard; a 250 °C nozzle gives instant burns.</p></div>
+
+  <h2 id="why">Why maintenance matters</h2>
+  <p>Most print failures are not mysterious. They are the visible end of slow wear: a nozzle slowly partially clogged, a belt that has lost tension, a fan full of dust, a plate that is greasy from fingerprints. Preventive maintenance has three payoffs:</p>
+  <ul>
+    <li><b>Quality.</b> Clean rails and tight belts give smooth walls, accurate dimensions and fewer ringing marks.</li>
+    <li><b>Reliability.</b> You find a frayed cable or a worn gear when it is a ten-minute fix instead of a failed overnight print.</li>
+    <li><b>Safety and cost.</b> Dust on heaters, loose terminals and worn insulation are fire risks. Replacing a $10 part on schedule is cheaper than replacing a $200 hotend.</li>
+  </ul>
+
+  <h2 id="schedule">The routine schedule</h2>
+  <p>Intervals depend on how much you print. The table assumes a typical hobby load of 5–20 hours a week. Printing abrasive or dusty materials (carbon-fiber or glass-fiber filled, glow-in-the-dark) or high-temperature enclosures shortens everything by roughly half.</p>
+
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th>Interval</th><th>Task</th><th>Time</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="4"><b>Every print</b></td><td>Look at the plate: clean, flat, no debris or old blobs</td><td>10 s</td><td>First-layer failures start here</td></tr>
+      <tr><td>Check the nozzle is free of old plastic (wipe or brush while warm)</td><td>20 s</td><td>Dragged blobs ruin first layers</td></tr>
+      <tr><td>Confirm the correct filament is loaded and dry enough</td><td>10 s</td><td>Wet filament causes many “mystery” defects</td></tr>
+      <tr><td>Remove purge waste or stray strands from the purge area</td><td>20 s</td><td>Strands can snag the toolhead</td></tr>
+      <tr><td rowspan="5"><b>Weekly</b></td><td>Wash the build plate (warm water + dish soap, then IPA)</td><td>3 min</td><td>Removes skin oil and residue</td></tr>
+      <tr><td>Vacuum or brush filament dust and debris from the chamber floor and rails</td><td>3 min</td><td>Debris causes motion noise and jams</td></tr>
+      <tr><td>Inspect the toolhead cable bundle and cooling fans visually</td><td>1 min</td><td>Early sign of wear</td></tr>
+      <tr><td>Wipe rods or rails with a lint-free cloth</td><td>2 min</td><td>Dirty rails lose their lubricant film</td></tr>
+      <tr><td>Check desiccant color / dry box humidity</td><td>1 min</td><td>Keeps filament dry</td></tr>
+      <tr><td rowspan="6"><b>Monthly</b></td><td>Lubricate linear rails and rods (a thin film only)</td><td>10 min</td><td>Reduces wear and noise</td></tr>
+      <tr><td>Check belt tension and inspect belt teeth</td><td>5 min</td><td>Loose belts cause ringing and layer shift</td></tr>
+      <tr><td>Clean the extruder gears and filament path</td><td>10 min</td><td>Gear dust causes slipping</td></tr>
+      <tr><td>Check screws, pulley set screws and frame bolts for tightness</td><td>5 min</td><td>Vibration loosens screws</td></tr>
+      <tr><td>Clean hotend and part-cooling fans (compressed air)</td><td>5 min</td><td>Dust reduces airflow and heats motors</td></tr>
+      <tr><td>Check the PTFE tube ends and couplers</td><td>3 min</td><td>Worn ends cause leaks and stringing</td></tr>
+      <tr><td rowspan="5"><b>Quarterly</b></td><td>Deep clean and lubricate lead screws (grease)</td><td>15 min</td><td>Z accuracy and noise</td></tr>
+      <tr><td>Replace or inspect the nozzle (earlier for abrasives)</td><td>10 min</td><td>Worn nozzles under-extrude and drift in size</td></tr>
+      <tr><td>Replace carbon/HEPA filter if present and dirty</td><td>5 min</td><td>Air quality and odor control</td></tr>
+      <tr><td>Inspect electrical connections and heater leads</td><td>10 min</td><td>Fire prevention</td></tr>
+      <tr><td>Refresh desiccant (bake silica gel or replace)</td><td>20 min</td><td>Dry storage</td></tr>
+      <tr><td rowspan="4"><b>Yearly</b></td><td>Replace PTFE tubes, silicone sock, wiper and cutter blade as needed</td><td>30 min</td><td>Consumables wear</td></tr>
+      <tr><td>Deep clean the whole printer; re-grease gears; check fans and bearings</td><td>1 h</td><td>Reset all wear</td></tr>
+      <tr><td>Review firmware and slicer versions; back up profiles</td><td>20 min</td><td>Fixes and safety updates</td></tr>
+      <tr><td>Replace the build plate if worn, scratched or warped</td><td>5 min</td><td>First-layer quality</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout tip"><span class="callout-title">Scale by hours, not months</span>
+    <p>If you print 40 hours a week, divide the intervals by 2–3. If the printer sits idle for a month, you still need the monthly rail check, but you can skip belt and gear work. A simple rule: do a mini-service every <b>200 printing hours</b>.</p></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 300" role="img" aria-label="Yearly maintenance calendar: weekly, monthly, quarterly and yearly tasks on a 12-month grid">
+      <g class="t t-xs">
+        <text x="40" y="26">Jan</text><text x="100" y="26">Feb</text><text x="160" y="26">Mar</text><text x="220" y="26">Apr</text><text x="280" y="26">May</text><text x="340" y="26">Jun</text><text x="400" y="26">Jul</text><text x="460" y="26">Aug</text><text x="520" y="26">Sep</text><text x="580" y="26">Oct</text><text x="640" y="26">Nov</text><text x="700" y="26">Dec</text>
+      </g>
+      <g class="d-grid"><path d="M30 34 V250 M90 34 V250 M150 34 V250 M210 34 V250 M270 34 V250 M330 34 V250 M390 34 V250 M450 34 V250 M510 34 V250 M570 34 V250 M630 34 V250 M690 34 V250 M750 34 V250"/></g>
+      <text class="t t-sm t-b" x="30" y="60">Weekly</text>
+      <rect class="f-blue" x="30" y="66" width="720" height="14" rx="3" opacity="0.55"/>
+      <text class="t t-sm t-b" x="30" y="108">Monthly</text>
+      <g class="f-green"><circle cx="60" cy="124" r="7"/><circle cx="120" cy="124" r="7"/><circle cx="180" cy="124" r="7"/><circle cx="240" cy="124" r="7"/><circle cx="300" cy="124" r="7"/><circle cx="360" cy="124" r="7"/><circle cx="420" cy="124" r="7"/><circle cx="480" cy="124" r="7"/><circle cx="540" cy="124" r="7"/><circle cx="600" cy="124" r="7"/><circle cx="660" cy="124" r="7"/><circle cx="720" cy="124" r="7"/></g>
+      <text class="t t-sm t-b" x="30" y="158">Quarterly</text>
+      <g class="f-orange"><rect x="46" y="166" width="28" height="18" rx="4"/><rect x="226" y="166" width="28" height="18" rx="4"/><rect x="406" y="166" width="28" height="18" rx="4"/><rect x="586" y="166" width="28" height="18" rx="4"/></g>
+      <text class="t t-sm t-b" x="30" y="208">Yearly</text>
+      <g class="f-red"><path d="M60 214 l12 22 h-24 z"/></g>
+      <text class="t t-xs" x="84" y="232">full service + new consumables</text>
+      <g class="d-thin"><rect x="30" y="256" width="720" height="34" rx="6"/></g>
+      <text class="t t-xs" x="40" y="270">Legend:</text>
+      <rect class="f-blue" x="96" y="262" width="14" height="10" opacity="0.55"/><text class="t t-xs" x="116" y="271">wash plate, wipe rails</text>
+      <circle class="f-green" cx="248" cy="267" r="5"/><text class="t t-xs" x="258" y="271">lube, belts, gears, fans</text>
+      <rect class="f-orange" x="400" y="262" width="14" height="10" rx="2"/><text class="t t-xs" x="420" y="271">nozzle, filter, screws, lead screws</text>
+      <path class="f-red" d="M612 262 l6 10 h-12 z"/><text class="t t-xs" x="624" y="271">yearly deep service</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> A visual year. Pin a copy near the printer or put reminders in your phone calendar: weekly on a fixed day, monthly on the 1st, quarterly with the season.</figcaption>
+  </figure>
+
+  <h2 id="cleaning">Cleaning: nozzle, bed and build plate</h2>
+
+  <h3 id="clean-plate">Build plate</h3>
+  <p>Skin oil, hand cream and dust are the number one reason a perfectly calibrated first layer fails. Clean the plate in two steps: <b>warm water with a drop of dish soap</b> (removes grease), rinse and dry with a lint-free towel, then wipe with <b>isopropyl alcohol</b> (70–99 %) if the manufacturer allows it. Never touch the print surface with bare fingers; hold the plate by its edge.</p>
+  <ul>
+    <li><b>Smooth PEI:</b> washes well; a light Scotch-Brite pad can restore bite once in a while.</li>
+    <li><b>Textured PEI:</b> use a soft brush with soap; avoid abrasives that flatten the texture.</li>
+    <li><b>Glass:</b> glass cleaner or IPA; a dilute vinegar rinse removes mineral films.</li>
+    <li><b>Glue-stick residue:</b> wash with warm water; it dissolves.</li>
+    <li><b>Spring steel base:</b> do not bend sharply; a kink permanently ruins flatness.</li>
+  </ul>
+  <div class="callout warn"><span class="callout-title">Do not scrape with metal on coated plates</span>
+    <p>Use the flexible plate to pop parts off, or a plastic scraper. A steel blade cuts through PEI and powder coatings in seconds.</p></div>
+
+  <h3 id="clean-nozzle">Nozzle and hotend exterior</h3>
+  <p>With the nozzle at printing temperature (and the printer powered normally), use brass-brush or tweezers to remove burnt plastic from the tip. Do not use steel wire brushes on soft brass nozzles. A silicone sock over the heater block prevents plastic from building up and keeps the temperature stable.</p>
+  <p>For an inner clog, perform a cold pull: see the <a href="troubleshooting.html#coldpull">cold-pull procedure</a>.</p>
+
+  <h3 id="clean-chamber">Chamber and frame</h3>
+  <p>Brush or vacuum filament fragments at the bottom, around rails and lead-screw bases. A non-woven cloth with a little IPA removes stains from walls and panels (check that the plastic and paint tolerate IPA). Avoid spraying liquid on electronics; spray the cloth, not the printer.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 260" role="img" aria-label="Cleaning map of a printer: plate, nozzle, rails, fans, chamber floor and extruder with recommended tools">
+      <rect class="d-surface" x="150" y="20" width="400" height="200" rx="12"/>
+      <rect class="d-metal2" x="190" y="170" width="320" height="14" rx="3"/><text class="t t-xs t-c" x="350" y="205">① build plate: soap + IPA</text>
+      <rect class="d-metal" x="190" y="60" width="320" height="6" rx="3"/><text class="t t-xs t-c" x="350" y="52">② X rail: lint-free cloth + oil</text>
+      <rect class="d-metal2" x="330" y="76" width="44" height="40" rx="6"/><path class="d-metal" d="M344 116 H360 L356 134 H348 Z"/><text class="t t-xs t-c" x="352" y="150">③ nozzle: brass brush</text>
+      <circle class="d-metal2" cx="410" cy="94" r="12"/><text class="t t-xs" x="426" y="98">④ fans: air</text>
+      <rect class="d-metal" x="168" y="60" width="6" height="110" rx="3"/><rect class="d-metal" x="526" y="60" width="6" height="110" rx="3"/><text class="t t-xs" x="40" y="120">⑤ Z rods and</text><text class="t t-xs" x="40" y="134">lead screws:</text><text class="t t-xs" x="40" y="148">grease</text>
+      <path class="d-dash" d="M150 130 H130"/>
+      <text class="t t-xs" x="570" y="120">⑥ chamber floor:</text><text class="t t-xs" x="570" y="134">vacuum</text>
+      <path class="d-dash" d="M550 130 H565"/>
+      <text class="t t-xs" x="570" y="68">⑦ extruder gears:</text><text class="t t-xs" x="570" y="82">brush + air</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> Seven zones to clean. Work top to bottom so debris falls on surfaces you have not cleaned yet.</figcaption>
+  </figure>
+
+  <h2 id="lubrication">Lubrication: rods, rails and lead screws</h2>
+  <p>Lubrication reduces friction and wear and keeps the printer quiet. But the wrong lubricant, or too much, attracts dust and creates sludge. Always wipe old lubricant and debris away <b>before</b> adding new.</p>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Part</th><th>Lubricant</th><th>Amount</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Steel linear rods (smooth rods) with bushings or bearings</td><td>Light machine oil (PTFE-based or sewing-machine oil, ISO VG 22–68)</td><td>1–2 drops per 5 cm, then run the axis 3–5 times</td><td>Wipe excess</td></tr>
+      <tr><td>Linear rails with carriages (MGN/HIWIN)</td><td>Light grease (NLGI 00/0) or manufacturer-recommended oil</td><td>A thin film along the rail; a drop at carriage grease port</td><td>Avoid heavy grease; it makes carriages sluggish</td></tr>
+      <tr><td>Lead screws and nuts (trapezoidal)</td><td>PTFE or lithium grease (not oil)</td><td>Pea-sized amount spread over the thread</td><td>Spread by moving the axis full-length</td></tr>
+      <tr><td>Plastic gears</td><td>Plastic-safe grease (silicone or PTFE grease)</td><td>Tiny amount on teeth</td><td>Check compatibility; petroleum grease can swell some plastics</td></tr>
+      <tr><td>Belts</td><td><b>None</b></td><td>—</td><td>Clean only with a dry brush or lightly dampened cloth</td></tr>
+      <tr><td>Carbon-fiber rods</td><td><b>None</b></td><td>—</td><td>Wipe dry; see warning below</td></tr>
+      <tr><td>Fans and motor bearings</td><td><b>None</b> normally</td><td>—</td><td>Replace when noisy</td></tr>
+    </tbody></table></div>
+
+  <div class="callout warn"><span class="callout-title">Carbon-fiber rods: do not oil</span>
+    <p>Some printers use carbon-fiber guide rods with self-lubricating bushings (graphite or composite). Adding oil can attract dust, swell the bushing or make the surface slippery and uneven. Wipe them with a dry cloth; follow the manufacturer’s guidance. The same applies to graphite or sintered bronze bearings that are marked “dry”: only lubricate what the manual lists.</p></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 240" role="img" aria-label="Lubrication zones: oil on smooth rods, grease on lead screws, nothing on belts or carbon rods">
+      <rect class="d-surface" x="20" y="20" width="240" height="190" rx="10"/><text class="t t-b t-c" x="140" y="44">Smooth rod / rail</text>
+      <rect class="d-metal" x="50" y="96" width="180" height="10" rx="5"/><rect class="d-plastic" x="110" y="80" width="60" height="42" rx="6"/>
+      <path class="k-blue" d="M70 90 v-12 M92 90 v-12" /><circle class="f-blue" cx="70" cy="74" r="4"/><circle class="f-blue" cx="92" cy="74" r="4"/>
+      <text class="t t-xs t-c" x="140" y="150">1–2 drops of oil per 5 cm</text><text class="t t-xs t-c" x="140" y="166">move the carriage 3–5×, wipe the excess</text>
+      <rect class="d-surface" x="270" y="20" width="240" height="190" rx="10"/><text class="t t-b t-c" x="390" y="44">Lead screw</text>
+      <rect class="d-metal" x="370" y="62" width="40" height="120" rx="4"/><g class="d-thin"><path d="M370 74 l40 8 M370 90 l40 8 M370 106 l40 8 M370 122 l40 8 M370 138 l40 8 M370 154 l40 8"/></g>
+      <ellipse class="f-orange" cx="390" cy="112" rx="14" ry="6"/>
+      <text class="t t-xs t-c" x="390" y="196">grease, pea-sized, spread by full travel</text>
+      <rect class="d-surface" x="520" y="20" width="240" height="190" rx="10"/><text class="t t-b t-c" x="640" y="44">Do not lubricate</text>
+      <path class="d-ink" d="M550 90 H730 M550 110 H730"/><g class="d-thin"><path d="M556 90 v20 M568 90 v20 M580 90 v20 M592 90 v20 M604 90 v20 M616 90 v20 M628 90 v20 M640 90 v20 M652 90 v20 M664 90 v20 M676 90 v20 M688 90 v20 M700 90 v20 M712 90 v20"/></g>
+      <text class="t t-xs t-c" x="640" y="132">belts (teeth)</text>
+      <rect class="d-metal" x="560" y="148" width="160" height="8" rx="4"/><text class="t t-xs t-c" x="640" y="176">carbon rods, dry bushings</text>
+      <path class="k-red" d="M620 60 l40 24 M660 60 l-40 24"/>
+    </svg>
+    <figcaption><b>Figure 3.</b> Match lubricant to the part. Oil for smooth rods, grease for screws, nothing for belts and carbon rods.</figcaption>
+  </figure>
+
+  <h2 id="belts">Belts: tension and inspection</h2>
+  <p>Belts transmit motion. Too loose and you get backlash, ringing and layer shifts; too tight and you wear bearings and stepper shafts. For most printers the right tension is “guitar-string firm, not piano-wire tight”. A reliable approach:</p>
+  <ol class="steps">
+    <li><b>Power off</b> and move the toolhead to the middle of the axis.</li>
+    <li><b>Pluck</b> the belt like a string. It should give a clear, low note and a visible vibration, not a dull thud, and not a high whine.</li>
+    <li><b>Compare</b> the two belts of a CoreXY; they should sound similar. Use a free phone app that shows frequency (a frequency meter) if you want numbers; follow your manufacturer’s target.</li>
+    <li><b>Inspect teeth</b> for fraying, missing teeth, rubber dust or shiny flat spots on the back.</li>
+    <li><b>Tighten</b> a quarter turn at a time using the tensioner, then re-check. Re-run any vibration compensation / input-shaping calibration afterward.</li>
+  </ol>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 220" role="img" aria-label="Belt tension check: too loose, right, too tight">
+      <g>
+        <rect class="d-surface" x="20" y="20" width="240" height="180" rx="10"/><text class="t t-b t-c" x="140" y="44">Too loose</text>
+        <circle class="d-metal" cx="50" cy="100" r="14"/><circle class="d-metal" cx="230" cy="100" r="14"/>
+        <path class="d-ink" d="M50 86 C110 130 170 130 230 86"/>
+        <text class="t t-xs t-c" x="140" y="168">large sag, dull flap</text><text class="t t-xs t-c" x="140" y="184">backlash, ringing</text>
+      </g>
+      <g>
+        <rect class="d-surface" x="270" y="20" width="240" height="180" rx="10"/><text class="t t-b t-c" x="390" y="44">Right</text>
+        <circle class="d-metal" cx="300" cy="100" r="14"/><circle class="d-metal" cx="480" cy="100" r="14"/>
+        <path class="d-ink" d="M300 86 C360 92 420 92 480 86"/>
+        <path class="k-green" d="M390 76 v-14" /><text class="t t-xs t-c" x="390" y="168">small sag, clear low note</text><text class="t t-xs t-c" x="390" y="184">quiet and accurate</text>
+      </g>
+      <g>
+        <rect class="d-surface" x="520" y="20" width="240" height="180" rx="10"/><text class="t t-b t-c" x="640" y="44">Too tight</text>
+        <circle class="d-metal" cx="550" cy="100" r="14"/><circle class="d-metal" cx="730" cy="100" r="14"/>
+        <path class="d-ink" d="M550 86 H730"/>
+        <text class="t t-xs t-c" x="640" y="168">high whine, no give</text><text class="t t-xs t-c" x="640" y="184">worn bearings, motor strain</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 4.</b> Belt tension in three pictures. Aim for the middle one, and check both belts match.</figcaption>
+  </figure>
+
+  <h2 id="fans">Fans and airflow</h2>
+  <p>A printer has several fans: <b>part-cooling</b> (blows on the printed layer), <b>heatsink / hotend fan</b> (keeps the cold side of the hotend cold), <b>electronics/mainboard fan</b>, and sometimes chamber or auxiliary fans. Dust builds up on blades and ducts and reduces flow; a slow hotend fan causes heat creep and clogs (see <a href="troubleshooting.html#d-heatcreep">heat creep</a>).</p>
+  <ul>
+    <li>Monthly: blow out dust with compressed air or a soft brush. Hold the fan blades still so the bearings do not over-spin.</li>
+    <li>Listen for rattles or rising noise; a fan that sounds rough is near failure. Replace it before it stops.</li>
+    <li>Check that ducts are not clogged with stray filament or covered by a melted blob.</li>
+    <li>Make sure fans start and spin freely when you command them from the menu.</li>
+  </ul>
+
+  <h2 id="hotend">Hotend and nozzle: wear, replacement and lifetime</h2>
+  <p>The nozzle is the most important consumable. Brass is soft and conducts heat well, which is ideal for PLA, PETG and ABS. Abrasive filaments (carbon fiber, glass fiber, glow-in-the-dark, some metal-filled) wear the bore wider over time, so under-extrusion and size drift appear slowly. Hardened steel, stainless or coated nozzles last much longer but conduct heat less well (print a little hotter).</p>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Nozzle</th><th>Typical use</th><th>Rough lifetime*</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Brass</td><td>PLA, PETG, ABS, ASA, TPU</td><td>3–6 months of regular use (or 300–500 kg-hours of light use)</td><td>Cheap; swap on schedule</td></tr>
+      <tr><td>Brass with abrasive filaments</td><td>Not recommended</td><td>Days to a couple of spools</td><td>Bore grows quickly</td></tr>
+      <tr><td>Hardened steel</td><td>CF/GF filled nylon, PC, PET-CF</td><td>Many months to years</td><td>Needs ~5–10 °C more heat; lower thermal conductivity</td></tr>
+      <tr><td>Stainless steel</td><td>Food-contact attempts, mild abrasives</td><td>Months</td><td>Poor conduction; mainly for niche cases</td></tr>
+      <tr><td>Ruby / diamond-tipped</td><td>Heavy abrasives, production</td><td>Very long</td><td>Expensive; fragile if overtightened</td></tr>
+    </tbody></table></div>
+  <p><small>* Rough, usage dependent figures. Judge by symptoms, not the calendar.</small></p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 260" role="img" aria-label="Nozzle bore wear over time: a new nozzle has a small round bore, a worn one has a widened, rough bore">
+      <rect class="d-surface" x="20" y="20" width="360" height="220" rx="10"/><text class="t t-b t-c" x="200" y="44">New nozzle</text>
+      <path class="d-metal" d="M130 70 H270 V120 L225 190 H175 L130 120 Z"/>
+      <path class="d-plastic" d="M192 70 H208 V180 H192 Z"/>
+      <text class="t t-xs t-c" x="200" y="214">0.40 mm bore, sharp edge</text>
+      <rect class="d-surface" x="400" y="20" width="360" height="220" rx="10"/><text class="t t-b t-c" x="580" y="44">Worn nozzle</text>
+      <path class="d-metal" d="M510 70 H650 V120 L605 190 H555 L510 120 Z"/>
+      <path class="d-plastic" d="M566 70 H594 V184 H566 Z"/>
+      <path class="d-dash" d="M572 184 H588"/>
+      <text class="t t-xs t-c" x="580" y="214">0.50+ mm bore, rounded tip</text>
+      <text class="t t-xs t-c" x="580" y="230">under-extrusion, oversize parts</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> Why abrasive filaments need hardened nozzles: the bore grows, flow control gets sloppy and dimensions drift.</figcaption>
+  </figure>
+
+  <h3 id="nozzle-swap">How to change a nozzle (generic)</h3>
+  <ol class="steps">
+    <li><b>Heat</b> the nozzle to about 200–250 °C (the plastic inside must be soft), unload filament, then power off.</li>
+    <li><b>Hold the heater block</b> with pliers or a wrench (it can twist and damage the heater and thermistor wires).</li>
+    <li><b>Unscrew the nozzle</b> with the correct socket (typically 6 mm hex for V6-style; follow the manual). Do it while hot.</li>
+    <li><b>Screw in the new nozzle</b> hand tight, then tighten to the manufacturer’s torque while hot. Over-tightening snaps nozzles; under-tightening leaks.</li>
+    <li><b>Check</b> for leaks with a small purge and re-torque after the first heat cycle.</li>
+  </ol>
+  <div class="callout warn"><span class="callout-title">Hot work</span>
+    <p>You are touching parts at 200+ °C. Use gloves, a wrench holder and take your time. Some printers (including most Bambu Lab models) use proprietary assemblies where the nozzle and heater are replaced as a unit; follow the official guide rather than the generic one.</p></div>
+
+  <h3 id="signs-nozzle">When to replace a nozzle</h3>
+  <ul class="checklist">
+    <li>Persistent under-extrusion after drying filament and cold pull</li>
+    <li>First layers need ever more flow or lower Z offset</li>
+    <li>Dimensions drift with the same profile</li>
+    <li>Visible rounded or scratched tip, or a bore bigger than the nominal size under a magnifier</li>
+    <li>You switched to abrasive materials with a brass nozzle</li>
+  </ul>
+
+  <h2 id="ptfe">PTFE tubes and couplers</h2>
+  <p>PTFE (Teflon) tubes guide filament from the spool or AMS to the toolhead and, in some hotends, through the heat break. Pneumatic couplers (push-fit connectors) clamp the tube. Over time the clamped section becomes grooved, the tube can slip, and gaps open that leak plastic and cause stringing, poor retraction or clicking.</p>
+  <ul>
+    <li><b>Test:</b> secure the coupler; if the tube can still move up and down, the end is worn. Cut off 5–10 mm and re-seat, or replace the tube.</li>
+    <li><b>Inside the hotend:</b> a PTFE liner discolored or deformed (above about 240–260 °C continuous use) should be replaced; PTFE degrades and releases fumes when overheated.</li>
+    <li><b>Cut square</b> with a tube cutter, not scissors. A slanted end leaves a gap.</li>
+    <li><b>Keep tubes short and smooth</b> with gentle bends; sharp bends increase friction and cause under-extrusion with flexible materials.</li>
+  </ul>
+
+  <div class="callout danger"><span class="callout-title">PTFE and high temperatures</span>
+    <p>PTFE starts to degrade above about 260 °C and releases fumes that are harmful, especially to birds. If you print hotter than that, use an all-metal hotend and keep the PTFE out of the hot zone.</p></div>
+
+  <h2 id="extruder">Extruder gears and filament path</h2>
+  <p>The extruder’s drive gear bites the filament. Dust from filament (especially carbon-fiber or glow) packs the teeth and reduces grip, which shows as slipping, clicking and sudden under-extrusion.</p>
+  <ol class="steps">
+    <li>Unload the filament and power off.</li>
+    <li>Open the extruder housing following the manual.</li>
+    <li>Use a small brush and compressed air to clear dust from gears, the idler and the filament path.</li>
+    <li>Check gear teeth for sharp points (good) or polished flats (worn). Replace a worn drive gear.</li>
+    <li>Apply a tiny amount of plastic-safe grease to gear teeth that mesh (not the filament path!).</li>
+    <li>Reassemble, load filament and watch a 100 mm extrusion test.</li>
+  </ol>
+
+  <h2 id="cutter">Filament cutter, wiper and purge area</h2>
+  <p>Printers that cut filament automatically use a small blade. A dull blade leaves frayed ends and causes unload failures. Check blade sharpness every 8–12 spools for ordinary plastics (sooner for abrasive ones) and replace it as soon as cuts look crushed rather than clean.</p>
+  <p>Many printers wipe the nozzle on a silicone or brass wiper and purge waste into a chute or bin. Keep these clean:</p>
+  <ul>
+    <li>Replace torn, hardened or deformed silicone wipers.</li>
+    <li>Empty the purge bin; waste piles can foul the toolhead path.</li>
+    <li>Check that the wiper contacts the nozzle at the right height.</li>
+  </ul>
+
+  <h2 id="filters">Filters: carbon and HEPA</h2>
+  <p>Enclosed printers often have an activated carbon filter (absorbs odors and some VOCs) and sometimes a HEPA filter (traps particles, not gases). They saturate silently: you notice the smell of ABS or nylon coming back.</p>
+  <ul>
+    <li>Replace the carbon filter when it is dirty, the smell returns, or after roughly 3–6 months of regular ABS/ASA/nylon printing (longer for PLA only).</li>
+    <li>Wash and <b>fully dry</b> the filter housing; moisture near electronics is dangerous.</li>
+    <li>Do not rely on a filter alone for toxic fumes; ventilate the room (see <a href="../foundations/safety-and-workspace.html">safety &amp; workspace</a>).</li>
+  </ul>
+
+  <h2 id="electrical">Electrical inspection and firmware</h2>
+  <h3 id="electrical-check">Electrical inspection (power off, unplugged)</h3>
+  <ul class="checklist">
+    <li>Heater and thermistor connectors: fully seated, no discoloration or melted housing</li>
+    <li>Toolhead cable bundle: no cracked insulation, no kinks, strain relief intact</li>
+    <li>Power connector and PSU: not warm to the touch when idle, no burn smell</li>
+    <li>Terminals on the mainboard: tight screws, no frayed strands</li>
+    <li>Ground connection (if the manual mentions one) in place</li>
+    <li>Dust removed from the PSU and mainboard vents (compressed air)</li>
+  </ul>
+  <div class="callout danger"><span class="callout-title">Unusual heat or smell</span>
+    <p>A connector that is brown or warm, or a smell of burning, means stop and replace the part. Heated-bed and heater connectors are a classic fire source when terminals loosen.</p></div>
+
+  <h3 id="firmware">Firmware and software updates</h3>
+  <p>Firmware updates fix safety issues (thermal runaway protection), improve motion and add features. Update when the release notes mention fixes that matter to you, and not in the middle of an important print. Back up profiles and settings first, and read the notes about compatibility with your slicer version. Keep the slicer and printer firmware reasonably in sync. See also <a href="../software/gcode-and-firmware.html">G-code &amp; firmware</a>.</p>
+
+  <h2 id="camera">Camera lens</h2>
+  <p>Enclosed printers with cameras collect a film of vaporized plastic on the lens. Clean it about every six months, or monthly when printing a lot of ABS or ASA: a microfiber cloth with a little IPA, never abrasive paper.</p>
+
+  <h2 id="desiccant">Desiccant and dry boxes</h2>
+  <p>Silica gel beads and similar desiccants saturate. Indicator beads change color (blue→pink, orange→green, depending on type). Refresh when the indicator has changed: bake at the temperature on the package (typically 100–120 °C for plain silica gel, in an oven or air fryer; indicator beads can be damaged by higher heat, so follow their label) until they return to the dry color, then seal immediately. Replace beads that no longer regenerate. See <a href="../materials/drying-and-storage.html">drying &amp; storage</a>.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 240" role="img" aria-label="Desiccant cycle: dry beads absorb moisture, change color, are baked and sealed again">
+      <rect class="f-blue" x="30" y="80" width="150" height="80" rx="10"/><text class="t t-b t-c" x="105" y="115">Dry beads</text><text class="t t-xs t-c" x="105" y="135">in sealed box</text>
+      <rect class="f-orange" x="240" y="80" width="150" height="80" rx="10"/><text class="t t-b t-c" x="315" y="115">Saturated</text><text class="t t-xs t-c" x="315" y="135">indicator changed</text>
+      <rect class="f-red" x="450" y="80" width="150" height="80" rx="10"/><text class="t t-b t-c" x="525" y="115">Bake dry</text><text class="t t-xs t-c" x="525" y="135">≈100–120 °C</text>
+      <rect class="f-green" x="660" y="80" width="100" height="80" rx="10"/><text class="t t-b t-c" x="710" y="115">Seal</text><text class="t t-xs t-c" x="710" y="135">hot, airtight</text>
+      <path class="d-ink arrow" d="M182 120 H238 M392 120 H448 M602 120 H658"/>
+      <path class="d-ink arrow" d="M710 162 V200 H105 V164"/>
+    </svg>
+    <figcaption><b>Figure 6.</b> The desiccant life cycle. Refresh quarterly or when the indicator changes.</figcaption>
+  </figure>
+
+  <h2 id="wear">Signs of wear: what to look for</h2>
+  <p>Learn to recognize early wear by sight, sound and print quality. When in doubt, compare with photos of your own new printer.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 300" role="img" aria-label="Six signs of wear: frayed belt, worn gear, grooved PTFE tube, dusty fan, cracked cable, rounded nozzle tip">
+      <g>
+        <rect class="d-surface" x="20" y="20" width="230" height="120" rx="10"/><text class="t t-b t-c" x="135" y="42">Frayed belt</text>
+        <path class="d-ink" d="M40 90 H230"/><g class="d-thin"><path d="M50 82 v16 M64 82 v16 M78 82 v16 M92 82 v16 M106 82 v16 M120 82 v16 M134 82 v16 M148 82 v16 M162 82 v16 M176 82 v16 M190 82 v16 M204 82 v16 M218 82 v16"/></g>
+        <path class="k-red" d="M120 70 l10 -10 M130 70 l10 -10 M140 70 l10 -10"/><text class="t t-xs t-c" x="135" y="124">fluff, flat teeth → replace</text>
+      </g>
+      <g>
+        <rect class="d-surface" x="275" y="20" width="230" height="120" rx="10"/><text class="t t-b t-c" x="390" y="42">Worn drive gear</text>
+        <circle class="d-metal" cx="390" cy="86" r="26"/><circle class="s-white d-thin" cx="390" cy="86" r="6"/>
+        <g class="d-thin"><path d="M390 56 v-6 M412 64 l5 -5 M420 86 h6 M412 108 l5 5 M390 116 v6 M368 108 l-5 5 M360 86 h-6 M368 64 l-5 -5"/></g>
+        <text class="t t-xs t-c" x="390" y="130">polished, filled teeth</text>
+      </g>
+      <g>
+        <rect class="d-surface" x="530" y="20" width="230" height="120" rx="10"/><text class="t t-b t-c" x="645" y="42">Grooved PTFE</text>
+        <rect class="d-plastic" x="560" y="74" width="170" height="20" rx="3"/><path class="k-red" d="M600 74 v20 M606 74 v20 M612 74 v20"/>
+        <text class="t t-xs t-c" x="645" y="124">ring marks where clamped</text>
+      </g>
+      <g>
+        <rect class="d-surface" x="20" y="160" width="230" height="130" rx="10"/><text class="t t-b t-c" x="135" y="182">Dusty fan</text>
+        <circle class="d-metal2" cx="135" cy="232" r="32"/><g class="d-plastic2"><path d="M135 232 l20 -24 l8 28 Z M135 232 l-24 -20 l-8 28 Z M135 232 l8 30 l-24 -4 Z"/></g>
+        <circle class="d-mute" cx="135" cy="232" r="8"/><text class="t t-xs t-c" x="135" y="280">grey fuzz, rising noise</text>
+      </g>
+      <g>
+        <rect class="d-surface" x="275" y="160" width="230" height="130" rx="10"/><text class="t t-b t-c" x="390" y="182">Cracked cable</text>
+        <path class="d-ink" d="M300 240 C340 200 440 280 480 230" fill="none" stroke-width="8"/>
+        <path class="k-red" d="M390 226 l8 14 M396 224 l-4 18"/><text class="t t-xs t-c" x="390" y="280">exposed copper → replace</text>
+      </g>
+      <g>
+        <rect class="d-surface" x="530" y="160" width="230" height="130" rx="10"/><text class="t t-b t-c" x="645" y="182">Rounded nozzle tip</text>
+        <path class="d-metal" d="M600 200 H690 L670 236 H620 Z"/><ellipse class="d-metal2" cx="645" cy="240" rx="18" ry="6"/>
+        <text class="t t-xs t-c" x="645" y="274">oversize bore, blobby first layer</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 7.</b> Six wear patterns. Catch them early and replacement stays a quick routine job.</figcaption>
+  </figure>
+
+  <h2 id="spares">Spare parts kit</h2>
+  <p>A small kit prevents long downtime. Keep it in a labeled box next to the printer.</p>
+  <div class="grid cols-2">
+    <div class="card accent-blue"><h4>Always keep</h4>
+      <ul>
+        <li>2 spare nozzles of your most-used size</li>
+        <li>1 spare PTFE tube + couplers</li>
+        <li>Spare build plate or a clean one for rotation</li>
+        <li>Hex keys, screwdrivers, tweezers, flush cutters</li>
+        <li>Lubricants: light oil, PTFE grease</li>
+        <li>IPA, microfiber cloths, brass brush</li>
+      </ul></div>
+    <div class="card accent-green"><h4>Nice to have</h4>
+      <ul>
+        <li>Spare belt(s) and a hotend fan</li>
+        <li>Spare silicone sock and thermistor/heater</li>
+        <li>Cutter blade, wiper, extruder gear</li>
+        <li>Hardened nozzle (for abrasives)</li>
+        <li>Thermal paste/pad, Kapton tape</li>
+        <li>Spare screws, zip ties, heat-shrink</li>
+      </ul></div>
+  </div>
+
+  <h2 id="log">Keep a maintenance log</h2>
+  <p>A log turns maintenance from guesswork into data. Note the date, print hours, what you did and any symptoms. After a few months you will know how often <i>your</i> printer needs each task. Copy this template into a spreadsheet or notebook.</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Date</th><th>Print hours (total)</th><th>Task</th><th>Part / material</th><th>Result / notes</th><th>Next due</th></tr></thead>
+    <tbody>
+      <tr><td>2025-01-05</td><td>120</td><td>Lubricated X/Y rods</td><td>Light oil</td><td>Quieter</td><td>+1 month</td></tr>
+      <tr><td>2025-01-19</td><td>152</td><td>Replaced nozzle</td><td>0.4 mm brass</td><td>First layer better</td><td>+4 months</td></tr>
+      <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    </tbody></table></div>
+  <p>Write down every change to the printer too: new plate, upgraded fan, firmware version. When a mysterious problem appears, the log often shows what changed.</p>
+
+  <h2 id="storage">Storing the printer long term</h2>
+  <p>If the printer will sit unused for weeks or months:</p>
+  <ol class="steps">
+    <li>Unload filament, cool everything and clean the nozzle (to avoid a plug of degraded plastic).</li>
+    <li>Wash and dry the plate; store it flat in a cover.</li>
+    <li>Clean and lightly lubricate rods; wipe lead screws with grease.</li>
+    <li>Remove spools and keep them in sealed bags with desiccant.</li>
+    <li>Cover the printer with a cloth or plastic sheet to keep dust out (not airtight; avoid condensation).</li>
+    <li>Store in a dry place between about 5 °C and 35 °C; avoid garages that freeze or damp basements.</li>
+    <li>Before restarting, inspect belts and cables, run a full calibration, and purge the nozzle.</li>
+  </ol>
+
+  <h2 id="shipping">Shipping or moving the printer</h2>
+  <p>Printers are heavy, precise and have fragile parts. Follow the manufacturer’s transport instructions; in general:</p>
+  <ul class="checklist">
+    <li>Remove filament, spools, plate and loose accessories; take out the hotend fan duct if the manual says so.</li>
+    <li>Secure the toolhead and heatbed with the original transport locks, screws and foam, or with zip ties and foam blocks.</li>
+    <li>Use the original box if you have it; otherwise a rigid box with at least 5 cm of foam all around.</li>
+    <li>Keep the printer upright; do not stack weight on top.</li>
+    <li>After moving: inspect for loose screws and belt tension, level the surface, and run a full calibration.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 200" role="img" aria-label="Moving a printer in five steps: empty, secure, pack, move, recalibrate">
+      <g>
+        <rect class="f-blue" x="10" y="60" width="130" height="70" rx="10"/><text class="t t-b t-c" x="75" y="90">1 Empty</text><text class="t t-xs t-c" x="75" y="108">filament, plate</text>
+        <rect class="f-green" x="165" y="60" width="130" height="70" rx="10"/><text class="t t-b t-c" x="230" y="90">2 Secure</text><text class="t t-xs t-c" x="230" y="108">lock head and bed</text>
+        <rect class="f-yellow" x="320" y="60" width="130" height="70" rx="10"/><text class="t t-b t-c" x="385" y="90">3 Pack</text><text class="t t-xs t-c" x="385" y="108">foam, rigid box</text>
+        <rect class="f-orange" x="475" y="60" width="130" height="70" rx="10"/><text class="t t-b t-c" x="540" y="90">4 Move</text><text class="t t-xs t-c" x="540" y="108">upright, no knocks</text>
+        <rect class="f-purple" x="630" y="60" width="130" height="70" rx="10"/><text class="t t-b t-c" x="695" y="90">5 Re-calibrate</text><text class="t t-xs t-c" x="695" y="108">level, shapers</text>
+        <path class="d-ink arrow" d="M142 95 H162 M297 95 H317 M452 95 H472 M607 95 H627"/>
+      </g>
+    </svg>
+    <figcaption><b>Figure 8.</b> A safe move in five steps. Skipping step 2 is how toolheads and beds get damaged.</figcaption>
+  </figure>
+
+  <h2 id="symptoms">Symptom → likely maintenance cause</h2>
+  <p>When quality drops, a maintenance item is often the cause. Use this table before changing slicer settings.</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Symptom</th><th>Check first</th><th>Maintenance action</th></tr></thead>
+    <tbody>
+      <tr><td>First layer suddenly poor</td><td>Plate cleanliness, nozzle tip</td><td>Wash plate; wipe nozzle; recalibrate Z offset</td></tr>
+      <tr><td>Ringing or ghosting increased</td><td>Belt tension, loose screws, printer on an unstable table</td><td>Retension belts; tighten frame; rerun input-shaping calibration</td></tr>
+      <tr><td>Grinding or squeaking motion</td><td>Dry or dirty rods and rails</td><td>Clean, then oil rods; grease lead screws</td></tr>
+      <tr><td>Clicking extruder, intermittent under-extrusion</td><td>Partial clog, gear dust, worn nozzle</td><td>Cold pull; clean gears; replace nozzle</td></tr>
+      <tr><td>Stringing came back</td><td>Worn PTFE ends, loose coupler, wet filament</td><td>Re-seat or replace tube; dry filament</td></tr>
+      <tr><td>Layer shifts</td><td>Loose pulley, belt skip, cables snagging</td><td>Tighten set screws; check belts; re-route cables</td></tr>
+      <tr><td>Odors or visible haze</td><td>Saturated filter, hot PTFE liner</td><td>Replace filter; check liner and temperatures</td></tr>
+      <tr><td>Blurry camera image</td><td>Film on lens</td><td>Clean lens with IPA on microfiber</td></tr>
+      <tr><td>Filament unloading fails</td><td>Dull cutter, debris in path</td><td>Replace blade; clean the filament path</td></tr>
+      <tr><td>Warm connector or smell of burning</td><td>Loose terminal, damaged insulation</td><td>Power off and replace the part before using again</td></tr>
+    </tbody></table></div>
+
+  <h2 id="profiles">Adjusting the schedule to your use</h2>
+  <div class="grid cols-3">
+    <div class="card accent-green"><h4>Light use</h4><p>Under 5 h/week, PLA only. Wash the plate when it looks dull, oil rods every 2–3 months, replace the nozzle yearly. Most important: keep filament dry and covered.</p></div>
+    <div class="card accent-blue"><h4>Regular use</h4><p>5–25 h/week, mixed PLA/PETG. Follow the table above as written. Keep one spare nozzle and tube, and log your hours.</p></div>
+    <div class="card accent-orange"><h4>Heavy or abrasive use</h4><p>Over 25 h/week or CF/GF filaments. Halve every interval, use a hardened nozzle, clean gear dust weekly, replace filters and blades early, and inspect electrical connections monthly.</p></div>
+  </div>
+  <div class="callout fact"><span class="callout-title">Enclosure effect</span>
+    <p>Hot chambers (50–65 °C) age rubber, plastic parts, grease and cables faster. Fans and rails also collect more fumes and residue. If you print ABS, ASA, nylon or PC in a heated chamber, shorten lubrication and inspection intervals by about a third and check cable insulation for brittleness every quarter.</p></div>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul class="checklist">
+    <li>Do small things often: wash the plate weekly, wipe rails, check desiccant.</li>
+    <li>Oil smooth rods lightly, grease lead screws, and lubricate nothing else (belts and carbon rods stay dry).</li>
+    <li>Replace consumables by symptoms and hours: nozzles, PTFE tubes, filters, wipers and blades.</li>
+    <li>Power off and cool down before electrical or hotend work.</li>
+    <li>Keep a log; it is the cheapest diagnostic tool you own.</li>
+    <li>For X2D-specific procedures see <a href="../x2d/maintenance-and-troubleshooting.html">X2D maintenance &amp; troubleshooting</a>; for diagnosing problems see the <a href="troubleshooting.html">troubleshooting gallery</a>.</li>
+  </ul>
+
+</main>
+</body>
+</html>

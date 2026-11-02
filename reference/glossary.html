@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Glossary A–Z · 3D Printing Compendium</title>
+  <meta name="description" content="A–Z glossary of more than 200 terms: 3D printing, materials, CAD, slicers, G-code, mechanics, post-processing and Bambu-specific terminology, with links to the relevant chapters.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+  <style>
+    .gl-tools{position:sticky;top:0;z-index:5;background:var(--bg, #fff);padding:.6rem 0;border-bottom:1px solid var(--border, #ddd)}
+    .gl-jump{display:flex;flex-wrap:wrap;gap:.3rem;margin:.5rem 0 0;padding:0;list-style:none}
+    .gl-jump a{display:inline-block;min-width:1.9rem;text-align:center;padding:.15rem .4rem;border:1px solid var(--border, #ccc);border-radius:6px;text-decoration:none;font-weight:600}
+    .gl-jump a:hover{background:var(--surface-2, #eee)}
+    .gl-filter{width:100%;max-width:28rem;padding:.5rem .7rem;font-size:1rem;border:1px solid var(--border, #ccc);border-radius:8px;background:inherit;color:inherit}
+    .gl-count{margin-left:.6rem;font-size:.9rem;opacity:.75}
+    .gl-letter h2{border-bottom:2px solid var(--border, #ddd);padding-bottom:.2rem}
+    dl.gl dt{font-weight:700;margin-top:.9rem;scroll-margin-top:7rem}
+    dl.gl dd{margin:.15rem 0 0 1.2rem}
+    .gl-empty{display:none;padding:1rem;font-style:italic}
+  </style>
+</head>
+<body data-page="reference/glossary.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 6 · Reference</div>
+    <h1>Glossary A–Z</h1>
+    <p class="lead">More than 200 terms from 3D printing, materials science, CAD, slicers, G-code, mechanics, post-processing and Bambu Lab hardware, each with a precise definition and links to where the topic is taught.</p>
+    <div class="meta"><span class="badge beginner">Reference</span><span class="badge time">⏱ Look-up page</span></div>
+  </header>
+
+  <div class="callout info"><span class="callout-title">How to use this page</span>
+    <p>Type in the box to filter terms and definitions, or jump to a letter. Every term has its own anchor (for example <code>glossary.html#term-retraction</code>), so you can link to a definition from anywhere. Words in <em>italics</em> inside a definition are defined elsewhere in this glossary.</p>
+  </div>
+
+  <div class="gl-tools">
+    <input id="gl-filter" class="gl-filter" type="search" aria-label="Filter glossary" placeholder="Filter terms (e.g. retraction, Tg, AMS)…" autocomplete="off">
+    <span class="gl-count" id="gl-count" aria-live="polite"></span>
+    <ul class="gl-jump" id="gl-jump">
+      <li><a href="#letter-num">#</a></li><li><a href="#letter-a">A</a></li><li><a href="#letter-b">B</a></li><li><a href="#letter-c">C</a></li><li><a href="#letter-d">D</a></li><li><a href="#letter-e">E</a></li><li><a href="#letter-f">F</a></li><li><a href="#letter-g">G</a></li><li><a href="#letter-h">H</a></li><li><a href="#letter-i">I</a></li><li><a href="#letter-j">J</a></li><li><a href="#letter-k">K</a></li><li><a href="#letter-l">L</a></li><li><a href="#letter-m">M</a></li><li><a href="#letter-n">N</a></li><li><a href="#letter-o">O</a></li><li><a href="#letter-p">P</a></li><li><a href="#letter-q">Q</a></li><li><a href="#letter-r">R</a></li><li><a href="#letter-s">S</a></li><li><a href="#letter-t">T</a></li><li><a href="#letter-u">U</a></li><li><a href="#letter-v">V</a></li><li><a href="#letter-w">W</a></li><li><a href="#letter-x">X</a></li><li><a href="#letter-y">Y</a></li><li><a href="#letter-z">Z</a></li>
+    </ul>
+  </div>
+
+  <h2 id="visual">🖼️ Visual term guides</h2>
+  <p>Three diagrams explain the terms that people confuse most. Definitions follow in the A–Z list.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 260" role="img" aria-label="Three panels comparing stringing, which is thin threads between separate parts, oozing, which is a droplet leaking from the nozzle on a travel move, and blobs, which are lumps at the start or end of a perimeter">
+      <rect class="d-surface" x="10" y="30" width="240" height="200" rx="10"/><rect class="d-surface" x="270" y="30" width="240" height="200" rx="10"/><rect class="d-surface" x="530" y="30" width="240" height="200" rx="10"/>
+      <text class="t-b t-c" x="130" y="22">Stringing</text><text class="t-b t-c" x="390" y="22">Oozing</text><text class="t-b t-c" x="650" y="22">Blobs / zits</text>
+      <rect class="d-plastic" x="40" y="130" width="50" height="80"/><rect class="d-plastic" x="170" y="130" width="50" height="80"/>
+      <path class="d-thin" d="M90 140 q40 12 80 0 M90 152 q40 14 80 0 M90 166 q40 10 80 0"/>
+      <text class="t-xs t-c" x="130" y="108">thin threads bridge</text><text class="t-xs t-c" x="130" y="122">the gap between parts</text>
+      <rect class="d-metal" x="360" y="60" width="60" height="40" rx="5"/><path class="d-metal" d="M375 100 L405 100 L395 118 L385 118 Z"/>
+      <path class="d-plastic" d="M390 118 q-2 14 0 22 q3 -8 0 -22"/><circle class="d-plastic" cx="390" cy="146" r="5"/>
+      <path class="k-orange arrow" d="M330 80 H356"/><text class="t-xs t-c" x="390" y="180">droplet leaks while the</text><text class="t-xs t-c" x="390" y="194">nozzle is travelling or idle</text>
+      <rect class="d-plastic" x="560" y="150" width="180" height="26"/><circle class="d-plastic" cx="650" cy="146" r="11"/><circle class="d-plastic" cx="725" cy="150" r="7"/>
+      <text class="t-xs t-c" x="650" y="108">lumps where the extruder</text><text class="t-xs t-c" x="650" y="122">pauses, often at the seam</text>
+      <text class="t-xs t-c" x="130" y="224">Cure: dry filament,</text><text class="t-xs t-c" x="130" y="238">retraction, lower temp</text>
+    </svg>
+    <figcaption><b>Visual 1.</b> Stringing, oozing and blobs (see <a href="#term-stringing">stringing</a>, <a href="#term-oozing">oozing</a>, <a href="#term-blob">blob</a>, <a href="#term-seam">seam</a>). All three are about uncontrolled molten plastic; the fixes overlap but differ.</figcaption>
+  </figure>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 300" role="img" aria-label="Top view and side cross-section of a printed part labelling outer wall, inner wall, perimeters, sparse infill, solid infill, top layers and bottom layers">
+      <rect class="d-surface" x="10" y="30" width="300" height="250" rx="10"/><rect class="d-surface" x="330" y="30" width="440" height="250" rx="10"/>
+      <text class="t-b t-c" x="160" y="22">Top view (one layer)</text><text class="t-b t-c" x="550" y="22">Side cross-section</text>
+      <rect class="d-plastic" x="40" y="60" width="240" height="200" rx="6"/><rect class="d-surface" x="52" y="72" width="216" height="176" rx="4"/><rect class="d-plastic" x="64" y="84" width="192" height="152" rx="3" fill-opacity=".5"/><rect class="d-surface" x="74" y="94" width="172" height="132" rx="2"/>
+      <path class="d-thin" d="M74 126 H246 M74 158 H246 M74 190 H246 M106 94 V226 M138 94 V226 M170 94 V226 M202 94 V226"/>
+      <text class="t-xs" x="48" y="56">outer wall</text><text class="t-xs" x="130" y="82">inner wall(s)</text><text class="t-xs t-c" x="160" y="168">sparse infill</text>
+      <rect class="d-plastic" x="360" y="60" width="380" height="14"/><rect class="d-plastic" x="360" y="74" width="380" height="14" fill-opacity=".8"/>
+      <rect class="d-plastic" x="360" y="88" width="30" height="130"/><rect class="d-plastic" x="710" y="88" width="30" height="130"/><rect class="d-plastic" x="390" y="88" width="14" height="130" fill-opacity=".5"/><rect class="d-plastic" x="696" y="88" width="14" height="130" fill-opacity=".5"/>
+      <path class="d-thin" d="M404 88 L450 218 M450 88 L496 218 M496 88 L542 218 M542 88 L588 218 M588 88 L634 218 M634 88 L680 218 M404 218 L450 88"/>
+      <rect class="d-plastic" x="360" y="218" width="380" height="14"/><rect class="d-plastic" x="360" y="232" width="380" height="14" fill-opacity=".8"/>
+      <text class="t-xs" x="342" y="54">top solid layers</text><text class="t-xs" x="342" y="264">bottom solid layers</text><text class="t-xs t-c" x="550" y="160">sparse infill (e.g. gyroid / grid)</text>
+    </svg>
+    <figcaption><b>Visual 2.</b> The anatomy of a sliced part: <a href="#term-perimeter">perimeters</a> (walls), <a href="#term-infill">infill</a>, and <a href="#term-top-layers">top</a> and <a href="#term-bottom-layers">bottom</a> solid layers.</figcaption>
+  </figure>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 280" role="img" aria-label="Side view labelling an overhang angle, a bridge between two pillars, an unsupported island, tree support and normal support, and support interface layers">
+      <rect class="d-surface" x="10" y="20" width="760" height="250" rx="10"/>
+      <rect class="d-metal" x="30" y="240" width="720" height="14" rx="3"/>
+      <rect class="d-plastic" x="60" y="130" width="40" height="110"/><rect class="d-plastic" x="260" y="130" width="40" height="110"/>
+      <rect class="d-plastic" x="60" y="116" width="240" height="14"/>
+      <text class="t-xs t-c" x="180" y="106">bridge</text><text class="t-xs t-c" x="180" y="94">(unsupported span between two points)</text>
+      <path class="d-plastic" d="M380 240 V130 H520 L560 100 V86 H380 Z" fill-opacity=".9"/>
+      <path class="d-thin" d="M520 130 L440 130"/><path class="k-orange" d="M520 130 L560 100"/><path class="d-dash" d="M520 130 H580"/>
+      <text class="t-xs" x="568" y="124">overhang angle</text>
+      <rect class="f-purple" x="420" y="142" width="100" height="6"/><rect class="d-cool" x="420" y="148" width="100" height="92" fill-opacity=".5"/><path class="d-thin" d="M430 148 V240 M445 148 V240 M460 148 V240 M475 148 V240 M490 148 V240 M505 148 V240"/>
+      <text class="t-xs" x="528" y="190">normal support</text><text class="t-xs" x="528" y="204">+ interface layer (purple)</text>
+      <path class="d-plastic" d="M640 240 V180 M640 180 L610 150 M640 180 L670 150 M640 180 L700 160" fill="none" stroke-width="5"/>
+      <rect class="d-plastic" x="590" y="130" width="130" height="14"/>
+      <text class="t-xs t-c" x="660" y="116">tree support</text>
+      <circle class="s-red" cx="740" cy="90" r="5"/><text class="t-xs t-r" x="730" y="80">island:</text><text class="t-xs t-r" x="730" y="68">first point of a new feature, needs support</text>
+    </svg>
+    <figcaption><b>Visual 3.</b> Overhang, bridge, island and support terms (see <a href="#term-overhang">overhang</a>, <a href="#term-bridge">bridge</a>, <a href="#term-support">support</a>, <a href="#term-tree-supports">tree supports</a>, <a href="#term-support-interface">support interface</a>). The technique page is <a href="../techniques/supports-bridges-overhangs.html">Supports, bridges &amp; overhangs</a>.</figcaption>
+  </figure>
+
+  <p class="gl-empty" id="gl-empty">No terms match your filter.</p>
+
+  <section class="gl-letter" id="letter-num"><h2>#</h2>
+  <dl class="gl">
+    <dt id="term-3mf">3MF</dt><dd>3D Manufacturing Format: a zipped, XML-based project file that stores one or more meshes plus units, colors, materials and, in slicer-specific variants, print settings and plate layouts. It carries more information than <a href="#term-stl">STL</a>, and Bambu Studio saves projects as 3MF.</dd>
+    <dt id="term-3d-printing">3D printing</dt><dd>Everyday name for <a href="#term-additive-manufacturing">additive manufacturing</a>: building a physical object layer by layer from a digital model. See <a href="../index.html">the compendium overview</a>.</dd>
+  </dl></section>
+
+  <section class="gl-letter" id="letter-a"><h2>A</h2>
+  <dl class="gl">
+    <dt id="term-abs">ABS</dt><dd>Acrylonitrile butadiene styrene: a tough, heat-resistant thermoplastic that warps and fumes. Printed at about 240–260 °C with a heated chamber. See <a href="../materials/engineering-plastics.html#abs-asa">Engineering plastics</a>.</dd>
+    <dt id="term-acceleration">Acceleration</dt><dd>How quickly the toolhead changes speed, in mm/s². High acceleration shortens print time but excites vibration and <a href="#term-ringing">ringing</a>. Limited by frame stiffness and <a href="#term-input-shaping">input shaping</a>.</dd>
+    <dt id="term-adaptive-layer-height">Adaptive layer height</dt><dd>A slicer feature that varies layer height along the part: thin layers on curves and details, thick layers on vertical walls. It saves time while keeping detail. See <a href="../techniques/speed-cooling-quality.html">Speed, cooling &amp; quality</a>.</dd>
+    <dt id="term-additive-manufacturing">Additive manufacturing</dt><dd>The industrial term for building objects by adding material, in contrast to <a href="#term-subtractive-manufacturing">subtractive manufacturing</a> (cutting away). <a href="#term-fdm">FDM</a>, resin printing and powder-bed fusion are all additive processes.</dd>
+    <dt id="term-adhesion">Adhesion (bed adhesion)</dt><dd>How well the first layer sticks to the <a href="#term-build-plate">build plate</a>. Too little causes <a href="#term-warping">warping</a> and failed prints; too much makes parts hard to remove. See <a href="../techniques/first-layer-and-adhesion.html">First layer &amp; adhesion</a>.</dd>
+    <dt id="term-ams">AMS</dt><dd>Automatic Material System: Bambu Lab’s multi-spool filament feeder that automates colour and material changes, filament loading and, in newer models, drying. See <a href="../x2d/ams-2-pro.html">AMS 2 Pro</a> and <a href="../techniques/multi-color-and-multi-material.html">Multi-color printing</a>.</dd>
+    <dt id="term-ams-2-pro">AMS 2 Pro</dt><dd>A Bambu Lab AMS generation with a heater, fan and desiccant for drying filament in place, up to 65 °C. Drying needs a 6-pin power connection and is weaker while printing. See <a href="../x2d/ams-2-pro.html">AMS 2 Pro</a>.</dd>
+    <dt id="term-ams-ht">AMS HT</dt><dd>A single-spool AMS variant with a higher drying temperature than the AMS 2 Pro, intended for materials that need more heat. It requires external power for drying. Check <a href="../x2d/filament-compatibility.html">Filament compatibility</a> for current details.</dd>
+    <dt id="term-amorphous">Amorphous</dt><dd>A polymer whose chains are randomly tangled with no crystal order (PLA as sold, PETG, ABS, PC). Amorphous plastics soften gradually above their <a href="#term-glass-transition">glass transition</a>. See <a href="../materials/overview.html#polymer-science">Materials overview</a>.</dd>
+    <dt id="term-annealing">Annealing</dt><dd>Heating a finished part below its melting point and cooling it slowly to relieve stress or raise <a href="#term-crystallinity">crystallinity</a>, increasing heat resistance. Often causes shrinkage. See <a href="../materials/everyday-plastics.html">Everyday plastics</a>.</dd>
+    <dt id="term-anisotropy">Anisotropy</dt><dd>Direction-dependent properties. <a href="#term-fdm">FDM</a> parts are strongest along the extrusion path and weakest between layers (Z). See <a href="../design/strength-and-orientation.html">Strength &amp; orientation</a>.</dd>
+    <dt id="term-arachne">Arachne</dt><dd>A <a href="#term-wall-generator">wall generator</a> that varies extrusion width to fill thin features without gaps, as opposed to the older classic generator that uses fixed-width lines.</dd>
+    <dt id="term-arc-fitting">Arc fitting</dt><dd>Replacing many short straight G-code segments with fewer G2/G3 arc commands, reducing file size and stutter. See <a href="../software/gcode-and-firmware.html">G-code &amp; firmware</a>.</dd>
+    <dt id="term-asa">ASA</dt><dd>Acrylonitrile styrene acrylate: like <a href="#term-abs">ABS</a> but UV and weather resistant, so preferred outdoors. See <a href="../materials/engineering-plastics.html#abs-asa">Engineering plastics</a>.</dd>
+    <dt id="term-auto-bed-leveling">Auto bed leveling (ABL)</dt><dd>Probing the bed at several points so the printer compensates for tilt or warp by adjusting Z during printing, forming a <a href="#term-bed-mesh">bed mesh</a>. Bambu printers perform it automatically before a print.</dd>
+    <dt id="term-auxiliary-nozzle">Auxiliary nozzle</dt><dd>On a dual-nozzle printer such as the Bambu X2D, the second nozzle. Its feed path and speed limits differ from the main nozzle, and some filaments (for example <a href="#term-tpu">TPU</a>) are restricted to the main one. See <a href="../x2d/dual-nozzle-printing.html">Dual-nozzle printing</a>.</dd>
+  </dl></section>
+
+  <section class="gl-letter" id="letter-b"><h2>B</h2>
+  <dl class="gl">
+    <dt id="term-bambu-studio">Bambu Studio</dt><dd>Bambu Lab’s slicer, a fork of PrusaSlicer/Slic3r with multi-material and cloud features. See <a href="../software/slicer-settings.html">Slicer settings</a>.</dd>
+    <dt id="term-bed-mesh">Bed mesh</dt><dd>A map of the bed’s height at probe points, used to keep the first layer consistent when the bed is not perfectly flat. Produced during <a href="#term-auto-bed-leveling">auto bed leveling</a>.</dd>
+    <dt id="term-bed-slinger">Bed slinger</dt><dd>A printer whose bed moves back and forth along Y, as on many Cartesian designs. Heavy prints and high acceleration are limited by the moving mass. Contrast <a href="#term-corexy">CoreXY</a>.</dd>
+    <dt id="term-benchy">Benchy</dt><dd>3DBenchy, a tugboat-shaped test model packed with overhangs, bridges, small holes and curves, widely used to judge print quality.</dd>
+    <dt id="term-blob">Blob (zit)</dt><dd>A small lump of excess plastic on a surface, typically at the <a href="#term-seam">seam</a> where extrusion pauses. Reduced with <a href="#term-pressure-advance">pressure advance</a>, <a href="#term-retraction">retraction</a> and seam placement. See <a href="../techniques/troubleshooting.html">Troubleshooting</a>.</dd>
+    <dt id="term-bottom-layers">Bottom layers</dt><dd>Solid layers printed at the base of a part, above the <a href="#term-first-layer">first layer</a>, giving a closed, flat underside.</dd>
+    <dt id="term-bowden">Bowden</dt><dd>An extruder system with the motor on the frame and a PTFE tube carrying filament to the hotend. Lighter toolhead, but poor for flexible filaments. Contrast <a href="#term-direct-drive">direct drive</a>.</dd>
+    <dt id="term-brass-nozzle">Brass nozzle</dt><dd>The standard nozzle: excellent thermal conductivity but soft, so it wears quickly with abrasive fillers such as carbon fiber or glow pigments. Use a <a href="#term-hardened-nozzle">hardened nozzle</a> for those.</dd>
+    <dt id="term-bridge">Bridge</dt><dd>A span printed between two supports with nothing underneath. Works best printed straight, slowly or with strong cooling. See <a href="../techniques/supports-bridges-overhangs.html">Supports, bridges &amp; overhangs</a>.</dd>
+    <dt id="term-brim">Brim</dt><dd>A flat ring of extra lines around the first layer, connected to the part, that increases bed contact and reduces corner lifting. Removed after printing. Compare <a href="#term-skirt">skirt</a>.</dd>
+    <dt id="term-build-plate">Build plate (bed)</dt><dd>The surface on which the part is printed: smooth PEI, textured PEI, cool plate, engineering plate, and so on, usually heated. See <a href="../techniques/first-layer-and-adhesion.html">First layer &amp; adhesion</a>.</dd>
+    <dt id="term-build-volume">Build volume</dt><dd>The maximum size of a printable part, stated as X × Y × Z, often reduced in practice by purge areas or <a href="#term-skirt">skirts</a> and by dual-nozzle limits.</dd>
+    <dt id="term-bvoh">BVOH</dt><dd>Butenediol vinyl alcohol copolymer: a water-soluble support material that prints more easily than <a href="#term-pva">PVA</a> but is also extremely hygroscopic. See <a href="../materials/flexibles-and-specialty.html#supports">Support materials</a>.</dd>
+  </dl></section>
+
+  <section class="gl-letter" id="letter-c"><h2>C</h2>
+  <dl class="gl">
+    <dt id="term-cad">CAD</dt><dd>Computer-aided design: software used to model parts, either parametrically (Fusion, FreeCAD, OnShape) or as meshes. See the <a href="../software/cad-modeling.html">CAD modeling guide</a> and <a href="../design/parametric-cad-workflow.html">parametric workflow</a>.</dd>
+    <dt id="term-calibration">Calibration</dt><dd>Measuring and adjusting printer behaviour: flow, <a href="#term-pressure-advance">pressure advance</a>, temperature, dimensions. See <a href="../techniques/calibration.html">Calibration</a>.</dd>
+    <dt id="term-carbon-fiber">Carbon fiber (CF)</dt><dd>Short chopped fibers mixed into a polymer to increase stiffness and reduce shrinkage; abrasive and requires a <a href="#term-hardened-nozzle">hardened nozzle</a>. See <a href="../materials/engineering-plastics.html#composites">Composites</a>.</dd>
+    <dt id="term-cartesian">Cartesian</dt><dd>A kinematic layout in which each axis moves independently (X, Y, Z). Simple and robust; contrast <a href="#term-corexy">CoreXY</a>.</dd>
+    <dt id="term-chamber">Chamber</dt><dd>The enclosed print space of a printer. A warm chamber reduces warping; the Bambu X2D can actively heat it to 65 °C. See <a href="../x2d/engineering-and-chamber.html">Engineering &amp; chamber</a>.</dd>
+    <dt id="term-chamfer">Chamfer</dt><dd>A bevelled edge, typically 45°. Chamfering the bottom edge of a part avoids <a href="#term-elephants-foot">elephant’s foot</a> and improves printability of overhangs.</dd>
+    <dt id="term-clog">Clog</dt><dd>A blockage in the hotend or nozzle. Causes include debris, <a href="#term-heat-creep">heat creep</a>, burnt filament and wet filament. Often cleared by a <a href="#term-cold-pull">cold pull</a>. See <a href="../techniques/troubleshooting.html">Troubleshooting</a>.</dd>
+    <dt id="term-cold-pull">Cold pull</dt><dd>Cleaning method: heat a nozzle with filament, cool it to near the softening point and pull the filament out, bringing debris with it. Use unfilled nylon, PLA or PETG; do not use fiber-filled filament.</dd>
+    <dt id="term-color-change">Color change</dt><dd>Switching filament mid-print, either manually at a layer or automatically through an AMS. Requires purging and creates <a href="#term-flush-volume">flush volume</a> waste.</dd>
+    <dt id="term-composite">Composite</dt><dd>A material with a matrix polymer plus fillers (fibers, minerals, metals), such as PA-CF. See <a href="../materials/engineering-plastics.html#composites">Composites</a>.</dd>
+    <dt id="term-cooling-fan">Cooling fan (part cooling)</dt><dd>A fan that blows air onto freshly extruded plastic to solidify it quickly, which is essential for PLA overhangs and bridges but harmful for ABS or nylon layer bonding. See <a href="../techniques/speed-cooling-quality.html">Speed, cooling &amp; quality</a>.</dd>
+    <dt id="term-corexy">CoreXY</dt><dd>A kinematic arrangement in which two motors with crossed belts drive the toolhead in X and Y while the bed moves only in Z. Allows fast, stable motion; used by Bambu printers.</dd>
+    <dt id="term-creep">Creep</dt><dd>Slow, permanent deformation of a plastic under a constant load, even below its yield strength, and faster at higher temperatures. PLA creeps noticeably.</dd>
+    <dt id="term-crystallinity">Crystallinity</dt><dd>The fraction of a polymer in ordered, crystalline regions. Higher crystallinity gives more stiffness, chemical resistance and a defined <a href="#term-melting-point">melting point</a>, with higher <a href="#term-shrinkage">shrinkage</a>. See <a href="../materials/overview.html#polymer-science">Polymer science</a>.</dd>
+    <dt id="term-curling">Curling</dt><dd>Edges of a layer lifting upward, usually at overhangs, because cooling shrinkage pulls them. Mitigated by cooling and slower speeds.</dd>
+  </dl></section>
+
+  <section class="gl-letter" id="letter-d"><h2>D</h2>
+  <dl class="gl">
+    <dt id="term-delamination">Delamination</dt><dd>Layers separating from each other, caused by low temperature, too much cooling, wet filament or a cold chamber. Visible as cracks along layer lines.</dd>
+    <dt id="term-density">Density</dt><dd>Mass per unit volume. Typical filament densities: PLA ≈ 1.24 g/cm³, PETG ≈ 1.27, ABS ≈ 1.04, nylon ≈ 1.1, CF-filled materials slightly higher. Needed to convert volume to weight and cost. See <a href="../tools/calculators.html">Calculators</a>.</dd>
+    <dt id="term-desiccant">Desiccant</dt><dd>A drying agent such as silica gel or molecular sieve that adsorbs water vapor, used in <a href="#term-dry-box">dry boxes</a> and in the AMS 2 Pro. See <a href="../materials/drying-and-storage.html#storage">Drying &amp; storage</a>.</dd>
+    <dt id="term-dfam">DfAM</dt><dd>Design for additive manufacturing: shaping parts to exploit and respect the process, for example avoiding supports, choosing orientation and using lattices. See <a href="../design/principles.html">Design principles</a>.</dd>
+    <dt id="term-dimensional-accuracy">Dimensional accuracy</dt><dd>How closely a printed dimension matches the model, affected by shrinkage, <a href="#term-flow-ratio">flow</a>, calibration and geometry. See <a href="../design/tolerances-and-fits.html">Tolerances &amp; fits</a>.</dd>
+    <dt id="term-direct-drive">Direct drive</dt><dd>An extruder mounted on the toolhead, a short distance from the hotend. Allows precise <a href="#term-retraction">retraction</a> and reliable printing of flexible filaments. Contrast <a href="#term-bowden">Bowden</a>.</dd>
+    <dt id="term-dlp">DLP</dt><dd>Digital light processing: a resin printing technology that cures a whole layer at once with a projector. Not <a href="#term-fdm">FDM</a>.</dd>
+    <dt id="term-dovetail">Dovetail</dt><dd>A tapered, interlocking joint that resists pulling apart. Common in print-in-place and multi-material designs. See <a href="../design/joints-and-fasteners.html">Joints &amp; fasteners</a>.</dd>
+    <dt id="term-dry-box">Dry box</dt><dd>A sealed container with desiccant (and sometimes a heater) that stores filament dry and may feed it directly to the printer. See <a href="../materials/drying-and-storage.html">Drying &amp; storage</a>.</dd>
+    <dt id="term-dual-nozzle">Dual nozzle</dt><dd>A printer with two independent nozzles that print different materials or colors without swapping filament in a single hotend, reducing purge waste. See <a href="../x2d/dual-nozzle-printing.html">Dual-nozzle printing</a>.</dd>
+    <dt id="term-duty-cycle">Duty cycle</dt><dd>The fraction of time a heater or fan is switched on. A heater at 100 % duty for long is working at its limit and may not hold temperature.</dd>
+  </dl></section>
+
+  <section class="gl-letter" id="letter-e"><h2>E</h2>
+  <dl class="gl">
+    <dt id="term-elastic-modulus">Elastic modulus</dt><dd>See <a href="#term-youngs-modulus">Young’s modulus</a>.</dd>
+    <dt id="term-elephants-foot">Elephant’s foot</dt><dd>A bulge at the bottom of a part caused by the first layers being squashed outward by heat and weight. Cured by first-layer tuning, slightly lower bed temperature or a <a href="#term-chamfer">chamfer</a>.</dd>
+    <dt id="term-enclosure">Enclosure</dt><dd>A housing around the printer that holds heat, blocks drafts and contains fumes. Essential for <a href="#term-abs">ABS</a>, <a href="#term-asa">ASA</a>, nylon and PC.</dd>
+    <dt id="term-engineering-plastic">Engineering plastic</dt><dd>A thermoplastic with higher mechanical, thermal or chemical performance than commodity plastics, such as nylon, PC and PEEK. See <a href="../materials/engineering-plastics.html">Engineering plastics</a>.</dd>
+    <dt id="term-esd">ESD-safe</dt><dd>Electrostatic-discharge safe: a material with controlled resistivity (typically 10⁴–10⁹ Ω) that bleeds static charge. See <a href="../materials/flexibles-and-specialty.html#specialty">Specialty filaments</a>.</dd>
+    <dt id="term-exclude-object">Exclude object</dt><dd>A firmware and slicer feature that lets you cancel one failed object on a plate and continue printing the rest.</dd>
+    <dt id="term-extruder">Extruder</dt><dd>The mechanism, with motor and gears, that pushes filament into the <a href="#term-hotend">hotend</a>. Types: <a href="#term-direct-drive">direct drive</a> and <a href="#term-bowden">Bowden</a>.</dd>
+    <dt id="term-extrusion-width">Extrusion width</dt><dd>The width of the line of plastic laid down, usually 100–120 % of the nozzle diameter. Wider lines are stronger and faster; narrower lines give detail.</dd>
+  </dl></section>
+
+  <section class="gl-letter" id="letter-f"><h2>F</h2>
+  <dl class="gl">
+    <dt id="term-fdm">FDM / FFF</dt><dd>Fused deposition modeling (a trademark) or fused filament fabrication: melting a thermoplastic filament and depositing it layer by layer. The process this compendium covers.</dd>
+    <dt id="term-filament">Filament</dt><dd>The thermoplastic wire fed into an FDM printer, usually 1.75 mm diameter (tolerance ±0.02 mm) wound on a spool. See <a href="../materials/overview.html">Materials overview</a>.</dd>
+    <dt id="term-filament-runout">Filament runout</dt><dd>The spool is empty or the filament is broken or tangled. A sensor pauses the print so you can load more; with an <a href="#term-ams">AMS</a> it may switch to another spool of the same material.</dd>
+    <dt id="term-fillet">Fillet</dt><dd>A rounded internal corner that reduces stress concentration and improves strength. See <a href="../design/strength-and-orientation.html">Strength &amp; orientation</a>.</dd>
+    <dt id="term-firmware">Firmware</dt><dd>The software running on the printer’s controller that interprets <a href="#term-g-code">G-code</a>, controls motion, heaters and safety. See <a href="../software/gcode-and-firmware.html">G-code &amp; firmware</a>.</dd>
+    <dt id="term-first-layer">First layer</dt><dd>The initial layer printed on the bed. Its quality decides adhesion and often the whole print. See <a href="../techniques/first-layer-and-adhesion.html">First layer &amp; adhesion</a>.</dd>
+    <dt id="term-flex">Flexible filament</dt><dd>Elastomeric filament such as <a href="#term-tpu">TPU</a>, measured in <a href="#term-shore-hardness">Shore hardness</a>. See <a href="../materials/flexibles-and-specialty.html">Flexibles &amp; specialty</a>.</dd>
+    <dt id="term-flow-dynamics">Flow Dynamics</dt><dd>Bambu Lab’s name for its <a href="#term-pressure-advance">pressure advance</a> calibration. It sets a K value per filament so extrusion pressure lag at corners and starts is compensated. See <a href="../techniques/calibration.html">Calibration</a>.</dd>
+    <dt id="term-flow-ratio">Flow ratio</dt><dd>A multiplier (often ≈ 0.95–1.0) applied to the extrusion amount to correct for filament diameter and material behavior. Also called extrusion multiplier. See <a href="../techniques/calibration.html">Calibration</a>.</dd>
+    <dt id="term-flush-volume">Flush volume</dt><dd>The amount of filament purged (in mm³) when changing color or material so the new color comes out pure. Depends on the colour pair; dark-to-light needs more. See <a href="../techniques/multi-color-and-multi-material.html">Multi-color printing</a>.</dd>
+    <dt id="term-fuzzy-skin">Fuzzy skin</dt><dd>A slicer option that adds random jitter to the outer wall to create a textured, grippy, layer-hiding surface.</dd>
+  </dl></section>
+
+  <section class="gl-letter" id="letter-g"><h2>G</h2>
+  <dl class="gl">
+    <dt id="term-g-code">G-code</dt><dd>The text instructions (G0/G1 moves, M104 heating, and so on) sent to the printer; produced by the <a href="#term-slicer">slicer</a>. See <a href="../software/gcode-and-firmware.html">G-code &amp; firmware</a>.</dd>
+    <dt id="term-gantry">Gantry</dt><dd>The moving frame that carries the toolhead across the bed. In <a href="#term-corexy">CoreXY</a> machines it moves in X and Y.</dd>
+    <dt id="term-ghosting">Ghosting</dt><dd>A faint echo of a feature on the surface, caused by vibration after sharp direction changes. See <a href="#term-ringing">ringing</a>.</dd>
+    <dt id="term-glass-transition">Glass transition (Tg)</dt><dd>The temperature at which an amorphous polymer changes from hard and glassy to soft and rubbery. Printed parts lose stiffness near it; PLA is about 60 °C. See <a href="../materials/overview.html#polymer-science">Polymer science</a>.</dd>
+    <dt id="term-gradient-filament">Gradient filament</dt><dd>Filament co-extruded or dyed so its color changes gradually along its length. See <a href="../materials/flexibles-and-specialty.html#specialty">Specialty filaments</a>.</dd>
+    <dt id="term-grid-infill">Grid infill</dt><dd>A crossing-line <a href="#term-infill">infill</a> pattern, simple and fast; its lines overlap at crossings, which can cause bumps.</dd>
+    <dt id="term-gyroid">Gyroid</dt><dd>A wavy, three-dimensional infill pattern with equal strength in all directions and no overlapping crossings. A popular default.</dd>
+  </dl></section>
+
+  <section class="gl-letter" id="letter-h"><h2>H</h2>
+  <dl class="gl">
+    <dt id="term-hardened-nozzle">Hardened nozzle</dt><dd>A nozzle made of hardened steel (or tungsten carbide or with a ruby tip) that resists wear from abrasive filaments, with lower thermal conductivity than <a href="#term-brass-nozzle">brass</a>. See <a href="../materials/overview.html">Materials overview</a>.</dd>
+    <dt id="term-hdt">HDT</dt><dd>Heat deflection temperature: the temperature at which a standard bar bends a set amount under a defined load. A practical indicator of heat resistance; differs from <a href="#term-glass-transition">Tg</a>.</dd>
+    <dt id="term-heat-break">Heat break</dt><dd>The thin-walled tube in a hotend that separates the hot zone from the cold zone to prevent <a href="#term-heat-creep">heat creep</a>.</dd>
+    <dt id="term-heat-creep">Heat creep</dt><dd>Heat traveling upward and softening filament too early, causing clogs, especially during slow prints or retractions.</dd>
+    <dt id="term-heatbed">Heatbed</dt><dd>A heated build platform that improves <a href="#term-adhesion">adhesion</a> and reduces warping.</dd>
+    <dt id="term-hepa">HEPA</dt><dd>A high-efficiency particulate air filter, used in printer enclosures to capture ultrafine particles. It does not remove all gases; combine with carbon.</dd>
+    <dt id="term-high-flow">High-flow hotend</dt><dd>A hotend and nozzle designed to melt more plastic per second, measured as maximum <a href="#term-volumetric-flow">volumetric flow</a>. See <a href="../techniques/speed-cooling-quality.html">Speed, cooling &amp; quality</a>.</dd>
+    <dt id="term-hips">HIPS</dt><dd>High-impact polystyrene: a plastic used as a support for ABS, dissolvable in limonene. See <a href="../materials/flexibles-and-specialty.html#supports">Support materials</a>.</dd>
+    <dt id="term-homing">Homing</dt><dd>Moving axes to endstops (or a sensor) to establish the printer’s known position before printing.</dd>
+    <dt id="term-hotend">Hotend</dt><dd>The assembly that melts filament: <a href="#term-heat-break">heat break</a>, heater block, thermistor and nozzle.</dd>
+    <dt id="term-hygroscopic">Hygroscopic</dt><dd>Tending to absorb water from the air. Nylon, PVA, TPU, PC and PETG are hygroscopic. See <a href="../materials/drying-and-storage.html#science">Drying &amp; storage</a>.</dd>
+    <dt id="term-hydrolysis">Hydrolysis</dt><dd>A chemical reaction in which water breaks polymer chains at high temperature, permanently weakening materials like PC, PET and nylon when printed wet.</dd>
+  </dl></section>
+
+  <section class="gl-letter" id="letter-i"><h2>I</h2>
+  <dl class="gl">
+    <dt id="term-idex">IDEX</dt><dd>Independent dual extruder: a printer with two toolheads that move independently, enabling duplicate or mirror printing.</dd>
+    <dt id="term-infill">Infill</dt><dd>The internal structure inside the walls, defined by pattern and density (0–100 %). Controls strength, weight and time. See <a href="../design/strength-and-orientation.html">Strength &amp; orientation</a>.</dd>
+    <dt id="term-input-shaping">Input shaping</dt><dd>A motion technique that cancels resonance by adding counter-vibrations to commanded movement, allowing higher acceleration with less <a href="#term-ringing">ringing</a>.</dd>
+    <dt id="term-interface-layers">Interface layers</dt><dd>See <a href="#term-support-interface">support interface</a>.</dd>
+    <dt id="term-ironing">Ironing</dt><dd>An extra pass of the nozzle over the top surface with very little extrusion to smooth it.</dd>
+    <dt id="term-island">Island</dt><dd>A part of a layer that has no connection to the layers below, such as the start of a new feature in mid-air. Needs <a href="#term-support">support</a>.</dd>
+    <dt id="term-isotropic">Isotropic</dt><dd>Having the same properties in all directions; the opposite of <a href="#term-anisotropy">anisotropic</a>. Printed parts are not perfectly isotropic.</dd>
+  </dl></section>
+
+  <section class="gl-letter" id="letter-j"><h2>J</h2>
+  <dl class="gl">
+    <dt id="term-jerk">Jerk</dt><dd>The instantaneous change in velocity at a corner (older firmware) or the rate of change of acceleration (physics). Too high causes vibration. See <a href="#term-junction-deviation">junction deviation</a>.</dd>
+    <dt id="term-jig">Jig</dt><dd>A custom tool that holds or guides a workpiece during assembly or machining; 3D printing makes jigs cheap. See <a href="../reference/applications.html">Applications</a>.</dd>
+    <dt id="term-junction-deviation">Junction deviation</dt><dd>A firmware method for limiting cornering speed based on corner angle, replacing the older <a href="#term-jerk">jerk</a> setting.</dd>
+  </dl></section>
+
+  <section class="gl-letter" id="letter-k"><h2>K</h2>
+  <dl class="gl">
+    <dt id="term-k-factor">K factor</dt><dd>The value tuned in <a href="#term-pressure-advance">pressure advance</a> or linear advance that scales how much extra pressure the extruder adds on acceleration.</dd>
+    <dt id="term-kinematics">Kinematics</dt><dd>How motor motions map to toolhead motion: <a href="#term-cartesian">Cartesian</a>, <a href="#term-corexy">CoreXY</a>, delta, and so on.</dd>
+    <dt id="term-kerf">Kerf</dt><dd>The width of material removed by a cutting process; in 3D printing, the equivalent is the gap you design to allow for parts to fit. See <a href="../design/tolerances-and-fits.html">Tolerances &amp; fits</a>.</dd>
+  </dl></section>
+
+  <section class="gl-letter" id="letter-l"><h2>L</h2>
+  <dl class="gl">
+    <dt id="term-layer-adhesion">Layer adhesion</dt><dd>The strength of the bond between consecutive layers, determined by temperature, cooling and material. It sets the Z strength of a part.</dd>
+    <dt id="term-layer-height">Layer height</dt><dd>The thickness of each layer, typically 0.08–0.4 mm for a 0.4 mm nozzle. Thinner means finer detail and longer print time.</dd>
+    <dt id="term-layer-line">Layer line</dt><dd>The visible ridge between layers, a signature of FDM prints, reduced by thinner layers, <a href="#term-ironing">ironing</a> or finishing. See <a href="../techniques/post-processing.html">Post-processing</a>.</dd>
+    <dt id="term-layer-time">Layer time</dt><dd>The time to print one layer. Short layer times let plastic stay hot; slicers slow down to guarantee a minimum for cooling.</dd>
+    <dt id="term-lead-screw">Lead screw</dt><dd>A threaded rod that moves the Z axis. Lead screws can produce <a href="#term-z-banding">Z banding</a> if misaligned.</dd>
+    <dt id="term-lidar">LiDAR</dt><dd>A laser scanner used on some Bambu printers to inspect the first layer and calibrate flow. Availability depends on the model; check the X2D documentation.</dd>
+    <dt id="term-lightning-infill">Lightning infill</dt><dd>A minimal infill pattern that only supports top surfaces, saving time and material at the cost of strength.</dd>
+    <dt id="term-linear-advance">Linear advance</dt><dd>A firmware feature equivalent to <a href="#term-pressure-advance">pressure advance</a>, adjusting extrusion for pressure in the nozzle.</dd>
+    <dt id="term-linear-rail">Linear rail</dt><dd>A precision guide that carries an axis smoothly with little play. Compared with rods and wheels, it has higher stiffness.</dd>
+    <dt id="term-lithophane">Lithophane</dt><dd>A thin, translucent 3D print whose varying thickness reveals an image when backlit.</dd>
+  </dl></section>
+
+  <section class="gl-letter" id="letter-m"><h2>M</h2>
+  <dl class="gl">
+    <dt id="term-m-code">M-code</dt><dd>A <a href="#term-g-code">G-code</a> command for machine functions rather than motion, such as M104 (set nozzle temperature) or M106 (fan speed).</dd>
+    <dt id="term-makerworld">MakerWorld</dt><dd>Bambu Lab’s online repository of models and print profiles, integrated with Bambu Studio and Bambu Handy.</dd>
+    <dt id="term-manifold">Manifold (watertight)</dt><dd>A mesh with a clearly defined inside and outside, with every edge shared by exactly two faces. Slicers need manifold meshes. See <a href="../software/files-and-meshes.html">Files &amp; meshes</a>.</dd>
+    <dt id="term-material-profile">Material profile</dt><dd>A slicer preset holding temperatures, flow, cooling and speed limits for one filament. See <a href="../x2d/settings-and-profiles.html">Settings &amp; profiles</a>.</dd>
+    <dt id="term-melting-point">Melting point (Tm)</dt><dd>The temperature at which crystalline regions of a semi-crystalline polymer melt (PA6 ≈ 220 °C). Amorphous polymers have no sharp melting point, only a <a href="#term-glass-transition">Tg</a> and a flow range.</dd>
+    <dt id="term-mesh">Mesh</dt><dd>A 3D model made of triangles, as in <a href="#term-stl">STL</a>. Compare parametric <a href="#term-cad">CAD</a>.</dd>
+    <dt id="term-modifier">Modifier</dt><dd>A slicer object that applies different settings to a region of a model, such as higher infill around a screw boss.</dd>
+    <dt id="term-mouse-ears">Mouse ears</dt><dd>Small, thin discs added at corners of the first layer to resist lifting. Like a mini-<a href="#term-brim">brim</a>.</dd>
+    <dt id="term-multi-material">Multi-material printing</dt><dd>Using more than one filament in a print, for colors, supports or properties. See <a href="../techniques/multi-color-and-multi-material.html">Multi-color printing</a>.</dd>
+  </dl></section>
+
+  <section class="gl-letter" id="letter-n"><h2>N</h2>
+  <dl class="gl">
+    <dt id="term-nfc-rfid">NFC / RFID tag</dt><dd>A chip on Bambu Lab spools that the AMS reads to identify filament type, color and settings automatically.</dd>
+    <dt id="term-non-manifold">Non-manifold</dt><dd>A mesh with holes, zero-thickness faces or edges shared by more than two faces, which confuses slicers. Fix in a mesh repair tool.</dd>
+    <dt id="term-nozzle">Nozzle</dt><dd>The tip of the hotend through which plastic is extruded. Diameter (0.2, 0.4, 0.6, 0.8 mm) sets detail and flow. See <a href="../x2d/settings-and-profiles.html">Settings &amp; profiles</a>.</dd>
+    <dt id="term-nylon">Nylon (PA)</dt><dd>Polyamide: a tough, wear-resistant, hygroscopic polymer family (PA6, PA66, PA12). See <a href="../materials/engineering-plastics.html#nylon">Engineering plastics</a>.</dd>
+  </dl></section>
+
+  <section class="gl-letter" id="letter-o"><h2>O</h2>
+  <dl class="gl">
+    <dt id="term-oozing">Oozing</dt><dd>Plastic dripping from the nozzle during travel moves, leaving blobs or hairs. Reduced by <a href="#term-retraction">retraction</a>, lower temperature and dry filament. See <a href="../techniques/troubleshooting.html">Troubleshooting</a>.</dd>
+    <dt id="term-openscad">OpenSCAD</dt><dd>A script-based, parametric CAD tool where models are described with code. See <a href="../software/cad-modeling.html">CAD modeling</a>.</dd>
+    <dt id="term-orientation">Orientation</dt><dd>How a part is positioned on the bed. It decides strength direction, support needs, surface quality and time. See <a href="../design/strength-and-orientation.html">Strength &amp; orientation</a>.</dd>
+    <dt id="term-outer-wall">Outer wall</dt><dd>The outermost <a href="#term-perimeter">perimeter</a>, which forms the visible surface. Often printed slowly for quality.</dd>
+    <dt id="term-overextrusion">Overextrusion</dt><dd>Depositing more plastic than needed: swollen surfaces, bulging corners and rough tops. Fix with <a href="#term-flow-ratio">flow ratio</a> calibration.</dd>
+    <dt id="term-overhang">Overhang</dt><dd>A part of a model extending outward with little or nothing below it. Angles above about 45–60° from vertical usually need cooling or <a href="#term-support">support</a>. See <a href="../techniques/supports-bridges-overhangs.html">Supports, bridges &amp; overhangs</a>.</dd>
+  </dl></section>
+
+  <section class="gl-letter" id="letter-p"><h2>P</h2>
+  <dl class="gl">
+    <dt id="term-pa">PA</dt><dd>See <a href="#term-nylon">nylon</a>.</dd>
+    <dt id="term-paht">PAHT</dt><dd>High-temperature polyamide, usually fiber-reinforced, with heat resistance around or above 150 °C. See <a href="../materials/engineering-plastics.html#nylon">Engineering plastics</a>.</dd>
+    <dt id="term-parametric">Parametric design</dt><dd>A model defined by named dimensions and rules, so changing a value updates the whole part. See <a href="../design/parametric-cad-workflow.html">Parametric CAD workflow</a>.</dd>
+    <dt id="term-pc">PC (polycarbonate)</dt><dd>A very tough, heat-resistant, hygroscopic amorphous polymer with a Tg near 145 °C that needs a hot nozzle and warm chamber. See <a href="../materials/engineering-plastics.html#pc">Engineering plastics</a>.</dd>
+    <dt id="term-pctg">PCTG</dt><dd>A copolyester similar to PETG, usually tougher and clearer. See <a href="../materials/everyday-plastics.html">Everyday plastics</a>.</dd>
+    <dt id="term-pei">PEI</dt><dd>Polyetherimide: both a high-performance filament (ULTEM) and the textured or smooth coating on most build plates, which sticks well when hot and releases when cool.</dd>
+    <dt id="term-peek">PEEK</dt><dd>Polyetheretherketone: an industrial high-performance polymer needing a nozzle above 380 °C, not suitable for desktop machines. See <a href="../materials/engineering-plastics.html#peek-pei">PEI and PEEK</a>.</dd>
+    <dt id="term-perimeter">Perimeter (wall)</dt><dd>A closed loop of extrusion following the outline of a layer. The number of perimeters sets wall thickness and strength.</dd>
+    <dt id="term-pet-cf">PET-CF</dt><dd>Carbon-fiber reinforced PET: stiff, dimensionally stable and relatively low-warp. See <a href="../materials/engineering-plastics.html#pet">Engineering plastics</a>.</dd>
+    <dt id="term-petg">PETG</dt><dd>Glycol-modified polyethylene terephthalate: tough, chemically resistant, easy to print and hygroscopic. See <a href="../materials/everyday-plastics.html">Everyday plastics</a>.</dd>
+    <dt id="term-pillowing">Pillowing</dt><dd>Bumpy, sunken top surfaces caused by too few top layers or too little cooling over sparse infill.</dd>
+    <dt id="term-pla">PLA</dt><dd>Polylactic acid: the most popular filament; easy, stiff and low-warp but with a low Tg (≈ 60 °C) and creep. See <a href="../materials/everyday-plastics.html">Everyday plastics</a>.</dd>
+    <dt id="term-pla-cf">PLA-CF</dt><dd>PLA filled with carbon fiber for stiffness and a matte look; needs a <a href="#term-hardened-nozzle">hardened nozzle</a>.</dd>
+    <dt id="term-polymer">Polymer</dt><dd>A material made of long chain molecules built from repeating units. All filaments are polymers. See <a href="../materials/overview.html#polymer-science">Polymer science</a>.</dd>
+    <dt id="term-pp">PP</dt><dd>Polypropylene: a waxy, chemical-resistant, fatigue-resistant plastic with high shrinkage and poor adhesion. See <a href="../materials/engineering-plastics.html#pp">Engineering plastics</a>.</dd>
+    <dt id="term-pps">PPS</dt><dd>Polyphenylene sulfide: a chemical- and heat-resistant semi-crystalline polymer, typically carbon-filled (PPS-CF) for printing.</dd>
+    <dt id="term-pressure-advance">Pressure advance</dt><dd>A firmware correction that extrudes slightly ahead of acceleration and reduces extrusion ahead of deceleration, compensating for pressure lag in the nozzle. Called <a href="#term-flow-dynamics">Flow Dynamics</a> in Bambu software.</dd>
+    <dt id="term-prime-tower">Prime tower</dt><dd>A sacrificial tower on the plate used to purge and stabilize flow after a filament change. See <a href="../techniques/multi-color-and-multi-material.html">Multi-color printing</a>. Also called a wipe tower.</dd>
+    <dt id="term-print-in-place">Print-in-place</dt><dd>Printing movable assemblies (hinges, chains, gears) as one piece with clearance between parts. See <a href="../design/design-patterns.html">Design patterns</a>.</dd>
+    <dt id="term-profile">Profile</dt><dd>A saved set of slicer settings for a printer, filament or process. See <a href="../x2d/settings-and-profiles.html">Settings &amp; profiles</a>.</dd>
+    <dt id="term-ptfe-tube">PTFE tube</dt><dd>A low-friction Teflon tube that guides filament from the spool or AMS to the printer.</dd>
+    <dt id="term-purge">Purge</dt><dd>Extruding filament to clear the old color or material, or to prime the nozzle. Waste is minimized by <a href="#term-flush-volume">flush volume</a> tuning.</dd>
+    <dt id="term-pva">PVA</dt><dd>Polyvinyl alcohol: a water-soluble support material that is very hygroscopic. See <a href="../materials/flexibles-and-specialty.html#supports">Support materials</a>.</dd>
+  </dl></section>
+
+  <section class="gl-letter" id="letter-q"><h2>Q</h2>
+  <dl class="gl">
+    <dt id="term-qgl">Quad gantry leveling</dt><dd>A procedure on some printers where independent Z motors align the gantry parallel to the bed. Not used on every machine.</dd>
+    <dt id="term-quick-change-nozzle">Quick-change nozzle</dt><dd>A nozzle or hotend designed to be swapped in seconds without tools, making material changes easier.</dd>
+  </dl></section>
+
+  <section class="gl-letter" id="letter-r"><h2>R</h2>
+  <dl class="gl">
+    <dt id="term-raft">Raft</dt><dd>A thick, multi-layer base printed under a part to improve adhesion or insulate it from a warped bed. More material and a rougher bottom surface than a <a href="#term-brim">brim</a>.</dd>
+    <dt id="term-resolution">Resolution</dt><dd>The smallest feature a printer can render, limited by nozzle size, layer height and motor step size.</dd>
+    <dt id="term-resonance">Resonance</dt><dd>A vibration frequency at which the frame amplifies motion, causing <a href="#term-ringing">ringing</a>. Measured and compensated by <a href="#term-input-shaping">input shaping</a>.</dd>
+    <dt id="term-retraction">Retraction</dt><dd>Pulling filament back slightly before travel moves to reduce <a href="#term-oozing">oozing</a> and <a href="#term-stringing">stringing</a>. Distance (≈ 0.4–1 mm direct drive) and speed need tuning. See <a href="../techniques/calibration.html">Calibration</a>.</dd>
+    <dt id="term-ringing">Ringing</dt><dd>Ripples on the surface after corners or sharp features, created by vibration. Reduced by lower acceleration or <a href="#term-input-shaping">input shaping</a>. See <a href="../techniques/speed-cooling-quality.html">Speed, cooling &amp; quality</a>.</dd>
+    <dt id="term-rotation-distance">Rotation distance</dt><dd>A firmware value that says how far filament moves per extruder rotation. Errors here cause under- or overextrusion.</dd>
+    <dt id="term-ruby-nozzle">Ruby nozzle</dt><dd>A nozzle with a ruby insert at the tip that lasts a very long time with abrasive filaments.</dd>
+  </dl></section>
+
+  <section class="gl-letter" id="letter-s"><h2>S</h2>
+  <dl class="gl">
+    <dt id="term-scarf-seam">Scarf seam</dt><dd>A <a href="#term-seam">seam</a> that gradually ramps the wall’s height and flow along a diagonal to hide the joint.</dd>
+    <dt id="term-seam">Seam</dt><dd>The visible line where each layer’s outer wall starts and ends. Positioned at the back, in corners or randomly. See <a href="../techniques/speed-cooling-quality.html">Speed, cooling &amp; quality</a>.</dd>
+    <dt id="term-semi-crystalline">Semi-crystalline</dt><dd>A polymer with ordered crystalline regions in an amorphous matrix (nylon, PP, PET, PPS). Sharp melting, high shrinkage. See <a href="../materials/overview.html#polymer-science">Polymer science</a>.</dd>
+    <dt id="term-shell">Shell</dt><dd>The outer skin of a model made of perimeters, top layers and bottom layers.</dd>
+    <dt id="term-shore-hardness">Shore hardness</dt><dd>A durometer scale for rubbery plastics: Shore A for soft, Shore D for harder. TPU grades are labelled 85A–95A. See <a href="../materials/flexibles-and-specialty.html#flex">Flexible filaments</a>.</dd>
+    <dt id="term-shrinkage">Shrinkage</dt><dd>The reduction in size as plastic cools, from about 0.2 % (PLA) to over 1.5 % (nylon, PP). Causes warping and size errors. See <a href="../materials/engineering-plastics.html#chamber">Chamber temperature</a>.</dd>
+    <dt id="term-silk-pla">Silk PLA</dt><dd>PLA with additives that create a shiny, pearlescent finish. See <a href="../materials/flexibles-and-specialty.html#specialty">Specialty filaments</a>.</dd>
+    <dt id="term-skirt">Skirt</dt><dd>One or more loops printed around the part, not touching it, to prime the nozzle and check flow. Different from a <a href="#term-brim">brim</a>.</dd>
+    <dt id="term-slicer">Slicer</dt><dd>Software that cuts a 3D model into layers and generates <a href="#term-g-code">G-code</a>: Bambu Studio, OrcaSlicer, PrusaSlicer, Cura. See <a href="../software/slicers.html">Slicers</a>.</dd>
+    <dt id="term-spaghetti">Spaghetti</dt><dd>A failed print in which the plastic extrudes into the air as tangled strands, often after the part detaches. Detected by some printers’ cameras.</dd>
+    <dt id="term-sparse-infill">Sparse infill</dt><dd>Low-density <a href="#term-infill">infill</a> (typically 5–30 %), providing support with less material.</dd>
+    <dt id="term-spiral-vase">Spiral vase mode</dt><dd>A single continuous outer wall with no seam and a solid base, forming smooth, thin-walled objects.</dd>
+    <dt id="term-stepper-motor">Stepper motor</dt><dd>A motor that moves in discrete steps, used for printer axes and extruders. Driven by microstepping drivers.</dd>
+    <dt id="term-step-file">STEP file</dt><dd>A neutral CAD format that stores exact geometry (not triangles), used for exchange between CAD programs. See <a href="../software/files-and-meshes.html">Files &amp; meshes</a>.</dd>
+    <dt id="term-stl">STL</dt><dd>Stereolithography file: the classic mesh format of triangles with no color or units. See <a href="../software/files-and-meshes.html">Files &amp; meshes</a>.</dd>
+    <dt id="term-stringing">Stringing</dt><dd>Fine threads of plastic between separate features, caused by oozing during travel. Cause: wet filament, too-hot nozzle, weak retraction. See <a href="../techniques/troubleshooting.html">Troubleshooting</a>.</dd>
+    <dt id="term-subtractive-manufacturing">Subtractive manufacturing</dt><dd>Making parts by removing material (milling, turning). Contrast <a href="#term-additive-manufacturing">additive manufacturing</a>.</dd>
+    <dt id="term-support">Support</dt><dd>Temporary structures printed to hold up overhangs and bridges, removed afterwards. See <a href="../techniques/supports-bridges-overhangs.html">Supports, bridges &amp; overhangs</a>.</dd>
+    <dt id="term-support-interface">Support interface</dt><dd>The top layers of a support, printed denser or from a different material to leave a smoother surface and release more easily. See <a href="../materials/flexibles-and-specialty.html#supports">Support materials</a>.</dd>
+  </dl></section>
+
+  <section class="gl-letter" id="letter-t"><h2>T</h2>
+  <dl class="gl">
+    <dt id="term-temperature-tower">Temperature tower</dt><dd>A calibration print with sections printed at different nozzle temperatures to find the best one for a filament. See <a href="../techniques/calibration.html">Calibration</a>.</dd>
+    <dt id="term-tg">Tg</dt><dd>Short for <a href="#term-glass-transition">glass transition temperature</a>.</dd>
+    <dt id="term-textured-pei">Textured PEI</dt><dd>A powder-coated PEI build plate with a grainy finish that gives good adhesion and a matte bottom surface.</dd>
+    <dt id="term-thermal-expansion">Thermal expansion</dt><dd>The tendency of materials to change size with temperature; relevant to bed, frame and part shrinkage.</dd>
+    <dt id="term-thermal-runaway">Thermal runaway</dt><dd>A fault where a heater keeps heating uncontrollably because it can’t measure temperature correctly. Firmware protection shuts the printer down; never disable it.</dd>
+    <dt id="term-thermistor">Thermistor</dt><dd>A temperature sensor whose resistance changes with temperature, used for nozzle and bed.</dd>
+    <dt id="term-timelapse">Timelapse</dt><dd>A video built from photos taken after each layer. Needs a parking spot for the toolhead, which can add a purge or time cost.</dd>
+    <dt id="term-tolerance">Tolerance</dt><dd>The allowable variation in a dimension, and the clearance designed between mating parts (typically 0.15–0.3 mm on FDM). See <a href="../design/tolerances-and-fits.html">Tolerances &amp; fits</a>.</dd>
+    <dt id="term-toolhead">Toolhead</dt><dd>The moving assembly that holds the extruder, hotend and fans.</dd>
+    <dt id="term-top-layers">Top layers</dt><dd>Solid layers closing the top of a part, giving a flat finish above the infill.</dd>
+    <dt id="term-tpe">TPE</dt><dd>Thermoplastic elastomer: a family of rubbery thermoplastics that includes <a href="#term-tpu">TPU</a>.</dd>
+    <dt id="term-tpu">TPU</dt><dd>Thermoplastic polyurethane: a flexible, abrasion-resistant filament, available in different <a href="#term-shore-hardness">Shore hardnesses</a>. On the Bambu X2D it is printed with the main nozzle only. See <a href="../x2d/tpu-and-flexibles.html">TPU &amp; flexibles</a>.</dd>
+    <dt id="term-tramming">Tramming</dt><dd>Adjusting the bed so it is parallel to the motion plane. Usually automated through <a href="#term-auto-bed-leveling">ABL</a>.</dd>
+    <dt id="term-travel-move">Travel move</dt><dd>A non-printing motion of the toolhead between two points. A source of <a href="#term-stringing">stringing</a> and <a href="#term-oozing">oozing</a>.</dd>
+    <dt id="term-tree-supports">Tree supports</dt><dd>Branching supports that touch the model at few points, use less material and leave fewer marks than normal supports. See <a href="../techniques/supports-bridges-overhangs.html">Supports, bridges &amp; overhangs</a>.</dd>
+  </dl></section>
+
+  <section class="gl-letter" id="letter-u"><h2>U</h2>
+  <dl class="gl">
+    <dt id="term-underextrusion">Underextrusion</dt><dd>Depositing less plastic than needed: gaps, thin walls and weak layers. Causes include clogs, wet filament, too-high speed, low temperature or a worn extruder gear.</dd>
+    <dt id="term-uv-resistance">UV resistance</dt><dd>Ability to withstand sunlight without cracking or yellowing. ASA and PETG fare well; PLA and ABS less so.</dd>
+  </dl></section>
+
+  <section class="gl-letter" id="letter-v"><h2>V</h2>
+  <dl class="gl">
+    <dt id="term-vapor-smoothing">Vapor smoothing</dt><dd>Exposing a part to solvent vapor (acetone for ABS and ASA) so the surface melts slightly and layer lines disappear. See <a href="../materials/engineering-plastics.html#smoothing">Engineering plastics</a>.</dd>
+    <dt id="term-vfa">VFA</dt><dd>Vertical fine artifacts: fine, regular vertical banding on walls, caused by motor steps and mechanical resonances.</dd>
+    <dt id="term-volumetric-flow">Volumetric flow</dt><dd>Plastic volume extruded per second (mm³/s) = line width × layer height × speed. Limited by the hotend’s melting capacity. See <a href="../tools/calculators.html">Calculators</a>.</dd>
+  </dl></section>
+
+  <section class="gl-letter" id="letter-w"><h2>W</h2>
+  <dl class="gl">
+    <dt id="term-wall-generator">Wall generator</dt><dd>The slicer algorithm that creates perimeters: <a href="#term-arachne">Arachne</a> (variable width) or classic (fixed width).</dd>
+    <dt id="term-warping">Warping</dt><dd>Corners or edges lifting from the bed as the part shrinks while cooling. Fix with a warm <a href="#term-chamber">chamber</a>, <a href="#term-brim">brim</a> and better adhesion. See <a href="../materials/engineering-plastics.html#chamber">Chamber temperature</a>.</dd>
+    <dt id="term-wet-filament">Wet filament</dt><dd>Filament that has absorbed moisture and prints with popping, stringing and rough surfaces. See <a href="../materials/drying-and-storage.html#symptoms">Symptoms of wet filament</a>.</dd>
+    <dt id="term-wipe-tower">Wipe tower</dt><dd>See <a href="#term-prime-tower">prime tower</a>.</dd>
+  </dl></section>
+
+  <section class="gl-letter" id="letter-x"><h2>X</h2>
+  <dl class="gl">
+    <dt id="term-x2d">X2D</dt><dd>The Bambu Lab dual-nozzle printer this compendium focuses on, with a 300 °C nozzle and an actively heated chamber up to 65 °C. See <a href="../x2d/dual-nozzle-printing.html">Dual-nozzle printing</a>.</dd>
+    <dt id="term-xy-compensation">XY compensation</dt><dd>A slicer setting that adjusts outer dimensions or hole sizes to offset shrinkage and bead width, improving fit. See <a href="../techniques/calibration.html">Calibration</a>.</dd>
+  </dl></section>
+
+  <section class="gl-letter" id="letter-y"><h2>Y</h2>
+  <dl class="gl">
+    <dt id="term-yield-strength">Yield strength</dt><dd>The stress at which a material starts to deform permanently. Beyond it, parts do not spring back.</dd>
+    <dt id="term-youngs-modulus">Young’s modulus</dt><dd>A measure of stiffness: stress divided by strain in the elastic range. Higher means stiffer; PLA ≈ 3.5 GPa, TPU ≈ 0.01–0.1 GPa.</dd>
+  </dl></section>
+
+  <section class="gl-letter" id="letter-z"><h2>Z</h2>
+  <dl class="gl">
+    <dt id="term-z-banding">Z banding</dt><dd>Regular horizontal bands on walls caused by Z-axis irregularities, such as a bent lead screw or inconsistent layer heights.</dd>
+    <dt id="term-z-hop">Z-hop</dt><dd>Lifting the nozzle slightly during travel moves to avoid dragging across printed parts. Can increase <a href="#term-stringing">stringing</a>.</dd>
+    <dt id="term-z-offset">Z offset</dt><dd>A fine adjustment of the nozzle’s height above the bed for the first layer. See <a href="../techniques/first-layer-and-adhesion.html">First layer &amp; adhesion</a>.</dd>
+  </dl></section>
+
+  <h2 id="more">📚 Keep learning</h2>
+  <p>Look up a symptom in <a href="../techniques/troubleshooting.html">Troubleshooting</a>, a material in the <a href="../materials/overview.html">Materials overview</a>, or practical numbers in the <a href="cheat-sheets.html">cheat sheets</a>. Missing a term? Check the <a href="faq.html">FAQ</a> and the <a href="resources.html">resources list</a>.</p>
+
+  <script>
+  document.addEventListener("c3d:ready", function () {
+    var input = document.getElementById("gl-filter");
+    var count = document.getElementById("gl-count");
+    var empty = document.getElementById("gl-empty");
+    var sections = Array.prototype.slice.call(document.querySelectorAll(".gl-letter"));
+    var items = [];
+    sections.forEach(function (sec) {
+      Array.prototype.slice.call(sec.querySelectorAll("dt")).forEach(function (dt) {
+        var dd = dt.nextElementSibling;
+        items.push({ dt: dt, dd: dd, sec: sec, text: (dt.textContent + " " + (dd ? dd.textContent : "")).toLowerCase() });
+      });
+    });
+    var jump = {};
+    Array.prototype.slice.call(document.querySelectorAll("#gl-jump a")).forEach(function (a) { jump[a.getAttribute("href").slice(1)] = a.parentNode; });
+
+    function apply() {
+      var q = input.value.trim().toLowerCase();
+      var terms = q ? q.split(/\s+/) : [];
+      var shown = 0;
+      var perSection = new Map();
+      items.forEach(function (it) {
+        var ok = terms.every(function (t) { return it.text.indexOf(t) !== -1; });
+        it.dt.hidden = !ok;
+        if (it.dd) it.dd.hidden = !ok;
+        if (ok) { shown++; perSection.set(it.sec, (perSection.get(it.sec) || 0) + 1); }
+      });
+      sections.forEach(function (sec) {
+        var n = perSection.get(sec) || 0;
+        sec.hidden = n === 0;
+        if (jump[sec.id]) jump[sec.id].style.opacity = n === 0 ? "0.3" : "";
+      });
+      count.textContent = q ? shown + " of " + items.length + " terms" : items.length + " terms";
+      empty.style.display = shown === 0 ? "block" : "none";
+    }
+    input.addEventListener("input", apply);
+    apply();
+  });
+  </script>
+</main>
+</body>
+</html>

@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Level 4 · Expert capstone exercises · 3D Printing Compendium</title>
+  <meta name="description" content="Twelve expert 3D printing capstone projects: compliant mechanisms, topology-driven brackets, multi-material assemblies, batch production, statistical process control, design of experiments, reverse engineering, fixtures, material characterization, large-part segmentation, casting and open-source release.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="exercises/level-4-expert.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 7 · Practice &amp; exercises</div>
+    <h1>Level 4 · Expert</h1>
+    <p class="lead">Capstone projects. They are open-ended: you define the requirements, plan the work, produce evidence and document the result. Each one takes a weekend or more and ends in a deliverable you could show to a customer or a colleague.</p>
+    <div class="meta"><span class="badge expert">Expert</span><span class="badge time">⏱ 8–20 h per project</span><span class="badge time">12 projects</span></div>
+  </header>
+
+  <div class="progress-summary" data-prefix="L4-" data-total="12" data-label="Level 4 progress"></div>
+
+  <h2>How capstone projects work</h2>
+  <p>Levels 1–3 gave you steps. Level 4 gives you a <strong>brief</strong>, a list of <strong>deliverables</strong> and <strong>acceptance criteria</strong>; the path is yours. Before you start any project, write a half-page plan with the requirement, the risks, the measurements you will take and a time budget. When you finish, compare the result with the plan and write down what you would do differently.</p>
+  <p>These projects assume the skills of <a href="level-3-advanced.html">Level 3</a>: calibrated profiles, tolerance tables, calculation habits and basic scripting. You will also use the <a href="../tools/calculators.html">calculators</a> for cost, flow and time estimates.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 190" role="img" aria-label="Project cycle: brief, plan, design, prototype, test, document and share, with a feedback loop from test back to design">
+      <g>
+        <rect class="f-blue" x="10" y="50" width="100" height="56" rx="10"/><text class="t-sm t-c t-b" x="60" y="84">Brief</text>
+        <rect class="f-teal" x="135" y="50" width="100" height="56" rx="10"/><text class="t-sm t-c t-b" x="185" y="84">Plan</text>
+        <rect class="f-green" x="260" y="50" width="100" height="56" rx="10"/><text class="t-sm t-c t-b" x="310" y="84">Design</text>
+        <rect class="f-orange" x="385" y="50" width="100" height="56" rx="10"/><text class="t-sm t-c t-b" x="435" y="84">Prototype</text>
+        <rect class="f-purple" x="510" y="50" width="100" height="56" rx="10"/><text class="t-sm t-c t-b" x="560" y="84">Test</text>
+        <rect class="f-red" x="635" y="50" width="130" height="56" rx="10"/><text class="t-sm t-c t-b" x="700" y="84">Document, share</text>
+        <path class="d-ink arrow" d="M110 78 H133 M235 78 H258 M360 78 H383 M485 78 H508 M610 78 H633"/>
+        <path class="d-dash arrow" d="M560 106 V150 H310 V108"/>
+        <text class="t-sm t-c t-m" x="435" y="172">iterate until the acceptance criteria are met</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 1.</b> Every capstone follows the same cycle. Plan to go around the iteration loop at least twice.</figcaption>
+  </figure>
+
+  <h3>Self-assessment rubric</h3>
+  <p>Score each project from 0 to 3 in each column (0 = missing, 1 = partly, 2 = good, 3 = excellent). A total of 10 or more out of 15 counts as a pass for your own tracking; the aim is honest feedback, not a grade.</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Criterion</th><th>What 3 points look like</th></tr></thead>
+    <tbody>
+      <tr><td>Requirements</td><td>Measurable requirements written before design started</td></tr>
+      <tr><td>Evidence</td><td>Photos, numbers and at least one test with repeated samples</td></tr>
+      <tr><td>Engineering</td><td>Calculations or models that predicted the result</td></tr>
+      <tr><td>Reproducibility</td><td>Someone else could print and assemble it from your files and notes</td></tr>
+      <tr><td>Reflection</td><td>An honest list of failures and what you changed</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Overview of all twelve projects</h2>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>#</th><th>Project</th><th>Main deliverable</th><th>Time</th></tr></thead>
+    <tbody>
+      <tr><td><a href="#L4-1">L4-1</a></td><td>Compliant mechanism design</td><td>Working flexure gripper + strain calculation</td><td>10 h</td></tr>
+      <tr><td><a href="#L4-2">L4-2</a></td><td>Topology-driven bracket</td><td>Lighter bracket tested against a solid one</td><td>12 h</td></tr>
+      <tr><td><a href="#L4-3">L4-3</a></td><td>Multi-material functional assembly</td><td>Rigid + flexible assembly with bill of materials</td><td>10 h</td></tr>
+      <tr><td><a href="#L4-4">L4-4</a></td><td>Production batch optimization</td><td>Cost model and a printed batch of 20</td><td>12 h</td></tr>
+      <tr><td><a href="#L4-5">L4-5</a></td><td>Statistical process control (Cp/Cpk)</td><td>Control chart and capability report</td><td>10 h</td></tr>
+      <tr><td><a href="#L4-6">L4-6</a></td><td>Design of experiments</td><td>Factorial design with effects table</td><td>12 h</td></tr>
+      <tr><td><a href="#L4-7">L4-7</a></td><td>Reverse-engineer and replace a part</td><td>Drawing, CAD model and fitted replacement</td><td>8 h</td></tr>
+      <tr><td><a href="#L4-8">L4-8</a></td><td>Jig or fixture for manufacturing</td><td>Fixture, go/no-go gauge and time saving</td><td>10 h</td></tr>
+      <tr><td><a href="#L4-9">L4-9</a></td><td>Material characterization test plan</td><td>Test plan, specimens and datasheet</td><td>15 h</td></tr>
+      <tr><td><a href="#L4-10">L4-10</a></td><td>Large-part segmentation</td><td>Split, joined part larger than the build plate</td><td>12 h</td></tr>
+      <tr><td><a href="#L4-11">L4-11</a></td><td>Mould or casting workflow</td><td>Printed master, mould and cast parts</td><td>15 h</td></tr>
+      <tr><td><a href="#L4-12">L4-12</a></td><td>Open-source release of a design</td><td>Repository with docs, license and photos</td><td>8 h</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>🔧 Projects</h2>
+
+  <section class="exercise" id="L4-1">
+    <header><span class="badge expert">Level 4 · Capstone</span><h3>Project 1 — Compliant mechanism design</h3><span class="badge time">⏱ ~10 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Brief</span>
+      <p>Design a single-piece mechanism that moves by bending, with no pins, hinges or assembly: for example a parallel gripper, a constant-force clip or a micro-positioning stage. Flexures replace joints: they have no backlash and no friction but store elastic energy and can fatigue.</p>
+      <span class="ex-label">Deliverables</span>
+      <ul>
+        <li>A sketch with the flexure dimensions and a strain calculation for each flexure</li>
+        <li>CAD files (parametric), printed prototypes in two materials (e.g. PETG and nylon or TPU 95A)</li>
+        <li>A test report: stroke, force, and cycles to failure</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 260" role="img" aria-label="A one-piece gripper with two flexure hinges in the open and closed position, and the strain formula for a flexure of thickness t, length L, rotation theta">
+          <rect class="d-plastic" x="40" y="180" width="120" height="40"/>
+          <path class="d-plastic" d="M60 180 V100 L90 60 H110 L130 100 V180 z" style="fill-opacity:.85"/>
+          <rect class="f-orange" x="62" y="130" width="14" height="30" rx="2"/><rect class="f-orange" x="124" y="130" width="14" height="30" rx="2"/>
+          <text class="t-sm t-c t-b" x="100" y="36">Open</text>
+          <rect class="d-plastic" x="200" y="180" width="120" height="40"/>
+          <path class="d-plastic" d="M222 180 V100 L250 62 H270 L290 100 V180 z"/>
+          <text class="t-sm t-c t-b" x="260" y="36">Closed</text>
+          <path class="d-thin arrow" d="M130 140 L112 140"/>
+          <g transform="translate(360 30)">
+            <rect class="f-teal" x="0" y="0" width="380" height="200" rx="10"/>
+            <text class="t t-b" x="14" y="28">Flexure strain (pure bending)</text>
+            <text class="t-sm t-mono" x="14" y="62">ε ≈ t · θ / (2 · L)</text>
+            <text class="t-sm" x="14" y="88">t thickness, L length, θ bend angle (rad)</text>
+            <text class="t-sm" x="14" y="116">Example: t = 0.8 mm, L = 10 mm, θ = 30° = 0.52 rad</text>
+            <text class="t-sm t-mono" x="14" y="140">ε = 0.8 · 0.52 / 20 = 2.1 %</text>
+            <text class="t-sm t-m" x="14" y="168">Compare with the allowable strain of your material</text>
+            <text class="t-sm t-m" x="14" y="186">(see L3-5). Longer and thinner flexures last longer.</text>
+          </g>
+        </svg>
+        <figcaption><b>Figure 2.</b> A compliant gripper. The orange necks are the flexures; strain depends only on thickness, length and bend angle.</figcaption>
+      </figure>
+      <span class="ex-label">Suggested path</span>
+      <ol class="steps">
+        <li><strong>Specify</strong> the required stroke (e.g. 6 mm jaw opening), grip force and cycle life.</li>
+        <li><strong>Choose flexure geometry</strong> (simple neck, notch or leaf) and size it with the formula in Figure 2 so ε stays below half the allowable strain.</li>
+        <li><strong>Print with layers parallel to the bending plane</strong> (flexure lying flat) and at least 3 walls across the thin section. Flexures of 0.8 mm require line widths that fit exactly: set the wall width in the slicer to a multiple of the line width.</li>
+        <li><strong>Test</strong> stroke and force with a spring scale; cycle 1,000 times and check for whitening, cracks or loss of preload.</li>
+        <li><strong>Iterate</strong> once: make the flexure 25 % longer and compare force and life.</li>
+      </ol>
+      <span class="ex-label">Acceptance criteria</span>
+      <ul class="checklist">
+        <li>Mechanism works as one piece with the specified stroke</li>
+        <li>Calculated and measured stroke agree within 20 %</li>
+        <li>At least 1,000 cycles in the best material without failure, or a documented failure analysis</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>A 0.8 mm wall prints as two lines with a 0.4 mm nozzle (line width about 0.42 mm each), so there is no gap-fill guesswork. A thickness of 0.9 mm can become 0.84 plus a thin gap fill, which behaves differently. Start from multiples of the line width.</p></details>
+      <details class="solution"><summary>Worked example</summary>
+        <p>A PETG gripper with 0.84 mm flexures, 12 mm long, bent ±15° has ε = 0.84 × 0.26 / 24 = 0.9 % and survived 5,000 cycles; the same design in PLA cracked at the neck after 40 cycles. A 3 mm × 5 mm test coupon of TPU 95A could bend 90° but gave a weak grip. The lesson: material allowable strain dominates; geometry must adapt to it. See <a href="../design/joints-and-fasteners.html">Joints &amp; fasteners</a> and <a href="../materials/flexibles-and-specialty.html">Flexibles &amp; specialty filaments</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L4-2">
+    <header><span class="badge expert">Level 4 · Capstone</span><h3>Project 2 — Topology-driven bracket</h3><span class="badge time">⏱ ~12 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Brief</span>
+      <p>Design a bracket for a defined load (for example 150 N at the tip of a 100 mm arm, with two bolt holes), use a topology or load-path method to remove material where it is not needed, and verify with physical tests that the optimized bracket beats a simple solid bracket in strength-to-weight ratio.</p>
+      <span class="ex-label">Deliverables</span>
+      <ul>
+        <li>Load case drawing with loads, supports and keep-out regions</li>
+        <li>Solid baseline and an optimized bracket (CAD and STL)</li>
+        <li>Test results for both brackets (n ≥ 3 each) and a mass comparison</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 260" role="img" aria-label="Three stages of bracket design: a solid block with load and fixed holes, a stress map with material removed in low-stress areas, and the final bracket with ribs along load paths">
+          <g>
+            <rect class="d-plastic" x="30" y="60" width="200" height="130"/>
+            <circle class="d-surface" cx="55" cy="85" r="8"/><circle class="d-surface" cx="55" cy="165" r="8"/>
+            <path class="d-ink arrow" d="M200 40 V60"/><text class="t-sm t-c" x="200" y="30">load F</text>
+            <text class="t-sm t-c t-b" x="130" y="220">1 · Design space</text>
+          </g>
+          <g>
+            <rect class="d-surface" x="280" y="60" width="200" height="130"/>
+            <path class="f-orange" d="M280 60 L420 60 L480 190 L280 190 z"/>
+            <path class="f-red" d="M280 90 L400 120 L280 160 z"/>
+            <text class="t-sm t-c t-b" x="380" y="220">2 · Stress map</text>
+            <text class="t-sm t-c" x="380" y="240">red = high stress, white = unused</text>
+          </g>
+          <g>
+            <path class="d-plastic" d="M530 60 H570 L700 85 V100 L570 150 H530 z"/>
+            <circle class="d-surface" cx="548" cy="85" r="7"/><circle class="d-surface" cx="548" cy="125" r="7"/>
+            <path class="d-surface" d="M585 85 L690 90 L585 140 z"/>
+            <text class="t-sm t-c t-b" x="630" y="220">3 · Material along load paths</text>
+          </g>
+        </svg>
+        <figcaption><b>Figure 3.</b> The method: define the load, find where the material works, then keep only that material and smooth the result so that it can be printed.</figcaption>
+      </figure>
+      <span class="ex-label">Suggested path</span>
+      <ol class="steps">
+        <li><strong>Define the loads</strong> in numbers: force, direction, bolt positions, keep-out zones for fasteners and tools. Include a safety factor (2–3 for printed parts).</li>
+        <li><strong>Print the solid baseline</strong> and test it first, so you know the load at failure and the mass.</li>
+        <li><strong>Find the load paths</strong> with a free FEA or topology-optimization tool (e.g. FreeCAD FEM or a generative-design function in your CAD package) or by hand sketching force flow: material should follow tension and compression lines.</li>
+        <li><strong>Rebuild a clean shape</strong> from the result: remove sharp inside corners, set a minimum feature size of 3× the nozzle diameter, orient so layers do not take tension across them.</li>
+        <li><strong>Print and test</strong> both versions three times each in the same orientation and load rig. Record failure load and mass; compute failure load per gram.</li>
+        <li><strong>Compare</strong> prediction and result, and document where the model was wrong (usually layer adhesion).</li>
+      </ol>
+      <span class="ex-label">Acceptance criteria</span>
+      <ul class="checklist">
+        <li>Optimized bracket carries at least 90 % of the baseline load at 20 % or more less mass</li>
+        <li>Mass, load and strength-to-weight table with repeated tests</li>
+        <li>A written explanation of where and why it failed</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Simulation tools assume isotropic material; printed parts are weaker across layers. Use a lower allowable stress for the Z direction (for example 30–50 % of the in-plane value as a first guess) and always validate by testing.</p></details>
+      <details class="solution"><summary>Worked example</summary>
+        <p>Baseline: 62 g PETG bracket, failure at 410 N (6.6 N/g). Optimized: 41 g, failure at 380 N (9.3 N/g). Mass −34 %, strength −7 %, strength-to-weight +40 %. Failure started at a fillet next to a bolt hole where layers ran across the load; adding a 4 mm fillet and rotating the part 90° in the slicer improved the next print by 15 %. Related theory: <a href="../design/strength-and-orientation.html">Strength &amp; orientation</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L4-3">
+    <header><span class="badge expert">Level 4 · Capstone</span><h3>Project 3 — Multi-material functional assembly</h3><span class="badge time">⏱ ~10 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Brief</span>
+      <p>Design a product with at least one rigid and one flexible material in a single print or assembly: a gasketed enclosure, a tool handle with a soft grip, or a gripper with soft pads. Use each material where it matters, document the interface, and test the function.</p>
+      <span class="ex-label">Deliverables</span>
+      <ul>
+        <li>A bill of materials (parts, material, nozzle, mass) and an exploded drawing</li>
+        <li>Print files with filament assignments, plus the printed assembly</li>
+        <li>A function test (for example water or dust resistance, grip force, drop test)</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 260" role="img" aria-label="Exploded view of a box with a printed lid, a soft gasket printed in flexible material and a base with screws, plus a bill of materials table">
+          <rect class="d-plastic" x="60" y="30" width="190" height="30" rx="4"/>
+          <rect class="f-orange" x="70" y="88" width="170" height="14" rx="4"/>
+          <path class="d-plastic" d="M60 130 H250 V220 H60 z"/><rect class="d-surface" x="76" y="140" width="158" height="72"/>
+          <path class="d-dash" d="M95 62 V86 M225 62 V86 M95 104 V128 M225 104 V128"/>
+          <text class="t-sm" x="262" y="50">lid: PETG (rigid)</text><text class="t-sm" x="262" y="98">gasket: TPU 95A (flexible)</text><text class="t-sm" x="262" y="176">base: PETG (rigid)</text>
+          <g transform="translate(440 20)">
+            <rect class="f-gray" x="0" y="0" width="310" height="210" rx="10"/>
+            <text class="t t-b" x="14" y="26">Bill of materials</text>
+            <text class="t-sm" x="14" y="56">1 × lid           PETG   18 g   nozzle A</text>
+            <text class="t-sm" x="14" y="80">1 × gasket      TPU    3 g    nozzle B</text>
+            <text class="t-sm" x="14" y="104">1 × base         PETG   26 g   nozzle A</text>
+            <text class="t-sm" x="14" y="128">4 × M3 screws  steel</text>
+            <text class="t-sm" x="14" y="152">4 × heat-set inserts M3</text>
+            <text class="t-sm t-m" x="14" y="184">Check nozzle assignment rules on the</text>
+            <text class="t-sm t-m" x="14" y="200">X2D filament compatibility page.</text>
+          </g>
+        </svg>
+        <figcaption><b>Figure 4.</b> An enclosure with a printed gasket: three printed parts in two materials plus hardware, documented in a BOM.</figcaption>
+      </figure>
+      <span class="ex-label">Suggested path</span>
+      <ol class="steps">
+        <li><strong>Write the function requirements</strong>: e.g. "survives 1 min under 5 cm of water", "grip holds 5 N pull".</li>
+        <li><strong>Choose materials</strong> by function and check compatibility of the pair: some combinations bond to each other (PETG on TPU), others do not (PLA on PETG may bond weakly). Review <a href="../materials/flexibles-and-specialty.html">Flexibles &amp; specialty filaments</a> and <a href="../x2d/filament-compatibility.html">Filament compatibility</a>.</li>
+        <li><strong>Design the interface</strong> with a mechanical lock (dovetail, undercut or through-holes) so that you do not depend on chemical bonding alone.</li>
+        <li><strong>Plan the print</strong>: which parts print together, which nozzle prints which material, expected flush waste (see <a href="level-3-advanced.html#L3-8">L3-8</a>).</li>
+        <li><strong>Print, assemble and test</strong> against the requirements. Photograph failures.</li>
+      </ol>
+      <span class="ex-label">Acceptance criteria</span>
+      <ul class="checklist">
+        <li>All functional requirements met and measured</li>
+        <li>Interface survives a pull-off test (at least a number you wrote down beforehand)</li>
+        <li>BOM and filament assignment documented</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Flexible materials are very sensitive to moisture and to the path to the extruder. Dry them and print slowly. Check the machine's guidance for which nozzle and which feeding path to use for TPU, and keep flexible material out of an automatic filament feeder that does not support it.</p></details>
+      <details class="solution"><summary>Worked example</summary>
+        <p>PETG enclosure with a 1.2 mm TPU gasket printed directly onto the lid with a dovetail groove. Test: 5 cm water for 1 min, no leakage at 4 screws torqued by hand; at 2 screws, a drip appeared in the corner. Lesson: gasket compression of about 20–30 % and screw spacing decide sealing, not the material alone. See also <a href="../x2d/tpu-and-flexibles.html">TPU &amp; flexibles on X2D</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L4-4">
+    <header><span class="badge expert">Level 4 · Capstone</span><h3>Project 4 — Production batch optimization</h3><span class="badge time">⏱ ~12 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Brief</span>
+      <p>Choose a small product (e.g. a 40 mm cable organizer) and make 20 identical copies as efficiently as possible. Build a cost model, then optimize plate layout, settings, post-processing and failure rate to lower the cost per good part and keep quality within spec.</p>
+      <span class="ex-label">Deliverables</span>
+      <ul>
+        <li>A cost model (machine time, material, electricity, labor, failures) in a spreadsheet</li>
+        <li>Three layouts or settings variants with measured time, mass and quality</li>
+        <li>A finished batch with inspection records and a final cost per part</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 260" role="img" aria-label="Stacked bar chart of cost per part for three variants: baseline, optimized layout, optimized layout and settings, split into machine time, material, labor and failures">
+          <path class="d-ink" d="M70 30 V210 H470"/>
+          <g class="t-xs t-r"><text x="62" y="214">0</text><text x="62" y="164">0.50</text><text x="62" y="114">1.00</text><text x="62" y="64">1.50</text></g>
+          <g>
+            <rect class="s-blue" x="100" y="110" width="70" height="100"/><rect class="s-green" x="100" y="80" width="70" height="30"/><rect class="s-orange" x="100" y="50" width="70" height="30"/><rect class="s-red" x="100" y="40" width="70" height="10"/>
+            <rect class="s-blue" x="230" y="140" width="70" height="70"/><rect class="s-green" x="230" y="116" width="70" height="24"/><rect class="s-orange" x="230" y="98" width="70" height="18"/><rect class="s-red" x="230" y="94" width="70" height="4"/>
+            <rect class="s-blue" x="360" y="156" width="70" height="54"/><rect class="s-green" x="360" y="134" width="70" height="22"/><rect class="s-orange" x="360" y="118" width="70" height="16"/><rect class="s-red" x="360" y="116" width="70" height="2"/>
+          </g>
+          <text class="t-sm t-c" x="135" y="230">Baseline</text><text class="t-sm t-c" x="265" y="230">Layout</text><text class="t-sm t-c" x="395" y="230">Layout + settings</text>
+          <g transform="translate(500 50)">
+            <rect class="s-blue" x="0" y="0" width="14" height="14"/><text class="t-sm" x="22" y="12">Machine time</text>
+            <rect class="s-green" x="0" y="26" width="14" height="14"/><text class="t-sm" x="22" y="38">Material</text>
+            <rect class="s-orange" x="0" y="52" width="14" height="14"/><text class="t-sm" x="22" y="64">Labor</text>
+            <rect class="s-red" x="0" y="78" width="14" height="14"/><text class="t-sm" x="22" y="90">Failures</text>
+            <text class="t-xs t-m" x="0" y="130">Example figures in currency units per part.</text>
+          </g>
+        </svg>
+        <figcaption><b>Figure 5.</b> Cost per good part for three variants. Machine time and labor usually dominate; the best savings come from layout and handling, not from material alone.</figcaption>
+      </figure>
+      <span class="ex-label">Suggested path</span>
+      <ol class="steps">
+        <li><strong>Build the cost model:</strong> cost per part = (machine rate × print time + material price × mass + electricity + labor per batch ÷ parts per batch) ÷ yield, where yield is the fraction of good parts (0–1).</li>
+        <li><strong>Define the quality spec:</strong> critical dimensions, tolerance, surface and function test. Decide what counts as a failure.</li>
+        <li><strong>Test layouts:</strong> parts per plate, orientation, spacing, print sequence (the plate that you can unload without tools), and a variant with a faster profile (see <a href="level-3-advanced.html#L3-13">L3-13</a>).</li>
+        <li><strong>Reduce hands-on time:</strong> support-free orientation, brim-free adhesion, a standard plate cleaning routine, a quick inspection template.</li>
+        <li><strong>Make the batch</strong> of 20 parts and inspect each one; record failures and the cause.</li>
+        <li><strong>Report</strong> the final cost per good part and the three biggest savings.</li>
+      </ol>
+      <span class="ex-label">Acceptance criteria</span>
+      <ul class="checklist">
+        <li>Final cost per good part at least 25 % below the baseline</li>
+        <li>All 20 parts inspected against the spec, with records</li>
+        <li>A sensitivity analysis: what happens to cost if failure rate doubles or labor time halves</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Do the sensitivity analysis before you optimize. If labor is 60 % of the cost, saving 5 minutes of print time per plate does not matter; saving 2 minutes of handling does. The <a href="../tools/calculators.html">calculators</a> include cost and time estimators to cross-check your spreadsheet.</p></details>
+      <details class="solution"><summary>Worked example</summary>
+        <p>Baseline: 6 parts per plate, 2 h each plate, 1.30 per part. Layout optimization: 12 parts per plate with 4 mm spacing, one plate of 12 and one of 8: 1.00 per part. Faster profile (0.24 mm layers, 4 instead of 6 walls) and no brim: 0.82 per part with yield 95 %. A failed corner on two parts was traced to a plate-edge adhesion problem; the fix was a cleaning step. All figures are illustrative. See <a href="../reference/economics-and-ethics.html">Economics, licensing &amp; sustainability</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L4-5">
+    <header><span class="badge expert">Level 4 · Capstone</span><h3>Project 5 — Statistical process control (Cp/Cpk)</h3><span class="badge time">⏱ ~10 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Brief</span>
+      <p>Treat your printer as a process: print 30 identical parts, measure one critical dimension on each, and compute the process capability indices Cp and Cpk. Decide whether your printer can reliably meet a given tolerance, and what to change if it cannot.</p>
+      <span class="ex-label">Deliverables</span>
+      <ul>
+        <li>A table of 30 measurements with the print order</li>
+        <li>An X-bar/individuals control chart and a histogram with specification limits</li>
+        <li>A capability report with Cp, Cpk and recommended action</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 270" role="img" aria-label="Histogram of measured dimensions with lower and upper specification limits, the process mean shifted toward the upper limit, and the Cp and Cpk formulas with a worked example">
+          <path class="d-ink" d="M40 30 V220 H440"/>
+          <g class="s-blue" style="fill-opacity:.75"><rect x="120" y="200" width="30" height="20"/><rect x="150" y="170" width="30" height="50"/><rect x="180" y="120" width="30" height="100"/><rect x="210" y="70" width="30" height="150"/><rect x="240" y="90" width="30" height="130"/><rect x="270" y="140" width="30" height="80"/><rect x="300" y="190" width="30" height="30"/><rect x="330" y="212" width="30" height="8"/></g>
+          <path class="k-red" d="M100 30 V220"/><path class="k-red" d="M390 30 V220"/>
+          <text class="t-sm t-c" x="100" y="238">LSL 19.80</text><text class="t-sm t-c" x="390" y="238">USL 20.20</text>
+          <path class="d-dash" d="M250 40 V220"/><text class="t-sm t-c" x="250" y="32">mean 20.06</text>
+          <text class="t-sm t-c t-m" x="240" y="260">dimension (mm)</text>
+          <g transform="translate(470 30)">
+            <rect class="f-teal" x="0" y="0" width="280" height="210" rx="10"/>
+            <text class="t t-b" x="14" y="26">Capability indices</text>
+            <text class="t-sm t-mono" x="14" y="56">Cp  = (USL − LSL) / (6σ)</text>
+            <text class="t-sm t-mono" x="14" y="78">Cpk = min(USL − μ, μ − LSL) / (3σ)</text>
+            <text class="t-sm" x="14" y="106">μ = 20.06, σ = 0.05 mm</text>
+            <text class="t-sm t-mono" x="14" y="128">Cp  = 0.40 / 0.30 = 1.33</text>
+            <text class="t-sm t-mono" x="14" y="150">Cpk = 0.14 / 0.15 = 0.93</text>
+            <text class="t-sm t-b" x="14" y="178">Spread is fine, the mean is off.</text>
+            <text class="t-sm" x="14" y="196">Shift the mean by −0.06 mm (CAD offset).</text>
+          </g>
+        </svg>
+        <figcaption><b>Figure 6.</b> Cp compares the width of the tolerance to the process spread; Cpk also penalizes an off-center mean. Here Cp is acceptable but Cpk is not.</figcaption>
+      </figure>
+      <span class="ex-label">Suggested path</span>
+      <ol class="steps">
+        <li><strong>Choose the characteristic and tolerance</strong>, for example the diameter of a 20 mm vertical hole from <a href="models/hole_gauge.scad">hole_gauge.scad</a> or a 20 mm outside dimension, with a tolerance of ±0.20 mm.</li>
+        <li><strong>Print 30 parts</strong> in sequence in as few sessions as possible (e.g. 3 plates of 10), recording plate, position and time. Use the same filament spool, temperature and plate.</li>
+        <li><strong>Measure every part</strong> at room temperature, with the same calipers and procedure. Use a gauge study: measure 10 of them twice to estimate the measurement error (it should be under 10 % of the tolerance).</li>
+        <li><strong>Plot an individuals control chart</strong> in print order, with the mean and limits at ±3σ. Look for trends, steps after a spool change and position effects.</li>
+        <li><strong>Compute Cp and Cpk</strong> (formulas in Figure 6). A common target for stable processes is Cpk ≥ 1.33.</li>
+        <li><strong>Act:</strong> shift the mean with a CAD offset or a compensation, reduce variation (dry filament, plate calibration, constant ambient temperature) and repeat with 30 new parts.</li>
+      </ol>
+      <span class="ex-label">Acceptance criteria</span>
+      <ul class="checklist">
+        <li>30 measurements, a control chart and a histogram with specification limits</li>
+        <li>Calculated Cp and Cpk with a one-paragraph interpretation</li>
+        <li>A second run after an improvement, showing Cpk improved</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Do not mix data from different conditions in one capability study. If two plates have different means, analyze them separately first. If your measurement error is large, repeat each measurement three times and use the average; otherwise Cp mostly shows how bad your calipers are.</p></details>
+      <details class="solution"><summary>Worked example</summary>
+        <p>The 30-part run with mean 20.06 mm and σ = 0.05 mm gives Cp = 1.33 and Cpk = 0.93: the printer is precise but the average is 0.06 mm too large. After a −0.06 mm CAD offset on the diameter, the second run had mean 20.00, σ 0.045 → Cpk = 0.2/0.135 = 1.48. A trend of +0.02 mm over the run suggested a temperature drift in the room; the third run used an enclosure and reduced σ to 0.035. All numbers are examples. Tools for tolerances: <a href="../design/tolerances-and-fits.html">Tolerances &amp; fits</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L4-6">
+    <header><span class="badge expert">Level 4 · Capstone</span><h3>Project 6 — Design of experiments for settings</h3><span class="badge time">⏱ ~12 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Brief</span>
+      <p>Replace "change one thing at a time" with a designed experiment: vary several settings at once in a planned pattern and calculate each factor's effect and the interactions from far fewer prints. Use it to find the best combination of settings for the strength or the accuracy of a part.</p>
+      <span class="ex-label">Deliverables</span>
+      <ul>
+        <li>A DoE table with randomized run order</li>
+        <li>Responses for every run and a main-effects chart</li>
+        <li>Recommended settings and a confirmation run</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 300" role="img" aria-label="A cube whose eight corners are the eight runs of a two-level full factorial design with three factors, and a table of the eight runs with responses and the calculated main effects">
+          <path class="d-ink" d="M70 70 H190 V190 H70 z M110 40 H230 V160 H110 z M70 70 L110 40 M190 70 L230 40 M190 190 L230 160 M70 190 L110 160"/>
+          <g class="s-green"><circle cx="70" cy="190" r="6"/><circle cx="190" cy="190" r="6"/><circle cx="70" cy="70" r="6"/><circle cx="190" cy="70" r="6"/><circle cx="110" cy="160" r="6"/><circle cx="230" cy="160" r="6"/><circle cx="110" cy="40" r="6"/><circle cx="230" cy="40" r="6"/></g>
+          <path class="d-thin arrow" d="M70 215 H190"/><text class="t-sm t-c" x="130" y="232">A: nozzle temp</text>
+          <path class="d-thin arrow" d="M48 190 V70"/><text class="t-sm t-c" x="26" y="130" style="writing-mode:vertical-rl">C: layer h</text>
+          <path class="d-thin arrow" d="M200 200 L240 170"/><text class="t-sm" x="226" y="196">B: speed</text>
+          <g transform="translate(300 20)" class="t-sm">
+            <rect class="f-gray" x="0" y="0" width="440" height="268" rx="8"/>
+            <text class="t-b" x="12" y="24">Run</text><text class="t-b" x="56" y="24">A °C</text><text class="t-b" x="112" y="24">B mm/s</text><text class="t-b" x="188" y="24">C mm</text><text class="t-b" x="252" y="24">Strength (N)</text>
+            <text x="12" y="52">1</text><text x="56" y="52">200</text><text x="112" y="52">100</text><text x="188" y="52">0.12</text><text x="252" y="52">310</text>
+            <text x="12" y="74">2</text><text x="56" y="74">220</text><text x="112" y="74">100</text><text x="188" y="74">0.12</text><text x="252" y="74">340</text>
+            <text x="12" y="96">3</text><text x="56" y="96">200</text><text x="112" y="96">200</text><text x="188" y="96">0.12</text><text x="252" y="96">290</text>
+            <text x="12" y="118">4</text><text x="56" y="118">220</text><text x="112" y="118">200</text><text x="188" y="118">0.12</text><text x="252" y="118">335</text>
+            <text x="12" y="140">5</text><text x="56" y="140">200</text><text x="112" y="140">100</text><text x="188" y="140">0.24</text><text x="252" y="140">270</text>
+            <text x="12" y="162">6</text><text x="56" y="162">220</text><text x="112" y="162">100</text><text x="188" y="162">0.24</text><text x="252" y="162">300</text>
+            <text x="12" y="184">7</text><text x="56" y="184">200</text><text x="112" y="184">200</text><text x="188" y="184">0.24</text><text x="252" y="184">250</text>
+            <text x="12" y="206">8</text><text x="56" y="206">220</text><text x="112" y="206">200</text><text x="188" y="206">0.24</text><text x="252" y="206">295</text>
+            <text class="t-b" x="12" y="238">Effects (mean at + minus mean at −):  A +37.5 N,  B −12.5 N,  C −40 N</text>
+            <text class="t-xs t-m" x="12" y="256">Illustrative data. Randomize the print order in practice.</text>
+          </g>
+        </svg>
+        <figcaption><b>Figure 7.</b> A 2³ full factorial design: three factors at two levels each give eight runs, one per corner of the cube. The effect of a factor is the average change in the response when it goes from low to high.</figcaption>
+      </figure>
+      <span class="ex-label">Suggested path</span>
+      <ol class="steps">
+        <li><strong>Choose a response</strong> you can measure well (failure load of a standard bar, dimension error, surface roughness score) and 3 factors you believe matter, with a low and a high level each; keep levels far enough apart to see an effect but inside safe printing limits.</li>
+        <li><strong>Write the 2³ table</strong> (8 runs, as in Figure 7), and randomize the order with a dice or a spreadsheet to avoid time trends being mistaken for effects.</li>
+        <li><strong>Print and measure</strong> all runs; if you can afford it, replicate each run twice to estimate the noise.</li>
+        <li><strong>Calculate main effects</strong>: for each factor, mean response at the high level minus mean at the low level. Calculate at least one interaction (A×C = mean of the runs where A and C have the same sign minus the others).</li>
+        <li><strong>Rank</strong> the effects and decide which factors to keep. Pick settings to maximize the response (or to balance it with print time).</li>
+        <li><strong>Confirm</strong> with a run at the chosen settings, which was not part of the design, and compare it with the prediction.</li>
+      </ol>
+      <span class="ex-label">Acceptance criteria</span>
+      <ul class="checklist">
+        <li>A complete randomized table with all responses</li>
+        <li>Main effects and one interaction calculated by hand or in a spreadsheet</li>
+        <li>A confirmation run within about 10 % of the prediction</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>An effect is only credible if it is larger than the run-to-run noise. Replicate at least the center point (a ninth run between the low and high levels) three times to estimate the noise. If a factor's effect is smaller than the noise, set it to the cheapest level.</p></details>
+      <details class="solution"><summary>Worked example</summary>
+        <p>From Figure 7: A (temperature) = +37.5 N, B (speed) = −12.5 N, C (layer height) = −40 N. Conclusion: high temperature and thin layers help most; speed matters little, so run at the fast level. Predicted best run: temperature 220 °C, speed 200 mm/s, layer 0.12 mm → run 4 = 335 N, which is close to the best measured run (340 N at 100 mm/s) but 5 minutes faster per part. The confirmation print gave 330 N. Full-factorial designs grow quickly (2⁵ = 32 runs); with many factors use a fractional design. Practical background: <a href="../techniques/calibration.html">Calibration playbook</a>.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L4-7">
+    <header><span class="badge expert">Level 4 · Capstone</span><h3>Project 7 — Reverse-engineer and replace a part</h3><span class="badge time">⏱ ~8 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Brief</span>
+      <p>Pick a broken or worn part in your home or workshop (a knob, a bracket, a battery cover, a drawer guide). Measure it, understand what it does, model it, and print a replacement that fits and works at least as well as the original. Redesign weak points rather than copying them.</p>
+      <span class="ex-label">Deliverables</span>
+      <ul>
+        <li>A dimensioned sketch with datum surfaces, plus photos of the original from several sides</li>
+        <li>A parametric CAD model and the printed replacement</li>
+        <li>A short analysis of why the original failed and what you changed</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 250" role="img" aria-label="Reverse engineering workflow in five steps: inspect and photograph, measure with calipers from datums, sketch and model, print test fit, refine; with a part showing datum faces A and B and measured dimensions">
+          <rect class="d-plastic" x="40" y="70" width="170" height="100" rx="6"/>
+          <circle class="d-surface" cx="90" cy="120" r="14"/><circle class="d-surface" cx="160" cy="120" r="14"/>
+          <path class="d-thin arrow arrow-start" d="M40 190 H210"/><text class="t-sm t-c" x="125" y="210">84.0</text>
+          <path class="d-thin arrow arrow-start" d="M90 50 H160"/><text class="t-sm t-c" x="125" y="44">Ø6.2 hole pitch 35.0</text>
+          <text class="t-sm t-b" x="48" y="90">A</text><text class="t-sm t-b" x="188" y="160">B</text>
+          <g class="t-sm t-c t-b">
+            <rect class="f-blue" x="260" y="30" width="110" height="52" rx="8"/><text x="315" y="62">1 Inspect</text>
+            <rect class="f-teal" x="260" y="96" width="110" height="52" rx="8"/><text x="315" y="128">2 Measure</text>
+            <rect class="f-green" x="260" y="162" width="110" height="52" rx="8"/><text x="315" y="194">3 Model</text>
+            <rect class="f-orange" x="500" y="96" width="110" height="52" rx="8"/><text x="555" y="128">4 Test fit</text>
+            <rect class="f-purple" x="640" y="96" width="100" height="52" rx="8"/><text x="690" y="128">5 Refine</text>
+          </g>
+          <path class="d-ink arrow" d="M370 56 H430 V110 H498 M370 122 H498 M370 188 H430 V134 H498 M610 122 H638"/>
+        </svg>
+        <figcaption><b>Figure 8.</b> From worn part to replacement. Measure from datum faces, not from edge to edge, so that errors do not add up.</figcaption>
+      </figure>
+      <span class="ex-label">Suggested path</span>
+      <ol class="steps">
+        <li><strong>Understand the function</strong>: what loads, what mating parts, what environment (heat, UV, chemicals). Pick a material that suits it (see <a href="../materials/overview.html">Materials overview</a>).</li>
+        <li><strong>Choose datums</strong> (two or three flat faces) and measure every feature from them. Measure critical features three times and note any wear.</li>
+        <li><strong>Make a quick fit-check model</strong> of only the interface features and print it in 10–20 minutes before you model the whole part.</li>
+        <li><strong>Model parametrically</strong>, with each measured value as a named parameter and a clearance parameter that you can adjust (see <a href="../design/parametric-cad-workflow.html">Parametric CAD workflow</a>).</li>
+        <li><strong>Improve</strong> the failure points: add fillets at the crack origin, rotate the print orientation, add ribs.</li>
+        <li><strong>Install and use</strong> the replacement for at least a week, then inspect.</li>
+      </ol>
+      <span class="ex-label">Acceptance criteria</span>
+      <ul class="checklist">
+        <li>The replacement fits without filing or force and performs its function</li>
+        <li>All dimensions are parameters in the model</li>
+        <li>You documented one improvement over the original and the reason</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Do not copy dimensions into the final model without allowing for the way a printed hole shrinks and a printed post grows. Use your tolerance table from <a href="level-2-intermediate.html#L2-6">L2-6</a> or a hole-gauge print (<a href="models/hole_gauge.scad">hole_gauge.scad</a>) to choose the clearance.</p></details>
+      <details class="solution"><summary>Worked example</summary>
+        <p>A broken oven-knob adapter: the original was a thin brittle sleeve with a D-shaped bore. Measurement from the flat of the D gave a width of 12.1 mm across the flat; the fit-check print needed +0.15 mm clearance. The replacement used a wall of 3 mm and a PETG body printed with the axis horizontal so that layers did not split along the bore. A heat-resistant variant (ASA) was used at the hot side. After a month of daily use there was no cracking.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L4-8">
+    <header><span class="badge expert">Level 4 · Capstone</span><h3>Project 8 — Jig or fixture for manufacturing</h3><span class="badge time">⏱ ~10 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Brief</span>
+      <p>Choose a repeated manual operation: drilling holes in a plate, gluing two parts at an angle, bending wire, assembling a small product. Design and print a jig or fixture that locates the workpiece, makes the operation faster and the result repeatable, and include a go/no-go gauge to check the output.</p>
+      <span class="ex-label">Deliverables</span>
+      <ul>
+        <li>The operation described in steps, with a time-and-error baseline (10 repetitions without the jig)</li>
+        <li>The jig and a go/no-go gauge</li>
+        <li>A comparison with the jig (10 repetitions): time, spread of the result, mistakes</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 260" role="img" aria-label="A fixture with a three-point locating scheme (two pins on one side, one on the other) holding a plate, with a clamp, a drill guide bushing, and a go/no-go gauge with go and no-go ends">
+          <rect class="d-plastic" x="40" y="60" width="300" height="160" rx="6"/>
+          <rect class="d-surface2" x="80" y="90" width="200" height="100"/>
+          <circle class="f-orange" cx="80" cy="110" r="7"/><circle class="f-orange" cx="80" cy="170" r="7"/><circle class="f-orange" cx="170" cy="190" r="7"/>
+          <circle class="d-metal" cx="220" cy="140" r="12"/><circle class="d-surface" cx="220" cy="140" r="5"/>
+          <path class="d-plastic" d="M290 80 H330 V200 H290 z"/><text class="t-xs t-c" x="310" y="52">clamp</text>
+          <text class="t-sm t-c" x="190" y="248">Workpiece located by three pins (3-2-1 principle)</text>
+          <text class="t-xs t-c" x="220" y="116">guide</text>
+          <g transform="translate(420 70)">
+            <rect class="d-plastic" x="0" y="40" width="290" height="40" rx="4"/>
+            <rect class="f-green" x="0" y="40" width="130" height="40" rx="4"/><text class="t-sm t-c t-b" x="65" y="65">GO</text>
+            <rect class="f-red" x="160" y="40" width="130" height="40" rx="4"/><text class="t-sm t-c t-b" x="225" y="65">NO-GO</text>
+            <text class="t-sm" x="0" y="20">Go/no-go gauge: 5.00 mm and 5.30 mm steps</text>
+            <text class="t-sm t-m" x="0" y="112">Go end must fit the feature; no-go end must not.</text>
+            <text class="t-sm t-m" x="0" y="132">Print the gauge flat so the steps are accurate.</text>
+          </g>
+        </svg>
+        <figcaption><b>Figure 9.</b> A fixture and its gauge. Three locating points (2-1 on two sides) fix the part without over-constraining it.</figcaption>
+      </figure>
+      <span class="ex-label">Suggested path</span>
+      <ol class="steps">
+        <li><strong>Time the baseline</strong>: do the operation 10 times, noting the time and the error (for example the hole position error in mm).</li>
+        <li><strong>Locate</strong> the workpiece on a flat face with three points, and push it against two more points on edges. Remove any excess constraint.</li>
+        <li><strong>Add a stop or a clamp</strong> that is quick (a cam, a toggle, a rubber band or a magnet) and that does not damage the work.</li>
+        <li><strong>Guide the tool</strong> with a bushing or hole sized for the drill (+0.2 mm clearance). Make the guide replaceable when it wears: use a metal bushing or a replaceable printed insert.</li>
+        <li><strong>Make a go/no-go gauge</strong> for the critical dimension, based on the tolerance band you want.</li>
+        <li><strong>Compare</strong> time and error with the baseline.</li>
+      </ol>
+      <span class="ex-label">Acceptance criteria</span>
+      <ul class="checklist">
+        <li>Operation time reduced by at least 30 %, or error spread halved</li>
+        <li>The jig can be used by someone else after reading the instructions you wrote</li>
+        <li>A gauge checks the critical dimension</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Print fixtures in PETG or nylon-based material for wear and impact resistance, with 4–6 walls and 30–40 % infill, since the loads are mostly local. Put the locating surfaces on the bottom of the print so they are flat and accurate (use <a href="../design/design-patterns.html">design patterns</a> for clamps and stops).</p></details>
+      <details class="solution"><summary>Worked example</summary>
+        <p>Drilling two 4 mm holes 40 mm apart in aluminium strips. Baseline by hand with a marked line: 70 s per part, position error up to ±0.8 mm. With a printed jig with a hardened-steel drill bushing: 25 s per part, error ±0.15 mm. A go/no-go gauge with 4.0 / 4.3 mm pins checked hole positions on a 40.0 mm centre. The jig paid for itself after about 40 parts. All numbers illustrative.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L4-9">
+    <header><span class="badge expert">Level 4 · Capstone</span><h3>Project 9 — Material characterization test plan</h3><span class="badge time">⏱ ~15 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Brief</span>
+      <p>Create a small datasheet for one filament, with the property values measured as you print it, in your orientation and with your settings. This is more useful than a manufacturer's datasheet, which is measured on injection-molded samples.</p>
+      <span class="ex-label">Deliverables</span>
+      <ul>
+        <li>A test plan: properties, specimens, sample counts, orientation, standard (or the standard you adapted from)</li>
+        <li>The printed specimens and raw data</li>
+        <li>A one-page datasheet with mean ± standard deviation for each property</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 260" role="img" aria-label="Test specimens: a dog-bone tensile bar, a three-point bending bar on two supports, an impact bar with a notch, and a heat deflection setup, each with orientation arrows X Y Z">
+          <g>
+            <path class="d-plastic" d="M30 70 H70 Q80 70 80 80 V90 H140 V80 Q140 70 150 70 H190 V120 H150 Q140 120 140 110 V100 H80 V110 Q80 120 70 120 H30 z"/>
+            <text class="t-sm t-c t-b" x="110" y="150">Tensile bar</text><text class="t-xs t-c" x="110" y="168">pull along arrows</text>
+            <path class="d-ink arrow" d="M30 95 H10 M190 95 H210"/>
+          </g>
+          <g>
+            <rect class="d-plastic" x="260" y="70" width="170" height="24" rx="2"/>
+            <path class="d-ink" d="M280 94 L270 114 H290 z M410 94 L400 114 H420 z"/>
+            <path class="d-ink arrow" d="M345 30 V68"/>
+            <text class="t-sm t-c t-b" x="345" y="150">3-point bend</text><text class="t-xs t-c" x="345" y="168">span = 16 × thickness</text>
+          </g>
+          <g>
+            <rect class="d-plastic" x="480" y="70" width="120" height="24" rx="2"/>
+            <path class="d-solid" d="M538 70 L542 70 L540 80 z"/>
+            <path class="d-ink arrow" d="M650 50 L612 82"/>
+            <text class="t-sm t-c t-b" x="540" y="150">Notched impact</text><text class="t-xs t-c" x="540" y="168">V-notch, hammer or drop</text>
+          </g>
+          <g transform="translate(630 190)">
+            <path class="d-ink arrow" d="M0 40 H60"/><text class="t-xs" x="64" y="44">X</text>
+            <path class="d-ink arrow" d="M0 40 L30 15"/><text class="t-xs" x="34" y="14">Y</text>
+            <path class="d-ink arrow" d="M0 40 V-5"/><text class="t-xs" x="-4" y="-10">Z</text>
+          </g>
+          <text class="t-sm" x="30" y="215">Print each orientation: flat (XY), on edge, and standing (Z). Layers weaken the Z direction.</text>
+          <text class="t-sm t-m" x="30" y="238">At least 5 specimens per condition; condition at the same humidity first.</text>
+        </svg>
+        <figcaption><b>Figure 10.</b> Three specimen types and the print orientations to compare. Orientation matters at least as much as the material.</figcaption>
+      </figure>
+      <span class="ex-label">Suggested path</span>
+      <ol class="steps">
+        <li><strong>Define the properties</strong>: for example tensile strength and elongation, flexural modulus, notched impact, heat softening (a simple oven or hot-water test), moisture uptake after 24 h, shrinkage.</li>
+        <li><strong>Plan specimens</strong>: pick geometry from a standard (ISO 527 type 1BA, ISO 178 flexural bar) or a scaled version; list the orientations and the number of samples (≥5 each).</li>
+        <li><strong>Standardize preparation</strong>: dry the filament the same way, print in a random order, label every specimen, and condition them for 48 h at room temperature.</li>
+        <li><strong>Test</strong> with a method you can defend: for bending, use known weights or a luggage scale and a fixture and record the load at break and the deflection. For tensile, a home-built rig with a hanging bucket of water can work if the load is applied slowly.</li>
+        <li><strong>Analyze</strong>: mean, standard deviation and the coefficient of variation per condition; compute the anisotropy ratio (Z strength ÷ XY strength).</li>
+        <li><strong>Write the datasheet</strong> with the settings used, the test method, its limitations and a statement that the values apply to your conditions only.</li>
+      </ol>
+      <span class="ex-label">Acceptance criteria</span>
+      <ul class="checklist">
+        <li>At least two properties and two orientations measured with ≥5 specimens each</li>
+        <li>Datasheet states mean, standard deviation, method and settings</li>
+        <li>Limitations written down honestly</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Printed specimens break at the weakest spot, often at the grip. Add a radius at the transition and print the grip areas with more walls so the break happens in the gauge section. If more than a third of the specimens break at the grip, repeat the test with a different grip. See <a href="../materials/engineering-plastics.html">Engineering plastics</a> for expected values.</p></details>
+      <details class="solution"><summary>Worked example</summary>
+        <p>PETG, 0.2 mm layers, 5 specimens per orientation. Flat: 42 ± 2 MPa. On edge: 38 ± 3 MPa. Standing: 17 ± 4 MPa. Anisotropy Z/XY ≈ 0.40. Moisture gain after 24 h at 60 % RH: roughly 0.2 %. Heat softening (loaded bar in a heated oven): visible sag at about 70 °C. These values sit in the range often quoted for PETG, but your own numbers are what you should design with. See also <a href="level-3-advanced.html#L3-9">L3-9</a> for annealing.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L4-10">
+    <header><span class="badge expert">Level 4 · Capstone</span><h3>Project 10 — Large-part segmentation</h3><span class="badge time">⏱ ~12 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Brief</span>
+      <p>Make a part that is larger than the build plate (for X2D that is 256 × 256 × 260 mm): a 450 mm shelf bracket, a helmet, a lamp shade, a drone body. Split it into segments, print them, align them, and join them so the seams are strong and invisible enough.</p>
+      <span class="ex-label">Deliverables</span>
+      <ul>
+        <li>The master model and the split plan (cut positions, joint type, orientation of each segment)</li>
+        <li>Printed segments, assembled part and a strength check at the joints</li>
+        <li>Notes on tolerances, glue and finishing</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 260" role="img" aria-label="A long part split into three segments, with three joint types shown: a tongue and groove, a dovetail, and a dowel pin joint, and a note on cut placement away from stress">
+          <rect class="d-plastic" x="30" y="40" width="200" height="50" rx="4"/>
+          <rect class="d-plastic2" x="230" y="40" width="200" height="50" rx="4"/>
+          <rect class="d-plastic" x="430" y="40" width="200" height="50" rx="4"/>
+          <path class="d-dash" d="M230 30 V100 M430 30 V100"/>
+          <text class="t-sm t-c" x="130" y="70">segment 1</text><text class="t-sm t-c" x="330" y="70">segment 2</text><text class="t-sm t-c" x="530" y="70">segment 3</text>
+          <path class="d-thin arrow arrow-start" d="M30 120 H630"/><text class="t-sm t-c" x="330" y="140">total length 600 mm: each segment ≤ 240 mm</text>
+          <g transform="translate(40 160)">
+            <path class="d-plastic" d="M0 0 H40 V20 H55 V0 H80 V50 H0 z"/><text class="t-sm t-c" x="40" y="72">tongue + groove</text>
+          </g>
+          <g transform="translate(240 160)">
+            <path class="d-plastic" d="M0 0 H80 V50 H0 z"/><path class="f-orange" d="M24 0 L16 25 H64 L56 0 z"/><text class="t-sm t-c" x="40" y="72">dovetail</text>
+          </g>
+          <g transform="translate(440 160)">
+            <path class="d-plastic" d="M0 0 H80 V50 H0 z"/><rect class="d-metal" x="35" y="8" width="10" height="34"/><text class="t-sm t-c" x="40" y="72">dowel pins + glue</text>
+          </g>
+          <text class="t-sm t-m" x="640" y="190">Cut where stress is low</text><text class="t-sm t-m" x="640" y="210">and hide seams on edges.</text>
+        </svg>
+        <figcaption><b>Figure 11.</b> Splitting a long part into three, and three joint styles. Alignment features matter more than glue strength.</figcaption>
+      </figure>
+      <span class="ex-label">Suggested path</span>
+      <ol class="steps">
+        <li><strong>Decide the number of segments</strong> from the build volume with a margin of 10 mm for brim and skirt, and from the print time per segment (keep each under 12 h).</li>
+        <li><strong>Pick cut positions</strong> in low-stress places and where the seam is hidden by a step, edge or color change. Avoid cutting through holes or thin walls.</li>
+        <li><strong>Add alignment features</strong>: pins and holes, tongue and groove, or a dovetail. Use a 0.15–0.25 mm clearance and test a joint coupon first. Each segment must lie flat on the plate and printable without support if possible.</li>
+        <li><strong>Print all segments</strong> from the same spool and with the same settings to keep color and shrinkage consistent.</li>
+        <li><strong>Dry-fit</strong> before gluing. Sand mating faces flat. Glue with a glue that suits the material (cyanoacrylate with a filler, two-part epoxy for PETG or nylon, solvent for ABS or ASA).</li>
+        <li><strong>Test the joint</strong>: the assembled part must carry the target load without failing at a seam.</li>
+      </ol>
+      <span class="ex-label">Acceptance criteria</span>
+      <ul class="checklist">
+        <li>Final part is more than 1.5× longer than the build plate in at least one direction</li>
+        <li>Segments align without gaps larger than 0.3 mm</li>
+        <li>Joint test passes the planned load, with a failure that is not at the seam</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Most CAD tools can split along a plane and many slicers can cut a model and add connectors automatically, but check the result: automatic pins are generous with clearance and can wobble. Always check the fit of a joint coupon before you print all the segments.</p></details>
+      <details class="solution"><summary>Worked example</summary>
+        <p>A 620 mm shelf bracket in three segments of 215, 190 and 215 mm. Cuts at the two non-loaded straight sections with 6 × 8 mm dovetails (clearance 0.2 mm) and two M4 threaded rods through the whole length for stiffness. Epoxy in the joints. At a load of 120 N at the end of a 600 mm arm there was no joint failure, and a 4 mm V-groove hid the seam lines. For 3 segments of 230 mm the print time was 9 h each with 0.2 mm layers.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L4-11">
+    <header><span class="badge expert">Level 4 · Capstone</span><h3>Project 11 — Mould or casting workflow</h3><span class="badge time">⏱ ~15 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Brief</span>
+      <p>Use 3D printing to make a master or a mould and cast a small series in silicone, polyurethane resin, plaster or wax. Printing gives you the geometry; casting gives you the material and the surface. Typical projects: soft silicone feet, resin knobs, plaster tiles.</p>
+      <span class="ex-label">Deliverables</span>
+      <ul>
+        <li>A design drawing with parting line, pour gate and vents</li>
+        <li>The printed master or mould, in a material that is compatible with the casting material</li>
+        <li>At least three cast parts, with a note on defects and fixes</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 260" role="img" aria-label="A two-part mould shown in section with the cavity, pour gate, vent, and parting line; and the workflow: print master, seal and polish, make silicone mould, pour, demold">
+          <rect class="d-plastic" x="40" y="30" width="200" height="60" rx="4"/>
+          <rect class="d-plastic2" x="40" y="130" width="200" height="60" rx="4"/>
+          <path class="f-orange" d="M100 90 Q100 110 120 110 H160 Q180 110 180 90 V130 H100 z"/>
+          <rect class="f-orange" x="132" y="30" width="16" height="60"/><text class="t-xs t-c" x="140" y="22">gate</text>
+          <rect class="d-surface" x="205" y="60" width="10" height="30"/><text class="t-xs t-c" x="212" y="22">vent</text>
+          <path class="d-dash" d="M30 110 H250"/><text class="t-sm" x="258" y="114">parting line</text>
+          <text class="t-sm t-c" x="140" y="220">Two-part mould, section</text>
+          <g class="t-sm t-c t-b">
+            <rect class="f-blue" x="420" y="30" width="150" height="40" rx="8"/><text x="495" y="55">Print master</text>
+            <rect class="f-teal" x="420" y="82" width="150" height="40" rx="8"/><text x="495" y="107">Seal and sand</text>
+            <rect class="f-green" x="420" y="134" width="150" height="40" rx="8"/><text x="495" y="159">Cast silicone mould</text>
+            <rect class="f-orange" x="420" y="186" width="150" height="40" rx="8"/><text x="495" y="211">Pour, cure, demold</text>
+          </g>
+          <path class="d-ink arrow" d="M495 70 V80 M495 122 V132 M495 174 V184"/>
+          <text class="t-sm t-m" x="590" y="55">0.1 mm layers,</text><text class="t-sm t-m" x="590" y="72">no supports on</text><text class="t-sm t-m" x="590" y="89">visible faces</text>
+          <text class="t-sm t-m" x="590" y="159">degas or pour</text><text class="t-sm t-m" x="590" y="176">slowly from low</text>
+        </svg>
+        <figcaption><b>Figure 12.</b> Mould section (left) and the master-to-cast workflow (right). The cast part inherits every layer line from the master, so surface preparation decides the result.</figcaption>
+      </figure>
+      <span class="ex-label">Suggested path</span>
+      <ol class="steps">
+        <li><strong>Choose the process</strong>: print the master and cast a silicone mould (best surface) or print the mould directly (fastest, for plaster, wax or two-part resin with release agent).</li>
+        <li><strong>Design for demolding</strong>: draft of 2–3° on vertical faces, no undercuts unless the mould is flexible, a parting line on an edge, a generous pour gate and a vent at each high point.</li>
+        <li><strong>Prepare the master</strong>: print fine (0.08–0.12 mm layers), sand, apply filler primer and sand again; seal against silicone inhibition (check your silicone's manufacturer for compatibility, since sulfur and some resins inhibit cure).</li>
+        <li><strong>Make the mould</strong>: build a box, fix the master with a release agent, mix silicone by weight, degas if possible or pour in a thin stream, and let it cure fully.</li>
+        <li><strong>Cast</strong> the final material following its datasheet, with gloves, ventilation and eye protection. Respect the pot life.</li>
+        <li><strong>Inspect and improve</strong> bubbles, flash and shrinkage; adjust gates and vents.</li>
+      </ol>
+      <div class="callout warn"><span class="callout-title">Safety</span>
+        <p>Resins, isocyanates in some polyurethanes and cleaning solvents are hazardous. Read the safety data sheet, ventilate, use nitrile gloves and eye protection, and never use a cast mould or resin for food contact unless it is rated for it. Review the <a href="../foundations/safety-and-workspace.html">safety page</a>.</p></div>
+      <span class="ex-label">Acceptance criteria</span>
+      <ul class="checklist">
+        <li>Three cast parts without major defects, matching the master within 1 %</li>
+        <li>Documented mix ratios, cure times and release agent</li>
+        <li>A list of defects and their fixes</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Do a small test before the big pour: cast a coin-sized piece of the same silicone against a printed scrap with your sealing method. If the silicone remains sticky, the print is inhibiting cure; try another sealer or print material.</p></details>
+      <details class="solution"><summary>Worked example</summary>
+        <p>A 40 mm knob master printed in PLA at 0.1 mm, filler primer and wet sanded to 800 grit. Silicone (Shore A 20) mould in two halves with registration keys. Casting in two-part polyurethane resin, 3 parts per mould. Result: surface good, two bubbles on the top face in the first cast; adding a vent at the highest point and tilting the mould during pouring solved this. Mass of the cast part was 14.2 g vs 11 g of printed PLA, so the cast part also felt more solid.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <section class="exercise" id="L4-12">
+    <header><span class="badge expert">Level 4 · Capstone</span><h3>Project 12 — Open-source release of a design</h3><span class="badge time">⏱ ~8 h</span></header>
+    <div class="ex-body">
+      <span class="ex-label">Brief</span>
+      <p>Publish one of your own designs so that a stranger can print, assemble and modify it without asking you anything. A good release is documentation plus files plus photos plus a license.</p>
+      <span class="ex-label">Deliverables</span>
+      <ul>
+        <li>A repository or model page with source files (CAD or SCAD), print-ready files (STL or 3MF) and a README</li>
+        <li>A license file and attribution of any remixed work</li>
+        <li>Photos of the printed result and a build-and-assemble guide</li>
+        <li>An independent test: someone else prints it from your instructions</li>
+      </ul>
+      <figure class="fig">
+        <svg class="diagram" viewBox="0 0 760 270" role="img" aria-label="A repository folder tree with README, LICENSE, source, stl, photos and docs folders next to a checklist of README sections">
+          <g class="t-mono t-sm">
+            <text x="30" y="40">my-design/</text>
+            <text x="50" y="66">├─ README.md</text>
+            <text x="50" y="90">├─ LICENSE</text>
+            <text x="50" y="114">├─ source/   (SCAD, STEP, F3D)</text>
+            <text x="50" y="138">├─ print/    (STL, 3MF)</text>
+            <text x="50" y="162">├─ photos/   (cover.jpg, assembly-1.jpg)</text>
+            <text x="50" y="186">├─ docs/     (BOM, assembly.md)</text>
+            <text x="50" y="210">└─ CHANGELOG.md</text>
+          </g>
+          <rect class="f-teal" x="400" y="20" width="340" height="230" rx="10"/>
+          <text class="t t-b" x="416" y="48">README checklist</text>
+          <g class="t-sm">
+            <text x="416" y="76">☐ What it is and why (one photo)</text>
+            <text x="416" y="100">☐ Print settings: material, nozzle,</text><text x="436" y="116">layer height, walls, supports</text>
+            <text x="416" y="140">☐ Bill of materials (screws, magnets)</text>
+            <text x="416" y="164">☐ Assembly steps with photos</text>
+            <text x="416" y="188">☐ Parameters you can change</text>
+            <text x="416" y="212">☐ License and credits</text>
+            <text x="416" y="236">☐ Known problems and version</text>
+          </g>
+        </svg>
+        <figcaption><b>Figure 13.</b> A minimal repository layout and a README checklist. Release the editable source, not only the STL.</figcaption>
+      </figure>
+      <span class="ex-label">Suggested path</span>
+      <ol class="steps">
+        <li><strong>Pick a design that works</strong>, and clean it: name parameters, remove dead features, check it prints without supports or document them.</li>
+        <li><strong>Choose a license</strong>: Creative Commons (CC BY for credit, CC BY-SA for share-alike, CC0 for free use, add NC only if you really want to forbid commercial use) for designs and an open-source license (MIT, GPL) for code such as OpenSCAD. If you remixed someone's work, make sure its license allows this and credit it. Details in <a href="../reference/economics-and-ethics.html">Economics, licensing &amp; sustainability</a>.</li>
+        <li><strong>Photograph</strong> the part with a plain background, soft daylight and a scale object; include a print-in-progress photo and the assembly photos.</li>
+        <li><strong>Write the README</strong> using the checklist in Figure 13, including exact print settings and orientation, and tested printers.</li>
+        <li><strong>Test with another person</strong>: ask a friend to print it from the README alone and fix every question they ask in the documentation.</li>
+        <li><strong>Publish</strong> to a repository host or model site, tag a version and add a changelog.</li>
+      </ol>
+      <span class="ex-label">Acceptance criteria</span>
+      <ul class="checklist">
+        <li>All the checklist items are in the README, with a license file</li>
+        <li>A second person printed the part successfully from your documentation</li>
+        <li>Source files can be opened and edited by others (no proprietary-only format without an exchange file)</li>
+      </ul>
+      <details class="hint"><summary>Hint</summary><p>Export STEP or 3MF in addition to STL, since STL has no units or colors. Put a print profile or a settings table into the repository; many readers will copy it directly. Add a section "What to change" for your parameters. The journal template on the <a href="index.html#journal">exercises overview</a> is a good starting point for the print notes.</p></details>
+      <details class="solution"><summary>Worked example</summary>
+        <p>A parametric box with a living-hinge lid was released with <code>box.scad</code> (all parameters at the top), STL for three sizes, a 6-line print profile table (PETG, 0.2 mm, 3 walls, 15 % gyroid, no supports), five photos, a CC BY 4.0 license and a changelog. A friend printed it on a different printer and reported one problem: a hinge too tight at 0.4 mm clearance. The README now suggests 0.5 mm for printers with larger first-layer flare, and the hinge parameter has a comment explaining it.</p>
+      </details>
+    </div>
+    <footer></footer>
+  </section>
+
+  <h2>Key takeaways</h2>
+  <ul>
+    <li>Write requirements and acceptance criteria <em>before</em> design; measure results against them.</li>
+    <li>Statistics (Cp/Cpk, DoE) turn "it seems better" into numbers you can defend.</li>
+    <li>Fixtures, batch layout and documentation matter as much as the part geometry in real use.</li>
+    <li>Every project ends with a document someone else could follow; a design that cannot be reproduced is not finished.</li>
+  </ul>
+
+  <h2>Next steps</h2>
+  <div class="grid cols-3">
+    <a class="card accent-blue" href="x2d-challenges.html"><h3>X2D challenges</h3><p>Apply your skills to dual-nozzle and AMS 2 Pro tasks.</p></a>
+    <a class="card accent-green" href="quizzes.html"><h3>Quizzes</h3><p>Check your knowledge across six topic sets.</p></a>
+    <a class="card accent-orange" href="models.html"><h3>Test models</h3><p>Parametric OpenSCAD files for calibration and testing.</p></a>
+  </div>
+</main>
+</body>
+</html>

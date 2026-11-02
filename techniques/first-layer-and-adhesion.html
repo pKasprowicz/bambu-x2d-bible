@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>First layer &amp; bed adhesion · 3D Printing Compendium</title>
+  <meta name="description" content="Everything about the first layer: Z-offset and squish, bed surfaces and cleaning, adhesion aids, brims and rafts, elephant foot, warping physics, bed leveling and diagnosing first-layer problems.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="techniques/first-layer-and-adhesion.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 4 · Techniques</div>
+    <h1>First layer &amp; bed adhesion</h1>
+    <p class="lead">Most failed prints die in the first five minutes. Learn what a perfect first layer looks like, why plastic shrinks and lifts, and how to make any material stay put and still come off cleanly.</p>
+    <div class="meta"><span class="badge beginner">Beginner → Intermediate</span><span class="badge time">⏱ 35 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <p>How to read a first layer at a glance, set Z-offset by sight, choose and clean a build surface, pick the right adhesion aid for each material, use brims, rafts and mouse ears, stop elephant foot and warping, level the bed, and diagnose every common first-layer failure from a picture.</p></div>
+
+  <h2 id="why">Why the first layer matters so much</h2>
+  <p>A 3D print is a stack of thin plastic lines. Every line is glued to the one below it by heat. The very first line has nothing below it except the build plate, so it has to stick to a <em>different</em> material, at a different temperature, while the rest of the part tries to pull it loose. Three jobs fall on that one layer:</p>
+  <ul>
+    <li><strong>Hold the part down</strong> against nozzle drag, travel moves and, most importantly, the internal stress created when hot plastic cools and shrinks.</li>
+    <li><strong>Provide a flat reference</strong>: every following layer copies the first one. A first layer that is 0.1 mm thicker on one side makes a tilted part, and small errors in the base get magnified into visible lean at the top.</li>
+    <li><strong>Create the visible bottom surface</strong> of your part. Whatever the bed looks like, the underside of the print looks like it too.</li>
+  </ul>
+  <p>The good news: the first layer is easy to judge by eye, and a few minutes of tuning per printer and per plate pay back on every print you make afterwards.</p>
+
+  <h3>🔰 Vocabulary you will meet</h3>
+  <div class="table-wrap"><table class="data compact"><thead><tr><th>Term</th><th>Meaning</th></tr></thead><tbody>
+    <tr><td><strong>Z-offset</strong></td><td>A correction added to the "zero" height so that the nozzle sits the right distance above the plate for the first layer. Smaller gap = more squish.</td></tr>
+    <tr><td><strong>Squish</strong></td><td>How much the nozzle presses the extruded line flat against the plate. Good squish gives wide, flat, glossy-looking lines that fuse side by side.</td></tr>
+    <tr><td><strong>Bed / build plate / build surface</strong></td><td>The heated platform (bed) and the removable sheet (plate) on which the part is printed. Often "bed" is used for both.</td></tr>
+    <tr><td><strong>Brim / skirt / raft</strong></td><td>Extra perimeter lines, an outline that does not touch the part, or a thick printed base. See <a href="#brims">brims, skirts, rafts</a>.</td></tr>
+    <tr><td><strong>Warping</strong></td><td>Corners or edges of the part curling upward off the bed as it cools and shrinks.</td></tr>
+    <tr><td><strong>Elephant foot</strong></td><td>A bulge at the bottom of a part where the first layers are squashed wider than the rest.</td></tr>
+    <tr><td><strong>Bed mesh</strong></td><td>A grid of height measurements the printer takes so it can follow tiny dips and bumps of the plate.</td></tr>
+  </tbody></table></div>
+
+  <h2 id="squish">Z-offset and squish: the core idea</h2>
+  <p>A typical first layer is set to a height of about 0.2 mm even when the rest of the print uses 0.12 mm or 0.16 mm layers, and the line is deliberately extruded a little wider than the nozzle (for example 0.5 mm wide from a 0.4 mm nozzle). The plastic leaves the nozzle as a round "noodle" and gets pressed flat by the nozzle tip as it moves. The gap between the tip and the plate determines the final shape.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 290" role="img" aria-label="Three cross-sections of first layer lines: nozzle too high gives round loose lines, ideal gives flat fused lines, too low gives thin squashed lines with ridges">
+      <!-- panel 1 -->
+      <text class="t t-c t-b" x="125" y="22">Too high</text>
+      <polygon class="d-metal" points="95,40 165,40 165,100 143,166 117,166 95,100"/>
+      <rect class="d-metal2" x="10" y="190" width="230" height="16"/>
+      <ellipse class="d-plastic" cx="25" cy="183" rx="11" ry="7"/>
+      <ellipse class="d-plastic" cx="53" cy="183" rx="11" ry="7"/>
+      <ellipse class="d-plastic" cx="81" cy="183" rx="11" ry="7"/>
+      <path class="d-mute arrow-start arrow" d="M200 166 V190"/>
+      <text class="t-sm" x="206" y="182">gap too big</text>
+      <text class="t-sm t-c" x="125" y="230">Round, loose lines</text>
+      <text class="t-sm t-c" x="125" y="247">with gaps between them.</text>
+      <text class="t-sm t-c c-red" x="125" y="268">Weak bond · peels off</text>
+      <!-- panel 2 -->
+      <text class="t t-c t-b" x="380" y="22">Ideal</text>
+      <polygon class="d-metal" points="350,40 420,40 420,100 398,178 372,178 350,100"/>
+      <rect class="d-metal2" x="265" y="190" width="230" height="16"/>
+      <rect class="d-plastic" x="270" y="178" width="34" height="12" rx="5"/>
+      <rect class="d-plastic" x="294" y="178" width="34" height="12" rx="5"/>
+      <rect class="d-plastic" x="318" y="178" width="34" height="12" rx="5"/>
+      <path class="d-mute arrow-start arrow" d="M455 178 V190"/>
+      <text class="t-sm" x="461" y="187">gap ≈ line height</text>
+      <text class="t-sm t-c" x="380" y="230">Flat, wide lines that</text>
+      <text class="t-sm t-c" x="380" y="247">fuse into one sheet.</text>
+      <text class="t-sm t-c c-green" x="380" y="268">Strong · smooth</text>
+      <!-- panel 3 -->
+      <text class="t t-c t-b" x="635" y="22">Too low</text>
+      <polygon class="d-metal" points="605,40 675,40 675,100 653,186 627,186 605,100"/>
+      <rect class="d-metal2" x="520" y="190" width="230" height="16"/>
+      <rect class="d-plastic" x="525" y="185" width="46" height="5" rx="2"/>
+      <rect class="d-plastic" x="560" y="185" width="46" height="5" rx="2"/>
+      <ellipse class="d-plastic" cx="560" cy="183" rx="6" ry="3"/>
+      <ellipse class="d-plastic" cx="525" cy="183" rx="5" ry="3"/>
+      <path class="d-mute arrow-start arrow" d="M715 186 V190"/>
+      <text class="t-sm" x="703" y="181">tiny gap</text>
+      <text class="t-sm t-c" x="635" y="230">Over-squashed lines with</text>
+      <text class="t-sm t-c" x="635" y="247">ridges, scratchy surface.</text>
+      <text class="t-sm t-c c-orange" x="635" y="268">Elephant foot · clogs</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> Side view of the first layer as the nozzle moves left to right. Too high and the plastic is simply laid on the plate; ideal squish presses each line into a flat ribbon; too low and plastic has nowhere to go, so it squeezes sideways and upward.</figcaption>
+  </figure>
+
+  <h3>How to set Z-offset by eye</h3>
+  <ol class="steps">
+    <li><strong>Print a thin test pattern</strong>Use a single-layer full-bed or large-square pattern (many slicers and printers include one; you can also print a 150 × 150 mm square, one layer thick). Clean the plate first.</li>
+    <li><strong>Watch the first lines being laid</strong>Lines should look slightly flattened and touch their neighbors. If they look like round tubes with visible gaps, lower the nozzle (more negative offset or "closer").</li>
+    <li><strong>Adjust live in small steps</strong>Move 0.02 mm at a time. Wait one or two lines for the change to show. Larger jumps overshoot and gouge the plate.</li>
+    <li><strong>Inspect the finished sheet</strong>Hold it at an angle under light. It should be a uniform, slightly glossy skin without grooves. Run a fingernail across it: you should feel almost no ridges.</li>
+    <li><strong>Try the paper test only as a rough start</strong>On printers without auto Z, a sheet of paper that drags slightly is a starting point. Always refine by looking at real extrusion.</li>
+    <li><strong>Save it</strong>Store the value per plate (smooth PEI and textured PEI need different offsets) and note it in your <a href="calibration.html#log">calibration log</a>.</li>
+  </ol>
+
+  <div class="callout fact"><span class="callout-title">Why squish works</span>
+    <p>Imagine squeezing toothpaste onto a table while dragging the tube. With the tube lifted high the paste is a fat worm that barely touches. Pressing the tip close forces the worm to spread wide and flat, increasing the contact area between plastic and plate, and pushing each line into its neighbor so they weld together. The pressure also drives molten plastic into the micro-texture of the surface, which is a big part of why adhesion improves.</p></div>
+
+  <div class="callout warn"><span class="callout-title">Common mistake</span>
+    <p>Trying to cure poor adhesion with temperature or glue when the real problem is Z-offset that is 0.05–0.1 mm too high. If lines look round, fix squish first, then everything else.</p></div>
+
+  <h3>Squish, line width and flow: a small bit of math</h3>
+  <p>The slicer calculates how much plastic to extrude from the cross-section of a line. A common model treats the line as a rectangle with rounded ends: the area is roughly (width − height) × height + π × (height / 2)². For a 0.5 mm wide, 0.2 mm high line this is about 0.30 × 0.2 + 0.031 = <strong>0.091 mm²</strong>. At 50 mm/s that is 4.6 mm³/s, easy for any hotend. If the real gap is smaller than the slicer assumes, the plastic still has to go somewhere, which is why too-low Z creates ridges and may even stop extrusion (the nozzle tip is blocked by the plate and the extruder clicks or skips).</p>
+
+  <h3>First-layer speed, height, width and flow</h3>
+  <p>The first layer is printed slower and fatter than normal. The values below are typical starting points for a 0.4 mm nozzle.</p>
+  <div class="table-wrap"><table class="data compact"><thead><tr><th>Setting</th><th>Typical start</th><th>Why</th></tr></thead><tbody>
+    <tr><td>First-layer height</td><td>0.2–0.25 mm (0.5 × nozzle diameter ≈ 0.2 for 0.4 mm)</td><td>A thicker first layer tolerates small bed irregularities and has more plastic mass to grip with.</td></tr>
+    <tr><td>First-layer line width</td><td>110–150 % of nozzle (0.45–0.6 mm)</td><td>Wider lines overlap more with neighbors, giving more contact with the plate.</td></tr>
+    <tr><td>First-layer speed</td><td>20–50 mm/s (slow printers) or up to 50–80 mm/s on modern machines with good leveling</td><td>Slow lets plastic wet the plate. Too fast starves the squish.</td></tr>
+    <tr><td>First-layer flow ratio</td><td>95–105 % (only change if lines show too much or too little plastic)</td><td>Fine trim for squish once Z is correct.</td></tr>
+    <tr><td>First-layer fan</td><td>0 % for the first 1–3 layers</td><td>Cooling the bottom layers makes them shrink and curl before bonding.</td></tr>
+    <tr><td>First-layer bed temp</td><td>See the <a href="#table-adhesion">per-material table</a></td><td>The plate must be warm enough for the bottom layers to stay soft and stick.</td></tr>
+    <tr><td>First-layer nozzle temp</td><td>+0–10 °C vs. normal</td><td>A slightly hotter, runnier first line wets the surface better.</td></tr>
+  </tbody></table></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 270" role="img" aria-label="Cross section showing how a round extruded filament is pressed into a flat rounded rectangle with width larger than nozzle diameter and height equal to layer height">
+      <text class="t t-b" x="20" y="26">From round noodle to flat line</text>
+      <!-- nozzle -->
+      <polygon class="d-metal" points="60,40 160,40 160,90 138,160 82,160 60,90"/>
+      <rect class="d-metal2" x="82" y="160" width="56" height="8"/>
+      <ellipse class="d-hot" cx="110" cy="130" rx="14" ry="30" opacity="0.7"/>
+      <text class="t-sm t-c" x="110" y="76">Ø 0.4 mm</text>
+      <text class="t-sm t-c" x="110" y="108">orifice</text>
+      <rect class="d-metal2" x="20" y="200" width="340" height="14"/>
+      <rect class="d-plastic" x="64" y="171" width="92" height="29" rx="12"/>
+      <path class="d-thin arrow arrow-start" d="M64 224 H156"/>
+      <text class="t-sm t-c" x="110" y="244">width ≈ 0.5 mm</text>
+      <path class="d-thin arrow arrow-start" d="M172 171 V200"/>
+      <text class="t-sm" x="178" y="190">0.2</text>
+      <!-- right: neighbouring lines overlapped -->
+      <text class="t t-b" x="420" y="26">Neighboring lines weld together</text>
+      <rect class="d-metal2" x="400" y="200" width="340" height="14"/>
+      <rect class="d-plastic" x="410" y="171" width="86" height="29" rx="12"/>
+      <rect class="d-plastic" x="470" y="171" width="86" height="29" rx="12"/>
+      <rect class="d-plastic" x="530" y="171" width="86" height="29" rx="12"/>
+      <rect class="d-plastic" x="590" y="171" width="86" height="29" rx="12"/>
+      <path class="d-mute arrow" d="M512 140 L505 170"/>
+      <text class="t-sm" x="470" y="130">overlap zone (weld)</text>
+      <path class="d-mute arrow" d="M640 100 L640 168"/>
+      <text class="t-sm t-c" x="640" y="92">plate texture grip</text>
+      <text class="t-sm t-c" x="540" y="244">Line spacing is a little smaller than line width,</text>
+      <text class="t-sm t-c" x="540" y="260">so each line is pressed into the next.</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> A first-layer line is wider than the nozzle hole and shorter than its natural round shape. The slicer spaces lines closer than their width so neighbors overlap and fuse.</figcaption>
+  </figure>
+
+  <h2 id="surfaces">Bed surfaces and how to keep them working</h2>
+  <p>The plate's job is to stick well when hot and release when cool. Different materials make this trade-off in different places, so there is no single best surface. Here is the landscape.</p>
+
+  <div class="table-wrap"><table class="data"><thead><tr><th>Surface</th><th>Bottom finish</th><th>Best for</th><th>Notes</th></tr></thead><tbody>
+    <tr><td><strong>Textured PEI (powder-coated spring steel)</strong></td><td>Fine matte grain</td><td>PLA, PETG, ABS/ASA, nylon with glue, most everyday prints</td><td>Hides first-layer flaws and removes by flexing. Forgiving, often tolerates PETG without separator.</td></tr>
+    <tr><td><strong>Smooth PEI</strong></td><td>Glossy, mirror-like</td><td>PLA and PETG when you want shiny bottoms; ABS/ASA</td><td>PETG can bond too well and tear coating: use glue stick as a release layer. Needs very clean surface.</td></tr>
+    <tr><td><strong>Cool Plate (smooth, low-adhesion PEI-like sheet)</strong></td><td>Smooth, slightly satin</td><td>PLA, low-temp prints, delicate parts</td><td>Releases PLA easily when cold. Not for high-temp materials.</td></tr>
+    <tr><td><strong>Engineering plate / high-temp sheet</strong></td><td>Matte</td><td>PA, PC, PET-CF, ABS with high bed temps; used with glue</td><td>Designed for materials that otherwise bond too hard or too soft on PEI.</td></tr>
+    <tr><td><strong>Glass (borosilicate)</strong></td><td>Very smooth, flat</td><td>PLA, PETG with glue; flat-bottom precision parts</td><td>Very flat and cheap. Requires glue or hairspray for most plastics.</td></tr>
+    <tr><td><strong>BuildTak-style sheets / PEO</strong></td><td>Matte</td><td>PLA, ABS</td><td>Older approach; wears out and cannot take much scraping.</td></tr>
+    <tr><td><strong>Painter's tape, kapton</strong></td><td>Matte</td><td>Old or unheated beds, ABS on Kapton</td><td>Low cost, disposable. Each print leaves tape residue.</td></tr>
+  </tbody></table></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 300" role="img" aria-label="Magnified cross-sections of smooth PEI and textured PEI surfaces showing how the plastic grips and what the bottom surface looks like">
+      <text class="t t-b" x="20" y="26">Smooth PEI</text>
+      <text class="t t-b" x="400" y="26">Textured PEI</text>
+      <!-- smooth -->
+      <rect class="d-metal" x="20" y="170" width="330" height="40"/>
+      <rect class="d-metal2" x="20" y="210" width="330" height="24"/>
+      <text class="t-xs t-c" x="185" y="226">spring steel</text>
+      <text class="t-xs t-c" x="185" y="195">PEI coating</text>
+      <path class="d-plastic" d="M30 170 V140 Q30 130 42 130 H330 Q340 130 340 140 V170 Z"/>
+      <text class="t-sm t-c" x="185" y="156">first layer (flat, glossy underside)</text>
+      <text class="t-sm" x="20" y="260">Grip: chemical + molecular contact</text>
+      <text class="t-sm" x="20" y="278">Underside: mirror-like, shows every speck</text>
+      <!-- textured -->
+      <rect class="d-metal2" x="400" y="210" width="340" height="24"/>
+      <path class="d-metal" d="M400 210 V184 l12 -6 l10 8 l12 -10 l10 10 l12 -8 l12 8 l10 -10 l12 10 l12 -8 l12 8 l10 -10 l12 8 l12 -6 l12 8 l10 -8 l12 8 l12 -8 l12 8 l10 -6 l12 6 l12 -8 l12 8 l10 -4 V210 Z"/>
+      <path class="d-plastic" d="M404 186 l12 -6 l10 8 l12 -10 l10 10 l12 -8 l12 8 l10 -10 l12 10 l12 -8 l12 8 l10 -10 l12 8 l12 -6 l12 8 l10 -8 l12 8 l12 -8 l12 8 l10 -6 l12 6 l12 -8 l12 8 l10 -4 V150 Q736 134 724 134 H416 Q404 134 404 150 Z"/>
+      <text class="t-sm t-c" x="570" y="160">first layer locks into tiny peaks</text>
+      <text class="t-sm" x="400" y="260">Grip: mechanical interlocking + contact</text>
+      <text class="t-sm" x="400" y="278">Underside: fine, matte, hides imperfections</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> Smooth plates stick by contact and give glossy bottoms; textured plates add mechanical grip and leave a grainy bottom. Neither is "better": choose per material and per look.</figcaption>
+  </figure>
+
+  <h3>Cleaning: the most underrated adhesion upgrade</h3>
+  <p>Skin oil, finger grease and old glue are what most "my plate lost its stickiness" complaints really are. Make cleaning a routine, not a rescue.</p>
+  <div class="grid cols-3">
+    <div class="card accent-blue"><span class="ico">🧼</span><h3>Dish soap + warm water</h3><p>Best for textured PEI and oily films. Scrub with a soft brush or sponge, rinse well, dry with a lint-free cloth. Do this every few weeks, or when IPA no longer helps.</p></div>
+    <div class="card accent-green"><span class="ico">🧴</span><h3>Isopropyl alcohol (IPA, 90 %+)</h3><p>Quick wipe between prints. Evaporates fast and removes light oil. Use a clean paper towel and wipe in one direction; do not keep rubbing the same dirty spot.</p></div>
+    <div class="card accent-orange"><span class="ico">🚫</span><h3>Do not touch</h3><p>Fingerprints are the number one cause of random adhesion failures. Hold the plate by its edges and flip it only with clean hands or gloves.</p></div>
+  </div>
+  <div class="callout trick"><span class="callout-title">Pro trick</span>
+    <p>If a smooth plate has lost its grip after many glue-stick prints, a warm dish-soap wash followed by IPA often brings it back to "new" behavior. A few drops of dish soap on a wet sponge, ten seconds of scrubbing, and a good rinse beat any chemical cocktail.</p></div>
+  <div class="callout warn"><span class="callout-title">Avoid</span>
+    <p>Acetone on PEI plates (it attacks the coating), abrasive pads on smooth plates, scraping with metal tools on coated spring steel, and sanding. Never print directly into the bare steel of a coated sheet when the nozzle could gouge it.</p></div>
+
+  <h3>Plate care calendar</h3>
+  <ul class="timeline">
+    <li><b>Every print</b> — Wipe with IPA only if the surface looks dull or you have touched it. Never wipe a hot plate: it can streak.</li>
+    <li><b>Weekly (heavy use)</b> — Dish soap wash, rinse, dry.</li>
+    <li><b>Monthly</b> — Inspect for gouges, bubbles in the coating, bent steel.</li>
+    <li><b>When sticking changes suddenly</b> — Check Z-offset first, then clean, then reconsider glue and temperature.</li>
+    <li><b>Replace</b> — When coating peels, deep scratches appear in the print area, or the plate no longer sits flat.</li>
+  </ul>
+
+  <h2 id="aids">Adhesion aids: glue stick, hairspray and friends</h2>
+  <p>Sometimes the plate alone is not enough, or it is <em>too</em> good and the part will not release. An adhesion aid works in one of two ways: it adds a tacky layer that holds plastic (hairspray, PVA-glue solution, ABS slurry) or it adds a thin sacrificial layer that stops plastic bonding to the sheet so you can release it (glue stick on PEI with PETG).</p>
+  <div class="grid cols-2">
+    <div class="card accent-green"><h3>Glue stick (PVA type)</h3><p>The most common aid. Apply a thin, even layer in a crosshatch to the area under the part, let it dry, and print. Washes off with water. Works as <strong>adhesion</strong> for PLA/ABS/PC on glass and as a <strong>release agent</strong> for PETG and nylon on PEI.</p></div>
+    <div class="card accent-blue"><h3>Hairspray (strong hold, unscented)</h3><p>Spray lightly from 25–30 cm onto a removed plate away from the printer. Good for glass and for ABS. Leaves a sticky film; wash off with warm water.</p></div>
+    <div class="card accent-purple"><h3>ABS slurry (ABS juice)</h3><p>Dissolve scrap ABS in acetone (about 1 g per 10 mL) and brush a thin layer onto cold glass or plate. Dries to a very grippy ABS film for ABS/ASA. Use outdoors or with strong ventilation; acetone is flammable and the fumes are irritating.</p></div>
+    <div class="card accent-orange"><h3>Special adhesives</h3><p>Branded liquid glues for nylon, PC and carbon-fiber filaments. They are formulated for high bed temperatures and for easy release. Useful where glue stick fails at 90–110 °C.</p></div>
+  </div>
+  <div class="callout tip"><span class="callout-title">Application rule</span>
+    <p>Less is more. A thick lumpy layer makes a rough, uneven bottom surface and can raise the effective Z height. Apply thin, spread with a damp finger or a cloth, let it dry, and wipe off high spots before printing.</p></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 280" role="img" aria-label="Decision tree for choosing an adhesion strategy based on material, part size and shape">
+      <rect class="f-blue" x="290" y="12" width="180" height="40" rx="10"/>
+      <text class="t t-c t-b" x="380" y="37">Part won't stick?</text>
+      <path class="d-ink arrow" d="M380 52 V80"/>
+      <rect class="f-yellow" x="270" y="80" width="220" height="40" rx="10"/>
+      <text class="t t-c" x="380" y="105">Lines round or gappy?</text>
+      <path class="d-ink arrow" d="M270 100 H190"/>
+      <text class="t-sm" x="215" y="94">yes</text>
+      <rect class="f-green" x="30" y="80" width="160" height="40" rx="10"/>
+      <text class="t t-c" x="110" y="105">Lower Z-offset</text>
+      <path class="d-ink arrow" d="M380 120 V150"/>
+      <text class="t-sm" x="388" y="140">no</text>
+      <rect class="f-yellow" x="270" y="150" width="220" height="40" rx="10"/>
+      <text class="t t-c" x="380" y="175">Plate clean &amp; warm enough?</text>
+      <path class="d-ink arrow" d="M270 170 H190"/>
+      <text class="t-sm" x="215" y="164">no</text>
+      <rect class="f-green" x="30" y="150" width="160" height="40" rx="10"/>
+      <text class="t t-c" x="110" y="175">Wash, raise bed °C</text>
+      <path class="d-ink arrow" d="M380 190 V220"/>
+      <text class="t-sm" x="388" y="210">yes</text>
+      <rect class="f-orange" x="140" y="220" width="480" height="44" rx="10"/>
+      <text class="t t-c" x="380" y="238">Add: brim · glue stick · enclosure · slower first layer</text>
+      <text class="t-sm t-c" x="380" y="255">Large flat part? also raise chamber temp, reduce drafts</text>
+      <path class="d-ink arrow" d="M490 100 H560"/>
+      <text class="t-sm" x="500" y="94">other</text>
+      <rect class="f-purple" x="560" y="80" width="170" height="40" rx="10"/>
+      <text class="t t-c" x="645" y="105">Check leveling/mesh</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> A simple troubleshooting order: fix squish first, then surface cleanliness and temperature, then add physical aids.</figcaption>
+  </figure>
+
+  <h2 id="temps">Bed temperatures and the glass-transition idea</h2>
+  <p>Plastics soften at their <strong>glass-transition temperature (Tg)</strong>. Above Tg the material is rubbery and sticky; below it, it is rigid. A bed set near (but not far above) the material's Tg keeps the lowest layers soft enough to stay flat and gripping, while the higher layers (which are further from the bed) cool and set. If the bed is far below Tg, the bottom layers harden instantly, shrink, and peel. If it is far above Tg for too long, the bottom layers sag and flare out as elephant foot.</p>
+  <div class="bars"><div class="bars-title">Typical bed temperature (°C) by material</div>
+    <div class="bar green"><span>PLA</span><i style="--v:42%"></i><em>35–65 °C</em></div>
+    <div class="bar blue"><span>PETG</span><i style="--v:60%"></i><em>65–85 °C</em></div>
+    <div class="bar red"><span>ABS / ASA</span><i style="--v:78%"></i><em>90–110 °C</em></div>
+    <div class="bar purple"><span>PA (nylon)</span><i style="--v:80%"></i><em>80–110 °C</em></div>
+    <div class="bar orange"><span>PC</span><i style="--v:92%"></i><em>100–120 °C</em></div>
+    <div class="bar teal"><span>TPU</span><i style="--v:45%"></i><em>30–60 °C</em></div>
+  </div>
+  <p class="t-sm">Values vary with brand and plate. Start from the filament spool label or the slicer preset, then adjust 5 °C at a time.</p>
+
+  <h3 id="table-adhesion">Per-material adhesion cheat table</h3>
+  <div class="table-wrap"><table class="data"><thead><tr><th>Material</th><th>Bed °C</th><th>Warp risk</th><th>Best plate</th><th>Aid</th><th>Notes</th></tr></thead><tbody>
+    <tr><td><strong>PLA</strong></td><td>45–65</td><td><span class="chip green">Low</span></td><td>Textured or cool plate</td><td>Usually none</td><td>Too hot a bed can cause elephant foot. Very clean plate matters most.</td></tr>
+    <tr><td><strong>PETG</strong></td><td>70–85</td><td><span class="chip yellow">Low–medium</span></td><td>Textured PEI; smooth PEI with glue</td><td>Glue stick as release</td><td>Bonds <em>too</em> well to smooth PEI. Raise Z slightly (less squish) if you tear the coating.</td></tr>
+    <tr><td><strong>ABS</strong></td><td>95–110</td><td><span class="chip red">High</span></td><td>Textured/engineering plate</td><td>Glue or slurry; brim</td><td>Needs enclosure, no drafts, chamber warm. Large flat parts curl without a brim.</td></tr>
+    <tr><td><strong>ASA</strong></td><td>90–110</td><td><span class="chip red">High</span></td><td>Textured/engineering plate</td><td>Glue; brim</td><td>Like ABS, slightly less warp-prone.</td></tr>
+    <tr><td><strong>PA / nylon (also CF/GF)</strong></td><td>80–100</td><td><span class="chip red">High</span></td><td>Engineering plate; glass with glue</td><td>Special nylon glue</td><td>Must be dry. Wet nylon bubbles and does not wet the plate well.</td></tr>
+    <tr><td><strong>PC</strong></td><td>100–120</td><td><span class="chip red">Very high</span></td><td>Engineering plate with glue</td><td>Strong adhesive; brim</td><td>Needs a hot chamber for large parts.</td></tr>
+    <tr><td><strong>TPU</strong></td><td>30–60</td><td><span class="chip green">Low</span></td><td>Smooth or textured PEI</td><td>Glue as release</td><td>Sticks very well; slow first layer. Releases from PEI with a little glue.</td></tr>
+    <tr><td><strong>PVA / BVOH</strong></td><td>45–60</td><td><span class="chip green">Low</span></td><td>Same as PLA</td><td>None</td><td>Keep dry; used as support, not as base.</td></tr>
+  </tbody></table></div>
+  <div class="callout info"><span class="callout-title">Related</span>
+    <p>Details on each material, including drying, are on <a href="../materials/overview.html">the materials overview</a>, <a href="../materials/everyday-plastics.html">PLA &amp; PETG</a> and <a href="../materials/engineering-plastics.html">engineering plastics</a>.</p></div>
+
+  <h2 id="brims">Brim, skirt, raft, mouse ears</h2>
+  <p>When the bottom face of the part is small, tall, or made of a warp-prone material, extra helper structures give the first layer more area to grab or hide the ugly bits.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 260" role="img" aria-label="Top-down views of a skirt, a brim, a raft and mouse ears around a square part">
+      <!-- Skirt -->
+      <text class="t t-c t-b" x="95" y="22">Skirt</text>
+      <rect class="d-dash" x="30" y="38" width="130" height="130" rx="6"/>
+      <rect class="d-plastic" x="58" y="66" width="74" height="74"/>
+      <text class="t-sm t-c" x="95" y="107">part</text>
+      <text class="t-sm t-c" x="95" y="190">Not attached.</text>
+      <text class="t-sm t-c" x="95" y="206">Primes the nozzle.</text>
+      <!-- Brim -->
+      <text class="t t-c t-b" x="290" y="22">Brim</text>
+      <rect class="d-plastic" x="225" y="38" width="130" height="130" rx="2"/>
+      <rect class="d-surface" x="253" y="66" width="74" height="74"/>
+      <text class="t-sm t-c" x="290" y="107">part</text>
+      <text class="t-sm t-c" x="290" y="190">Attached flange,</text>
+      <text class="t-sm t-c" x="290" y="206">several lines wide.</text>
+      <!-- Raft -->
+      <text class="t t-c t-b" x="485" y="22">Raft</text>
+      <rect class="d-plastic" x="415" y="38" width="140" height="140" rx="2"/>
+      <rect class="d-plastic2" x="425" y="48" width="120" height="120"/>
+      <rect class="d-surface" x="453" y="76" width="64" height="64"/>
+      <text class="t-sm t-c" x="485" y="113">part</text>
+      <text class="t-sm t-c" x="485" y="200">Thick printed base</text>
+      <text class="t-sm t-c" x="485" y="216">under the whole part.</text>
+      <!-- Mouse ears -->
+      <text class="t t-c t-b" x="680" y="22">Mouse ears</text>
+      <rect class="d-plastic" x="650" y="76" width="64" height="64"/>
+      <circle class="d-plastic" cx="640" cy="66" r="16"/>
+      <circle class="d-plastic" cx="724" cy="66" r="16"/>
+      <circle class="d-plastic" cx="640" cy="150" r="16"/>
+      <circle class="d-plastic" cx="724" cy="150" r="16"/>
+      <text class="t-sm t-c" x="680" y="113">part</text>
+      <text class="t-sm t-c" x="680" y="190">Single-layer discs</text>
+      <text class="t-sm t-c" x="680" y="206">at the corners only.</text>
+      <text class="t-sm t-c" x="390" y="246">Typical widths: brim 3–8 mm (8–20 lines), raft gap 0.1–0.2 mm, mouse ear radius 5–10 mm.</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> The four common first-layer helpers seen from above. Orange areas are plastic helper structures.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact"><thead><tr><th>Aid</th><th>Use when…</th><th>Cost</th><th>Drawback</th></tr></thead><tbody>
+    <tr><td><strong>Skirt</strong></td><td>Always (1–3 loops). Primes the nozzle and shows first-layer quality before the part starts.</td><td>Almost none</td><td>Does not hold the part.</td></tr>
+    <tr><td><strong>Brim</strong></td><td>Thin or tall parts, sharp corners, ABS/ASA/PA, small footprints</td><td>Low</td><td>Must be removed; leaves a rough edge. Increase "brim-object gap" (0–0.1 mm) for easier removal.</td></tr>
+    <tr><td><strong>Mouse ears</strong></td><td>Warp starts at sharp corners only</td><td>Very low</td><td>Needs manual placement; does not help long straight edges.</td></tr>
+    <tr><td><strong>Raft</strong></td><td>Warped bed, very difficult material, tiny footprint on rough plate</td><td>High (time, plastic)</td><td>Rough, wavy bottom of part; costs extra layers.</td></tr>
+  </tbody></table></div>
+
+  <h3>🔧 Tuning brim settings</h3>
+  <ul>
+    <li><strong>Width:</strong> start with 5 mm; use 8–10 mm for large ABS parts or tall thin pieces. The aim is to put the brim where warp forces are strongest: the corners.</li>
+    <li><strong>Brim ears vs full brim:</strong> some slicers (including Bambu Studio and OrcaSlicer) offer "auto" brim that adds width only at sharp corners.</li>
+    <li><strong>Brim-to-object gap:</strong> 0.05–0.1 mm makes the brim peel off in one piece. 0 gives maximum hold but is harder to remove.</li>
+    <li><strong>Inner brim:</strong> adds a brim inside holes and gaps; useful for large, thin-walled parts.</li>
+    <li><strong>Brim speed:</strong> follows first-layer speed; do not set it too high.</li>
+  </ul>
+  <div class="callout trick"><span class="callout-title">Trick</span>
+    <p>A brim is also great as an <strong>elephant-foot hider</strong> and as a <strong>first-layer quality check</strong>: if the brim lines are not perfect, the part's lines will not be either, and you can cancel after two minutes.</p></div>
+
+  <h3>🔧 Rafts in detail</h3>
+  <p>A raft is a printed mat: a thick, widely spaced base layer (often 0.3 mm), a few interface layers, and a small gap before the part starts. Because the raft's underside is printed on the plate and the part's underside is printed on the raft's top, small plate irregularities and bed temperature gradients matter less. The cost is speed and surface quality of the bottom.</p>
+  <ul>
+    <li><strong>Raft layers:</strong> 2–3 base layers and 1–3 top (interface) layers are typical.</li>
+    <li><strong>Raft expansion / margin:</strong> 3–5 mm beyond the part outline.</li>
+    <li><strong>Air gap (Z):</strong> 0.1–0.2 mm. A smaller gap bonds better but is harder to peel.</li>
+    <li><strong>Best use:</strong> PETG or nylon on a poor plate, ABS on glass, tiny pieces on textured plates when you want a flat bottom, and any case where the model's bottom is not flat.</li>
+  </ul>
+
+  <h2 id="elephant">Elephant foot</h2>
+  <p>The bottom few layers of the part may bulge outward and look like an elephant's foot. Hot bed + slow cooling + heavy squish = soft plastic being squashed by the weight of the layers above. It is purely cosmetic in most cases but ruins press fits and tight tolerances.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 270" role="img" aria-label="Side view of a part with elephant foot bulge at the bottom compared with a part corrected by an elephant foot compensation inset">
+      <text class="t t-c t-b" x="190" y="22">Elephant foot</text>
+      <rect class="d-metal2" x="30" y="220" width="320" height="14"/>
+      <path class="d-plastic" d="M100 220 V60 H280 V190 Q280 204 292 210 L300 220 Z"/>
+      <path class="d-plastic" d="M100 190 Q100 204 88 210 L80 220 H100 Z"/>
+      <path class="d-dash" d="M100 60 V220"/>
+      <path class="d-dash" d="M280 60 V220"/>
+      <path class="d-mute arrow" d="M330 170 L300 205"/>
+      <text class="t-sm" x="310" y="160">bulge 0.1–0.4 mm</text>
+      <text class="t t-c t-b" x="570" y="22">With compensation</text>
+      <rect class="d-metal2" x="410" y="220" width="320" height="14"/>
+      <path class="d-plastic" d="M480 60 H660 V220 H480 Z"/>
+      <path class="d-dash" d="M492 220 V196"/>
+      <path class="d-mute arrow" d="M395 196 H474"/>
+      <text class="t-sm" x="395" y="186">model inset on</text>
+      <text class="t-sm" x="395" y="172">first 1–3 layers</text>
+      <text class="t-sm t-c" x="570" y="256">Straight walls from layer 1 upward</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> Elephant foot is a bottom bulge. Slicer "elephant foot compensation" shrinks the outline of the first layers by a small amount so the squish brings them back to the true size.</figcaption>
+  </figure>
+  <p>Remedies, from simple to strong:</p>
+  <ol class="steps">
+    <li><strong>Raise Z-offset by 0.02–0.05 mm</strong>Less squish means less outward flow. Do this first.</li>
+    <li><strong>Lower bed temperature</strong>5–10 °C lower for PLA often removes it with no loss of hold.</li>
+    <li><strong>Use "elephant foot compensation"</strong>In most slicers, 0.1–0.3 mm. It insets the first layer's outline without changing the design.</li>
+    <li><strong>Chamfer the model's bottom edge</strong>A 0.4–0.6 mm 45° chamfer on the bottom perimeter eliminates the problem in CAD and also hides it where parts need to seat.</li>
+    <li><strong>Reduce first-layer flow</strong>Only a few percent, only when squish is already right.</li>
+  </ol>
+
+  <h2 id="warping">Warping: the physics of curling corners</h2>
+  <p>Warping is the biggest real adhesion problem in FDM. The physics is simple: <strong>almost every plastic shrinks as it cools from its printing temperature to room temperature</strong>. In an unconstrained block this is harmless, but a 3D print is not unconstrained: the lowest layers are held by the bed, while upper layers cool later and shrink on top of them. The top contracts and tries to drag the part into a bowl. At the corners the stress concentrates and the plastic peels from the plate.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 320" role="img" aria-label="Diagram of warping showing shrink stress forces pulling inward at the top, bed holding the bottom, and a corner lifting off">
+      <text class="t t-b" x="20" y="24">1 · Layers cool and shrink</text>
+      <rect class="d-metal2" x="20" y="260" width="320" height="14"/>
+      <rect class="d-plastic" x="60" y="220" width="240" height="40"/>
+      <rect class="d-plastic" x="60" y="180" width="240" height="40"/>
+      <rect class="d-plastic" x="60" y="140" width="240" height="40"/>
+      <rect class="d-hot" x="60" y="100" width="240" height="40" opacity="0.8"/>
+      <text class="t-sm t-c" x="180" y="125">fresh layer: hot, soft</text>
+      <text class="t-sm t-c" x="180" y="205">cooler: contracting</text>
+      <text class="t-sm t-c" x="180" y="245">held by bed</text>
+      <path class="k-red arrow" d="M40 120 H58"/>
+      <path class="k-red arrow" d="M320 120 H302"/>
+      <path class="k-red arrow" d="M40 160 H58"/>
+      <path class="k-red arrow" d="M320 160 H302"/>
+      <text class="t-sm c-red" x="20" y="90">shrink force pulls inward</text>
+      <text class="t t-b" x="420" y="24">2 · Corner lifts off</text>
+      <rect class="d-metal2" x="420" y="260" width="320" height="14"/>
+      <polygon class="d-plastic" points="450,222 690,258 690,170 450,170"/>
+      <path class="d-dash" d="M450 258 H690"/>
+      <path class="k-red arrow" d="M430 250 V200"/>
+      <text class="t-sm c-red" x="395" y="190">lift</text>
+      <text class="t-sm t-c" x="570" y="304">Edge lifts first because stress peaks at the corner</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> Each new layer is hot; the layers underneath are cooler and already contracted. As the upper layers cool, they shrink and pull inward and downward, trying to curl the corners up. If the bed adhesion is weaker than this stress, the corner peels.</figcaption>
+  </figure>
+
+  <div class="callout fact"><span class="callout-title">The math, simplified</span>
+    <p>Shrink strain ≈ α × ΔT, where α is the material's thermal expansion coefficient and ΔT is how far it cools after solidifying. ABS (α around 90 × 10⁻⁶ per °C) cooling 80 °C shrinks about 0.7 %: on a 200 mm part that is 1.4 mm of tendency to move. PLA has a lower α and a lower solidification temperature, so its stress is typically much lower. Warping force grows with part length and with the temperature difference between layers, so <strong>long, flat, large parts warp worst</strong>.</p></div>
+
+  <div class="stats">
+    <div class="stat"><b>Longer</b><span>edges collect more shrink: double the length ≈ double the tendency to curl</span></div>
+    <div class="stat"><b>Sharper</b><span>corners concentrate stress: round corners with 2–5 mm radius warp far less</span></div>
+    <div class="stat"><b>Hotter chamber</b><span>less temperature drop between layers = less stress</span></div>
+  </div>
+
+  <h3>Anti-warp toolbox</h3>
+  <ul>
+    <li><strong>Hold the heat:</strong> use an enclosure or closed chamber. Printers with an actively heated chamber (like <a href="../x2d/overview.html">the Bambu X2D</a> with up to 65 °C) allow warp-prone filaments with far less drama.</li>
+    <li><strong>No drafts:</strong> an open window, AC, or a fan blowing on the printer cools one side faster and tears that corner free.</li>
+    <li><strong>Keep the part cooling fan low or off</strong> for ABS/ASA/PA/PC. For PLA, high fan is fine because PLA's shrink is small.</li>
+    <li><strong>Design for it:</strong> round the corners, avoid large flat bottoms, add chamfers, split long parts, use "mouse ears", reduce the footprint's aspect ratio, and add holes or ribs that break up big flat layers.</li>
+    <li><strong>Slow the layers:</strong> a longer layer time keeps the layer warm longer. Counter-intuitively, very high speed with strong cooling is the worst combination for warp-prone filaments.</li>
+    <li><strong>Pre-heat (soak):</strong> let the bed and chamber reach temperature for 10–20 minutes before starting so the whole plate is evenly warm and the enclosure is warm.</li>
+    <li><strong>Use a brim or raft</strong> with generous width for large parts.</li>
+    <li><strong>Reduce infill density at the bottom?</strong> Not usually helpful; instead decrease the number of layers that are 100 % solid.</li>
+  </ul>
+
+  <h3>Drafts and enclosure</h3>
+  <p>For PLA and PETG you can print open-frame on many machines, but any moving air that makes the room feel cool will cool the plastic unevenly. An enclosure does three things: stops drafts, holds heat, and reduces noise and fumes. For ABS and ASA it is practically mandatory. Be aware of the opposite problem: very warm enclosed chambers (above ~40 °C ambient) can soften PLA near the hotend and cause heat creep clogs. Open the lid or door for PLA when the chamber is heat-soaked, or use the printer's chamber-fan and vent setting. See <a href="speed-cooling-quality.html#cooling">cooling</a> for per-material fan strategies.</p>
+
+  <h2 id="leveling">Bed leveling, mesh and flatness</h2>
+  <p>"Leveling" actually means two things: making the plate <em>parallel</em> to the nozzle's path (tramming), and compensating for the plate not being perfectly <em>flat</em> (mesh). The first-layer gap is only 0.2 mm, so a bed that is 0.1 mm off on one side has already ruined half the squish.</p>
+  <div class="grid cols-3">
+    <div class="card accent-blue"><span class="ico">📐</span><h3>Manual leveling</h3><p>Turn screws or knobs at three or four points while a paper or feeler gauge sits under the nozzle. Needed on older or budget machines. Re-check after moving the printer or swapping plates.</p></div>
+    <div class="card accent-green"><span class="ico">📡</span><h3>Auto bed leveling (ABL)</h3><p>A probe (inductive, capacitive, strain-gauge, load-cell, or nozzle-contact) measures many points and the firmware tilts and warps the toolpath height to match. You still need correct Z-offset.</p></div>
+    <div class="card accent-purple"><span class="ico">🗺️</span><h3>Mesh bed leveling</h3><p>A grid of probe points (for example 5 × 5 to 10 × 10) builds a height map. The firmware interpolates between points, which fixes bowed plates and warped heat beds.</p></div>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 330" role="img" aria-label="Left: heat map grid of bed height deviations in millimeters with the center slightly low. Right: side view showing how the nozzle path follows the bowed bed using mesh compensation">
+      <text class="t t-b" x="20" y="24">Bed mesh heat map (mm, bed relative to average)</text>
+      <g>
+        <rect class="f-orange" x="20" y="40" width="56" height="48"/><text class="t-sm t-c" x="48" y="69">+0.08</text>
+        <rect class="f-yellow" x="76" y="40" width="56" height="48"/><text class="t-sm t-c" x="104" y="69">+0.04</text>
+        <rect class="f-green" x="132" y="40" width="56" height="48"/><text class="t-sm t-c" x="160" y="69">0.00</text>
+        <rect class="f-yellow" x="188" y="40" width="56" height="48"/><text class="t-sm t-c" x="216" y="69">+0.03</text>
+        <rect class="f-orange" x="244" y="40" width="56" height="48"/><text class="t-sm t-c" x="272" y="69">+0.09</text>
+
+        <rect class="f-yellow" x="20" y="88" width="56" height="48"/><text class="t-sm t-c" x="48" y="117">+0.04</text>
+        <rect class="f-green" x="76" y="88" width="56" height="48"/><text class="t-sm t-c" x="104" y="117">0.00</text>
+        <rect class="f-blue" x="132" y="88" width="56" height="48"/><text class="t-sm t-c" x="160" y="117">−0.03</text>
+        <rect class="f-green" x="188" y="88" width="56" height="48"/><text class="t-sm t-c" x="216" y="117">0.00</text>
+        <rect class="f-yellow" x="244" y="88" width="56" height="48"/><text class="t-sm t-c" x="272" y="117">+0.05</text>
+
+        <rect class="f-green" x="20" y="136" width="56" height="48"/><text class="t-sm t-c" x="48" y="165">0.00</text>
+        <rect class="f-blue" x="76" y="136" width="56" height="48"/><text class="t-sm t-c" x="104" y="165">−0.04</text>
+        <rect class="f-purple" x="132" y="136" width="56" height="48"/><text class="t-sm t-c" x="160" y="165">−0.08</text>
+        <rect class="f-blue" x="188" y="136" width="56" height="48"/><text class="t-sm t-c" x="216" y="165">−0.04</text>
+        <rect class="f-green" x="244" y="136" width="56" height="48"/><text class="t-sm t-c" x="272" y="165">0.00</text>
+
+        <rect class="f-yellow" x="20" y="184" width="56" height="48"/><text class="t-sm t-c" x="48" y="213">+0.03</text>
+        <rect class="f-green" x="76" y="184" width="56" height="48"/><text class="t-sm t-c" x="104" y="213">0.00</text>
+        <rect class="f-blue" x="132" y="184" width="56" height="48"/><text class="t-sm t-c" x="160" y="213">−0.03</text>
+        <rect class="f-green" x="188" y="184" width="56" height="48"/><text class="t-sm t-c" x="216" y="213">0.00</text>
+        <rect class="f-yellow" x="244" y="184" width="56" height="48"/><text class="t-sm t-c" x="272" y="213">+0.04</text>
+
+        <rect class="f-orange" x="20" y="232" width="56" height="48"/><text class="t-sm t-c" x="48" y="261">+0.09</text>
+        <rect class="f-yellow" x="76" y="232" width="56" height="48"/><text class="t-sm t-c" x="104" y="261">+0.05</text>
+        <rect class="f-green" x="132" y="232" width="56" height="48"/><text class="t-sm t-c" x="160" y="261">0.00</text>
+        <rect class="f-yellow" x="188" y="232" width="56" height="48"/><text class="t-sm t-c" x="216" y="261">+0.04</text>
+        <rect class="f-orange" x="244" y="232" width="56" height="48"/><text class="t-sm t-c" x="272" y="261">+0.10</text>
+      </g>
+      <text class="t-sm" x="20" y="302">Corners high, center low: a typical heat-bed "bowl".</text>
+      <text class="t-sm" x="20" y="320">Differences of ±0.1 mm are normal on large beds.</text>
+
+      <text class="t t-b" x="350" y="24">Mesh compensation, side view</text>
+      <path class="d-metal" d="M360 220 Q560 270 760 220 V250 Q560 300 360 250 Z"/>
+      <text class="t-xs t-c" x="560" y="282">bowed plate (exaggerated)</text>
+      <path class="d-dash" d="M360 190 H760"/>
+      <text class="t-sm" x="640" y="182">flat path: gap varies</text>
+      <path class="k-green" d="M360 200 Q560 250 760 200"/>
+      <text class="t-sm c-green" x="450" y="226">mesh path: gap constant</text>
+      <polygon class="d-metal" points="535,90 585,90 585,130 570,168 550,168 535,130"/>
+      <path class="d-mute arrow" d="M610 130 L655 130"/>
+      <text class="t-sm" x="660" y="134">travel</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> A mesh turns many small measurements into a height map. The printer raises or lowers the nozzle as it moves so that the gap to the plate stays the same everywhere.</figcaption>
+  </figure>
+
+  <h3>Practical leveling rules</h3>
+  <ul>
+    <li><strong>Level hot.</strong> Metal expands, so probe or tram at your usual print temperature for the material (heat-soak 5–10 minutes).</li>
+    <li><strong>Clean the nozzle</strong> before any contact probing; blobs of plastic on the tip give false heights.</li>
+    <li><strong>Re-mesh after changing plate, nozzle, or bed temperature by a lot</strong>. Many printers store a mesh per bed temperature.</li>
+    <li><strong>Mesh cannot fix a bad frame.</strong> If the gantry is tilted, rails are loose, or the Z-axis binds, address mechanical causes first. See <a href="calibration.html#mechanical">calibration: mechanical check</a>.</li>
+    <li><strong>Mesh size matters.</strong> For a small plate, 5 × 5 is plenty. For large beds, adaptive meshing probes only the area occupied by the print, saving time and focusing accuracy.</li>
+  </ul>
+  <div class="callout x2d"><span class="callout-title">Bambu X2D note</span>
+    <p>Bambu printers run automatic bed leveling and Z-offset calibration as part of start-up calibration, so the manual paper test does not apply. What still matters: keep the supplied textured PEI plate clean and seated flat, make sure no debris is under it, and let the printer's pre-print routines run. If a first layer is off on a Bambu machine, clean the plate and the nozzle before touching anything else. More on the built-in routines in <a href="calibration.html#bambu-auto">the calibration playbook</a> and <a href="../x2d/settings-and-profiles.html">Bambu Studio settings &amp; profiles</a>.</p></div>
+
+  <h2 id="detach">Getting prints off the plate</h2>
+  <p>A print that is stuck for life is as much a failure as one that peels away. Good adhesion means "stays during the print, releases afterwards".</p>
+  <ol class="steps">
+    <li><strong>Let it cool</strong>Wait until the bed is at room temperature (or below 30 °C). Contracting steel and plastic break the bond for you. This alone solves most "stuck" PLA on PEI.</li>
+    <li><strong>Flex the plate</strong>Spring-steel sheets are designed to bend. Remove the sheet from the printer and flex it gently in both directions. Use gloves for hot prints.</li>
+    <li><strong>Use a thin spatula, not a screwdriver</strong>Slide a thin plastic or flat metal scraper in at a corner with the blade angled slightly up. Pry with a low angle; do not hammer.</li>
+    <li><strong>Freeze trick</strong>For stubborn large prints, put the plate in a freezer for 10–15 minutes (not a wet freezer: dry the bottom). The plastic and plate shrink differently and let go.</li>
+    <li><strong>Water or IPA at the seam</strong>For glue-stick prints, a few drops of water at the edge dissolves the glue. IPA under a part on glass breaks the bond (use sparingly; keep it away from electronics).</li>
+    <li><strong>Never pry toward your hand</strong>Scrapers slip. Keep your free hand clear of the blade path and wear cut-resistant gloves for large prints.</li>
+  </ol>
+  <div class="callout danger"><span class="callout-title">Safety</span>
+    <p>Hot beds are 60–110 °C: they burn skin. Spatulas can cut. When using IPA near a hot bed, remember it is flammable and its vapor ignites easily: do not apply it to a hot plate and never inside a closed printer.</p></div>
+
+  <h2 id="diagnose">Diagnosing the first layer from the top down</h2>
+  <p>Read your first layer like a doctor reads an X-ray. Print a one-layer test sheet, look at it from above in oblique light, and compare it to the gallery below.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 360" role="img" aria-label="Gallery of six top-down first layer patterns: ideal, too high, too low, tilted bed, dirty plate, and warping corner">
+      <defs>
+        <pattern id="fl-good" width="20" height="9" patternUnits="userSpaceOnUse"><rect class="s-orange" x="0" y="0" width="20" height="8.4"/></pattern>
+        <pattern id="fl-high" width="20" height="9" patternUnits="userSpaceOnUse"><rect class="s-orange" x="0" y="2.5" width="20" height="4"/></pattern>
+        <pattern id="fl-low" width="20" height="9" patternUnits="userSpaceOnUse"><rect class="s-orange" x="0" y="0" width="20" height="9"/><rect class="s-red" x="0" y="7.5" width="20" height="1.5" opacity="0.7"/></pattern>
+      </defs>
+      <!-- row 1 -->
+      <text class="t t-b" x="20" y="22">A · Ideal</text>
+      <rect class="d-surface" x="20" y="30" width="220" height="100"/>
+      <rect x="26" y="36" width="208" height="88" fill="url(#fl-good)"/>
+      <text class="t-sm" x="20" y="148">Smooth, uniform, no gaps or ridges.</text>
+      <text class="t-sm c-green" x="20" y="164">Keep these settings.</text>
+
+      <text class="t t-b" x="270" y="22">B · Too high</text>
+      <rect class="d-surface" x="270" y="30" width="220" height="100"/>
+      <rect x="276" y="36" width="208" height="88" fill="url(#fl-high)"/>
+      <text class="t-sm" x="270" y="148">Thin, separated lines; gaps show plate.</text>
+      <text class="t-sm c-red" x="270" y="164">Lower nozzle / more squish.</text>
+
+      <text class="t t-b" x="520" y="22">C · Too low</text>
+      <rect class="d-surface" x="520" y="30" width="220" height="100"/>
+      <rect x="526" y="36" width="208" height="88" fill="url(#fl-low)"/>
+      <text class="t-sm" x="520" y="148">Rough ridges, glossy smears, rippled.</text>
+      <text class="t-sm c-red" x="520" y="164">Raise nozzle; check flow.</text>
+
+      <!-- row 2 -->
+      <text class="t t-b" x="20" y="202">D · One side high (tilt)</text>
+      <rect class="d-surface" x="20" y="210" width="220" height="100"/>
+      <rect x="26" y="216" width="104" height="88" fill="url(#fl-good)"/>
+      <rect x="130" y="216" width="104" height="88" fill="url(#fl-high)"/>
+      <text class="t-sm" x="20" y="328">Good on one edge, gappy on the other.</text>
+      <text class="t-sm c-red" x="20" y="344">Tram bed / re-run mesh.</text>
+
+      <text class="t t-b" x="270" y="202">E · Dirty plate</text>
+      <rect class="d-surface" x="270" y="210" width="220" height="100"/>
+      <rect x="276" y="216" width="208" height="88" fill="url(#fl-good)"/>
+      <ellipse style="fill:var(--surface);stroke:none" cx="330" cy="250" rx="22" ry="14"/>
+      <ellipse style="fill:var(--surface);stroke:none" cx="410" cy="280" rx="30" ry="12"/>
+      <ellipse style="fill:var(--surface);stroke:none" cx="455" cy="238" rx="14" ry="10"/>
+      <text class="t-sm" x="270" y="328">Bare patches, lines slide or lift.</text>
+      <text class="t-sm c-red" x="270" y="344">Wash plate; no fingerprints.</text>
+
+      <text class="t t-b" x="520" y="202">F · Corner lifting</text>
+      <rect class="d-surface" x="520" y="210" width="220" height="100"/>
+      <rect x="526" y="216" width="208" height="88" fill="url(#fl-good)"/>
+      <path class="k-red" d="M526 216 L526 262 L572 216 Z"/>
+      <path class="k-red" d="M534 216 L534 246 M526 232 L548 216"/>
+      <text class="t-sm" x="520" y="328">Curled, shiny edge at corners.</text>
+      <text class="t-sm c-red" x="520" y="344">Warp: brim, enclosure, no draft.</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> Six patterns you will see in practice. Rows are drawn as seen from above. Orange = extruded plastic; light = bare plate.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data"><thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix, in order</th></tr></thead><tbody>
+    <tr><td>Lines round, gaps between them, peel up with a fingernail</td><td>Nozzle too far from plate</td><td>Lower Z-offset in 0.02 steps; recheck leveling; slow first layer</td></tr>
+    <tr><td>Rough, rippled, plastic piles on the sides of lines; extruder clicks</td><td>Nozzle too close; flow too high</td><td>Raise Z-offset; calibrate flow; check that nozzle is clean</td></tr>
+    <tr><td>Sticks in the middle of the plate but not at the edge</td><td>Bowed or tilted bed; edge colder; cooling fan hitting edge</td><td>Run mesh; check bed heat; add brim; print away from edge</td></tr>
+    <tr><td>Bare patches, random lifting</td><td>Grease, glue residue, dust</td><td>Dish-soap wash, IPA wipe, avoid touching</td></tr>
+    <tr><td>Lines start thin, then fine</td><td>Nozzle not primed; filament pressure low at start</td><td>Add prime line / purge before start; increase skirt loops</td></tr>
+    <tr><td>First layer looks perfect but the part pops off later at height</td><td>Warp stress; drafts; too much fan</td><td>Enclose; reduce fan; add brim; raise bed temp for first layers</td></tr>
+    <tr><td>Nozzle drags previous lines or knocks the part</td><td>Layer curled up (z-hop absent) or over-extrusion</td><td>Enable z-hop on travel; check flow; slow travel over fresh lines</td></tr>
+    <tr><td>Spaghetti after first layer</td><td>Layer didn't stick, part detached</td><td>Pause early; fix cause above; use brim; reduce first-layer speed</td></tr>
+  </tbody></table></div>
+
+  <h3>The first-layer calibration pattern</h3>
+  <p>A single large square shows overall squish, but a five-square pattern (one near each corner and one in the middle of the bed) shows <em>uniformity</em>. If the center square looks different from the corners, the bed is bowed, tilted, or the mesh did not cover the area. Many printers and slicers include a built-in version; you can also model five 40 × 40 × 0.2 mm squares.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 330" role="img" aria-label="Two beds each with five test squares: left bed all squares uniform, right bed with one square too high, one too low and one lifting">
+      <defs>
+        <pattern id="sq-good" width="20" height="8" patternUnits="userSpaceOnUse"><rect class="s-orange" x="0" y="0" width="20" height="7.5"/></pattern>
+        <pattern id="sq-high" width="20" height="8" patternUnits="userSpaceOnUse"><rect class="s-orange" x="0" y="2" width="20" height="3.5"/></pattern>
+        <pattern id="sq-low" width="20" height="8" patternUnits="userSpaceOnUse"><rect class="s-red" x="0" y="0" width="20" height="8"/></pattern>
+      </defs>
+      <text class="t t-c t-b" x="190" y="22">Good bed: five identical squares</text>
+      <rect class="d-surface" x="40" y="36" width="300" height="240" rx="8"/>
+      <rect x="62" y="56" width="64" height="64" fill="url(#sq-good)"/>
+      <rect x="254" y="56" width="64" height="64" fill="url(#sq-good)"/>
+      <rect x="158" y="128" width="64" height="64" fill="url(#sq-good)"/>
+      <rect x="62" y="192" width="64" height="64" fill="url(#sq-good)"/>
+      <rect x="254" y="192" width="64" height="64" fill="url(#sq-good)"/>
+      <text class="t-sm t-c c-green" x="190" y="304">Uniform sheen, no gaps. Corners match the center.</text>
+      <text class="t t-c t-b" x="590" y="22">Problem bed: squares disagree</text>
+      <rect class="d-surface" x="440" y="36" width="300" height="240" rx="8"/>
+      <rect x="462" y="56" width="64" height="64" fill="url(#sq-high)"/>
+      <rect x="654" y="56" width="64" height="64" fill="url(#sq-good)"/>
+      <rect x="558" y="128" width="64" height="64" fill="url(#sq-low)" opacity="0.85"/>
+      <rect x="462" y="192" width="64" height="64" fill="url(#sq-good)"/>
+      <path class="k-red" d="M654 192 L654 232 L694 192 Z"/>
+      <rect x="654" y="192" width="64" height="64" fill="url(#sq-good)" opacity="0.5"/>
+      <text class="t-xs" x="462" y="52">gappy: too high</text>
+      <text class="t-xs t-c" x="590" y="124">scuffed: too low</text>
+      <text class="t-xs" x="640" y="270">curls</text>
+      <text class="t-sm t-c c-red" x="590" y="304">Back-left high, center low: bowed bed, re-mesh.</text>
+    </svg>
+    <figcaption><b>Figure 10.</b> The five-square test. Compare each square to the rest: the pattern of differences tells you whether the problem is Z-offset, tilt, bowing or dirt.</figcaption>
+  </figure>
+
+  <h2 id="cases">Mini case studies</h2>
+  <div>
+    <details class="accordion"><summary>Case 1: "PLA lifts only on the left side"</summary><p>Left side of the plate was colder because the printer sat next to a window and the door of the enclosure was ajar. Closing the door and moving the printer fixed it; a brim was no longer needed. Lesson: location and drafts matter more than glue.</p></details>
+    <details class="accordion"><summary>Case 2: "PETG tore my smooth plate"</summary><p>PETG at 80 °C on smooth PEI with maximum squish welded into the coating and tore chips out when removed. Fix: raise Z by 0.03 mm, apply a thin glue-stick layer as release, and always let the bed cool before removing. The same part then popped off by hand.</p></details>
+    <details class="accordion"><summary>Case 3: "ABS corners curl at 1 cm height"</summary><p>An open-frame printer with a part fan at 50 %. Closing the enclosure, turning fan to 0–20 %, raising bed to 100 °C and adding a 10 mm brim with 0.05 mm gap solved the curl. Lesson: reduce temperature differences, not just add glue.</p></details>
+    <details class="accordion"><summary>Case 4: "Perfect first layer, then rubbish after layer 1"</summary><p>The first layer looked great but the second layer scraped through it. The second layer used 0.12 mm height after a 0.2 mm first layer and a part-fan blast. The plastic curled and caught the nozzle. A z-hop of 0.4 mm and a lower fan until layer 4 stopped the collisions.</p></details>
+  </div>
+
+  <h2 id="checklist">Pre-print first-layer checklist</h2>
+  <ul class="checklist">
+    <li>Plate is clean (soap or IPA) and I did not touch the print area.</li>
+    <li>Nozzle is clean; no filament blob on the tip.</li>
+    <li>Bed and chamber temperatures match the material and have soaked for a few minutes.</li>
+    <li>Z-offset or auto-leveling has run for this plate and temperature.</li>
+    <li>First-layer speed, fan, and brim/skirt are set for the material.</li>
+    <li>I will watch the first three minutes of the print.</li>
+    <li>Model bottom is flat on the plate (or has supports/raft where it is not).</li>
+  </ul>
+
+  <div class="callout trick"><span class="callout-title">Pro habit</span>
+    <p>Spend the first two minutes of every print watching the skirt and first layer. Cancelling a bad start costs two minutes; letting a bad start run costs hours and a messy plate. Your eyes are the best sensor you have.</p></div>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul>
+    <li>Squish decides adhesion: first fix Z-offset until lines are flat and fused, then look elsewhere.</li>
+    <li>Clean the plate; fingerprints and grease are the invisible villain.</li>
+    <li>Bed temperature should be near the material's glass-transition temperature, not just "as hot as possible".</li>
+    <li>Warping is shrink stress. Long parts, sharp corners, drafts and cold chambers make it worse; enclosure, brims, rounded corners and low fan make it better.</li>
+    <li>Brim and mouse ears are cheap insurance; a raft is the heavy tool.</li>
+    <li>Elephant foot comes from too much squish and heat: raise Z a hair, cool the bed, add compensation or a chamfer.</li>
+    <li>Level hot, mesh the real plate, and keep the nozzle clean.</li>
+    <li>Read the first layer from above: gaps mean too high, ridges mean too low, one-sided problems mean tilt.</li>
+  </ul>
+  <p>Next steps: practice on the <a href="../exercises/level-1-beginner.html">Level 1 exercises</a>, continue with <a href="supports-bridges-overhangs.html">supports, bridges and overhangs</a>, and when you want precise control read the <a href="calibration.html">calibration playbook</a>. For a catalog of defects see the <a href="troubleshooting.html">troubleshooting gallery</a>.</p>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Design patterns · 3D Printing Compendium</title>
+  <meta name="description" content="A catalogue of 30 reusable 3D-printing design patterns with diagrams, parameters in mm and use cases: enclosures, clips, holders, modular bins, hinges, springs, gears, bearings, brackets, jigs, adapters and workflow patterns.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+  <style>
+    .dp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 18px; margin: 16px 0 28px; }
+    .dp-card { border: 1px solid var(--border, rgba(127,127,127,.3)); border-radius: 12px; padding: 14px 16px; background: var(--surface, transparent); }
+    .dp-card h3 { margin: 0 0 6px; font-size: 17px; }
+    .dp-card figure.fig { margin: 6px 0 10px; }
+    .dp-card p { margin: 6px 0; font-size: 14px; }
+    .dp-par { margin: 6px 0 0; padding-left: 18px; font-size: 13px; color: var(--muted); }
+    .dp-par li { margin: 2px 0; }
+    .dp-table td:first-child { white-space: nowrap; font-weight: 600; }
+    .dp-eq { font-family: var(--mono, ui-monospace, Consolas, monospace); background: var(--surface-2, rgba(127,127,127,.12)); padding: 2px 8px; border-radius: 6px; }
+  </style>
+</head>
+<body data-page="design/design-patterns.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 5 · Design for printing</div>
+    <h1>Design patterns</h1>
+    <p class="lead">Thirty proven building blocks for printed parts. Each pattern has a diagram, the parameters that matter (in mm, for a 0.4 mm nozzle and 0.2 mm layers), a typical use and a pointer to the rules behind it. Combine them instead of designing every part from a blank sheet.</p>
+    <div class="meta"><span class="badge intermediate">Intermediate</span><span class="badge time">⏱ 45 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <p>How to recognise a recurring design problem (a lid, a clip, a hinge, a gear) and apply a tested pattern with starting dimensions. Every number is a <em>starting value</em>: adjust it with your own <a href="tolerances-and-fits.html">tolerance coupon</a> and keep the patterns in a parametric model (see <a href="parametric-cad-workflow.html">Parametric CAD workflow</a>).</p></div>
+
+  <h2 id="how-to-use">🔰 How to use this catalogue</h2>
+  <p>A <b>design pattern</b> is a solution that works repeatedly: a way to hold a lid, mount a bearing or split a big part. Experienced designers keep a library of them. A pattern is never copied blindly; you take the topology (the idea) and then set the parameters for your material, printer and load. The cards below are grouped by problem: housings, holders and mounts, mechanisms, structure and connections, and workflows.</p>
+  <p>All dimensions assume a 0.4 mm nozzle, 0.2 mm layers and an accurate printer such as the X2D. The shared defaults are listed once here, so the cards stay short.</p>
+
+  <div class="table-wrap"><table class="data compact dp-table">
+    <thead><tr><th>Parameter</th><th>Default</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Wall thickness</td><td>1.6 mm (4 lines of 0.4)</td><td>Strong enough for housings; see <a href="principles.html#walls">Principles</a></td></tr>
+      <tr><td>Floor / roof</td><td>1.2 mm (6 layers)</td><td>Closes the top surface without pillowing</td></tr>
+      <tr><td>Inside fillet</td><td>≥ 1 mm</td><td>Removes stress concentrations</td></tr>
+      <tr><td>Clearance between parts</td><td>0.2–0.3 mm per side (slip)</td><td>See <a href="tolerances-and-fits.html">Tolerances &amp; fits</a></td></tr>
+      <tr><td>Overhang</td><td>≤ 45°</td><td>Printable without supports</td></tr>
+      <tr><td>Minimum feature</td><td>0.8 mm</td><td>Two lines wide</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout tip"><span class="callout-title">Tip</span>
+    <p>When two patterns conflict (a thin snap arm next to a thick wall), solve the load path first, then the printing constraint, then the look. The <a href="strength-and-orientation.html">strength and orientation</a> page tells you which way to lay the part.</p></div>
+
+  <h2 id="housings">🔰 Housings and lids</h2>
+  <div class="dp-grid">
+
+    <article class="dp-card" id="snap-enclosure"><h3>1 · Snap-lid enclosure</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Section of a box with a lid that has a lip and a snap bump">
+        <rect class="d-plastic" x="40" y="60" width="6" height="74"/><rect class="d-plastic" x="214" y="60" width="6" height="74"/><rect class="d-plastic" x="40" y="128" width="180" height="6"/>
+        <rect class="d-plastic" x="34" y="44" width="192" height="8"/><rect class="d-plastic" x="49" y="52" width="4" height="16"/><rect class="d-plastic" x="207" y="52" width="4" height="16"/>
+        <polygon class="d-surface2" points="46,62 51,66 46,70"/><polygon class="d-surface2" points="214,62 209,66 214,70"/>
+        <path class="d-ink arrow" d="M130 20 V40"/><text class="t-xs t-c" x="130" y="14">press down</text><text class="t-xs" x="50" y="100">0.3 mm gap</text>
+      </svg><figcaption><b>Figure 1.</b> Lid with an inner lip and two snap bumps.</figcaption></figure>
+      <p><b>Use:</b> sensor boxes, remote cases, anything opened rarely.</p>
+      <ul class="dp-par"><li>Lip height 3–4 mm, lip wall 1.2 mm, gap 0.2–0.3 mm per side</li><li>Snap bump 0.4–0.6 mm high, 45° lead-in, 20–30° return</li><li>Add a thumb notch 8 × 3 mm for opening</li><li>Rules: <a href="joints-and-fasteners.html#snap-fits">snap-fits</a></li></ul></article>
+
+    <article class="dp-card" id="screw-enclosure"><h3>2 · Screw-lid enclosure</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Box with corner screw bosses and a lid fixed by screws">
+        <rect class="d-plastic" x="40" y="70" width="6" height="64"/><rect class="d-plastic" x="214" y="70" width="6" height="64"/><rect class="d-plastic" x="40" y="128" width="180" height="6"/>
+        <rect class="d-plastic" x="46" y="76" width="22" height="52"/><rect class="d-plastic" x="192" y="76" width="22" height="52"/>
+        <rect class="d-plastic" x="40" y="58" width="180" height="6"/>
+        <rect class="d-surface2" x="52" y="86" width="10" height="42"/><rect class="d-surface2" x="198" y="86" width="10" height="42"/>
+        <path class="d-ink" d="M57 40 V80 M203 40 V80" style="stroke-width:2"/><rect class="d-metal" x="50" y="36" width="14" height="5"/><rect class="d-metal" x="196" y="36" width="14" height="5"/>
+        <text class="t-xs" x="76" y="104">M3 pilot Ø 2.5</text>
+      </svg><figcaption><b>Figure 2.</b> Corner bosses with screws through the lid.</figcaption></figure>
+      <p><b>Use:</b> serviceable electronics and anything that must be opened many times.</p>
+      <ul class="dp-par"><li>Pilot hole Ø 2.5 mm for M3 self-tapping (or insert pocket Ø 4.0–4.2)</li><li>Boss outer Ø 7–8 mm, fillet 1 mm, rib 1.2 mm</li><li>Lid hole Ø 3.4 mm, counterbore Ø 6.2 × 3 mm</li><li>Rules: <a href="joints-and-fasteners.html#bosses">bosses</a>, <a href="joints-and-fasteners.html#heat-set">heat-set inserts</a></li></ul></article>
+
+    <article class="dp-card" id="electronics-enclosure"><h3>3 · Electronics enclosure with standoffs and vents</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Enclosure floor with four standoffs under a circuit board and slot vents in the wall">
+        <rect class="d-plastic" x="30" y="120" width="200" height="8"/>
+        <rect class="d-plastic" x="60" y="104" width="10" height="16"/><rect class="d-plastic" x="190" y="104" width="10" height="16"/>
+        <rect class="d-metal" x="50" y="98" width="160" height="6"/>
+        <rect class="d-plastic" x="224" y="30" width="6" height="90"/>
+        <rect class="d-surface" x="224" y="44" width="6" height="4"/><rect class="d-surface" x="224" y="54" width="6" height="4"/><rect class="d-surface" x="224" y="64" width="6" height="4"/>
+        <text class="t-xs" x="70" y="90">PCB</text><text class="t-xs" x="76" y="116">standoff 5 mm</text><text class="t-xs" x="150" y="60">slots 2 × 12</text>
+      </svg><figcaption><b>Figure 3.</b> Standoffs lift the board; slots let hot air escape.</figcaption></figure>
+      <p><b>Use:</b> microcontroller projects, power supplies, routers.</p>
+      <ul class="dp-par"><li>Standoff height 4–6 mm; hole for M2.5 pilot Ø 2.2</li><li>Vent slots 2 mm wide, 3 mm pitch, vertical (printable without supports)</li><li>Slot area ≈ 10 % of the heat-producing zone; keep PLA below 50 °C</li><li>Rules: <a href="joints-and-fasteners.html#standoffs">standoffs</a>, <a href="joints-and-fasteners.html#cables">cables</a></li></ul></article>
+
+    <article class="dp-card" id="hinge-box"><h3>4 · Hinge box</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Box and lid joined by a print-in-place pin hinge at the back edge">
+        <rect class="d-plastic" x="40" y="80" width="150" height="50"/><rect class="d-plastic" x="40" y="62" width="150" height="14" transform="rotate(-18 40 70)"/>
+        <circle class="d-surface2" cx="40" cy="72" r="9"/><circle class="d-metal" cx="40" cy="72" r="3"/>
+        <path class="d-ink arrow" d="M120 54 Q96 32 70 36"/><text class="t-xs" x="150" y="106">detent bump</text><text class="t-xs" x="62" y="26">pin Ø 3, gap 0.3</text>
+      </svg><figcaption><b>Figure 4.</b> Two or three hinge knuckles with a pin along the back.</figcaption></figure>
+      <p><b>Use:</b> jewellery boxes, small tool cases.</p>
+      <ul class="dp-par"><li>Pin Ø 3 mm, hole Ø 3.4 mm; knuckle Ø 8 mm; axial gap 0.4 mm</li><li>Print with the hinge axis horizontal, pin as a separate filament or steel rod</li><li>Add a 0.4 mm detent bump to hold the lid closed</li><li>Rules: <a href="joints-and-fasteners.html#pins-hinges">pins &amp; hinges</a></li></ul></article>
+
+    <article class="dp-card" id="threaded-container"><h3>5 · Threaded container</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Jar with a coarse thread and a matching screw cap">
+        <rect class="d-plastic" x="70" y="70" width="120" height="64"/><rect class="d-plastic" x="76" y="40" width="108" height="26"/>
+        <path class="d-ink" d="M76 46 l10 6 M76 56 l10 6 M184 46 l-10 6 M184 56 l-10 6" style="stroke-width:2"/>
+        <rect class="d-surface2" x="66" y="26" width="128" height="14" rx="3"/>
+        <path class="d-ink" d="M76 92 H184" style="stroke:var(--orange);stroke-dasharray:4 3"/><text class="t-xs" x="84" y="110">print upright, no supports</text>
+      </svg><figcaption><b>Figure 5.</b> A coarse thread (pitch 3–4 mm) prints without supports.</figcaption></figure>
+      <p><b>Use:</b> pill and spice containers, geocaches, storage jars.</p>
+      <ul class="dp-par"><li>Pitch 3–4 mm, 60° profile with 45° flanks (no overhang)</li><li>Radial clearance 0.3 mm; 2–3 turns are enough</li><li>Add a printed gasket groove or TPU ring for water resistance</li><li>Rules: <a href="tolerances-and-fits.html#threads">thread tolerance</a></li></ul></article>
+
+  </div>
+
+  <h2 id="holders">🔰 Holders, mounts and organisers</h2>
+  <div class="dp-grid">
+
+    <article class="dp-card" id="cable-clip"><h3>6 · Cable clip</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="C-shaped cable clip with a narrower opening and a screw base">
+        <path class="d-ink" d="M110 90 A30 30 0 1 1 150 90" style="stroke-width:8;fill:none;stroke:var(--blue);stroke-linecap:round"/>
+        <rect class="d-plastic" x="80" y="96" width="100" height="10"/><circle class="d-surface2" cx="130" cy="101" r="3"/>
+        <path class="d-thin arrow arrow-start" d="M110 86 H150"/><text class="t-xs t-c" x="130" y="80">opening Ø × 0.85</text><text class="t-xs" x="40" y="130">wall 1.6, arm length ≥ 8</text>
+      </svg><figcaption><b>Figure 6.</b> The opening is narrower than the cable so it snaps in.</figcaption></figure>
+      <p><b>Use:</b> desk cables, USB leads, camera wires.</p>
+      <ul class="dp-par"><li>Inner Ø = cable Ø + 0.4 mm; opening ≈ 85 % of Ø</li><li>Print on its side so the layers run around the C</li><li>Material PETG or ABS for the flex; PLA breaks after a few cycles</li></ul></article>
+
+    <article class="dp-card" id="tool-holder"><h3>7 · Tool holder</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Wall plate with holes of different diameters holding screwdrivers and pliers">
+        <rect class="d-plastic" x="40" y="60" width="180" height="30"/>
+        <rect class="d-surface" x="62" y="60" width="20" height="30"/><rect class="d-surface" x="100" y="60" width="14" height="30"/><rect class="d-surface" x="132" y="60" width="10" height="30"/>
+        <path class="d-ink" d="M72 60 V20 M107 60 V30 M137 60 V36" style="stroke-width:6;stroke-linecap:round;stroke:var(--orange)"/>
+        <text class="t-xs" x="40" y="112">hole = tool Ø + 1 mm, depth ≥ 25 mm</text><text class="t-xs" x="40" y="128">wall 2 mm between holes</text>
+      </svg><figcaption><b>Figure 7.</b> A plate with drilled pockets sized to the tools.</figcaption></figure>
+      <p><b>Use:</b> workshop walls, desk organisers.</p>
+      <ul class="dp-par"><li>Pocket = measured tool Ø + 1 mm; chamfer the mouth 1 mm</li><li>Load: tool weight is shear, so print flat with 4 walls</li><li>Pre-measure with callipers; list the Ø in a parameter table</li></ul></article>
+
+    <article class="dp-card" id="phone-stand"><h3>8 · Phone stand</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Side view of a phone stand with a 65 degree back angle and a front lip">
+        <polygon class="d-plastic" points="60,130 200,130 200,118 90,118 150,46 134,40 70,118"/>
+        <rect class="d-surface2" x="150" y="40" width="12" height="80" transform="rotate(25 156 80)"/>
+        <rect class="d-plastic" x="60" y="112" width="12" height="18"/>
+        <text class="t-xs" x="170" y="100">angle 65°</text><text class="t-xs" x="68" y="146">lip 10 mm, slot 12 mm</text>
+      </svg><figcaption><b>Figure 8.</b> A wedge with a lip and a charging-cable gap.</figcaption></figure>
+      <p><b>Use:</b> phones, tablets, e-readers.</p>
+      <ul class="dp-par"><li>Backrest angle 60–70°; slot width = device thickness + 3 mm (or 12 mm with a case)</li><li>Base ≥ 1.5 × height for stability, add weight (coins) in a pocket</li><li>Print on its side so layers run along the bend</li></ul></article>
+
+    <article class="dp-card" id="keyhole"><h3>9 · Wall-mount keyhole</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Keyhole slot with a large entry circle and a narrow slot for a screw head">
+        <rect class="d-plastic" x="60" y="20" width="140" height="110" rx="6"/>
+        <circle class="d-surface2" cx="130" cy="45" r="9"/><rect class="d-surface2" x="124" y="45" width="12" height="38"/>
+        <text class="t-xs" x="146" y="42">Ø 9 entry</text><text class="t-xs" x="146" y="76">slot 5 wide</text><text class="t-xs" x="72" y="112">screw head Ø 8, shank Ø 4</text>
+      </svg><figcaption><b>Figure 9.</b> Slide the part down onto a screw head.</figcaption></figure>
+      <p><b>Use:</b> hang a box, a sign or a panel on a wall.</p>
+      <ul class="dp-par"><li>Entry Ø = head Ø + 1 mm; slot = shank Ø + 1 mm; slot length ≥ 8 mm</li><li>Make the rear 2 mm thick around the slot; slot walls 3 mm minimum</li><li>Put the keyhole axis in the XY plane so the screw loads the lines, not layers</li></ul></article>
+
+    <article class="dp-card" id="magnet-mount"><h3>10 · Magnetic mount</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Part with a magnet pocket closed by a thin 0.4 mm skin layer facing a steel surface">
+        <rect class="d-plastic" x="70" y="40" width="120" height="50"/><rect class="d-metal" x="110" y="52" width="40" height="30"/>
+        <rect class="d-plastic" x="110" y="82" width="40" height="3" style="stroke:var(--orange)"/><rect class="d-metal" x="60" y="96" width="140" height="10"/>
+        <text class="t-xs" x="76" y="124">steel plate</text><text class="t-xs" x="76" y="30">pocket = magnet + 0.1 Ø, +0.2 depth</text><text class="t-xs" x="156" y="76">skin 0.4–0.6</text>
+      </svg><figcaption><b>Figure 10.</b> A magnet sealed behind a thin skin.</figcaption></figure>
+      <p><b>Use:</b> hold-downs, tool racks, removable covers, fridge mounts.</p>
+      <ul class="dp-par"><li>Pocket Ø = magnet Ø + 0.1–0.2 mm; depth = thickness + 0.2 mm</li><li>Skin toward the steel 0.4–0.6 mm; glue magnet with CA or pause the print and insert</li><li>Keep polarity identical in every part (mark with a dot)</li><li>Rules: <a href="joints-and-fasteners.html#magnets">magnets</a></li></ul></article>
+
+    <article class="dp-card" id="modular-bin"><h3>11 · Modular bins on a grid</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Baseplate with grid pitch and a bin with a chamfered foot that sits in the grid">
+        <rect class="d-plastic" x="30" y="108" width="200" height="12"/>
+        <polygon class="d-surface2" points="56,108 76,108 70,98 62,98"/><polygon class="d-surface2" points="120,108 140,108 134,98 126,98"/><polygon class="d-surface2" points="184,108 204,108 198,98 190,98"/>
+        <path class="d-plastic" d="M50 40 H150 V98 H50 Z"/><polygon class="d-plastic" points="62,98 138,98 130,106 70,106"/>
+        <path class="d-thin arrow arrow-start" d="M56 130 H120"/><text class="t-xs" x="66" y="144">pitch (e.g. 42 mm)</text><text class="t-xs" x="156" y="64">stacking lip + foot</text>
+      </svg><figcaption><b>Figure 11.</b> A repeating pitch lets bins of different sizes share a baseplate.</figcaption></figure>
+      <p><b>Use:</b> workshop drawers, electronics parts, desk organisers. The idea (a baseplate on a fixed pitch with chamfered, stackable feet) is public and used by several open systems; design your own dimensions or follow the specification of a system you want compatibility with.</p>
+      <ul class="dp-par"><li>Choose one pitch and make every size a multiple of it, minus 0.5 mm total clearance</li><li>Foot chamfer 45° (printable), height 4–5 mm</li><li>Print floors on the bed face with 3–4 walls; add a finger scoop radius ≥ 8 mm</li></ul></article>
+
+    <article class="dp-card" id="drawer-rail"><h3>12 · Drawer rails</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Dovetail-shaped rail on a drawer sliding in a matching groove, with a clearance gap">
+        <rect class="d-plastic" x="40" y="102" width="180" height="16"/>
+        <polygon class="d-plastic" points="112,102 148,102 158,78 102,78"/>
+        <polygon class="d-surface2" points="40,52 220,52 220,100 150,100 160,76 100,76 110,100 40,100"/>
+        <text class="t-xs" x="40" y="136">45° flanks, clearance 0.3 mm per side</text>
+      </svg><figcaption><b>Figure 12.</b> A 45° dovetail rail keeps the drawer from tilting.</figcaption></figure>
+      <p><b>Use:</b> small parts drawers, sliding lids, battery covers.</p>
+      <ul class="dp-par"><li>Flanks 45° so nothing needs support; width 8–12 mm, height 5 mm</li><li>Clearance 0.3 mm per side; add a 0.4 mm detent to stop the drawer</li><li>Run the slide axis along a printed line direction and wax or dry-lube the rail</li><li>Rules: <a href="joints-and-fasteners.html#shape-joints">dovetails and slides</a></li></ul></article>
+
+    <article class="dp-card" id="label-inlay"><h3>13 · Labels and inlays</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A label recess 0.6 mm deep with a separate colour insert and a magnet or paper window">
+        <rect class="d-plastic" x="40" y="60" width="180" height="40"/><rect class="d-surface2" x="70" y="60" width="120" height="8"/>
+        <path class="d-thin arrow" d="M130 30 V56"/><text class="t-xs t-c" x="130" y="24">insert / paper / paint</text>
+        <text class="t-xs" x="40" y="124">recess 0.6–1.2 mm deep; text 1 mm tall; stroke ≥ 0.8</text>
+      </svg><figcaption><b>Figure 13.</b> A recess with a thin lip holds a label, tile or colour inlay.</figcaption></figure>
+      <p><b>Use:</b> bins, drawers, control panels.</p>
+      <ul class="dp-par"><li>Embossed text: height 0.6–1 mm, stroke ≥ 0.8 mm, font size ≥ 6 mm</li><li>Colour inlay: change filament at the layer where the recess starts (see <a href="../techniques/multi-color-and-multi-material.html">multi-colour</a>)</li><li>A slide-in label gap = label thickness + 0.3 mm</li></ul></article>
+
+  </div>
+
+  <h2 id="mechanisms">🚀 Mechanisms</h2>
+  <p>Moving parts multiply every tolerance error, so mechanisms use the biggest clearances in the catalogue. Test each one on a small coupon before printing the full assembly.</p>
+  <div class="dp-grid">
+
+    <article class="dp-card" id="flexure"><h3>14 · Spring and flexure</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A zig-zag printed spring and a straight flexure beam with thick ends and a thin neck">
+        <path class="d-ink" d="M40 100 H60 L72 70 L96 130 L120 70 L144 130 L156 100 H176" style="stroke:var(--blue);stroke-width:5;fill:none;stroke-linejoin:round"/>
+        <rect class="d-plastic" x="190" y="60" width="10" height="70"/><rect class="d-plastic" x="204" y="92" width="40" height="6"/>
+        <text class="t-xs" x="40" y="146">zig-zag: bar 1.2 × 8, bends in XY</text><text class="t-xs" x="190" y="52">flexure neck 0.8–1.2</text>
+      </svg><figcaption><b>Figure 14.</b> A zig-zag spring and a thin-neck flexure.</figcaption></figure>
+      <p><b>Use:</b> latches, buttons, detents, return springs.</p>
+      <ul class="dp-par"><li>Print so the bend is in the XY plane (layers along the beam)</li><li>Neck 0.8–1.2 mm thick, length ≥ 6× thickness; radius 2 mm at the ends</li><li>Strain ≤ 1 % in PETG, ≤ 0.4 % in PLA: see <a href="joints-and-fasteners.html#snap-fits">snap-fit math</a></li></ul></article>
+
+    <article class="dp-card" id="compliant"><h3>15 · Compliant mechanism</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A one-piece gripper whose jaws close when the thin flexure hinges bend">
+        <path class="d-plastic" d="M110 130 V80 L90 40 H110 L130 76 L150 40 H170 L150 80 V130 Z"/>
+        <circle class="d-surface2" cx="130" cy="86" r="3"/><circle class="d-surface" cx="116" cy="82" r="2"/><circle class="d-surface" cx="144" cy="82" r="2"/>
+        <path class="d-ink arrow" d="M130 20 V36" style="stroke:var(--red)"/><path class="d-ink arrow" d="M70 56 H88"/><path class="d-ink arrow" d="M190 56 H172"/>
+        <text class="t-xs" x="170" y="120">hinge 0.8 mm, arm 3 mm</text>
+      </svg><figcaption><b>Figure 15.</b> One-piece gripper: thin hinges bend, thick arms stay rigid.</figcaption></figure>
+      <p><b>Use:</b> tweezers, grippers, clamps, mechanical sample holders.</p>
+      <ul class="dp-par"><li>Rigid arms ≥ 3 mm thick; hinge neck 0.8–1.2 mm</li><li>Make the hinge long (10–15 mm) to spread strain; use fillets</li><li>Use PETG or nylon; check by hand-cycling 100 times</li></ul></article>
+
+    <article class="dp-card" id="gear-train"><h3>16 · Gear train</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Two meshing spur gears with a speed ratio">
+        <circle cx="100" cy="76" r="40" style="fill:none;stroke:var(--blue);stroke-width:9;stroke-dasharray:6 4"/><circle class="d-plastic" cx="100" cy="76" r="36"/><circle class="d-surface2" cx="100" cy="76" r="8"/>
+        <circle cx="170" cy="76" r="28" style="fill:none;stroke:var(--orange);stroke-width:9;stroke-dasharray:6 4"/><circle class="d-plastic" cx="170" cy="76" r="24"/><circle class="d-surface2" cx="170" cy="76" r="6"/>
+        <text class="t-xs t-c" x="100" y="136">30 teeth</text><text class="t-xs t-c" x="170" y="136">20 teeth → 1.5 : 1</text>
+      </svg><figcaption><b>Figure 16.</b> Gears of module 2 mesh at (z₁ + z₂) × 1 mm centre distance.</figcaption></figure>
+      <p><b>Use:</b> toys, gearboxes, clocks, adjustable feeders.</p>
+      <ul class="dp-par"><li>Module 1.5–2 (tooth ≥ 3 mm), 20° pressure angle, ≥ 12 teeth</li><li>Backlash 0.2–0.3 mm; centre distance +0.2 mm</li><li>Print flat; PETG or nylon for wear; face width 6–10 mm</li><li>Rules: <a href="joints-and-fasteners.html#gears">gears</a></li></ul></article>
+
+    <article class="dp-card" id="cam"><h3>17 · Cam and follower</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="An eccentric cam turning against a follower rod which moves up and down">
+        <circle class="d-plastic" cx="110" cy="96" r="34"/><circle class="d-metal" cx="122" cy="96" r="5"/>
+        <rect class="d-surface2" x="94" y="20" width="32" height="44"/><path class="d-ink arrow arrow-start" d="M150 24 V62"/>
+        <text class="t-xs" x="160" y="46">lift 6 mm</text><text class="t-xs" x="40" y="146">eccentric offset = lift ÷ 2</text>
+      </svg><figcaption><b>Figure 17.</b> An eccentric disc converts rotation into up-down motion.</figcaption></figure>
+      <p><b>Use:</b> valves, clamps, indexing stops, small animated models.</p>
+      <ul class="dp-par"><li>Lift = 2 × offset; keep pressure angle &lt; 30° or the follower binds</li><li>Follower tip radius ≥ 3 mm; clearance 0.3 mm in its guide</li><li>Steel axle Ø 3 or 4 mm through a 0.2 mm slip fit</li></ul></article>
+
+    <article class="dp-card" id="planetary"><h3>18 · Planetary gear</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Sun gear in the middle, three planet gears and an outer ring gear">
+        <circle cx="130" cy="76" r="62" style="fill:none;stroke:var(--purple);stroke-width:8;stroke-dasharray:6 4"/><circle cx="130" cy="76" r="56" class="d-surface"/>
+        <circle class="d-plastic" cx="130" cy="76" r="18"/><circle class="d-plastic" cx="130" cy="42" r="14"/><circle class="d-plastic" cx="100" cy="90" r="14"/><circle class="d-plastic" cx="160" cy="90" r="14"/>
+        <text class="t-xs" x="196" y="40">ring 48</text><text class="t-xs" x="196" y="56">planet 12 × 3</text><text class="t-xs" x="196" y="72">sun 24</text>
+      </svg><figcaption><b>Figure 18.</b> Ring = sun + 2 × planet; planets must be spaced evenly.</figcaption></figure>
+      <p><b>Use:</b> compact 3:1 – 5:1 reducers for motors, spinners, fidget toys.</p>
+      <ul class="dp-par"><li>Constraint: ring teeth = sun teeth + 2 × planet teeth; (ring + sun) ÷ planets = integer</li><li>Backlash 0.25 mm; helical or herringbone teeth are quiet</li><li>Use a carrier of 4 mm thickness with steel pins Ø 3</li></ul></article>
+
+    <article class="dp-card" id="bearing-in-place"><h3>19 · Ball bearing in place</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Print-in-place bearing: inner ring, balls and outer ring separated by gaps">
+        <circle class="d-plastic" cx="130" cy="76" r="58"/><circle class="d-surface" cx="130" cy="76" r="44"/><circle class="d-plastic" cx="130" cy="76" r="30"/><circle class="d-surface" cx="130" cy="76" r="14"/>
+        <circle class="d-metal" cx="130" cy="32" r="7"/><circle class="d-metal" cx="168" cy="98" r="7"/><circle class="d-metal" cx="92" cy="98" r="7"/>
+        <text class="t-xs" x="196" y="58">gap 0.4</text><text class="t-xs" x="196" y="76">ball Ø 5–6</text><text class="t-xs" x="196" y="94">race groove 0.6</text>
+      </svg><figcaption><b>Figure 19.</b> A bearing printed in place with captive balls.</figcaption></figure>
+      <p><b>Use:</b> fidget spinners, turntables, demonstrations. Not for loads; buy a real bearing for machines.</p>
+      <ul class="dp-par"><li>Gap 0.4–0.5 mm; balls Ø ≥ 5 mm; 45° race walls</li><li>Print with a brim off, break free by twisting; slow speed</li><li>Rules: <a href="joints-and-fasteners.html#bearings">bearings</a>, <a href="joints-and-fasteners.html#print-in-place">print-in-place</a></li></ul></article>
+
+    <article class="dp-card" id="captive-nut"><h3>20 · Captive nut</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Side view with a hex pocket cut from the side, a nut inserted and a bolt through it">
+        <rect class="d-plastic" x="70" y="30" width="120" height="90"/><polygon class="d-surface2" points="100,76 112,66 148,66 160,76 148,86 112,86"/>
+        <rect class="d-surface" x="156" y="66" width="34" height="20"/>
+        <path class="d-ink" d="M130 20 V120" style="stroke-width:3;stroke:var(--orange);stroke-dasharray:6 3"/><text class="t-xs" x="196" y="60">insert from the side</text><text class="t-xs" x="196" y="76">M3: 5.7 AF × 2.6</text><text class="t-xs" x="196" y="92">pocket +0.2</text>
+      </svg><figcaption><b>Figure 20.</b> A slot lets the nut slide in; the bolt locks it.</figcaption></figure>
+      <p><b>Use:</b> any threaded connection that is tightened often: hardware, camera mounts, adjustable arms.</p>
+      <ul class="dp-par"><li>M3 nut 5.5 mm across flats, 2.4 mm thick → pocket 5.7–5.9 × 2.6–2.8 mm</li><li>Pause the print to insert from above, or use a side slot (no pause)</li><li>Wall around the pocket ≥ 1.6 mm; fillets only outside the pocket</li><li>Rules: <a href="joints-and-fasteners.html#bolted">bolted joints</a></li></ul></article>
+
+  </div>
+
+  <h2 id="structure">🔧 Structure and connections</h2>
+  <div class="dp-grid">
+
+    <article class="dp-card" id="press-peg"><h3>21 · Press-fit pegs</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A peg with a slotted tip pressed into a hole with a chamfer and a small crush rib">
+        <rect class="d-plastic" x="30" y="86" width="66" height="34"/><rect class="d-plastic" x="112" y="86" width="118" height="34"/>
+        <rect class="d-surface2" x="96" y="50" width="16" height="58"/><path class="d-ink" d="M104 50 V80" style="stroke:var(--red);stroke-dasharray:3 2"/>
+        <path class="d-ink arrow" d="M104 22 V44"/><text class="t-xs" x="124" y="44">peg Ø 5, hole Ø 4.9</text><text class="t-xs" x="120" y="140">interference 0.05–0.1; chamfer 0.5</text>
+      </svg><figcaption><b>Figure 21.</b> A split peg flexes slightly and presses into its hole.</figcaption></figure>
+      <p><b>Use:</b> alignment pins, two-part assemblies, quick prototypes.</p>
+      <ul class="dp-par"><li>Hole diameter = peg diameter − 0.05 to −0.1 mm (hole made by the slicer, so test)</li><li>Add a 0.5 mm lead-in chamfer and a 1 mm slit for flexibility</li><li>Pegs are strongest when their axis is in the layer plane for bending, vertical for shear</li><li>Rules: <a href="tolerances-and-fits.html#dowels">dowels</a></li></ul></article>
+
+    <article class="dp-card" id="gusset-bracket"><h3>22 · Bracket with gussets</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="An L-bracket with a triangular gusset and a root fillet">
+        <polygon class="d-plastic" points="60,24 76,24 76,106 190,106 190,122 60,122"/>
+        <polygon class="d-surface2" points="76,60 76,106 122,106"/>
+        <path class="d-ink arrow" d="M190 90 V110" style="stroke:var(--red)"/>
+        <text class="t-xs" x="130" y="50">wall 3.2 (8 lines)</text><text class="t-xs" x="130" y="66">gusset 1.6 thick</text><text class="t-xs" x="130" y="82">fillet r 3+</text>
+      </svg><figcaption><b>Figure 22.</b> Gusset and a fillet at the inside corner.</figcaption></figure>
+      <p><b>Use:</b> shelf supports, motor mounts, brackets for a frame.</p>
+      <ul class="dp-par"><li>Print the L on its side so layers run along both legs, not across the corner</li><li>Gusset thickness ≥ 50 % of the wall; length ≥ 0.6 × leg</li><li>Fillet r ≥ 3 mm at the root; ≥ 4 walls</li><li>Rules: <a href="joints-and-fasteners.html#ribs">ribs and gussets</a>, <a href="strength-and-orientation.html#orientation">orientation</a></li></ul></article>
+
+    <article class="dp-card" id="modular-connector"><h3>23 · Modular connectors</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Two panels joined by a double dovetail key">
+        <rect class="d-plastic" x="40" y="50" width="76" height="60"/><rect class="d-plastic" x="144" y="50" width="76" height="60"/>
+        <polygon class="d-surface2" points="100,62 116,62 120,70 120,90 116,98 100,98"/>
+        <polygon class="d-metal" points="116,56 144,56 140,104 120,104"/>
+        <text class="t-xs" x="40" y="130">key 10 wide, 45° flanks, 0.25 clearance</text>
+      </svg><figcaption><b>Figure 23.</b> A bow-tie or dovetail key joins two modules.</figcaption></figure>
+      <p><b>Use:</b> tiles, modular furniture models, large panels split for a small bed.</p>
+      <ul class="dp-par"><li>Bow-tie key 10–15 mm wide, 6 mm deep, 45° flanks</li><li>Clearance 0.2–0.3 mm per side; print the key flat so it spans layers</li><li>A 0.2 mm ridge on the key gives a friction hold</li><li>Rules: <a href="joints-and-fasteners.html#shape-joints">shape joints</a>, <a href="joints-and-fasteners.html#splitting">splitting</a></li></ul></article>
+
+    <article class="dp-card" id="jig"><h3>24 · Custom jig</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A drilling jig: a block with a guide hole and a stop fence over a workpiece">
+        <rect class="d-surface2" x="50" y="104" width="160" height="14"/><rect class="d-plastic" x="70" y="52" width="120" height="48"/><rect class="d-surface" x="110" y="52" width="20" height="48"/>
+        <path class="d-ink arrow" d="M120 20 V50" style="stroke:var(--red)"/><rect class="d-plastic" x="50" y="40" width="18" height="78"/>
+        <text class="t-xs" x="138" y="44">guide Ø = drill + 0.2</text><text class="t-xs" x="70" y="136">fence 3 mm, steel sleeve for long runs</text>
+      </svg><figcaption><b>Figure 24.</b> A jig locates the work and guides the tool.</figcaption></figure>
+      <p><b>Use:</b> drilling, gluing, cutting, assembling, positioning parts for repeated work.</p>
+      <ul class="dp-par"><li>Datum on 2 faces (fence + stop); clearance 0.2 mm to the workpiece</li><li>Guide hole = drill Ø + 0.2 mm, height ≥ 2 × drill Ø</li><li>PLA wears quickly under drills: add brass or steel sleeves for 50+ uses</li></ul></article>
+
+    <article class="dp-card" id="adapter"><h3>25 · Adapter</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A conical adapter between a 32 mm and a 38 mm pipe, with a 45 degree transition">
+        <polygon class="d-plastic" points="50,40 120,40 150,56 210,56 210,100 150,100 120,116 50,116"/>
+        <polygon class="d-surface" points="62,50 120,50 150,66 200,66 200,90 150,90 120,106 62,106"/>
+        <text class="t-xs" x="50" y="32">Ø 38</text><text class="t-xs" x="170" y="48">Ø 32</text><text class="t-xs" x="50" y="136">transition 45°, wall 2</text>
+      </svg><figcaption><b>Figure 25.</b> A stepped adapter joining two diameters.</figcaption></figure>
+      <p><b>Use:</b> vacuum hoses, tube fittings, tool mounts, camera adapters.</p>
+      <ul class="dp-par"><li>Measure both ends at 3 places; fit = measured Ø − 0.2 to 0.3 mm for a tight push</li><li>Taper ≤ 45° from vertical, or print the adapter standing</li><li>Ribs on the spigot to grip hoses; wall ≥ 2 mm</li></ul></article>
+
+    <article class="dp-card" id="vase"><h3>26 · Vase / spiral shell</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A vase profile printed in single-wall spiral mode with a flared top and a thicker base">
+        <path class="d-plastic" d="M100 20 C80 50 78 90 96 124 H164 C182 90 180 50 160 20 Z"/>
+        <path class="d-surface" d="M106 26 C90 54 88 90 104 118 H156 C172 90 170 54 154 26 Z"/>
+        <text class="t-xs" x="190" y="40">wall = one line</text><text class="t-xs" x="190" y="58">0.42–0.6 mm</text><text class="t-xs" x="190" y="76">base 2–3 mm solid</text>
+      </svg><figcaption><b>Figure 26.</b> A single-wall profile; slope stays below 45° outward.</figcaption></figure>
+      <p><b>Use:</b> decorative vases, lamps, pots. Water-tight with a sealed base and a spiral-vase mode.</p>
+      <ul class="dp-par"><li>Spiral vase mode: one line wall, no top, no infill, bottom 3–5 layers</li><li>Outward flare ≤ 35° from vertical; thin features ≥ 0.8 mm</li><li>Coat with epoxy or use a liner for a drink-safe result</li></ul></article>
+
+  </div>
+
+  <h2 id="workflows">🚀 Workflow patterns</h2>
+  <p>Some patterns are not shapes but <em>ways of working</em>. They save the most time because they stop you printing the wrong part twice.</p>
+  <div class="dp-grid">
+
+    <article class="dp-card" id="replacement-part"><h3>27 · Replacement-part workflow</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Flow: measure the broken part, model, print a quick test slice, fit check, final print">
+        <rect class="f-blue" x="10" y="50" width="42" height="40" rx="6"/><rect class="f-green" x="62" y="50" width="42" height="40" rx="6"/><rect class="f-orange" x="114" y="50" width="42" height="40" rx="6"/><rect class="f-purple" x="166" y="50" width="42" height="40" rx="6"/><rect class="f-teal" x="218" y="50" width="34" height="40" rx="6"/>
+        <path class="d-ink arrow" d="M52 70 H60 M104 70 H112 M156 70 H164 M208 70 H216"/>
+        <text class="t-xs t-c" x="31" y="74">measure</text><text class="t-xs t-c" x="83" y="74">model</text><text class="t-xs t-c" x="135" y="74">slice 5 mm</text><text class="t-xs t-c" x="187" y="74">fit check</text><text class="t-xs t-c" x="235" y="74">print</text>
+        <path class="d-dash" d="M187 94 V120 H83 V94" style="stroke:var(--red)"/><text class="t-xs t-c" x="135" y="136">adjust and repeat</text>
+      </svg><figcaption><b>Figure 27.</b> Print a thin slice of the critical area first.</figcaption></figure>
+      <ol class="steps"><li>Measure the interface (not the whole part) with callipers at 3 places; photograph the part with a ruler.</li><li>Model the interface exactly and the rest freely, with every dimension as a parameter.</li><li>Print a 3–5 mm slice of the critical area with 2 walls (10 minutes) and check the fit.</li><li>Adjust by 0.1 mm steps; then print the full part in a tougher material than the original if loads are unknown.</li></ol></article>
+
+    <article class="dp-card" id="cosplay-split"><h3>28 · Cosplay shell splitting</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A helmet outline split in two halves along a hidden seam with alignment pins">
+        <path class="d-plastic" d="M60 120 V70 Q60 24 130 24 Q200 24 200 70 V120 Z"/>
+        <path class="d-ink" d="M130 24 V120" style="stroke:var(--red);stroke-width:2;stroke-dasharray:5 3"/>
+        <circle class="d-metal" cx="130" cy="50" r="4"/><circle class="d-metal" cx="130" cy="90" r="4"/>
+        <text class="t-xs" x="140" y="48">pin Ø 4</text><text class="t-xs" x="140" y="108">seam on a hard edge</text><text class="t-xs" x="40" y="142">piece ≤ bed − 10 mm</text>
+      </svg><figcaption><b>Figure 28.</b> Cut along natural edges; join with pins and overlap.</figcaption></figure>
+      <p><b>Use:</b> helmets, armour, props larger than the bed.</p>
+      <ul class="dp-par"><li>Cut on existing creases and panel lines; hide seams under straps</li><li>Overlap tabs 8 mm wide, 1.6 mm thick, with pins Ø 4 mm every 40 mm</li><li>Orient each piece so curves are not stair-stepped; plan sanding allowance of 0.4 mm</li><li>Rules: <a href="joints-and-fasteners.html#splitting">splitting large parts</a></li></ul></article>
+
+    <article class="dp-card" id="miniature"><h3>29 · Miniatures</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A small figure tilted 45 degrees on a base with supports from the base only">
+        <rect class="d-surface2" x="50" y="124" width="160" height="8"/>
+        <path class="d-plastic" d="M110 118 L136 40 L152 46 L130 120 Z" transform="rotate(12 130 120)"/>
+        <circle class="d-plastic" cx="150" cy="30" r="12" transform="rotate(12 130 120)"/>
+        <path class="d-dash" d="M190 124 L170 70"/><text class="t-xs" x="40" y="26">layer 0.08–0.12</text><text class="t-xs" x="40" y="42">nozzle 0.2 optional</text><text class="t-xs" x="175" y="104">tilt 15–45°</text>
+      </svg><figcaption><b>Figure 29.</b> Tilt the figure slightly to avoid large flat undersides.</figcaption></figure>
+      <p><b>Use:</b> game pieces, dioramas, 28–32 mm figures.</p>
+      <ul class="dp-par"><li>Layer height 0.08–0.12 mm; a 0.2 mm nozzle resolves 0.4 mm details</li><li>Minimum solid feature 0.6 mm (e.g. a sword), best 1 mm; thin parts bend, thick parts hold paint</li><li>Tilt 15–45° and use tree supports that touch only the base</li><li>Print slowly (30–40 mm/s) with cooling at 100 %</li></ul></article>
+
+    <article class="dp-card" id="outdoor"><h3>30 · Outdoor functional print</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A sloped roof with drip edge, drain holes and UV exposure arrows hitting a printed housing">
+        <polygon class="d-plastic" points="50,60 130,32 210,60 210,66 50,66"/><rect class="d-plastic" x="60" y="66" width="140" height="56"/><rect class="d-surface" x="70" y="70" width="120" height="44"/>
+        <rect class="d-surface2" x="120" y="118" width="20" height="4"/>
+        <path class="d-ink arrow" d="M20 20 L50 44 M220 20 L190 44" style="stroke:var(--orange)"/>
+        <text class="t-xs" x="40" y="140">drain 3 mm hole, drip edge 3 mm overhang</text>
+      </svg><figcaption><b>Figure 30.</b> Water runs off, UV is shaded, trapped water has an exit.</figcaption></figure>
+      <p><b>Use:</b> garden sensors, camera housings, hooks, drainage fittings.</p>
+      <ul class="dp-par"><li>Material: ASA (best), PETG, PC; not PLA (softens at 55–60 °C in a parked car)</li><li>Slope surfaces ≥ 10° so water does not pool; drip edge ≥ 3 mm; drain holes 3 mm at the lowest point</li><li>Walls 2.4 mm (6 lines) to survive freeze–thaw; dark colours get hotter</li><li>Use stainless hardware with a heat-set insert, never a bare thread</li></ul></article>
+
+  </div>
+
+  <h2 id="orientation-material">🔧 Orientation and material per pattern</h2>
+  <p>The same shape fails differently depending on how it lies on the bed and what it is made of. Use this table as the first guess, then confirm with the <a href="strength-and-orientation.html">strength and orientation</a> rules. A pattern with the wrong orientation can lose half its strength even if every dimension is perfect.</p>
+
+  <div class="table-wrap"><table class="data compact dp-table">
+    <thead><tr><th>Pattern</th><th>Print orientation</th><th>Material</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Snap lid (1)</td><td>Lid flat, bumps on the wall facing sideways</td><td>PETG, ABS, ASA</td><td>Snap arms need strain 1–2 %, PLA reaches 0.4 % when repeated</td></tr>
+      <tr><td>Screw enclosure (2)</td><td>Open side up</td><td>Any; inserts in PLA</td><td>Bosses grow along Z with horizontal rings</td></tr>
+      <tr><td>Hinge box (4)</td><td>Hinge axis horizontal, box upright</td><td>PETG</td><td>Layers run around the pin</td></tr>
+      <tr><td>Cable clip (6)</td><td>On its side, C in the XY plane</td><td>PETG, ABS</td><td>Bending along the layers</td></tr>
+      <tr><td>Phone stand (8)</td><td>On its side</td><td>PLA, PETG</td><td>Bending load follows lines</td></tr>
+      <tr><td>Flexure (14)</td><td>Flat, bend in XY</td><td>PETG, TPU 95A, nylon</td><td>Z-bending delaminates</td></tr>
+      <tr><td>Gears (16, 18)</td><td>Flat on the bed</td><td>PETG, nylon, POM-like</td><td>Teeth are strongest along the layer</td></tr>
+      <tr><td>Bracket (22)</td><td>L on its side</td><td>PETG, PA-CF</td><td>Layers run through both legs</td></tr>
+      <tr><td>Jig (24)</td><td>Datum face down</td><td>PLA, PETG, PLA-CF</td><td>Datum faces are accurate against the bed</td></tr>
+      <tr><td>Outdoor housing (30)</td><td>Open side up, lid flat</td><td>ASA, PC</td><td>UV and heat resistance</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="parameter-sets">🔧 Parameters worth exposing</h2>
+  <p>Before modelling a pattern, list the parameters that change between uses. Everything else should be a derived value (calculated from them) so that one change never breaks another. A short list keeps the model simple:</p>
+  <ul>
+    <li><b>Interface parameters</b> (set by the outside world): screw size, magnet diameter, board dimensions, tool diameters, cable diameter, bed size.</li>
+    <li><b>Printer parameters</b>: line width (0.42 mm), layer height (0.2 mm), clearance per fit class (0.1, 0.2, 0.3, 0.4 mm), minimum wall.</li>
+    <li><b>Material parameters</b>: shrinkage correction and allowable strain for snaps (e.g. PETG 1 %).</li>
+    <li><b>Style parameters</b>: fillet radius, chamfer size, wall thickness, text height.</li>
+  </ul>
+  <p>The first group changes by project, the second by printer, the third by filament and the fourth by taste. Keeping them apart in the model's header is what makes a pattern reusable: you copy it into the next project and fix only the first group. The complete method, including a sample OpenSCAD file, is in <a href="parametric-cad-workflow.html">Parametric CAD workflow</a>.</p>
+
+  <div class="callout trick"><span class="callout-title">Trick: derive, don't type</span>
+    <p>If a lid lip needs to fit a box inner wall, write <span class="dp-eq">lip_outer = inner − 2 × clearance</span> instead of a second hand-typed number. When you change the box, the lid follows. Hand-typed duplicates are the biggest source of mismatched parts.</p></div>
+
+  <h2 id="test-each">🚀 Testing a pattern before you commit</h2>
+  <p>Every pattern in this page has one critical interface. Instead of printing the whole object, print only that interface as a <b>test slice</b> and measure it. A snap lid is checked with a 20 mm length of wall; a thread with a 12 mm tall ring; a hinge with two knuckles; a gear mesh with two gears of 10 mm face width. The slices cost minutes, the full part may cost hours.</p>
+  <ol class="steps">
+    <li>Choose the one feature that decides success (the clearance, the strain, the thread engagement).</li>
+    <li>Print three variants at once, for example clearances 0.2, 0.3 and 0.4 mm, labelled with embossed numbers.</li>
+    <li>Fit-check by hand: does it assemble, move without play and hold the load you expect?</li>
+    <li>Pick the winner, write the value in the parameter table together with filament, printer and nozzle.</li>
+    <li>Print the full part and record any difference so the next version starts from facts.</li>
+  </ol>
+
+  <div class="callout info"><span class="callout-title">Why one set of parameters is not enough</span>
+    <p>Clearances change with filament (PLA +0.15, PETG +0.2, ABS −0.05 relative), nozzle, speed and even humidity. Keep a short table for each filament you use regularly. See <a href="tolerances-and-fits.html#parameters">designing parameters in CAD</a>.</p></div>
+
+  <h2 id="assembly">🔧 Assembly order and tolerances</h2>
+  <p>Patterns combine, and so do their tolerances. A box with a screw lid, an inner tray and a drawer stacks the errors of all parts: if each has ±0.15 mm, the stack can reach ±0.45 mm. Fix this by choosing <b>one reference face</b> per assembly, designing fits at the end of the chain, and adding <b>slotted holes</b> or oversize clearances for the last component to be fitted. The rules of tolerance stack-up are in <a href="tolerances-and-fits.html">Tolerances &amp; fits</a>. Plan the <b>assembly order</b> too: a captive nut must be inserted before the lid is closed, a pin before the hinge knuckle's second half and a magnet before the cover plate; otherwise the part cannot be built and no tolerance fixes it. Draw an exploded view and number the parts in the order they are fitted.</p>
+
+  <div class="callout tip"><span class="callout-title">Tip</span>
+    <p>Add a visible alignment mark (a small triangle, 0.6 mm raised) on parts that fit only one way. It prevents wrong assembly and takes two minutes to add.</p></div>
+
+  <h2 id="choosing">🔰 Choosing a pattern</h2>
+  <p>Ask three questions: <b>what moves</b>, <b>what is loaded</b>, <b>how often is it opened</b>. The table links each need to a pattern and to the rule page with the maths.</p>
+
+  <div class="table-wrap"><table class="data compact dp-table">
+    <thead><tr><th>Need</th><th>First choice</th><th>Alternative</th><th>Avoid</th></tr></thead>
+    <tbody>
+      <tr><td>Opens rarely</td><td>Snap lid (1)</td><td>Press-fit lid</td><td>Fine thread</td></tr>
+      <tr><td>Opens often</td><td>Screw lid with inserts (2)</td><td>Hinge box (4)</td><td>Self-tapping in PLA, 10+ cycles</td></tr>
+      <tr><td>Rotates</td><td>Steel axle in a 0.2 mm slip fit</td><td>Printed pin (4)</td><td>Printed bearing under load (19)</td></tr>
+      <tr><td>Springs back</td><td>Flexure in PETG (14)</td><td>Metal spring</td><td>Flexure in PLA</td></tr>
+      <tr><td>Holds a tool</td><td>Pocket plate (7)</td><td>Magnetic mount (10)</td><td>Thin wall pockets</td></tr>
+      <tr><td>Too big for the bed</td><td>Split with pins (28, 23)</td><td>Dovetail key (23)</td><td>Flat butt joint</td></tr>
+      <tr><td>Must be stiff</td><td>Gusset bracket (22)</td><td>Rib-grid (see <a href="strength-and-orientation.html#ribs-hollow">ribs</a>)</td><td>Infill 100 % in a thin wall</td></tr>
+      <tr><td>Weatherproof</td><td>Outdoor housing (30)</td><td>Gasketed jar (5)</td><td>PLA, no drain</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Combining patterns: a worked example</h3>
+  <p>A weatherproof sensor box for a garden uses at least five patterns. The housing is a screw-lid enclosure (2) with a gasketed lid, in ASA (30). The board sits on standoffs (3) with vent slots that face down and are covered by a drip edge. The box hangs on a wall by a keyhole slot (9) on the back. The cable leaves through a clip-style grommet (6). Its lid screws use heat-set inserts. At each junction the rules from <a href="joints-and-fasteners.html">Joints &amp; fasteners</a> apply: fillets ≥ 1 mm, bosses with ribs, and walls of 2.4 mm. Writing the box as one parametric model (inner size, wall, screw size, clearance) means a bigger board needs one number change, not a redesign.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 220" role="img" aria-label="Decision flow from need to pattern: moves, loaded, opened often, with branches to patterns">
+      <rect class="f-blue" x="20" y="80" width="110" height="50" rx="8"/><text class="t-sm t-b t-c" x="75" y="110">Need</text>
+      <path class="d-ink arrow" d="M130 105 H170"/>
+      <rect class="f-green" x="172" y="20" width="150" height="46" rx="8"/><text class="t-xs t-c" x="247" y="48">moves? → hinge / gear / cam</text>
+      <rect class="f-orange" x="172" y="86" width="150" height="46" rx="8"/><text class="t-xs t-c" x="247" y="114">loaded? → gusset / rib / insert</text>
+      <rect class="f-purple" x="172" y="152" width="150" height="46" rx="8"/><text class="t-xs t-c" x="247" y="180">opened often? → screws / inserts</text>
+      <path class="d-ink arrow" d="M322 43 H370 M322 109 H370 M322 175 H370"/>
+      <rect class="d-surface" x="372" y="20" width="320" height="180" rx="10"/>
+      <text class="t-sm t-b" x="388" y="46">Then check</text>
+      <text class="t-xs" x="388" y="70">1. Orientation: layers along the load</text><text class="t-xs" x="388" y="90">2. Overhangs ≤ 45° or a bridge ≤ 10 mm</text><text class="t-xs" x="388" y="110">3. Clearances from your coupon, not from this page</text><text class="t-xs" x="388" y="130">4. Test slice of the critical area</text><text class="t-xs" x="388" y="150">5. Material for the environment</text><text class="t-xs t-m" x="388" y="180">Write the parameters down before you model.</text>
+    </svg>
+    <figcaption><b>Figure 31.</b> A quick decision flow: what moves, what is loaded and how often it is opened decide the pattern; the checklist keeps it printable.</figcaption>
+  </figure>
+
+  <h2 id="anti-patterns">⚠️ Anti-patterns to avoid</h2>
+  <div class="pros-cons">
+    <div class="pros"><h4>Do</h4>
+      <ul><li>Reuse a tested pattern and change parameters</li><li>Print a test slice of every fit</li><li>Fillet inside corners, chamfer bottom edges</li><li>Put metal where the load is (inserts, pins, rods)</li><li>Record dimensions in a parameter table</li></ul></div>
+    <div class="cons"><h4>Don't</h4>
+      <ul><li>Make a snap-fit in PLA that has to open 100 times</li><li>Put a thread axis horizontal and expect it to last</li><li>Print a bearing for a real load</li><li>Copy a pattern at a different scale without recalculating the strain</li><li>Mix tolerances: one clearance for all fits</li></ul></div>
+  </div>
+
+  <div class="callout warn"><span class="callout-title">Safety</span>
+    <p>Printed parts must not be the only thing preventing injury: locks, climbing gear, pressure vessels, mains-electrical insulation and child-safety items need certified products. Use patterns here for convenience and hobby parts, and keep mains voltage in certified enclosures.</p></div>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul>
+    <li>A pattern is a topology plus parameters: copy the idea, then set the numbers for your printer, material and load.</li>
+    <li>Housings: 1.6 mm walls, 0.2–0.3 mm lid clearance, bosses with ribs and fillets.</li>
+    <li>Mechanisms need 0.3–0.5 mm clearances, tough materials (PETG, nylon) and a test coupon before the full print.</li>
+    <li>Structure: layers along the load, gussets ≥ 50 % of wall thickness, fillets ≥ 3 mm.</li>
+    <li>Workflows beat geometry: measure, model parametrically, print a test slice, then the final part.</li>
+  </ul>
+  <p>Next: <a href="parametric-cad-workflow.html">Parametric CAD workflow</a> turns these patterns into reusable, adjustable models. For the maths behind each joint see <a href="joints-and-fasteners.html">Joints &amp; fasteners</a>, and practise with the <a href="../exercises/level-2-intermediate.html">Level 2 exercises</a>.</p>
+
+
+</main>
+</body>
+</html>

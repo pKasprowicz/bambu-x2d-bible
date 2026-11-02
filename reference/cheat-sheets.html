@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cheat sheets · 3D Printing Compendium</title>
+  <meta name="description" content="Printable 3D printing cheat sheets: material temperatures, drying, layer height and nozzle rules, strength settings, tolerances, hole and thread sizes, G-code, troubleshooting, calibration order, first layer, formulas and an X2D quick-card.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+  <style>
+    .cs-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 1em 0 1.4em; }
+    .cs-bar .hint { color: var(--muted); font-size: 14px; }
+    .cs-jump { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 1.6em; padding: 0; list-style: none; }
+    .cs-jump li { margin: 0; }
+    .cs-jump a { display: inline-block; padding: 3px 10px; border: 1px solid var(--line); border-radius: 999px; font-size: 13px; text-decoration: none; background: var(--surface); }
+    .cs-sheet { border: 1px solid var(--line); border-radius: var(--radius); padding: 4px 18px 14px; margin: 0 0 1.6em; background: var(--surface); }
+    .cs-sheet > h2 { margin-top: .8em; }
+    .cs-two { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+    @media print {
+      .no-print { display: none !important; }
+      .cs-sheet { break-inside: avoid; page-break-inside: avoid; border: 1px solid #999; padding: 4px 10px 8px; margin-bottom: 10pt; }
+      .cs-sheet.cs-break { break-before: page; page-break-before: always; }
+      .cs-sheet table { font-size: 9pt; }
+      .cs-sheet p, .cs-sheet li { font-size: 10pt; }
+      main.content { max-width: none; padding: 0; }
+    }
+  </style>
+</head>
+<body data-page="reference/cheat-sheets.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 8 · Reference</div>
+    <h1>Cheat sheets</h1>
+    <p class="lead">Twenty compact, printable sheets for the printer bench: temperatures, drying, layer and nozzle rules, strength settings, tolerances, hole and thread sizes, G-code, a troubleshooting one-pager, calibration order, first-layer checks, formulas and an X2D quick-card. All values are typical starting points; your printer, filament and slicer have the last word.</p>
+    <div class="meta"><span class="badge beginner">All levels</span><span class="badge time">⏱ 25 min read</span></div>
+  </header>
+
+  <div class="cs-bar no-print">
+    <button type="button" class="btn" id="cs-print">🖨 Print this page</button>
+    <span class="hint">Tip: in the print dialog choose “Save as PDF”, enable background graphics for colored figures, and use A4/Letter portrait.</span>
+  </div>
+
+  <ul class="cs-jump no-print">
+    <li><a href="#s-materials">1 Materials</a></li><li><a href="#s-drying">2 Drying</a></li><li><a href="#s-layers">3 Layers &amp; nozzles</a></li><li><a href="#s-strength">4 Strength</a></li>
+    <li><a href="#s-tolerances">5 Tolerances</a></li><li><a href="#s-holes">6 Holes &amp; threads</a></li><li><a href="#s-pockets">7 Pockets</a></li><li><a href="#s-gcode">8 G-code</a></li>
+    <li><a href="#s-trouble">9 Troubleshooting</a></li><li><a href="#s-calibration">10 Calibration</a></li><li><a href="#s-firstlayer">11 First layer</a></li><li><a href="#s-formulas">12 Formulas</a></li>
+    <li><a href="#s-x2d">13 X2D</a></li><li><a href="#s-keys">14 Shortcuts</a></li><li><a href="#s-starting">16 Starting values</a></li><li><a href="#s-post">17 Post-processing</a></li><li><a href="#s-safety">18 Safety</a></li><li><a href="#s-preflight">19 Pre-flight</a></li><li><a href="#s-terms">20 Terms</a></li>
+  </ul>
+
+  <div class="callout info"><span class="callout-title">How to use these sheets</span>
+    <p>Each sheet fits on roughly half a page. Print the ones you use most and pin them next to the printer. Where a number is a range, start in the middle and adjust. Always follow the filament maker’s label when it differs from the table.</p></div>
+
+  <section class="cs-sheet" id="s-materials" aria-labelledby="s-materials-h">
+    <h2 id="s-materials-h">1 · Material temperature &amp; speed quick table</h2>
+    <div class="table-wrap"><table class="data compact">
+      <thead><tr><th>Material</th><th>Nozzle °C</th><th>Bed °C</th><th>Chamber / enclosure</th><th>Part fan</th><th>Typical speed</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>PLA</td><td>190–230</td><td>35–60</td><td>Open or vented</td><td>80–100 %</td><td>60–300 mm/s*</td><td>Softens near 55–60 °C</td></tr>
+        <tr><td>PLA+ / silk / matte</td><td>200–235</td><td>45–60</td><td>Open</td><td>60–100 %</td><td>40–200 mm/s</td><td>Silk: slower, hotter</td></tr>
+        <tr><td>PETG</td><td>230–260</td><td>70–85</td><td>Open or warm</td><td>30–60 %</td><td>40–200 mm/s</td><td>Strings; glue stick on smooth plates</td></tr>
+        <tr><td>ABS</td><td>240–270</td><td>90–110</td><td>Enclosed, 40–65 °C</td><td>0–30 %</td><td>40–200 mm/s</td><td>Fumes; ventilate</td></tr>
+        <tr><td>ASA</td><td>245–275</td><td>90–110</td><td>Enclosed, 40–65 °C</td><td>0–30 %</td><td>40–200 mm/s</td><td>UV stable</td></tr>
+        <tr><td>TPU 95A</td><td>210–235</td><td>30–60</td><td>Open</td><td>30–100 %</td><td>15–60 mm/s</td><td>Short filament path; low retraction</td></tr>
+        <tr><td>PA6 / PA12 (nylon)</td><td>250–290</td><td>80–100</td><td>Enclosed, warm</td><td>0–30 %</td><td>30–120 mm/s</td><td>Dry before use; glue stick</td></tr>
+        <tr><td>PC / PC blends</td><td>260–300</td><td>100–120</td><td>Enclosed, hot</td><td>0–20 %</td><td>30–100 mm/s</td><td>High warp risk</td></tr>
+        <tr><td>PET-CF / PA-CF / PA-GF</td><td>260–300</td><td>80–110</td><td>Enclosed, warm</td><td>0–30 %</td><td>30–120 mm/s</td><td>Hardened nozzle</td></tr>
+        <tr><td>PVA / BVOH (support)</td><td>180–220</td><td>45–60</td><td>Open, dry</td><td>50–100 %</td><td>20–60 mm/s</td><td>Very hygroscopic</td></tr>
+      </tbody></table></div>
+    <p><small>* Speed limited by volumetric flow (sheet 12) and printer acceleration. High-flow hotends allow the upper end; standard hotends plan on 12–20 mm³/s for PLA. Use the filament label as primary source.</small></p>
+
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 780 250" role="img" aria-label="Nozzle temperature ranges for common materials as horizontal bars from 180 to 300 degrees Celsius">
+        <g class="t t-xs"><text x="140" y="24">180</text><text x="260" y="24">200</text><text x="380" y="24">220</text><text x="500" y="24">240</text><text x="620" y="24">260</text><text x="740" y="24">280–300</text></g>
+        <g class="d-grid"><path d="M150 30 V232 M270 30 V232 M390 30 V232 M510 30 V232 M630 30 V232 M750 30 V232"/></g>
+        <g class="t t-sm">
+          <text x="10" y="50">PVA</text><text x="10" y="76">PLA</text><text x="10" y="102">TPU</text><text x="10" y="128">PETG</text><text x="10" y="154">ABS / ASA</text><text x="10" y="180">Nylon</text><text x="10" y="206">PC / CF blends</text>
+        </g>
+        <rect class="f-purple" x="150" y="40" width="144" height="14" rx="4"/>
+        <rect class="f-green" x="162" y="66" width="288" height="14" rx="4"/>
+        <rect class="f-blue" x="330" y="92" width="150" height="14" rx="4"/>
+        <rect class="f-orange" x="360" y="118" width="226" height="14" rx="4"/>
+        <rect class="f-red" x="440" y="144" width="260" height="14" rx="4"/>
+        <rect class="f-yellow" x="470" y="170" width="280" height="14" rx="4"/>
+        <rect class="f-gray" x="530" y="196" width="226" height="14" rx="4"/>
+      </svg>
+      <figcaption><b>Figure 1.</b> Typical nozzle ranges. The X2D nozzle tops out at 300 °C, which covers every bar here.</figcaption>
+    </figure>
+  </section>
+
+  <section class="cs-sheet" id="s-drying" aria-labelledby="s-drying-h">
+    <h2 id="s-drying-h">2 · Drying table</h2>
+    <div class="table-wrap"><table class="data compact">
+      <thead><tr><th>Material</th><th>Temperature</th><th>Time</th><th>Store at humidity</th><th>Sensitivity</th></tr></thead>
+      <tbody>
+        <tr><td>PLA</td><td>45–55 °C</td><td>4–8 h</td><td>&lt; 30 % RH</td><td>Low to medium</td></tr>
+        <tr><td>PETG</td><td>60–65 °C</td><td>4–8 h</td><td>&lt; 20–30 % RH</td><td>Medium</td></tr>
+        <tr><td>ABS / ASA</td><td>65–80 °C</td><td>4–6 h</td><td>&lt; 30 % RH</td><td>Low to medium</td></tr>
+        <tr><td>TPU</td><td>50–65 °C</td><td>6–8 h</td><td>&lt; 20 % RH</td><td>High</td></tr>
+        <tr><td>PA (nylon), PA-CF</td><td>70–90 °C</td><td>8–12 h</td><td>&lt; 10–15 % RH</td><td>Very high</td></tr>
+        <tr><td>PC</td><td>80–100 °C</td><td>6–8 h</td><td>&lt; 20 % RH</td><td>High</td></tr>
+        <tr><td>PVA / BVOH</td><td>45–55 °C</td><td>6–12 h</td><td>&lt; 10–15 % RH</td><td>Extreme</td></tr>
+      </tbody></table></div>
+    <div class="callout warn"><span class="callout-title">Stay under the spool’s limit</span>
+      <p>Cardboard spools survive ~50–60 °C; plastic spools usually 65–80 °C. A dryer with a lower maximum (the AMS 2 Pro tops out at 65 °C) cannot dry nylon or PC fully: use a dedicated dryer or a hot-air filament dryer for those. Signs of wet filament: popping or hissing, steam, bubbles, stringing, rough surface. See <a href="../materials/drying-and-storage.html">drying &amp; storage</a>.</p></div>
+  </section>
+
+  <section class="cs-sheet" id="s-layers" aria-labelledby="s-layers-h">
+    <h2 id="s-layers-h">3 · Layer height &amp; nozzle rules of thumb</h2>
+    <div class="cs-two">
+      <div>
+        <div class="table-wrap"><table class="data compact">
+          <thead><tr><th>Nozzle</th><th>Layer height</th><th>Line width</th><th>Best for</th></tr></thead>
+          <tbody>
+            <tr><td>0.2 mm</td><td>0.05–0.15</td><td>0.22–0.26</td><td>Miniatures, fine text</td></tr>
+            <tr><td>0.4 mm</td><td>0.08–0.30</td><td>0.42–0.50</td><td>General purpose</td></tr>
+            <tr><td>0.6 mm</td><td>0.15–0.45</td><td>0.62–0.75</td><td>Fast, strong parts</td></tr>
+            <tr><td>0.8 mm</td><td>0.20–0.60</td><td>0.82–1.0</td><td>Large, draft, vases</td></tr>
+          </tbody></table></div>
+      </div>
+      <div>
+        <ul>
+          <li><b>Layer height ≈ 25–75 % of the nozzle diameter.</b> Below 25 % the plastic is squashed and unreliable; above 75 % layer bonding suffers.</li>
+          <li><b>Line width ≈ 100–125 % of nozzle diameter</b>; wider lines are stronger and faster.</li>
+          <li><b>Halve the layer height → double the time</b> (roughly) and hide more layer lines.</li>
+          <li><b>Strength:</b> thicker layers and wider lines usually bond better than tiny ones.</li>
+          <li><b>Details smaller than the nozzle</b> cannot be printed; keep features ≥ 1× line width, walls ≥ 2 lines.</li>
+        </ul>
+      </div>
+    </div>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 780 220" role="img" aria-label="Layer-height illustration: thin layers on the left give smooth curves, thick layers on the right give visible steps">
+        <g>
+          <rect class="d-surface" x="20" y="20" width="360" height="180" rx="10"/><text class="t t-b t-c" x="200" y="42">0.08 mm layers: smooth, slow</text>
+          <path class="d-plastic" d="M60 180 V168 H62 V160 H66 V152 H72 V145 H80 V138 H90 V132 H102 V126 H116 V121 H132 V117 H150 V114 H170 V112 H200 V114 H230 V117 H250 V121 H266 V126 H278 V132 H290 V138 H300 V145 H308 V152 H314 V160 H318 V168 H320 V180 Z"/>
+        </g>
+        <g>
+          <rect class="d-surface" x="400" y="20" width="360" height="180" rx="10"/><text class="t t-b t-c" x="580" y="42">0.28 mm layers: stepped, fast</text>
+          <path class="d-plastic" d="M440 180 V160 H446 V140 H466 V124 H500 V112 H560 V112 H620 V112 H660 V124 H694 V140 H714 V160 H720 V180 Z"/>
+        </g>
+      </svg>
+      <figcaption><b>Figure 2.</b> Thin layers follow curves smoothly; thick layers are fast and strong but show steps on shallow slopes.</figcaption>
+    </figure>
+  </section>
+
+  <section class="cs-sheet" id="s-strength" aria-labelledby="s-strength-h">
+    <h2 id="s-strength-h">4 · Infill &amp; walls for strength by application</h2>
+    <div class="table-wrap"><table class="data compact">
+      <thead><tr><th>Application</th><th>Walls</th><th>Infill</th><th>Top / bottom layers</th><th>Orientation tip</th></tr></thead>
+      <tbody>
+        <tr><td>Decorative / display</td><td>2</td><td>5–10 % gyroid</td><td>4 / 3</td><td>Best-looking face up</td></tr>
+        <tr><td>Prototype / fit test</td><td>2–3</td><td>10–15 % grid/cubic</td><td>4 / 4</td><td>Fast layers, 0.2–0.28 mm</td></tr>
+        <tr><td>Everyday functional (brackets, clips)</td><td>3–4</td><td>20–30 % gyroid/cubic</td><td>5 / 4</td><td>Layers perpendicular to the main load</td></tr>
+        <tr><td>Load-bearing / mechanical</td><td>4–6</td><td>30–50 %</td><td>6 / 5</td><td>Never load layers in tension</td></tr>
+        <tr><td>Threaded or insert bosses</td><td>4+</td><td>40–100 % near the boss</td><td>5 / 5</td><td>Axis of screw ∥ layers is weaker</td></tr>
+        <tr><td>Watertight / pressure</td><td>4–6</td><td>40–100 %</td><td>6 / 6</td><td>Hot nozzle, slow, high flow stability</td></tr>
+        <tr><td>Flexible (TPU)</td><td>2–3</td><td>10–20 % gyroid</td><td>4 / 4</td><td>Low speed</td></tr>
+        <tr><td>Vase / spiral</td><td>1 continuous</td><td>0 %</td><td>Solid base</td><td>0.6–0.8 mm nozzle for strength</td></tr>
+      </tbody></table></div>
+    <p><b>Remember:</b> walls add more strength than infill. Adding a wall usually beats adding 20 % infill. Fine-tune with local modifiers (extra walls only around holes).</p>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 780 240" role="img" aria-label="Relative strength versus relative print time as walls and infill increase; walls give more strength per hour">
+        <path class="d-grid" d="M80 20 V200 H740"/>
+        <text class="t t-xs" x="20" y="120" transform="rotate(-90 20 120)">Strength →</text><text class="t t-xs" x="400" y="228">Print time / material →</text>
+        <path class="k-green" d="M80 190 C150 100 230 70 330 60 C430 52 540 48 730 44" fill="none"/><text class="t t-xs" x="520" y="40" fill="currentColor">add walls</text>
+        <path class="k-orange" d="M80 190 C200 170 320 140 440 112 C560 86 650 70 730 62" fill="none"/><text class="t t-xs" x="560" y="92">add infill</text>
+        <circle class="s-green" cx="230" cy="70" r="6"/><text class="t t-xs" x="238" y="62">3–4 walls: big gain</text>
+        <circle class="s-orange" cx="440" cy="112" r="6"/><text class="t t-xs" x="448" y="132">40 % infill</text>
+      </svg>
+      <figcaption><b>Figure 3.</b> Strength per print hour: the first extra walls pay off most; very high infill is expensive.</figcaption>
+    </figure>
+  </section>
+
+  <section class="cs-sheet cs-break" id="s-tolerances" aria-labelledby="s-tolerances-h">
+    <h2 id="s-tolerances-h">5 · Tolerance cheat sheet for design</h2>
+    <p>Gaps are per side unless noted. Values assume a calibrated 0.4 mm nozzle printer; measure a test coupon on your machine and adjust.</p>
+    <div class="table-wrap"><table class="data compact">
+      <thead><tr><th>Fit</th><th>Gap (per side)</th><th>Use</th></tr></thead>
+      <tbody>
+        <tr><td>Press / interference</td><td>−0.05 to +0.05 mm</td><td>Pins into holes, bearings in housings (check by test print)</td></tr>
+        <tr><td>Snug / transition</td><td>0.10–0.15 mm</td><td>Snap fits, lids that should stay put</td></tr>
+        <tr><td>Sliding</td><td>0.15–0.30 mm</td><td>Drawers, hinges, parts that move by hand</td></tr>
+        <tr><td>Loose</td><td>0.30–0.50 mm</td><td>Print-in-place joints, easy assembly</td></tr>
+        <tr><td>Print-in-place clearance (vertical gaps)</td><td>0.30–0.50 mm; down to 0.2–0.25 on tuned printers</td><td>Chains, hinges, captive balls</td></tr>
+      </tbody></table></div>
+    <div class="cs-two">
+      <ul>
+        <li><b>Minimum wall:</b> 2 line widths (0.8–1.2 mm for a 0.4 nozzle).</li>
+        <li><b>Smallest hole that prints reliably:</b> about 1.5–2 mm (drill out for accuracy).</li>
+        <li><b>Smallest pin:</b> 2–3 mm diameter.</li>
+        <li><b>Text:</b> ≥ 1 mm line thickness, 0.6 mm relief height.</li>
+      </ul>
+      <ul>
+        <li><b>Max unsupported bridge:</b> 20–30 mm (longer with tuning).</li>
+        <li><b>Overhang limit:</b> ≈ 45° without supports; 60° with good cooling.</li>
+        <li><b>Chamfer instead of fillet</b> at the bottom edge (0.5 mm × 45°) to defeat elephant foot.</li>
+        <li><b>Holes shrink</b> by 0.1–0.3 mm; add compensation in CAD.</li>
+      </ul>
+    </div>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 780 220" role="img" aria-label="Cross sections of a pin in a hole showing press, snug, sliding and loose fits with increasing gaps">
+        <g>
+          <rect class="d-surface" x="20" y="20" width="170" height="180" rx="8"/>
+          <text class="t t-b t-c" x="105" y="42">Press</text>
+          <rect class="d-plastic" x="40" y="60" width="50" height="110"/><rect class="d-plastic" x="120" y="60" width="50" height="110"/><rect class="d-plastic2" x="88" y="70" width="34" height="90"/>
+          <text class="t t-xs t-c" x="105" y="190">≈ 0 mm</text>
+        </g>
+        <g>
+          <rect class="d-surface" x="205" y="20" width="170" height="180" rx="8"/>
+          <text class="t t-b t-c" x="290" y="42">Snug</text>
+          <rect class="d-plastic" x="225" y="60" width="46" height="110"/><rect class="d-plastic" x="309" y="60" width="46" height="110"/><rect class="d-plastic2" x="275" y="70" width="30" height="90"/>
+          <text class="t t-xs t-c" x="290" y="190">0.10–0.15 mm</text>
+        </g>
+        <g>
+          <rect class="d-surface" x="390" y="20" width="170" height="180" rx="8"/>
+          <text class="t t-b t-c" x="475" y="42">Sliding</text>
+          <rect class="d-plastic" x="410" y="60" width="42" height="110"/><rect class="d-plastic" x="498" y="60" width="42" height="110"/><rect class="d-plastic2" x="458" y="70" width="34" height="90"/>
+          <text class="t t-xs t-c" x="475" y="190">0.15–0.30 mm</text>
+        </g>
+        <g>
+          <rect class="d-surface" x="575" y="20" width="185" height="180" rx="8"/>
+          <text class="t t-b t-c" x="667" y="42">Loose</text>
+          <rect class="d-plastic" x="595" y="60" width="36" height="110"/><rect class="d-plastic" x="705" y="60" width="36" height="110"/><rect class="d-plastic2" x="645" y="70" width="46" height="90"/>
+          <text class="t t-xs t-c" x="667" y="190">0.30–0.50 mm</text>
+        </g>
+      </svg>
+      <figcaption><b>Figure 4.</b> Fits as cross sections. A gap that is a couple of line widths wide moves freely; below 0.1 mm layers fuse.</figcaption>
+    </figure>
+    <p>Deeper treatment: <a href="../design/tolerances-and-fits.html">tolerances &amp; fits</a>.</p>
+  </section>
+
+  <section class="cs-sheet" id="s-holes" aria-labelledby="s-holes-h">
+    <h2 id="s-holes-h">6 · Hole &amp; thread sizes (M2–M8)</h2>
+    <div class="table-wrap"><table class="data compact">
+      <thead><tr><th>Screw</th><th>Clearance hole (close / loose)</th><th>Self-tap pilot hole</th><th>Tap drill (cut thread)</th><th>Heat-set insert hole*</th><th>Min. wall around insert</th></tr></thead>
+      <tbody>
+        <tr><td>M2</td><td>2.2 / 2.4 mm</td><td>1.6–1.7 mm</td><td>1.6 mm</td><td>3.0–3.2 mm</td><td>1.5 mm</td></tr>
+        <tr><td>M2.5</td><td>2.7 / 2.9 mm</td><td>2.0–2.1 mm</td><td>2.05 mm</td><td>3.6–3.8 mm</td><td>1.6 mm</td></tr>
+        <tr><td>M3</td><td>3.2 / 3.4 mm</td><td>2.5–2.7 mm</td><td>2.5 mm</td><td>4.0–4.2 mm</td><td>1.6–2 mm</td></tr>
+        <tr><td>M4</td><td>4.3 / 4.5 mm</td><td>3.3–3.5 mm</td><td>3.3 mm</td><td>5.4–5.6 mm</td><td>2 mm</td></tr>
+        <tr><td>M5</td><td>5.3 / 5.5 mm</td><td>4.2–4.4 mm</td><td>4.2 mm</td><td>6.3–6.5 mm</td><td>2.4 mm</td></tr>
+        <tr><td>M6</td><td>6.4 / 6.6 mm</td><td>5.0–5.2 mm</td><td>5.0 mm</td><td>7.8–8.0 mm</td><td>3 mm</td></tr>
+        <tr><td>M8</td><td>8.4 / 8.8 mm</td><td>6.8–7.0 mm</td><td>6.8 mm</td><td>9.8–10.0 mm</td><td>4 mm</td></tr>
+      </tbody></table></div>
+    <p><small>* Insert hole depends on the insert brand and length; always check its datasheet and print a test. Make the hole 0.5–1 mm deeper than the insert so melted plastic has room.</small></p>
+    <ul>
+      <li><b>Self-tapping into plastic:</b> works for M3 and larger with 2+ mm of wall; fine for a few assembly cycles only. Use inserts for repeated use.</li>
+      <li><b>Printed threads:</b> M8 or larger work well; model with 0.2–0.4 mm clearance and print vertically. Smaller threads are better tapped or insert-based.</li>
+      <li><b>Taps in plastic:</b> go slow, back out often, no oil on nylon-bound parts (use water or dry).</li>
+    </ul>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 780 240" role="img" aria-label="Cross sections of a clearance hole, a self-tapping pilot hole and a heat-set insert hole with the screw outline">
+        <g>
+          <rect class="d-surface" x="20" y="20" width="230" height="200" rx="8"/><text class="t t-b t-c" x="135" y="42">Clearance</text>
+          <rect class="d-plastic" x="40" y="60" width="80" height="140"/><rect class="d-plastic" x="150" y="60" width="80" height="140"/>
+          <rect class="d-metal" x="124" y="50" width="22" height="130"/><rect class="d-metal2" x="110" y="40" width="50" height="12" rx="2"/>
+          <text class="t t-xs t-c" x="135" y="214">M3: 3.2–3.4 mm</text>
+        </g>
+        <g>
+          <rect class="d-surface" x="275" y="20" width="230" height="200" rx="8"/><text class="t t-b t-c" x="390" y="42">Pilot / tap</text>
+          <rect class="d-plastic" x="295" y="60" width="84" height="140"/><rect class="d-plastic" x="401" y="60" width="84" height="140"/>
+          <rect class="d-metal" x="379" y="60" width="22" height="120"/><g class="d-thin"><path d="M379 70 h22 M379 82 h22 M379 94 h22 M379 106 h22 M379 118 h22 M379 130 h22 M379 142 h22 M379 154 h22 M379 166 h22"/></g>
+          <text class="t t-xs t-c" x="390" y="214">M3: 2.5–2.7 mm</text>
+        </g>
+        <g>
+          <rect class="d-surface" x="530" y="20" width="230" height="200" rx="8"/><text class="t t-b t-c" x="645" y="42">Heat-set insert</text>
+          <rect class="d-plastic" x="550" y="60" width="70" height="140"/><rect class="d-plastic" x="670" y="60" width="70" height="140"/>
+          <rect class="d-metal2" x="620" y="60" width="50" height="80"/><rect class="s-white" x="634" y="60" width="22" height="80"/>
+          <text class="t t-xs t-c" x="645" y="214">M3: hole 4.0–4.2 mm</text>
+        </g>
+      </svg>
+      <figcaption><b>Figure 5.</b> The same M3 screw in three hole types. Detailed insert procedure: <a href="../techniques/post-processing.html#hardware">post-processing</a>.</figcaption>
+    </figure>
+  </section>
+
+  <section class="cs-sheet" id="s-pockets" aria-labelledby="s-pockets-h">
+    <h2 id="s-pockets-h">7 · Screw head, nut and magnet pockets</h2>
+    <div class="table-wrap"><table class="data compact">
+      <thead><tr><th>Size</th><th>Socket-head counterbore (Ø × depth)</th><th>Hex nut trap (across flats × thickness)</th><th>Washer Ø</th></tr></thead>
+      <tbody>
+        <tr><td>M2</td><td>4.2 × 2.2 mm</td><td>4.2 × 1.8 mm</td><td>5.2 mm</td></tr>
+        <tr><td>M3</td><td>6.0 × 3.2 mm</td><td>5.7 × 2.6 mm</td><td>7.2 mm</td></tr>
+        <tr><td>M4</td><td>7.6 × 4.2 mm</td><td>7.2 × 3.4 mm</td><td>9.2 mm</td></tr>
+        <tr><td>M5</td><td>9.2 × 5.2 mm</td><td>8.2 × 4.2 mm</td><td>10.2 mm</td></tr>
+        <tr><td>M6</td><td>10.8 × 6.2 mm</td><td>10.2 × 5.2 mm</td><td>12.5 mm</td></tr>
+        <tr><td>M8</td><td>13.6 × 8.2 mm</td><td>13.2 × 6.7 mm</td><td>17 mm</td></tr>
+      </tbody></table></div>
+    <h3 id="magnets-sheet">Magnet pockets (disc magnets)</h3>
+    <ul>
+      <li>Pocket diameter = magnet diameter + <b>0.1–0.2 mm</b> (press fit) or + 0.3 mm (glued). Depth = magnet height + 0.1 mm.</li>
+      <li>Leave <b>0.4–0.6 mm</b> (2–3 layers) of plastic between the magnet and the mating face; thinner is stronger but fragile.</li>
+      <li>Pause the print at the pocket’s top layer, insert the magnet, resume. Check polarity first with a marked reference magnet.</li>
+      <li>Secure with a drop of cyanoacrylate or epoxy for anything that is pulled hard.</li>
+      <li>Keep magnets away from pacemakers, credit cards and electronics; heat above ~80 °C weakens common neodymium magnets.</li>
+    </ul>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 780 200" role="img" aria-label="Cross section of a magnet pocket with a bridged cover layer and a nut trap with hex pocket">
+        <g>
+          <rect class="d-surface" x="20" y="20" width="360" height="160" rx="8"/><text class="t t-b t-c" x="200" y="42">Magnet pocket</text>
+          <rect class="d-plastic" x="60" y="60" width="280" height="100"/>
+          <rect class="d-metal2" x="160" y="84" width="80" height="24"/><text class="t t-xs t-c" x="200" y="100" fill="currentColor">magnet</text>
+          <path class="d-dash" d="M60 78 H340"/><path class="d-ink arrow" d="M280 62 V78"/><text class="t t-xs" x="288" y="74">0.4–0.6 mm skin</text>
+        </g>
+        <g>
+          <rect class="d-surface" x="400" y="20" width="360" height="160" rx="8"/><text class="t t-b t-c" x="580" y="42">Nut trap + screw</text>
+          <rect class="d-plastic" x="440" y="60" width="280" height="100"/>
+          <rect class="d-metal" x="568" y="60" width="24" height="100"/>
+          <rect class="d-metal2" x="548" y="112" width="64" height="20"/><text class="t t-xs t-c" x="580" y="126">nut</text>
+          <rect class="d-metal2" x="552" y="50" width="56" height="12" rx="3"/>
+        </g>
+      </svg>
+      <figcaption><b>Figure 6.</b> Pocket cross sections. A thin printed skin holds a magnet flush; a hex pocket stops a nut from spinning.</figcaption>
+    </figure>
+  </section>
+
+  <section class="cs-sheet cs-break" id="s-gcode" aria-labelledby="s-gcode-h">
+    <h2 id="s-gcode-h">8 · G-code quick reference</h2>
+    <div class="cs-two">
+      <div class="table-wrap"><table class="data compact">
+        <thead><tr><th>Command</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><code>G0 / G1 X Y Z E F</code></td><td>Move (G1 extrudes if E given); F = feed rate in mm/min</td></tr>
+          <tr><td><code>G2 / G3</code></td><td>Arc clockwise / counter-clockwise</td></tr>
+          <tr><td><code>G4 P1000</code></td><td>Dwell 1000 ms</td></tr>
+          <tr><td><code>G28</code></td><td>Home axes</td></tr>
+          <tr><td><code>G29</code></td><td>Auto bed leveling (Marlin-like firmware)</td></tr>
+          <tr><td><code>G90 / G91</code></td><td>Absolute / relative positioning</td></tr>
+          <tr><td><code>M82 / M83</code></td><td>Absolute / relative extruder mode</td></tr>
+          <tr><td><code>G92 E0</code></td><td>Set current extruder position to 0</td></tr>
+          <tr><td><code>M84</code></td><td>Disable stepper motors</td></tr>
+        </tbody></table></div>
+      <div class="table-wrap"><table class="data compact">
+        <thead><tr><th>Command</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><code>M104 S220</code></td><td>Set nozzle temperature (don’t wait)</td></tr>
+          <tr><td><code>M109 S220</code></td><td>Set nozzle and wait</td></tr>
+          <tr><td><code>M140 S60</code></td><td>Set bed temperature</td></tr>
+          <tr><td><code>M190 S60</code></td><td>Set bed and wait</td></tr>
+          <tr><td><code>M106 S255</code></td><td>Part fan on (0–255); <code>M107</code> off</td></tr>
+          <tr><td><code>M220 S100</code></td><td>Speed factor (%)</td></tr>
+          <tr><td><code>M221 S95</code></td><td>Flow factor (%)</td></tr>
+          <tr><td><code>M204 P500</code></td><td>Set print acceleration</td></tr>
+          <tr><td><code>M600</code></td><td>Filament change / pause (firmware dependent)</td></tr>
+          <tr><td><code>M117 text</code></td><td>Show a message on the LCD</td></tr>
+        </tbody></table></div>
+    </div>
+    <p>Firmware-specific commands (pressure advance <code>M900</code> on some firmware, <code>SET_PRESSURE_ADVANCE</code> in Klipper, AMS commands on Bambu machines) vary. Check your firmware before editing start or end G-code. More in <a href="../software/gcode-and-firmware.html">G-code &amp; firmware</a>.</p>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 780 200" role="img" aria-label="Anatomy of one line of G-code: command, axis words, extrusion and feed rate">
+        <rect class="d-surface" x="20" y="60" width="740" height="50" rx="8"/>
+        <text class="t t-mono t-lg" x="50" y="94">G1  X42.5  Y60.0  E1.8532  F4800  ; perimeter</text>
+        <path class="d-ink arrow" d="M62 56 V30"/><text class="t t-xs" x="40" y="24">move + extrude</text>
+        <path class="d-ink arrow" d="M150 56 V30"/><text class="t t-xs" x="106" y="24">X / Y target (mm)</text>
+        <path class="d-ink arrow" d="M345 56 V30"/><text class="t t-xs" x="290" y="24">extruder length (mm)</text>
+        <path class="d-ink arrow" d="M440 56 V30"/><text class="t t-xs" x="400" y="24">feed (mm/min = 80 mm/s)</text>
+        <path class="d-ink arrow" d="M610 114 V150"/><text class="t t-xs" x="560" y="168">comment (ignored by printer)</text>
+      </svg>
+      <figcaption><b>Figure 7.</b> One G-code line. F is in mm/min, so divide by 60 to get mm/s (F4800 = 80 mm/s).</figcaption>
+    </figure>
+  </section>
+
+  <section class="cs-sheet" id="s-trouble" aria-labelledby="s-trouble-h">
+    <h2 id="s-trouble-h">9 · Troubleshooting one-pager (symptom → fix)</h2>
+    <div class="table-wrap"><table class="data compact">
+      <thead><tr><th>Symptom</th><th>Try first</th><th>Then</th></tr></thead>
+      <tbody>
+        <tr><td>Stringing / oozing</td><td>Dry filament</td><td>Lower temp 5–10 °C; tune retraction</td></tr>
+        <tr><td>First layer not sticking</td><td>Wash plate</td><td>Lower Z offset slightly; slow first layer; warmer bed</td></tr>
+        <tr><td>Warping</td><td>Brim, close the enclosure</td><td>Reduce fan; raise bed temp</td></tr>
+        <tr><td>Under-extrusion / clicking</td><td>Raise temp 5–10 °C</td><td>Cold pull; slow down; check flow limit and gears</td></tr>
+        <tr><td>Over-extrusion / blobs</td><td>Flow −2–5 %</td><td>Calibrate pressure advance; move seam</td></tr>
+        <tr><td>Gaps in top surface</td><td>More top layers (5+)</td><td>More infill; reduce speed</td></tr>
+        <tr><td>Layer splitting</td><td>Hotter nozzle</td><td>Lower fan; enclose; slower</td></tr>
+        <tr><td>Ringing</td><td>Lower outer-wall acceleration</td><td>Input shaping; belts; stable table</td></tr>
+        <tr><td>Sagging overhangs / bridges</td><td>More cooling</td><td>Slower; lower temp; supports</td></tr>
+        <tr><td>Layer shifts</td><td>Check belts, collisions</td><td>Lower acceleration; check pulleys</td></tr>
+        <tr><td>Holes too small / dimensions off</td><td>Calibrate flow</td><td>Hole compensation; test coupon</td></tr>
+        <tr><td>Bubbles, popping, hissing</td><td>Dry filament</td><td>Store sealed with desiccant</td></tr>
+        <tr><td>Spaghetti</td><td>Stop print</td><td>Fix adhesion; brim; clean nozzle</td></tr>
+      </tbody></table></div>
+    <p>Full gallery with illustrated causes and fixes: <a href="../techniques/troubleshooting.html">troubleshooting</a>. Five checks for any failure: <a href="../techniques/troubleshooting.html#first5">first 5 checks</a>.</p>
+  </section>
+
+  <section class="cs-sheet" id="s-calibration" aria-labelledby="s-calibration-h">
+    <h2 id="s-calibration-h">10 · Calibration order</h2>
+    <p>Calibrate in this order; each step depends on the previous ones.</p>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 780 190" role="img" aria-label="Calibration sequence from mechanics to dimensional accuracy">
+        <g>
+          <rect class="f-gray" x="10" y="60" width="90" height="64" rx="8"/><text class="t t-xs t-b t-c" x="55" y="86">1 Mechanics</text><text class="t t-xs t-c" x="55" y="102">belts, frame</text>
+          <rect class="f-blue" x="112" y="60" width="90" height="64" rx="8"/><text class="t t-xs t-b t-c" x="157" y="86">2 Level + Z</text><text class="t t-xs t-c" x="157" y="102">first layer</text>
+          <rect class="f-green" x="214" y="60" width="90" height="64" rx="8"/><text class="t t-xs t-b t-c" x="259" y="86">3 Dry filament</text><text class="t t-xs t-c" x="259" y="102">fresh profile</text>
+          <rect class="f-yellow" x="316" y="60" width="90" height="64" rx="8"/><text class="t t-xs t-b t-c" x="361" y="86">4 Temperature</text><text class="t t-xs t-c" x="361" y="102">tower</text>
+          <rect class="f-orange" x="418" y="60" width="90" height="64" rx="8"/><text class="t t-xs t-b t-c" x="463" y="86">5 Flow</text><text class="t t-xs t-c" x="463" y="102">+ max flow</text>
+          <rect class="f-red" x="520" y="60" width="90" height="64" rx="8"/><text class="t t-xs t-b t-c" x="565" y="86">6 Pressure</text><text class="t t-xs t-c" x="565" y="102">advance</text>
+          <rect class="f-purple" x="622" y="60" width="70" height="64" rx="8"/><text class="t t-xs t-b t-c" x="657" y="86">7 Retract</text><text class="t t-xs t-c" x="657" y="102">+ shapers</text>
+          <rect class="f-blue" x="704" y="60" width="66" height="64" rx="8"/><text class="t t-xs t-b t-c" x="737" y="86">8 Size</text><text class="t t-xs t-c" x="737" y="102">+ holes</text>
+          <path class="d-ink arrow" d="M102 92 H110 M204 92 H212 M306 92 H314 M408 92 H416 M510 92 H518 M612 92 H620 M694 92 H702"/>
+        </g>
+      </svg>
+      <figcaption><b>Figure 8.</b> Calibration order. Re-run the affected steps after a nozzle swap or new filament brand. Details: <a href="../techniques/calibration.html">calibration</a>.</figcaption>
+    </figure>
+  </section>
+
+  <section class="cs-sheet" id="s-firstlayer" aria-labelledby="s-firstlayer-h">
+    <h2 id="s-firstlayer-h">11 · First-layer one-pager</h2>
+    <div class="cs-two">
+      <div>
+        <ul class="checklist">
+          <li>Plate washed (soap, then IPA); not touched afterwards</li>
+          <li>Correct plate for the material</li>
+          <li>Nozzle clean, no blob; filament purged</li>
+          <li>Auto-leveling / Z offset calibrated</li>
+          <li>First layer height 0.2–0.3 mm, speed 20–50 mm/s</li>
+          <li>Bed temperature right for the material (sheet 1)</li>
+          <li>Watch the first 3 minutes of every print</li>
+        </ul>
+      </div>
+      <div>
+        <ul>
+          <li><b>Too high:</b> separate round lines, gaps, peeling.</li>
+          <li><b>Good:</b> lines slightly flattened, touching, smooth.</li>
+          <li><b>Too low:</b> ridged, translucent, rough, ripples, elephant foot.</li>
+          <li>Adjust Z by ±0.02 mm at a time.</li>
+        </ul>
+      </div>
+    </div>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 780 200" role="img" aria-label="Three first-layer cross sections: too high, correct and too low">
+        <g>
+          <rect class="d-surface" x="20" y="20" width="240" height="160" rx="8"/><text class="t t-b t-c" x="140" y="42">Too high</text>
+          <rect class="d-metal2" x="40" y="140" width="200" height="10"/>
+          <g class="d-plastic"><ellipse cx="70" cy="132" rx="14" ry="9"/><ellipse cx="110" cy="132" rx="14" ry="9"/><ellipse cx="150" cy="132" rx="14" ry="9"/><ellipse cx="190" cy="132" rx="14" ry="9"/></g>
+          <text class="t t-xs t-c" x="140" y="170">round, gaps, poor bond</text>
+        </g>
+        <g>
+          <rect class="d-surface" x="270" y="20" width="240" height="160" rx="8"/><text class="t t-b t-c" x="390" y="42">Just right</text>
+          <rect class="d-metal2" x="290" y="140" width="200" height="10"/>
+          <g class="d-plastic"><rect x="296" y="128" width="42" height="12" rx="4"/><rect x="338" y="128" width="42" height="12" rx="4"/><rect x="380" y="128" width="42" height="12" rx="4"/><rect x="422" y="128" width="42" height="12" rx="4"/></g>
+          <text class="t t-xs t-c" x="390" y="170">squished, touching</text>
+        </g>
+        <g>
+          <rect class="d-surface" x="520" y="20" width="240" height="160" rx="8"/><text class="t t-b t-c" x="640" y="42">Too low</text>
+          <rect class="d-metal2" x="540" y="140" width="200" height="10"/>
+          <g class="d-plastic"><rect x="546" y="134" width="44" height="6" rx="2"/><rect x="590" y="134" width="44" height="6" rx="2"/><rect x="634" y="134" width="44" height="6" rx="2"/><rect x="678" y="134" width="44" height="6" rx="2"/></g>
+          <path class="k-red" d="M546 126 h176" stroke-dasharray="3 3"/>
+          <text class="t t-xs t-c" x="640" y="170">over-squished, rough</text>
+        </g>
+      </svg>
+      <figcaption><b>Figure 9.</b> Line cross sections for first-layer height. See <a href="../techniques/first-layer-and-adhesion.html">first layer &amp; adhesion</a>.</figcaption>
+    </figure>
+  </section>
+
+  <section class="cs-sheet cs-break" id="s-formulas" aria-labelledby="s-formulas-h">
+    <h2 id="s-formulas-h">12 · Unit conversions &amp; useful formulas</h2>
+    <div class="cs-two">
+      <div class="table-wrap"><table class="data compact">
+        <thead><tr><th>Convert</th><th>Formula</th></tr></thead>
+        <tbody>
+          <tr><td>mm ↔ inch</td><td>1 in = 25.4 mm</td></tr>
+          <tr><td>mm/s ↔ mm/min</td><td>× 60 (80 mm/s = 4800 mm/min)</td></tr>
+          <tr><td>°C ↔ °F</td><td>°F = °C × 9/5 + 32</td></tr>
+          <tr><td>g ↔ oz</td><td>1 oz = 28.35 g</td></tr>
+          <tr><td>kg ↔ lb</td><td>1 kg = 2.205 lb</td></tr>
+          <tr><td>mm³ ↔ cm³</td><td>1 cm³ = 1000 mm³</td></tr>
+          <tr><td>Filament Ø 1.75 mm cross-section</td><td>≈ 2.405 mm²</td></tr>
+          <tr><td>Filament Ø 2.85 mm cross-section</td><td>≈ 6.38 mm²</td></tr>
+        </tbody></table></div>
+      <div>
+        <ul>
+          <li><b>Volumetric flow (mm³/s)</b> = line width × layer height × speed. Example: 0.42 × 0.20 × 150 = 12.6 mm³/s.</li>
+          <li><b>Max speed</b> = max flow ÷ (line width × layer height). With 15 mm³/s: 15 ÷ (0.42 × 0.20) ≈ 178 mm/s.</li>
+          <li><b>Filament length (mm)</b> = volume (mm³) ÷ 2.405 (1.75 mm filament).</li>
+          <li><b>Mass (g)</b> = volume (cm³) × density (g/cm³).</li>
+          <li><b>Print time</b> ≈ path length ÷ average speed, plus accelerations, travel and layer overhead (often +20–40 %).</li>
+          <li><b>Cost</b> = grams × (price per kg ÷ 1000) + energy + wear.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="table-wrap"><table class="data compact">
+      <thead><tr><th>Material</th><th>Density g/cm³</th><th>1.75 mm: g per meter</th><th>Meters per 1 kg</th></tr></thead>
+      <tbody>
+        <tr><td>PLA</td><td>1.24</td><td>≈ 3.0</td><td>≈ 335</td></tr>
+        <tr><td>PETG</td><td>1.27</td><td>≈ 3.05</td><td>≈ 327</td></tr>
+        <tr><td>ABS / ASA</td><td>1.04–1.07</td><td>≈ 2.5–2.6</td><td>≈ 390–400</td></tr>
+        <tr><td>TPU</td><td>1.21</td><td>≈ 2.9</td><td>≈ 340</td></tr>
+        <tr><td>Nylon (PA)</td><td>1.14</td><td>≈ 2.7</td><td>≈ 365</td></tr>
+        <tr><td>PC</td><td>1.20</td><td>≈ 2.9</td><td>≈ 345</td></tr>
+      </tbody></table></div>
+    <p>Try these formulas interactively in the <a href="../tools/calculators.html">calculators</a>.</p>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 780 200" role="img" aria-label="Line cross section with width, layer height and speed forming volumetric flow">
+        <rect class="d-surface" x="20" y="20" width="740" height="160" rx="8"/>
+        <rect class="d-metal2" x="60" y="140" width="320" height="10"/>
+        <rect class="d-plastic" x="140" y="106" width="130" height="34" rx="14"/>
+        <path class="d-ink arrow arrow-start" d="M140 156 H270"/><text class="t t-xs t-c" x="205" y="172">width w</text>
+        <path class="d-ink arrow arrow-start" d="M284 106 V140"/><text class="t t-xs" x="292" y="128">h</text>
+        <text class="t t-lg t-b" x="420" y="82">Q = w × h × v</text>
+        <text class="t t-sm" x="420" y="108">Q: volumetric flow, mm³/s</text>
+        <text class="t t-sm" x="420" y="128">w: line width, h: layer height, v: speed</text>
+        <text class="t t-sm" x="420" y="148">Stay below your hotend’s Q limit.</text>
+      </svg>
+      <figcaption><b>Figure 10.</b> The formula behind “why won’t it print faster”: the nozzle can only melt so many cubic millimeters per second.</figcaption>
+    </figure>
+  </section>
+
+  <section class="cs-sheet" id="s-x2d" aria-labelledby="s-x2d-h">
+    <h2 id="s-x2d-h">13 · X2D quick-card</h2>
+    <div class="callout x2d"><span class="callout-title">Bambu Lab X2D at a glance</span>
+      <p>Enclosed dual-nozzle CoreXY printer. Values below follow the manufacturer’s documentation as of writing; confirm against the current manual and firmware.</p></div>
+    <div class="cs-two">
+      <div class="table-wrap"><table class="data compact">
+        <thead><tr><th>Item</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Build volume (main / left nozzle)</td><td>256 × 256 × 260 mm</td></tr>
+          <tr><td>Aux (right) nozzle only</td><td>235.5 × 256 × 256 mm</td></tr>
+          <tr><td>Max nozzle temperature</td><td>300 °C</td></tr>
+          <tr><td>Actively heated chamber</td><td>up to 65 °C</td></tr>
+          <tr><td>Aux nozzle limits</td><td>≈ 200 mm/s, ≈ 1000 mm/s² acceleration</td></tr>
+          <tr><td>Standard nozzle</td><td>0.4 mm; optional kit with 0.2 mm and 0.6 mm</td></tr>
+          <tr><td>Default plate</td><td>Textured PEI, 256 × 256 mm</td></tr>
+          <tr><td>Filtration</td><td>Pre-filter + HEPA H12 + activated carbon</td></tr>
+          <tr><td>AMS 2 Pro</td><td>4 slots; drying to 65 °C max; 6-pin cable</td></tr>
+        </tbody></table></div>
+      <div>
+        <ul>
+          <li><b>Main nozzle (left)</b> prints the model: direct-drive servo extruder, full speed.</li>
+          <li><b>Aux nozzle (right)</b> is fed by a separate extruder with a long PTFE path: use slower speeds, longer retraction, official filament where possible, and ideal for support material or a second material.</li>
+          <li><b>Flow-dynamics calibration</b> applies to the main nozzle only; the aux nozzle needs its own, much larger K value.</li>
+          <li><b>Chamber:</b> keep PLA open/cool (vent the chamber); heat the chamber for ABS, ASA, PC, nylon and CF materials.</li>
+          <li><b>Drying in the AMS 2 Pro</b> is limited to 65 °C: fine for PLA, PETG, TPU; use a dedicated dryer for nylon and PC.</li>
+        </ul>
+        <p>Full details: <a href="../x2d/overview.html">X2D overview</a>, <a href="../x2d/dual-nozzle-printing.html">dual-nozzle printing</a>, <a href="../x2d/ams-2-pro.html">AMS 2 Pro</a>, <a href="../x2d/maintenance-and-troubleshooting.html">maintenance &amp; troubleshooting</a>.</p>
+      </div>
+    </div>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 780 240" role="img" aria-label="Schematic of the X2D toolhead with left main nozzle and right auxiliary nozzle, with the auxiliary extruder at the rear connected by a tube">
+        <rect class="d-surface" x="20" y="20" width="740" height="200" rx="10"/>
+        <rect class="d-metal2" x="250" y="70" width="280" height="50" rx="8"/><text class="t t-b t-c" x="390" y="100">Toolhead</text>
+        <path class="d-metal" d="M290 120 H330 L322 156 H298 Z"/><text class="t t-xs t-c" x="310" y="176">Main (left)</text><text class="t t-xs t-c" x="310" y="192">0.4 mm, 300 °C</text>
+        <path class="d-metal" d="M450 120 H490 L482 156 H458 Z"/><text class="t t-xs t-c" x="470" y="176">Aux (right)</text><text class="t t-xs t-c" x="470" y="192">≤ 200 mm/s</text>
+        <rect class="d-plastic2" x="610" y="40" width="120" height="40" rx="6"/><text class="t t-xs t-c" x="670" y="64">Aux extruder (rear)</text>
+        <path class="d-ink" d="M610 60 H540 C500 60 480 70 470 70"/><text class="t t-xs t-c" x="560" y="52">PTFE tube</text>
+        <rect class="d-plastic" x="60" y="40" width="130" height="40" rx="6"/><text class="t t-xs t-c" x="125" y="64">AMS 2 Pro</text>
+        <path class="d-ink" d="M190 60 H250 C280 60 300 70 310 70"/>
+      </svg>
+      <figcaption><b>Figure 11.</b> Simplified X2D filament paths. The main extruder sits in the toolhead; the aux extruder is at the rear and feeds through a tube.</figcaption>
+    </figure>
+  </section>
+
+  <section class="cs-sheet" id="s-keys" aria-labelledby="s-keys-h">
+    <h2 id="s-keys-h">14 · Slicer-agnostic shortcuts &amp; mouse</h2>
+    <p>Most slicers (Bambu Studio, OrcaSlicer, PrusaSlicer, Cura) share these conventions. Menus differ; check yours under Help → Keyboard shortcuts.</p>
+    <div class="cs-two">
+      <div class="table-wrap"><table class="data compact">
+        <thead><tr><th>Action</th><th>Typical keys</th></tr></thead>
+        <tbody>
+          <tr><td>Undo / redo</td><td><kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Ctrl</kbd>+<kbd>Y</kbd> (or <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd>)</td></tr>
+          <tr><td>Copy / paste / delete</td><td><kbd>Ctrl</kbd>+<kbd>C</kbd> / <kbd>Ctrl</kbd>+<kbd>V</kbd> / <kbd>Del</kbd></td></tr>
+          <tr><td>Select all</td><td><kbd>Ctrl</kbd>+<kbd>A</kbd></td></tr>
+          <tr><td>Arrange objects</td><td><kbd>A</kbd> (in many slicers)</td></tr>
+          <tr><td>Slice</td><td><kbd>Ctrl</kbd>+<kbd>R</kbd> (varies)</td></tr>
+          <tr><td>Standard views</td><td>Number keys <kbd>0</kbd>–<kbd>6</kbd> (iso, top, bottom, front, rear, left, right)</td></tr>
+        </tbody></table></div>
+      <div class="table-wrap"><table class="data compact">
+        <thead><tr><th>Mouse</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>Left drag on empty space</td><td>Orbit the view</td></tr>
+          <tr><td>Right or middle drag</td><td>Pan the view</td></tr>
+          <tr><td>Scroll wheel</td><td>Zoom</td></tr>
+          <tr><td>Click object</td><td>Select; <kbd>Ctrl</kbd>/<kbd>Shift</kbd> adds to selection</td></tr>
+          <tr><td>Drag object</td><td>Move on the plate</td></tr>
+          <tr><td>Layer slider</td><td>Scrub through layers in preview</td></tr>
+        </tbody></table></div>
+    </div>
+    <div class="callout tip"><span class="callout-title">Preview every print</span>
+      <p>Scrub the layer slider before you start: look for floating islands, missing supports, odd seam positions and gaps in thin walls. Thirty seconds here saves hours.</p></div>
+  </section>
+
+  <section class="cs-sheet" id="s-starting" aria-labelledby="s-starting-h">
+    <h2 id="s-starting-h">16 · Starting values: retraction, supports, bridges, cooling</h2>
+    <p>Treat these as starting points for a first test, not final answers. Always change one value at a time and print a small test.</p>
+    <div class="cs-two">
+      <div class="table-wrap"><table class="data compact">
+        <thead><tr><th>Setting</th><th>Direct drive</th><th>Bowden</th></tr></thead>
+        <tbody>
+          <tr><td>Retraction distance, PLA / PETG</td><td>0.4–1.2 mm</td><td>3–6 mm</td></tr>
+          <tr><td>Retraction distance, TPU</td><td>0–1 mm</td><td>Avoid retraction; slow down</td></tr>
+          <tr><td>Retraction speed</td><td>25–45 mm/s</td><td>30–60 mm/s</td></tr>
+          <tr><td>Z hop</td><td>0–0.4 mm (only if needed)</td><td>0.2–0.4 mm</td></tr>
+          <tr><td>Travel speed</td><td>150–500 mm/s</td><td>100–250 mm/s</td></tr>
+          <tr><td>Pressure advance (K)</td><td colspan="2">Calibrate per nozzle and filament; do not copy numbers between printers</td></tr>
+        </tbody></table></div>
+      <div class="table-wrap"><table class="data compact">
+        <thead><tr><th>Setting</th><th>Starting value</th></tr></thead>
+        <tbody>
+          <tr><td>Support overhang threshold</td><td>45–55°</td></tr>
+          <tr><td>Support top Z gap</td><td>0.1–0.2 mm (0.2–0.3 for PETG)</td></tr>
+          <tr><td>Support interface layers</td><td>2–3</td></tr>
+          <tr><td>Support pattern</td><td>Tree for organic shapes; grid/lines for flat ones</td></tr>
+          <tr><td>Bridge speed / flow</td><td>20–40 mm/s; flow 0.85–0.95</td></tr>
+          <tr><td>Bridge fan</td><td>100 %</td></tr>
+          <tr><td>Overhang fan</td><td>100 % for PLA; low for ABS/ASA</td></tr>
+          <tr><td>Brim width</td><td>5–8 mm (10+ for warp-prone parts)</td></tr>
+        </tbody></table></div>
+    </div>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 780 220" role="img" aria-label="Support geometry: overhang angle, support gap and interface layers under a model">
+        <rect class="d-surface" x="20" y="20" width="740" height="180" rx="10"/>
+        <rect class="d-metal2" x="60" y="170" width="660" height="10"/>
+        <path class="d-plastic" d="M200 50 H520 V92 H200 Z"/>
+        <g class="d-plastic2"><path d="M220 94 V168 M244 94 V168 M268 94 V168 M292 94 V168 M316 94 V168 M340 94 V168 M364 94 V168 M388 94 V168 M412 94 V168 M436 94 V168 M460 94 V168 M484 94 V168 M508 94 V168" stroke-width="2"/></g>
+        <path class="d-ink arrow arrow-start" d="M550 92 V94" /><path class="d-dash" d="M200 92 H520"/>
+        <text class="t t-xs" x="540" y="86">Z gap 0.1–0.3 mm</text><path class="d-ink arrow" d="M538 88 L520 92"/>
+        <text class="t t-xs" x="540" y="130">interface 2–3 layers</text><text class="t t-xs" x="540" y="148">sparse body below</text>
+        <text class="t t-xs t-c" x="360" y="40">model</text>
+      </svg>
+      <figcaption><b>Figure 12.</b> Support anatomy: sparse body, denser interface, small gap that lets it break away cleanly.</figcaption>
+    </figure>
+  </section>
+
+  <section class="cs-sheet" id="s-post" aria-labelledby="s-post-h">
+    <h2 id="s-post-h">17 · Post-processing quick picks</h2>
+    <div class="cs-two">
+      <div class="table-wrap"><table class="data compact">
+        <thead><tr><th>Sanding step</th><th>Grit</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>Rough</td><td>120–180</td><td>Remove blobs and support scars</td></tr>
+          <tr><td>Medium</td><td>240–320</td><td>Flatten layer lines</td></tr>
+          <tr><td>Before primer</td><td>400</td><td>Prepare for filler primer</td></tr>
+          <tr><td>Between coats</td><td>600–800 (wet)</td><td>Smooth primer</td></tr>
+          <tr><td>Polish prep</td><td>1000–2000 (wet)</td><td>Gloss finish</td></tr>
+        </tbody></table></div>
+      <div class="table-wrap"><table class="data compact">
+        <thead><tr><th>Joining</th><th>Best for</th></tr></thead>
+        <tbody>
+          <tr><td>Cyanoacrylate (super glue)</td><td>PLA, PETG, ABS quick joints; add baking soda for gaps</td></tr>
+          <tr><td>Two-part epoxy</td><td>Strong joints, mixed materials, nylon</td></tr>
+          <tr><td>Solvent welding (acetone / DCM / THF types)</td><td>ABS/ASA (acetone); handle solvents with great care</td></tr>
+          <tr><td>Plastic welding / hot air</td><td>Large repairs; needs practice</td></tr>
+          <tr><td>Heat-set inserts</td><td>Screws that must be reused (sheet 6)</td></tr>
+        </tbody></table></div>
+    </div>
+    <div class="callout danger"><span class="callout-title">Solvent and dust safety</span>
+      <p>Work outdoors or with strong ventilation, wear nitrile gloves and eye protection, and keep solvents away from flames. Sand wet or use a mask: plastic dust, especially carbon-fiber, should not be inhaled. See <a href="../techniques/post-processing.html">post-processing</a>.</p></div>
+  </section>
+
+  <section class="cs-sheet" id="s-safety" aria-labelledby="s-safety-h">
+    <h2 id="s-safety-h">18 · Safety one-pager</h2>
+    <ul class="checklist">
+      <li>Never leave a printer running where you cannot reach it or hear a smoke alarm; install a smoke detector in the room.</li>
+      <li>Ventilate when printing ABS, ASA, nylon, PC and resins; consider an enclosure with filtration.</li>
+      <li>Nozzle (up to 300 °C) and bed (up to 110 °C and above) cause instant burns; wait for cooling before touching.</li>
+      <li>Power off and unplug before opening electronics or the hotend.</li>
+      <li>Use flush cutters and scrapers away from your body; wear eye protection when removing supports.</li>
+      <li>Do not use printed parts for food contact, structural safety or electrical insulation without proper evaluation.</li>
+      <li>Keep a fire extinguisher (ABC or CO₂) accessible; never use water on an electrical fire.</li>
+    </ul>
+    <p>More: <a href="../foundations/safety-and-workspace.html">safety &amp; workspace</a>.</p>
+  </section>
+
+  <section class="cs-sheet" id="s-preflight" aria-labelledby="s-preflight-h">
+    <h2 id="s-preflight-h">19 · Pre-flight checklist</h2>
+    <div class="cs-two">
+      <div>
+        <h3>Model &amp; slicer</h3>
+        <ul class="checklist">
+          <li>Model is manifold, oriented for strength and supports</li>
+          <li>Right printer, nozzle size and plate selected</li>
+          <li>Filament profile matches the spool in the machine</li>
+          <li>Walls, infill, top/bottom set for the application (sheet 4)</li>
+          <li>Supports and brim set where needed</li>
+          <li>Layer preview checked (no gaps, no islands)</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Printer</h3>
+        <ul class="checklist">
+          <li>Plate clean, correctly seated</li>
+          <li>Nozzle clean; no old plastic on the bed or purge area</li>
+          <li>Filament dry, spool turning freely, no tangles</li>
+          <li>Enough filament for the whole print (weight estimate + 10 %)</li>
+          <li>Chamber/lid set for the material; printer ventilated</li>
+          <li>Camera or monitoring on; stay near for the first layer</li>
+        </ul>
+      </div>
+    </div>
+    <p>If anything looks wrong during the first layer: stop, fix, restart. It is cheaper than any other time to fix it.</p>
+  </section>
+
+  <section class="cs-sheet" id="s-terms" aria-labelledby="s-terms-h">
+    <h2 id="s-terms-h">20 · Slicer terms in one line</h2>
+    <div class="table-wrap"><table class="data compact">
+      <thead><tr><th>Term</th><th>Plain meaning</th><th>Turn it when…</th></tr></thead>
+      <tbody>
+        <tr><td>Wall loops / perimeters</td><td>Number of outlines printed around each layer</td><td>You need strength or watertightness</td></tr>
+        <tr><td>Sparse infill</td><td>Internal lattice that fills the part</td><td>You need stiffness or support for top layers</td></tr>
+        <tr><td>Top / bottom shells</td><td>Solid layers above and below the infill</td><td>Top is rough or has gaps</td></tr>
+        <tr><td>Seam</td><td>Where each outline starts and ends</td><td>You want to hide the vertical line</td></tr>
+        <tr><td>Retraction</td><td>Pulls filament back before travel moves</td><td>Stringing or oozing appears</td></tr>
+        <tr><td>Pressure / flow dynamics</td><td>Compensates for pressure lag in the nozzle</td><td>Corners bulge or gaps follow corners</td></tr>
+        <tr><td>Flow ratio</td><td>Multiplier on extruded volume</td><td>Walls look too thick or too thin</td></tr>
+        <tr><td>Brim / skirt</td><td>Extra lines around the base / purge line</td><td>Warp-prone or tall, thin parts</td></tr>
+        <tr><td>Ironing</td><td>Extra smoothing pass on top surfaces</td><td>You want a glossy flat top</td></tr>
+        <tr><td>Z hop</td><td>Lifts the nozzle during travel</td><td>Nozzle scars the top surface</td></tr>
+        <tr><td>Arc fitting</td><td>Replaces tiny line segments with arcs</td><td>Smooth curves and smaller files</td></tr>
+        <tr><td>Wipe tower / prime tower</td><td>Purge area for material changes</td><td>Multi-color or multi-material prints</td></tr>
+        <tr><td>Adaptive layer height</td><td>Thinner layers on curves, thicker on flats</td><td>You want speed with smooth details</td></tr>
+        <tr><td>Modifier</td><td>A region with its own settings</td><td>One area needs extra walls or density</td></tr>
+      </tbody></table></div>
+    <p>More terms in the <a href="glossary.html">glossary</a> and <a href="../software/slicer-settings.html">slicer settings</a>.</p>
+  </section>
+
+  <div class="callout goal no-print"><span class="callout-title">Key takeaways</span>
+    <p>Start from the table values, calibrate in order, change one variable at a time, keep filament dry, and use the troubleshooting sheet before blaming the printer. Print this page and keep the sheets you use next to the machine.</p></div>
+
+  <script>
+    document.addEventListener("c3d:ready", function () {
+      var b = document.getElementById("cs-print");
+      if (b) b.addEventListener("click", function () { window.print(); });
+    });
+  </script>
+</main>
+</body>
+</html>

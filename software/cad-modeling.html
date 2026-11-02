@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CAD &amp; modeling software · 3D Printing Compendium</title>
+  <meta name="description" content="Modeling paradigms (mesh, parametric CAD, code, generative), a tour of Tinkercad, Fusion, Onshape, FreeCAD, OpenSCAD, Blender and more, core CAD concepts illustrated, modeling for printing, scanning, remixing and a ten-step bracket workflow with code samples.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="software/cad-modeling.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 3 · Software</div>
+    <h1>CAD &amp; modeling software</h1>
+    <p class="lead">You do not have to download every model you print. Learn how the main families of modeling tools think, which one fits which job, and how to design a simple part that prints well on the first try.</p>
+    <div class="meta"><span class="badge beginner">Beginner</span><span class="badge intermediate">Intermediate</span><span class="badge time">⏱ 40 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <ul>
+      <li>The four modeling paradigms (mesh, parametric solid, code, generative) and when each is the right tool.</li>
+      <li>A fair tour of the popular programs, with strengths, limits, cost and licensing.</li>
+      <li>The core CAD vocabulary: sketches, constraints, extrude, revolve, loft, sweep, fillets, booleans, patterns and assemblies.</li>
+      <li>How to model for printing, measure real objects, remix safely and judge AI-generated models honestly.</li>
+      <li>A complete ten-step bracket workflow, plus short OpenSCAD and CadQuery examples.</li>
+    </ul>
+  </div>
+
+  <h2 id="paradigms">Four ways to describe a shape</h2>
+  <p>All modeling programs end up producing a <a href="files-and-meshes.html">mesh</a> that your slicer can read, but they get there by very different routes. Choosing the right route for the job saves more time than learning any particular program.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 340" role="img" aria-label="Four modeling paradigms: mesh and sculpt, parametric solid CAD, constructive solid geometry in code, and generative or AI modeling, each with a small example and its strength">
+      <g transform="translate(20,20)">
+        <rect class="f-purple" width="190" height="290" rx="12"/>
+        <text class="t t-b" x="95" y="26" style="text-anchor:middle">Mesh / sculpt</text>
+        <g transform="translate(35,48)">
+          <path class="d-surface" d="M10 70 Q0 30 40 12 Q80 0 100 40 Q116 80 70 98 Q30 108 10 70Z"/>
+          <path class="d-thin" d="M10 70 L40 12 M40 12 L70 50 L100 40 M10 70 L70 50 L70 98 M70 50 L40 90 M40 12 L70 98"/>
+        </g>
+        <text class="t-sm" x="14" y="186">Push and pull vertices</text>
+        <text class="t-sm" x="14" y="204">like digital clay.</text>
+        <text class="t-xs c-green" x="14" y="228">+ organic, fast, artistic</text>
+        <text class="t-xs c-red" x="14" y="244">− no exact dimensions</text>
+        <text class="t-xs t-m" x="14" y="268">Blender, ZBrush, Nomad</text>
+      </g>
+      <g transform="translate(235,20)">
+        <rect class="f-blue" width="190" height="290" rx="12"/>
+        <text class="t t-b" x="95" y="26" style="text-anchor:middle">Parametric solid</text>
+        <g transform="translate(35,48)">
+          <rect class="d-surface" x="0" y="30" width="110" height="60" rx="3"/>
+          <path class="d-thin" d="M0 70 H110"/>
+          <circle class="d-surface2" cx="30" cy="50" r="10"/><circle class="d-surface2" cx="80" cy="50" r="10"/>
+          <path class="d-ink arrow" d="M0 20 H110"/><text class="t-xs" x="40" y="14">W = 40 mm</text>
+        </g>
+        <text class="t-sm" x="14" y="186">Sketches + features with</text>
+        <text class="t-sm" x="14" y="204">editable dimensions.</text>
+        <text class="t-xs c-green" x="14" y="228">+ precise, editable history</text>
+        <text class="t-xs c-red" x="14" y="244">− steeper learning curve</text>
+        <text class="t-xs t-m" x="14" y="268">Fusion, Onshape, FreeCAD…</text>
+      </g>
+      <g transform="translate(450,20)">
+        <rect class="f-green" width="190" height="290" rx="12"/>
+        <text class="t t-b" x="95" y="26" style="text-anchor:middle">Code / CSG</text>
+        <g transform="translate(30,50)">
+          <rect class="d-surface2" x="0" y="0" width="130" height="86" rx="6"/>
+          <text class="t-xs t-mono" x="8" y="20">difference() {</text>
+          <text class="t-xs t-mono" x="8" y="38">  cube(30);</text>
+          <text class="t-xs t-mono" x="8" y="56">  cylinder(r=8);</text>
+          <text class="t-xs t-mono" x="8" y="74">}</text>
+        </g>
+        <text class="t-sm" x="14" y="186">Write a program that</text>
+        <text class="t-sm" x="14" y="204">builds the shape.</text>
+        <text class="t-xs c-green" x="14" y="228">+ exact, versionable, loops</text>
+        <text class="t-xs c-red" x="14" y="244">− no direct clicking</text>
+        <text class="t-xs t-m" x="14" y="268">OpenSCAD, CadQuery, build123d</text>
+      </g>
+      <g transform="translate(665,20)">
+        <rect class="f-orange" width="175" height="290" rx="12"/>
+        <text class="t t-b" x="88" y="26" style="text-anchor:middle">Generative / AI</text>
+        <g transform="translate(26,50)">
+          <rect class="d-surface2" x="0" y="0" width="120" height="86" rx="6"/>
+          <text class="t-xs" x="8" y="22">"a rugged phone</text><text class="t-xs" x="8" y="38">stand with a hook"</text>
+          <path class="d-ink arrow" d="M60 46 V66"/>
+          <path class="d-surface" d="M30 82 L60 62 L90 82Z"/>
+        </g>
+        <text class="t-sm" x="14" y="186">Describe or optimize and</text>
+        <text class="t-sm" x="14" y="204">let software propose shapes.</text>
+        <text class="t-xs c-green" x="14" y="228">+ quick ideas, topology opt.</text>
+        <text class="t-xs c-red" x="14" y="244">− unreliable dimensions</text>
+        <text class="t-xs t-m" x="14" y="268">text/image-to-3D, Fusion generative</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 1.</b> Four paradigms. Many projects mix them: a sculpted shape for the look, a parametric model for the mechanism, code for repeating patterns.</figcaption>
+  </figure>
+
+  <div class="grid cols-2">
+    <div class="card accent-purple"><h4>🔰 Think "clay" or think "blueprint"?</h4><p>If you ask "how should it <em>look</em>?" (a figurine, a creature, a smooth grip), mesh sculpting is natural. If you ask "how big must it be to <em>fit</em>?" (a bracket, a case, a gear), you need exact numbers and an editable history, which is what parametric CAD or code provide.</p></div>
+    <div class="card accent-teal"><h4>🔧 Exact vs approximate</h4><p>Parametric and code models are mathematically defined (planes, cylinders, splines), and only converted to triangles when you export. Sculpted models <em>are</em> triangles from the start, so you cannot reliably say "make this hole 5.2 mm" without rebuilding it.</p></div>
+  </div>
+
+  <h2 id="software-tour">Software tour</h2>
+  <p>No program is "the best"; each is a trade-off between ease, precision and cost. Prices and license terms change often, so treat the notes below as a snapshot to verify on the vendor's site before you commit.</p>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Program</th><th>Paradigm</th><th>Strengths</th><th>Limits</th><th>Cost / license (check current terms)</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Tinkercad</strong></td><td>Block CSG (web)</td><td>Zero learning curve, runs in a browser, great for kids and quick fixtures</td><td>Limited precision tools, no real fillets, big models get slow</td><td>Free account (Autodesk)</td></tr>
+      <tr><td><strong>Autodesk Fusion</strong></td><td>Parametric + sculpt + CAM</td><td>Full-featured, timeline history, big learning library, integrated simulation and CAM</td><td>Cloud-tied; free personal-use tier has feature and export restrictions that change over time</td><td>Free for qualifying personal use; paid subscription otherwise</td></tr>
+      <tr><td><strong>Onshape</strong></td><td>Parametric (browser)</td><td>Runs anywhere, built-in version control and collaboration, good assemblies</td><td>Internet required; free plan makes documents public</td><td>Free (public docs) / paid plans</td></tr>
+      <tr><td><strong>FreeCAD</strong></td><td>Parametric, open source</td><td>No cost, no accounts, scripting in Python, many workbenches (Part Design, Sketcher, TechDraw)</td><td>UI feels dated; topological naming issues improved in recent versions but still needs good habits</td><td>Free, LGPL</td></tr>
+      <tr><td><strong>SolidWorks / Inventor</strong></td><td>Parametric (industry)</td><td>Industry standard, advanced surfacing, assemblies, drawings</td><td>Cost, Windows-only, overkill for most hobbyists</td><td>Commercial; discounted maker/hobbyist and education options exist</td></tr>
+      <tr><td><strong>Shapr3D</strong></td><td>Direct + parametric hybrid</td><td>Touch and pencil friendly, fast to learn, runs on tablets</td><td>Free tier has limits; fewer advanced features</td><td>Freemium subscription</td></tr>
+      <tr><td><strong>OpenSCAD</strong></td><td>Code / CSG</td><td>Exact, programmable, perfect for parametric families and diffs in Git</td><td>No interactive picking, hard for organic forms, fillets are manual</td><td>Free, GPL</td></tr>
+      <tr><td><strong>CadQuery / build123d</strong></td><td>Code (Python, real B-rep)</td><td>Real fillets, chamfers and STEP export from Python; integrates with scripts</td><td>Requires Python skills; limited GUI viewers</td><td>Free, open source</td></tr>
+      <tr><td><strong>Blender</strong></td><td>Mesh / sculpt</td><td>Superb for organic shapes, mesh repair, rendering; huge community; 3D-Print Toolbox add-on</td><td>Not designed for engineering dimensions (units available but manual)</td><td>Free, GPL</td></tr>
+      <tr><td><strong>ZBrush / Nomad Sculpt</strong></td><td>Digital sculpting</td><td>Millions of polygons, detailed figurines and miniatures; Nomad runs on tablets</td><td>Not for mechanical parts; models need decimation/hollowing for print</td><td>Commercial (ZBrush subscription; Nomad low-cost app)</td></tr>
+      <tr><td><strong>Plasticity</strong></td><td>NURBS / B-rep</td><td>Smooth, artistic hard-surface modeling with a pleasant interface</td><td>Fewer parametric history features; paid</td><td>Commercial (perpetual and subscription options)</td></tr>
+      <tr><td><strong>Meshmixer alternatives</strong></td><td>Mesh editing</td><td>Meshmixer is no longer actively developed; Blender, MeshLab, Microsoft 3D Builder and slicer tools cover repair, hollowing and cutting</td><td>Each needs a different workflow</td><td>Mostly free</td></tr>
+    </tbody></table></div>
+
+  <div class="callout tip"><span class="callout-title">How to pick in 30 seconds</span>
+    <p>Total beginner or a quick one-off fixture: <strong>Tinkercad</strong>. Functional parts you will revise: <strong>Fusion, Onshape or FreeCAD</strong>. Families of parts with a few numbers changing: <strong>OpenSCAD or CadQuery</strong>. Creatures, faces and miniatures: <strong>Blender or Nomad</strong>. Reverse-engineering a broken part: calipers + parametric CAD.</p>
+  </div>
+
+  <div class="pros-cons">
+    <div class="pros"><h4>Why learn parametric CAD</h4><ul><li>Change one dimension and the whole model updates</li><li>Reuse parts, assemblies and tolerances</li><li>Transferable skills across Fusion, Onshape, FreeCAD, SolidWorks</li></ul></div>
+    <div class="cons"><h4>What it costs you</h4><ul><li>A few weekends to feel comfortable</li><li>Habit changes: constrain sketches, name features</li><li>Cloud accounts or licensing to keep an eye on</li></ul></div>
+  </div>
+
+  <h2 id="learning-path">A learning path with a timeline</h2>
+  <p>You do not need to learn everything. This sequence builds skills in the order they get used on real printed parts. Times are rough guidance for casual evening practice.</p>
+  <ul class="timeline">
+    <li><strong>Week 1 · Blocks.</strong> Tinkercad or a basic CAD sketch-and-extrude tutorial. Goal: a coaster, a phone stand and a simple box with lid. Learn: units, workplane, grouping, alignment.</li>
+    <li><strong>Weeks 2–3 · Sketches and constraints.</strong> Fusion, Onshape or FreeCAD. Goal: fully constrained sketches with named dimensions. Learn: extrude, cut, hole, fillet, chamfer.</li>
+    <li><strong>Weeks 4–6 · Real parts.</strong> Model something you actually need: a bracket, a cable clip, a replacement knob. Learn: measuring with calipers, tolerances from <a href="../design/tolerances-and-fits.html">Tolerances &amp; fits</a>, printing and revising.</li>
+    <li><strong>Months 2–3 · Parametric habits.</strong> User parameters, patterns, mirrors, multi-body parts, assemblies and joints. Learn: design for splitting and for <a href="../design/joints-and-fasteners.html">joints and fasteners</a>.</li>
+    <li><strong>Months 3–6 · Specialize.</strong> Add code (OpenSCAD/CadQuery), surfacing (loft/sweep), or sculpting (Blender/Nomad), depending on what you build. Learn: version control, naming, exporting STEP and 3MF.</li>
+    <li><strong>Beyond.</strong> Simulation, topology optimization, CAM, or professional certification if your goals require it.</li>
+  </ul>
+
+  <h2 id="core-concepts">Core CAD concepts, illustrated</h2>
+  <p>Almost every parametric program shares the same vocabulary. Once you know these ideas, switching programs feels like learning a new dialect, not a new language.</p>
+
+  <h3 id="sketches">Sketches and constraints</h3>
+  <p>A <strong>sketch</strong> is a flat drawing on a plane (lines, arcs, circles). <strong>Dimensions</strong> fix sizes (a length of 40 mm), and <strong>constraints</strong> fix relationships (this line is horizontal, these two circles are equal, this point lies on that line). A <em>fully constrained</em> sketch cannot move unexpectedly when you edit something else, which is what makes a model robust. Most programs color under-constrained geometry (often blue) and fully constrained geometry (black or green).</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 300" role="img" aria-label="A sketch evolving from loose lines to a fully constrained rectangle with a hole, showing horizontal, vertical, equal and dimension constraints">
+      <text class="t t-b" x="30" y="26">① Rough sketch</text><text class="t t-b" x="320" y="26">② Add constraints</text><text class="t t-b" x="610" y="26">③ Fully constrained</text>
+      <g transform="translate(30,44)">
+        <path class="k-blue" d="M10 20 L180 30 L170 150 L20 140 Z" style="stroke-width:2.5"/>
+        <circle class="k-blue" cx="95" cy="86" r="20" style="stroke-width:2.5"/>
+        <text class="t-xs t-m" x="20" y="190">Lines are slightly crooked and free to move.</text>
+      </g>
+      <g transform="translate(320,44)">
+        <path class="k-orange" d="M10 20 H180 V140 H10 Z" style="stroke-width:2.5"/>
+        <circle class="k-orange" cx="95" cy="80" r="20" style="stroke-width:2.5"/>
+        <g class="t-xs c-green"><text x="86" y="14">H</text><text x="86" y="156">H</text><text x="0" y="84">V</text><text x="186" y="84">V</text><text x="104" y="54">⌖</text></g>
+        <text class="t-xs t-m" x="10" y="190">H / V = horizontal / vertical; ⌖ = centered.</text>
+      </g>
+      <g transform="translate(610,44)">
+        <path class="k-green" d="M10 20 H180 V140 H10 Z" style="stroke-width:2.5"/>
+        <circle class="k-green" cx="95" cy="80" r="20" style="stroke-width:2.5"/>
+        <path class="d-ink arrow" d="M10 164 H180"/><text class="t-xs" x="70" y="180">40 mm</text>
+        <path class="d-ink arrow" d="M200 20 V140"/><text class="t-xs" x="206" y="84">28 mm</text>
+        <path class="d-thin" d="M95 80 L113 70"/><text class="t-xs" x="118" y="68">Ø 8</text>
+        <text class="t-xs t-m" x="10" y="204">Fully constrained: edit a number, the sketch updates.</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 2.</b> The sketch workflow: draw loosely, add relationships, then add a small set of driving dimensions. Name the important dimensions so you can find them later.</figcaption>
+  </figure>
+
+  <h3 id="features">Features: extrude, revolve, loft, sweep</h3>
+  <p>A <strong>feature</strong> turns a 2D sketch into 3D volume. The four workhorses cover most printable parts.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 280" role="img" aria-label="Four feature operations: extrude a rectangle into a block, revolve a profile around an axis into a vase, loft between a circle and a square, and sweep a circle along a curved path">
+      <g class="t t-b"><text x="30" y="26">Extrude</text><text x="240" y="26">Revolve</text><text x="450" y="26">Loft</text><text x="660" y="26">Sweep</text></g>
+      <g transform="translate(30,46)">
+        <path class="d-thin" d="M10 150 H110 V110 H10Z"/>
+        <path class="d-surface" d="M30 120 H130 V160 H30Z M30 120 L50 100 H150 L130 120 M130 120 V160 L150 140 V100"/>
+        <path class="d-ink arrow" d="M70 100 V50"/><text class="t-xs" x="76" y="56">distance</text>
+        <text class="t-xs t-m" x="10" y="200">profile pushed along a line</text>
+      </g>
+      <g transform="translate(240,46)">
+        <path class="d-dash" d="M90 0 V170"/>
+        <path class="d-surface" d="M90 20 Q150 40 140 90 Q130 130 110 150 H90 Z"/>
+        <path class="d-surface2" d="M90 20 Q30 40 40 90 Q50 130 70 150 H90 Z"/>
+        <path class="d-thin" d="M40 150 Q90 170 140 150"/>
+        <text class="t-xs" x="96" y="12">axis</text>
+        <text class="t-xs t-m" x="10" y="200">profile spun around an axis</text>
+      </g>
+      <g transform="translate(450,46)">
+        <ellipse class="d-surface2" cx="85" cy="150" rx="55" ry="14"/>
+        <rect class="d-surface2" x="48" y="38" width="74" height="26" rx="3" transform="skewX(-10) translate(14,0)"/>
+        <path class="d-surface" d="M30 150 L48 64 H122 L140 150 Q85 164 30 150Z" opacity=".8"/>
+        <path class="d-thin" d="M30 150 L48 64 M140 150 L122 64"/>
+        <text class="t-xs t-m" x="0" y="200">blend between two profiles</text>
+      </g>
+      <g transform="translate(660,46)">
+        <path class="d-dash" d="M20 160 Q40 40 110 60 T170 20"/>
+        <circle class="d-surface" cx="20" cy="160" r="12"/>
+        <path class="d-surface2" d="M12 158 Q32 36 104 52 T164 14 L176 26 Q110 70 44 70 Q36 110 28 164Z" opacity=".7"/>
+        <text class="t-xs t-m" x="0" y="200">profile dragged along a path</text>
+      </g>
+      <rect class="d-surface2" x="30" y="240" width="800" height="30" rx="8"/>
+      <text class="t-sm" x="46" y="260">For printing, extrude and revolve cover most parts; loft and sweep are for ducts, handles and organic transitions.</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> Four ways to create volume from a sketch. Extrude cuts (pockets) use the same dialogs as extrude joins, only subtracting.</figcaption>
+  </figure>
+
+  <h3 id="edge-ops">Fillets, chamfers and Booleans</h3>
+  <p>A <strong>fillet</strong> rounds an edge; a <strong>chamfer</strong> cuts it at an angle. For printing, fillets on inner corners reduce stress concentrations, and chamfers on the bottom edge hide elephant foot and avoid overhang. <strong>Boolean operations</strong> combine solids: <em>union</em> joins, <em>subtract</em> (cut) removes one from another, and <em>intersect</em> keeps only the shared volume. In code-based CAD, Booleans are the main tool; in GUI CAD they hide behind "join / cut / intersect".</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 280" role="img" aria-label="Fillet and chamfer on a corner, and union, subtract and intersect operations on overlapping circle and square">
+      <g transform="translate(20,20)">
+        <text class="t t-b" x="0" y="14">Corner treatments</text>
+        <path class="d-surface" d="M10 160 V60 H110 V160Z" transform="translate(0,0)"/>
+        
+        <g transform="translate(150,0)"><path class="d-surface" d="M0 160 V80 Q0 60 20 60 H100 V160Z"/><text class="t-xs" x="20" y="180">fillet</text></g>
+        <g transform="translate(290,0)"><path class="d-surface" d="M0 160 V90 L30 60 H100 V160Z"/><text class="t-xs" x="20" y="180">chamfer</text></g>
+        <text class="t-xs" x="20" y="180">sharp</text>
+      </g>
+      <g transform="translate(500,20)">
+        <text class="t t-b" x="0" y="14">Boolean operations</text>
+        <g transform="translate(0,40)"><rect class="d-surface" x="0" y="20" width="60" height="60"/><circle class="d-surface2" cx="60" cy="50" r="34" opacity=".85"/><text class="t-xs" x="8" y="108">union</text></g>
+        <g transform="translate(110,40)"><rect class="d-surface" x="0" y="20" width="60" height="60" opacity=".25"/><circle class="d-metal" cx="60" cy="50" r="34" opacity=".25" stroke-dasharray="4 3"/><path class="d-surface2" d="M0 20 H44 A34 34 0 0 0 44 80 H0Z"/><text class="t-xs" x="8" y="108">subtract</text></g>
+        <g transform="translate(220,40)"><rect class="d-metal" x="0" y="20" width="60" height="60" opacity=".25"/><circle class="d-metal" cx="60" cy="50" r="34" opacity=".25"/><path class="d-surface2" d="M44 20 H60 V80 H44 A34 34 0 0 1 44 20Z"/><text class="t-xs" x="4" y="108">intersect</text></g>
+      </g>
+      <rect class="d-surface2" x="20" y="234" width="820" height="34" rx="8"/>
+      <text class="t-sm" x="36" y="256">Booleans on dirty meshes can fail; fillets are easier before holes and patterns are added (apply them in logical order).</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> Edge treatments and the three Boolean operations. Order matters: subtract a hole after you union a boss, not before.</figcaption>
+  </figure>
+
+  <h3 id="patterns-assemblies">Patterns, assemblies and parameter tables</h3>
+  <p><strong>Patterns</strong> repeat a feature along a line (linear) or around an axis (circular), and <strong>mirror</strong> duplicates across a plane. Use them for bolt circles, vent slots and symmetrical parts; changing the count or spacing updates every copy. <strong>Assemblies</strong> place several parts in one file and connect them with joints or mates (rigid, revolute, slider), letting you check clearances and motion before printing. <strong>Parameter tables</strong> (user parameters or spreadsheets) keep the key numbers in one list, such as <code>wall = 2.4</code>, <code>clearance = 0.3</code> and <code>boss_d = 8</code>, so you change one place instead of hunting through sketches.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 290" role="img" aria-label="A linear pattern of slots, a circular pattern of holes, an assembly of lid and box with joint, and a parameter table linked to a model">
+      <g class="t t-b"><text x="20" y="24">Linear pattern</text><text x="230" y="24">Circular pattern</text><text x="440" y="24">Assembly joint</text><text x="650" y="24">Parameter table</text></g>
+      <g transform="translate(20,40)">
+        <rect class="d-surface" x="0" y="20" width="170" height="70" rx="4"/>
+        <g class="d-surface2"><rect x="14" y="36" width="12" height="38" rx="6"/><rect x="44" y="36" width="12" height="38" rx="6"/><rect x="74" y="36" width="12" height="38" rx="6"/><rect x="104" y="36" width="12" height="38" rx="6"/><rect x="134" y="36" width="12" height="38" rx="6"/></g>
+        <path class="d-ink arrow" d="M20 108 H150"/><text class="t-xs" x="10" y="130">count = 5, spacing = 30</text>
+      </g>
+      <g transform="translate(230,40)">
+        <circle class="d-surface" cx="85" cy="60" r="56"/>
+        <circle class="d-surface2" cx="85" cy="60" r="12"/>
+        <g class="d-surface2"><circle cx="85" cy="20" r="6"/><circle cx="125" cy="60" r="6"/><circle cx="85" cy="100" r="6"/><circle cx="45" cy="60" r="6"/><circle cx="113" cy="32" r="6"/><circle cx="113" cy="88" r="6"/><circle cx="57" cy="88" r="6"/><circle cx="57" cy="32" r="6"/></g>
+        <text class="t-xs" x="10" y="130">8 holes around an axis</text>
+      </g>
+      <g transform="translate(440,40)">
+        <path class="d-surface" d="M0 70 H110 V120 H0Z"/>
+        <path class="d-surface2" d="M10 20 H120 V50 H10Z" transform="rotate(-18 10 50)"/>
+        <circle class="k-red" cx="4" cy="68" r="5" style="stroke-width:2"/>
+        <path class="d-ink arrow" d="M30 50 Q10 36 14 62" style="stroke-width:1.5"/>
+        <text class="t-xs" x="10" y="140">revolute joint (hinge): lid swings</text>
+      </g>
+      <g transform="translate(650,40)">
+        <rect class="d-surface2" x="0" y="0" width="190" height="104" rx="6"/>
+        <g class="t-xs t-mono"><text x="10" y="22">wall        = 2.4</text><text x="10" y="42">clearance   = 0.30</text><text x="10" y="62">boss_d      = 8</text><text x="10" y="82">height      = 30</text></g>
+        <path class="d-ink arrow" d="M95 108 V130"/>
+        <rect class="d-surface" x="60" y="132" width="70" height="30" rx="3"/>
+        <text class="t-xs" x="0" y="184">edit once, every feature updates</text>
+      </g>
+      <rect class="d-surface2" x="20" y="238" width="820" height="32" rx="8"/>
+      <text class="t-sm" x="36" y="259">Habit: name the parameters that matter (wall, clearance, hole size) and reference them everywhere.</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> Reusable structure. Patterns and parameter tables are what turn "a drawing" into "a design you can resize in a minute."</figcaption>
+  </figure>
+
+  <h2 id="modeling-for-printing">Modeling for printing: the basics</h2>
+  <p>A model that looks perfect on the screen can still fail on the bed. These habits cost nothing and prevent most problems. The full theory is in <a href="../design/principles.html">Design principles</a>, <a href="../design/tolerances-and-fits.html">Tolerances &amp; fits</a> and <a href="../design/strength-and-orientation.html">Strength &amp; orientation</a>.</p>
+
+  <div class="grid cols-2">
+    <div class="card accent-blue"><h4>📏 Units</h4><p>Work in millimeters and export in millimeters. Many slicers assume millimeters, so a model exported in inches will arrive 25.4 times too small, and one exported in meters will look gigantic. Check the scale in the slicer's object info.</p></div>
+    <div class="card accent-green"><h4>🧭 Orientation</h4><p>Decide how the part will sit on the plate while you model it. Put the flattest, largest face down, keep load directions across layers where possible, and avoid steep overhangs that would need supports.</p></div>
+    <div class="card accent-orange"><h4>🧱 Wall thickness</h4><p>Make walls at least two nozzle widths thick (≈ 0.8–1.2 mm on a 0.4 mm nozzle); structural walls of 2–3 mm are common. Thickness in multiples of your line width slices cleanly, with fewer gaps.</p></div>
+    <div class="card accent-purple"><h4>🔍 Export resolution</h4><p>When exporting STL, choose a tessellation fine enough that curves look round (typically a chord deviation of 0.01–0.05 mm) but not so fine that the file becomes enormous. 3MF preserves units and colors; see <a href="files-and-meshes.html">File formats &amp; mesh repair</a>.</p></div>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 300" role="img" aria-label="Good and bad modeling for printing: a thin wall versus a thick wall, a sharp internal corner versus a filleted corner, a flat bottom versus a 45 degree chamfer, and a hole sized with clearance">
+      <g class="t t-b"><text x="20" y="24">Wall thickness</text><text x="230" y="24">Corners</text><text x="440" y="24">Bottom edge</text><text x="650" y="24">Holes</text></g>
+      <g transform="translate(20,40)">
+        <rect class="d-surface" x="10" y="10" width="14" height="110"/><rect class="d-surface" x="70" y="10" width="42" height="110"/><rect class="d-metal" x="0" y="120" width="140" height="10"/>
+        <text class="t-xs c-red" x="0" y="152">0.4 mm: fragile</text><text class="t-xs c-green" x="70" y="152">1.2+ mm</text>
+      </g>
+      <g transform="translate(230,40)">
+        <path class="d-surface" d="M0 10 V120 H70 V80 H120 V10Z"/>
+        <path class="k-red" d="M70 80 L78 72" style="stroke-width:3"/>
+        <text class="t-xs c-red" x="76" y="108">sharp inside corner</text>
+        <text class="t-xs c-green" x="0" y="148">Add a 1–2 mm fillet to share stress.</text>
+      </g>
+      <g transform="translate(440,40)">
+        <path class="d-surface" d="M0 10 H100 V120 H0Z"/>
+        <path class="d-surface2" d="M110 10 H210 V105 L195 120 H125 L110 105Z"/>
+        <rect class="d-metal" x="-10" y="120" width="230" height="8"/>
+        <text class="t-xs" x="0" y="148">square edge: elephant foot flares</text>
+        <text class="t-xs c-green" x="110" y="164">chamfer 0.4–0.6 mm hides it</text>
+      </g>
+      <g transform="translate(650,40)">
+        <rect class="d-surface" x="0" y="20" width="76" height="76" rx="3"/><circle class="d-surface2" cx="38" cy="58" r="16" stroke-dasharray="3 3"/>
+        <rect class="d-surface" x="100" y="20" width="76" height="76" rx="3"/><circle class="d-surface2" cx="138" cy="58" r="19"/>
+        <text class="t-xs c-red" x="0" y="118">Ø exactly 8 → tight</text><text class="t-xs c-green" x="100" y="118">Ø 8 + 0.2–0.4 clearance</text>
+        <text class="t-xs t-m" x="0" y="136">Printed holes come out slightly small.</text>
+      </g>
+      <rect class="d-surface2" x="20" y="240" width="820" height="40" rx="8"/>
+      <text class="t-sm" x="36" y="258">Model the real dimension, then add clearance separately as a named parameter, so you can retune it for each printer.</text>
+      <text class="t-sm" x="36" y="274">Typical starting clearances: 0.2 mm sliding fit, 0.1 mm press fit, 0.4 mm loose fit (verify on your printer).</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> Four small modeling habits that prevent common printing failures. Several of them (corners, chamfers) cost nothing in CAD but save time on the printer.</figcaption>
+  </figure>
+
+  <h2 id="measuring">Reverse engineering and measuring</h2>
+  <p>Many useful prints replace or adapt something that already exists. Measure carefully, model what you measure, then test-print a small section before committing to the full part.</p>
+  <ul>
+    <li><strong>Digital calipers</strong> (≈ ±0.02 mm) measure outer dimensions, hole diameters and depths. Measure three times, in different places; parts are rarely perfect.</li>
+    <li><strong>Calipers + templates:</strong> trace the outline on paper, scan it flat, then import the scan as a sketch background and scale it to a known dimension.</li>
+    <li><strong>Photos with a reference:</strong> photograph the part flat on graph paper or beside a coin or ruler, perpendicular to the camera, then calibrate the image scale inside CAD. Fine for flat parts such as gaskets and clips.</li>
+    <li><strong>Photogrammetry:</strong> software builds a mesh from dozens of overlapping photos. Free and cheap, good for large or organic objects, but shiny, transparent and featureless surfaces fail.</li>
+    <li><strong>3D scanners</strong> (structured light, laser or phone LiDAR) produce a mesh quickly. Accuracy ranges from about a millimeter on phones to hundredths of a millimeter on professional units. Expect to clean, repair and then remodel critical features in CAD.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 260" role="img" aria-label="Measuring a part with calipers, transferring dimensions into a sketch, and comparing the first print with the original">
+      <g transform="translate(20,20)">
+        <rect class="f-blue" width="260" height="190" rx="12"/><text class="t t-b" x="130" y="26" style="text-anchor:middle">1 · Measure</text>
+        <rect class="d-surface" x="40" y="70" width="120" height="70" rx="3"/><circle class="d-surface2" cx="100" cy="105" r="14"/>
+        <path class="d-metal" d="M34 56 H170 V64 H34Z M34 56 V150 M170 56 V66"/>
+        <text class="t-xs" x="70" y="48">calipers</text>
+        <text class="t-xs" x="16" y="176">record to ±0.05 mm; note holes and depths</text>
+      </g>
+      <path class="d-ink arrow" d="M284 115 H312"/>
+      <g transform="translate(316,20)">
+        <rect class="f-green" width="260" height="190" rx="12"/><text class="t t-b" x="130" y="26" style="text-anchor:middle">2 · Model</text>
+        <rect class="k-green" x="40" y="70" width="120" height="70" style="stroke-width:2.5"/><circle class="k-green" cx="100" cy="105" r="14" style="stroke-width:2.5"/>
+        <text class="t-xs" x="40" y="62">38.4</text><text class="t-xs" x="164" y="108">24.0</text>
+        <text class="t-xs" x="16" y="176">sketch + parameters (named dims)</text>
+      </g>
+      <path class="d-ink arrow" d="M580 115 H608"/>
+      <g transform="translate(612,20)">
+        <rect class="f-orange" width="228" height="190" rx="12"/><text class="t t-b" x="114" y="26" style="text-anchor:middle">3 · Test &amp; adjust</text>
+        <rect class="d-surface" x="34" y="70" width="120" height="70" rx="3"/><rect class="d-surface2" x="40" y="76" width="120" height="70" rx="3" opacity=".5"/>
+        <text class="t-xs" x="16" y="176">print, overlay, adjust clearance</text>
+      </g>
+      <text class="t-sm t-m" x="20" y="244">Print a quick test slice (a thin section with the critical holes) before the full part.</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> Measure → model → test loop for replacement parts. Always test fit-critical sections first; scans are starting points, not finished models.</figcaption>
+  </figure>
+
+  <h2 id="text-svg">Text, logos and SVG import</h2>
+  <p>Text and logos are 2D outlines that you extrude into 3D. <strong>Text tools</strong> in most CAD programs create a sketch from a font; pick a bold, simple font and keep strokes at least 0.8–1.2 mm wide (about two to three nozzle widths) so letters print cleanly. <strong>SVG import</strong> brings vector artwork into a sketch: clean the paths first (convert text to outlines, remove tiny details, close open shapes, simplify nodes), then extrude by 0.6–2 mm. Embossed (raised) text prints best on a top face; engraved text should be at least 0.6 mm deep. Raster images (PNG, JPEG) must first be traced into vectors. Mind font and logo licenses before selling anything that includes them.</p>
+
+  <h2 id="remixing">Remixing models and licensing</h2>
+  <p>Remixing means modifying someone else's model, often the fastest way to a solution. Download a mesh or, better, a native or STEP file, and modify it in CAD or a mesh editor. Before sharing or selling, check the license on the source page. Creative Commons licenses are common on model sites: <strong>CC0</strong> (no restrictions), <strong>CC BY</strong> (credit required), <strong>CC BY-SA</strong> (credit and share-alike), <strong>NC</strong> (no commercial use) and <strong>ND</strong> (no derivatives, so no remixing for publication). Some sites use their own terms in addition. When in doubt, ask the author. See also <a href="files-and-meshes.html#repositories">repositories and licensing</a> and <a href="../reference/economics-and-ethics.html">Economics, licensing &amp; sustainability</a>.</p>
+  <div class="callout warn"><span class="callout-title">This is general information, not legal advice</span>
+    <p>License terms vary by site and by country. A remix of an "ND" model, a model of a trademarked character, or a part derived from a patented design may be restricted even for personal sale. Keep a note of the source URL, author and license beside every remix.</p>
+  </div>
+
+  <h2 id="ai-3d">AI text-to-3D and image-to-3D</h2>
+  <p>Generative tools can turn a sentence or a photo into a 3D mesh in minutes. They are developing fast, and results vary widely by tool and prompt. For printing, treat them as a source of <em>concepts and rough shapes</em>, not as engineering drawings.</p>
+  <div class="grid cols-2">
+    <div class="card accent-green"><h4>What they are good at</h4><ul><li>Quick ideas for figurines, props and decorative shapes</li><li>Starting meshes for sculpting in Blender or Nomad</li><li>Turning a photo into a rough 3D base</li></ul></div>
+    <div class="card accent-red"><h4>Where they struggle</h4><ul><li>Exact dimensions, holes and mating surfaces</li><li>Thin features, tiny shells and non-manifold geometry</li><li>Symmetry, text and mechanical logic (gears, hinges)</li><li>Unclear training-data and licensing situations; check the tool's terms</li></ul></div>
+  </div>
+  <p>Typical clean-up: import the mesh, check for holes, non-manifold edges and wall thickness (see <a href="files-and-meshes.html#anatomy">mesh anatomy</a>), decimate or remesh, scale to real-world size, and rebuild any functional features, such as screw holes or mounting plates, in CAD. Do not rely on an AI-generated model for anything that bears load or safety.</p>
+
+  <h2 id="bracket">Worked example: design a bracket in ten steps</h2>
+  <p>We will make an L-shaped shelf bracket: a 40 × 30 mm leg pair, 4 mm thick, 30 mm wide, with two screw holes and a gusset. The steps are the same in Fusion, Onshape or FreeCAD; the menu names differ.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 420" role="img" aria-label="Ten step diagrams for designing an L bracket: define parameters, sketch the L profile, constrain, extrude, add gusset, add holes, fillet, check orientation, export, slice and test">
+      <g class="t-sm t-b"><text x="20" y="22">1 Parameters</text><text x="190" y="22">2 Sketch profile</text><text x="360" y="22">3 Constrain</text><text x="530" y="22">4 Extrude 30</text><text x="700" y="22">5 Gusset</text></g>
+      <g transform="translate(20,32)"><rect class="d-surface2" width="150" height="150" rx="8"/><g class="t-xs t-mono"><text x="10" y="40">t  = 4</text><text x="10" y="62">w  = 30</text><text x="10" y="84">a  = 40</text><text x="10" y="106">b  = 30</text><text x="10" y="128">d  = 4.5</text></g></g>
+      <g transform="translate(190,32)"><rect class="d-surface2" width="150" height="150" rx="8"/><path class="k-blue" d="M30 120 H120 V104 H46 V30 H30Z" style="stroke-width:2.5"/></g>
+      <g transform="translate(360,32)"><rect class="d-surface2" width="150" height="150" rx="8"/><path class="k-green" d="M30 120 H120 V104 H46 V30 H30Z" style="stroke-width:2.5"/><path class="d-ink arrow" d="M30 138 H120"/><text class="t-xs" x="60" y="148">a</text><path class="d-ink arrow" d="M14 30 V120"/><text class="t-xs" x="2" y="78">b</text></g>
+      <g transform="translate(530,32)"><rect class="d-surface2" width="150" height="150" rx="8"/><path class="d-surface" d="M30 120 H120 V104 H46 V30 H30Z"/><path class="d-surface2" d="M30 30 L56 14 H72 L46 30Z M120 104 L146 88 V104 L120 120Z M46 30 L72 14 V88 L46 104Z" opacity=".8"/><path class="d-ink arrow" d="M110 124 L134 108" style="stroke-width:1.5"/></g>
+      <g transform="translate(700,32)"><rect class="d-surface2" width="150" height="150" rx="8"/><path class="d-surface" d="M30 120 H120 V104 H46 V30 H30Z"/><path class="d-plastic" d="M46 104 H100 L46 56Z"/></g>
+      <g class="t-sm t-b"><text x="20" y="212">6 Holes</text><text x="190" y="212">7 Fillets</text><text x="360" y="212">8 Orientation</text><text x="530" y="212">9 Export</text><text x="700" y="212">10 Slice &amp; test</text></g>
+      <g transform="translate(20,222)"><rect class="d-surface2" width="150" height="150" rx="8"/><path class="d-surface" d="M30 120 H120 V104 H46 V30 H30Z"/><circle class="d-surface2" cx="96" cy="112" r="3"/><circle class="d-surface2" cx="38" cy="58" r="3"/></g>
+      <g transform="translate(190,222)"><rect class="d-surface2" width="150" height="150" rx="8"/><path class="d-surface" d="M30 120 H120 V104 H56 Q46 104 46 94 V30 H30Z"/><path class="k-orange" d="M46 104 Q46 94 56 104" style="stroke-width:3"/></g>
+      <g transform="translate(360,222)"><rect class="d-surface2" width="150" height="150" rx="8"/><rect class="d-metal" x="10" y="22" width="130" height="100" rx="4" opacity=".5"/><path class="d-surface" d="M30 100 H120 V84 H46 V38 H30Z"/><text class="t-xs c-green" x="14" y="16">top view: L lies on its side</text><text class="t-xs" x="14" y="142">layers follow the bend</text></g>
+      <g transform="translate(530,222)"><rect class="d-surface2" width="150" height="150" rx="8"/><rect class="d-surface" x="40" y="30" width="70" height="90" rx="4"/><text class="t-xs t-b" x="50" y="82">3MF / STEP</text><text class="t-xs" x="22" y="144">mm units, keep the source</text></g>
+      <g transform="translate(700,222)"><rect class="d-surface2" width="150" height="150" rx="8"/><path class="k-orange" d="M30 110 H120 M30 96 H120 M30 82 H120 M30 68 H120" style="stroke-width:3"/><text class="t-xs" x="16" y="144">check preview, print, test fit</text></g>
+      <text class="t-sm t-m" x="20" y="404">Left to right, top to bottom. Each step builds on the previous one and can be undone or edited later in the history.</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> The bracket workflow in ten snapshots. The model is driven by five named parameters: change <code>a</code>, <code>b</code> or <code>d</code> and the whole part follows.</figcaption>
+  </figure>
+
+  <ol class="steps">
+    <li><strong>Define parameters.</strong> Create user parameters for thickness <code>t = 4</code>, width <code>w = 30</code>, leg lengths <code>a = 40</code> and <code>b = 30</code>, hole diameter <code>d = 4.5</code> (3.5 mm screw plus clearance for countersink and print variation).</li>
+    <li><strong>Sketch the L-profile</strong> on the side plane: a base leg and an upright leg with a thickness of <code>t</code>. Start from the origin so the part sits at a known location.</li>
+    <li><strong>Constrain it.</strong> Use horizontal/vertical constraints, tie lengths to <code>a</code>, <code>b</code> and <code>t</code>, and confirm the sketch shows fully constrained.</li>
+    <li><strong>Extrude</strong> the profile symmetrically or one-sided by <code>w</code>.</li>
+    <li><strong>Add a gusset:</strong> sketch a right triangle in the inside corner, extrude it by <code>t</code> at the center, and join it to the body. It adds stiffness where the bracket is loaded.</li>
+    <li><strong>Add holes.</strong> Place one clearance hole per leg using the hole tool or a sketch circle cut through <code>t</code>. Keep at least 1.5× the hole diameter from any edge.</li>
+    <li><strong>Fillet</strong> the inside corner (1.5–3 mm) and add a small chamfer to the bottom edge. Apply fillets before adding holes and patterns, since fillets on complicated edges are the most likely feature to fail.</li>
+    <li><strong>Check orientation.</strong> Lay the bracket on its side, with the L profile flat on the plate, so the layer lines follow the bend. Printed upright, the corner would be loaded across its layer lines, which is where brackets crack. The trade-off is that the screw holes now point sideways, so use teardrop-shaped holes or let the slicer add small supports.</li>
+    <li><strong>Export</strong> a 3MF (or STL in millimeters) and save the native file. Also store the parameter list in your notes.</li>
+    <li><strong>Slice and test.</strong> Preview walls (3–4), infill (25–40 %), and orientation; print; test with real screws; adjust <code>d</code> or <code>t</code> and re-export.</li>
+  </ol>
+
+  <h2 id="code-samples">Short code samples</h2>
+  <p>Code-based modeling pays off when you need many variations. The two examples below produce the same bracket without a gusset fillet. They are deliberately short; see <a href="../design/parametric-cad-workflow.html">Parametric CAD workflow</a> for more.</p>
+
+  <div class="tabs">
+    <div class="tab" data-title="OpenSCAD">
+<pre><code>// L-bracket with gusset and two clearance holes (mm)
+t = 4;  w = 30;  a = 40;  b = 30;  d = 4.5;
+$fn = 48;
+
+difference() {
+  union() {
+    cube([a, w, t]);                       // base leg
+    cube([t, w, b]);                       // upright leg
+    // gusset: right triangle extruded t, centered on the width
+    translate([0, w/2 + t/2, 0])
+      rotate([90, 0, 0])
+        linear_extrude(t)
+          polygon([[t, t], [a*0.6, t], [t, b*0.6]]);
+  }
+  // hole through the base, near its free end
+  translate([a - 10, w/2, -1]) cylinder(d = d, h = t + 2);
+  // hole through the upright, near its free end
+  translate([-1, w/2, b - 10]) rotate([0, 90, 0]) cylinder(d = d, h = t + 2);
+}</code></pre>
+    </div>
+    <div class="tab" data-title="CadQuery">
+<pre><code>import cadquery as cq
+
+t, w, a, b, d = 4, 30, 40, 30, 4.5      # mm
+
+# L profile on the XZ plane, extruded along +Y by w
+bracket = (
+    cq.Workplane("XZ")
+    .polyline([(0, 0), (a, 0), (a, t), (t, t), (t, b), (0, b)])
+    .close()
+    .extrude(-w)
+    .edges("|Y").fillet(1.0)             # round the profile edges
+)
+
+# clearance holes: one per leg, centered on the width
+hole_base = cq.Workplane("XY").center(a - 10, w / 2).circle(d / 2).extrude(t)
+hole_wall = cq.Workplane("YZ").center(w / 2, b - 10).circle(d / 2).extrude(t)
+bracket = bracket.cut(hole_base).cut(hole_wall)
+
+cq.exporters.export(bracket, "bracket.step")   # real B-rep, opens in any CAD
+cq.exporters.export(bracket, "bracket.stl", tolerance=0.01)</code></pre>
+    </div>
+  </div>
+  <div class="callout info"><span class="callout-title">Which one first?</span>
+    <p>OpenSCAD is easier to start with (one program, instant preview). CadQuery and build123d give you real fillets, chamfers and STEP export, which makes them better for parts that need to be shared with other CAD users. Both keep your design in a text file, which works well with Git, as described in <a href="files-and-meshes.html#archiving">archiving and version control</a>.</p>
+  </div>
+
+  <h2 id="decision">Choosing a tool for a specific job</h2>
+  <p>When you start a project, a short decision path beats a long comparison. Ask what the object must <em>do</em>, how precise it must be, and how many variations you expect.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 330" role="img" aria-label="Decision flow: does it need exact dimensions? if no and organic, sculpt; if yes and many variants, code; if yes and a one-off, parametric CAD; quick simple shapes, Tinkercad">
+      <rect class="f-blue" x="320" y="14" width="220" height="44" rx="10"/><text class="t t-b" x="430" y="42" style="text-anchor:middle">Does it need exact dimensions?</text>
+      <path class="d-ink arrow" d="M370 58 L190 108"/><text class="t-sm" x="240" y="78">no</text>
+      <path class="d-ink arrow" d="M490 58 L670 108"/><text class="t-sm" x="600" y="78">yes</text>
+      <rect class="f-purple" x="80" y="108" width="220" height="44" rx="10"/><text class="t t-b" x="190" y="136" style="text-anchor:middle">Organic or artistic?</text>
+      <path class="d-ink arrow" d="M150 152 L110 214"/><text class="t-sm" x="110" y="190">yes</text>
+      <path class="d-ink arrow" d="M240 152 L290 214"/><text class="t-sm" x="276" y="190">no</text>
+      <rect class="f-orange" x="20" y="214" width="180" height="60" rx="10"/><text class="t-sm t-b" x="110" y="238" style="text-anchor:middle">Sculpt</text><text class="t-xs" x="110" y="256" style="text-anchor:middle">Blender, Nomad, ZBrush</text>
+      <rect class="f-green" x="220" y="214" width="170" height="60" rx="10"/><text class="t-sm t-b" x="305" y="238" style="text-anchor:middle">Quick blocks</text><text class="t-xs" x="305" y="256" style="text-anchor:middle">Tinkercad, remix an STL</text>
+      <rect class="f-teal" x="560" y="108" width="220" height="44" rx="10"/><text class="t t-b" x="670" y="136" style="text-anchor:middle">Many variants or formulas?</text>
+      <path class="d-ink arrow" d="M630 152 L560 214"/><text class="t-sm" x="574" y="190">yes</text>
+      <path class="d-ink arrow" d="M710 152 L750 214"/><text class="t-sm" x="740" y="190">no</text>
+      <rect class="f-yellow" x="450" y="214" width="180" height="60" rx="10"/><text class="t-sm t-b" x="540" y="238" style="text-anchor:middle">Code</text><text class="t-xs" x="540" y="256" style="text-anchor:middle">OpenSCAD, CadQuery, build123d</text>
+      <rect class="f-pink" x="660" y="214" width="180" height="60" rx="10"/><text class="t-sm t-b" x="750" y="238" style="text-anchor:middle">Parametric CAD</text><text class="t-xs" x="750" y="256" style="text-anchor:middle">Fusion, Onshape, FreeCAD</text>
+      <text class="t-sm t-m" x="20" y="312">Real projects mix these: sculpt the look, model the mechanism in CAD, and fix the join in a mesh editor.</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> A rough decision path. When two answers are close, choose the tool you already know; speed of iteration beats theoretical fit.</figcaption>
+  </figure>
+
+  <details class="accordion"><summary>🔧 A sculpting workflow for printable figures</summary>
+    <ol class="steps">
+      <li><strong>Block out</strong> the proportions with low-polygon primitives. Keep the model in real-world size from the start (for example 80 mm tall).</li>
+      <li><strong>Sculpt</strong> forms with large brushes first, details later. Use symmetry for faces and bodies.</li>
+      <li><strong>Check printability:</strong> avoid razor-thin features such as hair strands or sword edges thinner than 0.8 mm; thicken them or plan to cast or paint them.</li>
+      <li><strong>Split</strong> into parts that print flat and glue or pin together (see <a href="../design/design-patterns.html">Design patterns &amp; recipes</a>).</li>
+      <li><strong>Decimate and repair</strong>, then export. Details at the mesh level are covered in <a href="files-and-meshes.html">File formats &amp; mesh repair</a>.</li>
+    </ol>
+  </details>
+
+  <details class="accordion"><summary>🚀 Common beginner mistakes</summary>
+    <ul>
+      <li><strong>Unconstrained sketches</strong> that shift when another dimension changes. Fix: constrain fully before extruding.</li>
+      <li><strong>Modeling the "ideal" size</strong> without allowing for printer tolerance. Fix: use a named clearance parameter and test-print a coupon.</li>
+      <li><strong>Ignoring orientation</strong> until the model is finished. Fix: decide on the print face first and design with it in mind.</li>
+      <li><strong>Too many tiny features</strong>: ornamental details below 0.4 mm simply disappear. Fix: exaggerate details for the printer's resolution.</li>
+      <li><strong>Exporting at the wrong tessellation</strong>, producing visible facets on round parts. Fix: lower the chord deviation or export 3MF/STEP.</li>
+      <li><strong>Losing the source file.</strong> The STL is not editable. Fix: keep the native file or script under version control.</li>
+      <li><strong>Over-modeling.</strong> A screw thread or a knurl can be created by the slicer's fuzzy skin or by a printed insert nut at a fraction of the effort. Fix: ask whether a feature needs to exist at all.</li>
+    </ul>
+  </details>
+
+  <details class="accordion"><summary>🔰 STEP, STL, 3MF: which should I export from CAD?</summary>
+    <p><strong>STEP</strong> keeps exact geometry for other CAD users and is ideal for sharing or archiving, but a slicer cannot read it directly in many cases (some can import it and tessellate). <strong>STL</strong> is a plain triangle soup: universal, but unitless and without color or settings. <strong>3MF</strong> is a modern container with units, multiple objects, colors, materials and, in slicer projects, print settings. Export 3MF to the slicer when you can; keep STEP (or the native file) as your master. A deeper comparison is in <a href="files-and-meshes.html#formats">File formats &amp; mesh repair</a>.</p>
+  </details>
+
+  <h2 id="quiz">Quick self-check</h2>
+  <div class="quiz"><p class="q">You need a hole diameter you can change in one place for ten variants of a part. Which approach fits best?</p>
+    <ul class="options"><li>Sculpt each variant in Blender</li><li data-correct>A parametric model or code with a named parameter</li><li>Download an STL and scale it</li></ul>
+    <p class="explain">Named parameters (or code variables) propagate to every feature that references them.</p></div>
+  <div class="quiz"><p class="q">A model you downloaded arrives 25.4 times smaller than expected. Most likely cause?</p>
+    <ul class="options"><li>The slicer's layer height is too low</li><li data-correct>Unit mismatch (inches treated as millimeters)</li><li>A non-manifold edge</li></ul>
+    <p class="explain">Inches exported as raw numbers look like millimeters, so everything shrinks by 25.4×.</p></div>
+  <div class="quiz"><p class="q">Which is the best use of AI text-to-3D for printing?</p>
+    <ul class="options"><li>A load-bearing bracket with exact bolt spacing</li><li data-correct>A rough starting shape for a decorative figure that you then clean up</li><li>A replacement gear for a machine</li></ul>
+    <p class="explain">AI meshes are unreliable at exact dimensions; use them as concept bases, not for mechanical parts.</p></div>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul>
+    <li>Pick the paradigm first: sculpt for looks, parametric for fit, code for families, AI for ideas.</li>
+    <li>Constrain sketches, name the parameters that matter, and order features logically.</li>
+    <li>Model in millimeters, add clearances as parameters and orient for the print.</li>
+    <li>Measure real parts with calipers and test-print critical sections before the whole object.</li>
+    <li>Check the license of anything you remix and keep the source and author noted.</li>
+    <li>Keep the editable source file; export 3MF or STEP/STL only as deliverables.</li>
+  </ul>
+  <p>Practice: <a href="../exercises/level-1-beginner.html">Level 1 exercises</a> have starter modeling tasks, and <a href="../exercises/models.html">test models</a> offers parametric OpenSCAD files to dissect.</p>
+</main>
+</body>
+</html>

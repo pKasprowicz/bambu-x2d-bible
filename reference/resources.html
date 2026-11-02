@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Resources &amp; communities · 3D Printing Compendium</title>
+  <meta name="description" content="Curated 3D printing resources: model repositories, slicers, CAD software, official documentation, books, community channels, standards, test models, supplier categories, shopping lists by tier, a 12-month learning roadmap, how to evaluate information online, and how to contribute.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="reference/resources.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 9 · Reference</div>
+    <h1>Resources &amp; communities</h1>
+    <p class="lead">Where to find models, software, documentation, books, communities and standards, plus shopping lists by budget, a twelve-month learning roadmap, a guide to judging what you read online, and instructions for contributing corrections to this compendium. Only stable, well-known homepages are linked; the rest is described so you can search for it.</p>
+    <div class="meta"><span class="badge beginner">Beginner</span><span class="badge intermediate">Intermediate</span><span class="badge time">⏱ 30 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will find here</span>
+    <ul>
+      <li>Where to get models, slicers, CAD tools and official documentation.</li>
+      <li>Books and well-known community resources, with honest limits on what we can vouch for.</li>
+      <li>A starter, enthusiast and professional shopping list for tools and consumables.</li>
+      <li>A learning roadmap for the first twelve months.</li>
+      <li>A myth-busting guide to evaluating information, and how to improve this site on GitHub.</li>
+    </ul>
+  </div>
+
+  <div class="callout info"><span class="callout-title">How we chose the links</span>
+    <p>External links on this page are limited to organizations' main homepages and official documentation sites that have been stable for years. We avoid deep links, affiliate links and anything we cannot verify. Websites change, so if a link is dead, search for the name. This compendium is unofficial and not affiliated with any company listed here; mentioning a product is not an endorsement. See the <a href="#disclaimer">disclaimer</a>.</p></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 360" role="img" aria-label="Map of learning resources around a central learner: model repositories, slicers and CAD, documentation, communities, books and courses, standards, suppliers and test models">
+      <circle class="f-blue" cx="430" cy="180" r="62"/><text class="t t-b" x="430" y="176" style="text-anchor:middle">You</text><text class="t-xs" x="430" y="194" style="text-anchor:middle">and your printer</text>
+      <g class="d-ink"><path d="M370 160 L240 90"/><path d="M430 118 V70"/><path d="M490 160 L620 90"/><path d="M370 200 L240 270"/><path d="M430 242 V290"/><path d="M490 200 L620 270"/><path d="M368 180 H210"/><path d="M492 180 H650"/></g>
+      <rect class="f-green" x="130" y="52" width="190" height="56" rx="10"/><text class="t t-b" x="225" y="76" style="text-anchor:middle">Model repositories</text><text class="t-xs" x="225" y="94" style="text-anchor:middle">things to print</text>
+      <rect class="f-orange" x="335" y="14" width="190" height="56" rx="10"/><text class="t t-b" x="430" y="38" style="text-anchor:middle">Slicers and CAD</text><text class="t-xs" x="430" y="56" style="text-anchor:middle">tools to make and prepare</text>
+      <rect class="f-purple" x="540" y="52" width="190" height="56" rx="10"/><text class="t t-b" x="635" y="76" style="text-anchor:middle">Documentation</text><text class="t-xs" x="635" y="94" style="text-anchor:middle">official and community wikis</text>
+      <rect class="f-teal" x="10" y="152" width="200" height="56" rx="10"/><text class="t t-b" x="110" y="176" style="text-anchor:middle">Communities</text><text class="t-xs" x="110" y="194" style="text-anchor:middle">forums, groups, makerspaces</text>
+      <rect class="f-yellow" x="650" y="152" width="200" height="56" rx="10"/><text class="t t-b" x="750" y="176" style="text-anchor:middle">Books and videos</text><text class="t-xs" x="750" y="194" style="text-anchor:middle">structured learning</text>
+      <rect class="f-pink" x="130" y="252" width="190" height="56" rx="10"/><text class="t t-b" x="225" y="276" style="text-anchor:middle">Standards</text><text class="t-xs" x="225" y="294" style="text-anchor:middle">shared language, tests</text>
+      <rect class="f-red" x="335" y="292" width="190" height="56" rx="10"/><text class="t t-b" x="430" y="316" style="text-anchor:middle">Suppliers</text><text class="t-xs" x="430" y="334" style="text-anchor:middle">filament, parts, tools</text>
+      <rect class="f-gray" x="540" y="252" width="190" height="56" rx="10"/><text class="t t-b" x="635" y="276" style="text-anchor:middle">Test models</text><text class="t-xs" x="635" y="294" style="text-anchor:middle">calibrate and compare</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> The resource landscape. A healthy learning diet mixes all eight; relying on only one type (for example videos) leaves gaps.</figcaption>
+  </figure>
+
+  <h2 id="repositories">Model repositories</h2>
+  <p>Before you design, search: someone may already have solved your problem. Each site has its own community, search quality and license conventions, so read the license on every model (see <a href="economics-and-ethics.html#ip">licenses and IP</a>).</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Site</th><th>Known for</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://www.printables.com" rel="noopener" target="_blank">Printables</a></td><td>Community models, contests, a large collection from established printer brands</td><td>Free models, with options to sell; check each license.</td></tr>
+      <tr><td><a href="https://makerworld.com" rel="noopener" target="_blank">MakerWorld</a></td><td>Models with print profiles targeted at Bambu Lab printers</td><td>Run by the printer maker; can open directly in the slicer. Review profiles before printing.</td></tr>
+      <tr><td><a href="https://www.thingiverse.com" rel="noopener" target="_blank">Thingiverse</a></td><td>One of the oldest and largest collections</td><td>Huge archive; quality and license clarity vary widely.</td></tr>
+      <tr><td><a href="https://thangs.com" rel="noopener" target="_blank">Thangs</a></td><td>Search across many sources and geometry search</td><td>Useful as a search layer on top of other sites.</td></tr>
+      <tr><td><a href="https://www.myminifactory.com" rel="noopener" target="_blank">MyMiniFactory</a></td><td>Curated miniatures and tabletop models</td><td>Mixes free and paid designers.</td></tr>
+      <tr><td><a href="https://cults3d.com" rel="noopener" target="_blank">Cults</a></td><td>Free and paid designs, many artistic items</td><td>Marketplace; check commercial terms before selling prints.</td></tr>
+      <tr><td><a href="https://grabcad.com" rel="noopener" target="_blank">GrabCAD</a></td><td>Engineering CAD models and a professional community</td><td>Often in CAD formats, not print-ready meshes.</td></tr>
+      <tr><td><a href="https://3d.nih.gov" rel="noopener" target="_blank">NIH 3D</a></td><td>Science and medical-education models from a public research institute</td><td>Educational; check license and intended use.</td></tr>
+    </tbody></table></div>
+  <div class="callout tip"><span class="callout-title">Tips for good downloads</span>
+    <ul>
+      <li>Prefer models with photos of real prints and comments from people who printed them.</li>
+      <li>Download the source (STEP, 3MF or native CAD) when it is offered; it is easier to modify than a mesh. See <a href="../software/files-and-meshes.html">File formats &amp; mesh repair</a>.</li>
+      <li>Support designers whose work you use: a like, a photo of your print and, if they accept, a small tip or purchase.</li>
+    </ul></div>
+
+  <h2 id="software">Slicers, CAD and utilities</h2>
+  <h3>Slicers</h3>
+  <ul>
+    <li><strong>Bambu Studio</strong> by the maker of the X2D, free to download from <a href="https://bambulab.com" rel="noopener" target="_blank">bambulab.com</a>. Built-in support for the X2D and AMS; the default for this compendium.</li>
+    <li><strong>OrcaSlicer</strong>, an open-source fork with many tuning tools; the project lives on <a href="https://github.com/SoftFever/OrcaSlicer" rel="noopener" target="_blank">GitHub</a>.</li>
+    <li><strong>PrusaSlicer</strong>, open source, from <a href="https://www.prusa3d.com" rel="noopener" target="_blank">Prusa Research</a>.</li>
+    <li><strong>UltiMaker Cura</strong>, open source, with a large plug-in ecosystem; see the <a href="https://github.com/Ultimaker/Cura" rel="noopener" target="_blank">Cura project</a>.</li>
+  </ul>
+  <p>Comparison and settings: <a href="../software/slicers.html">Slicers compared</a> and <a href="../software/slicer-settings.html">Slicer settings explained</a>.</p>
+
+  <h3>CAD and modeling</h3>
+  <div class="grid cols-3">
+    <div class="card accent-green"><h4>Easy start</h4>
+      <p><a href="https://www.tinkercad.com" rel="noopener" target="_blank">Tinkercad</a>, a free browser tool, is ideal for first designs and for children.</p></div>
+    <div class="card accent-blue"><h4>Parametric CAD</h4>
+      <p><a href="https://www.freecad.org" rel="noopener" target="_blank">FreeCAD</a> (open source), <a href="https://www.onshape.com" rel="noopener" target="_blank">Onshape</a> (browser-based, with free and paid plans) and Autodesk Fusion (check its current license terms for personal use).</p></div>
+    <div class="card accent-purple"><h4>Code and meshes</h4>
+      <p><a href="https://openscad.org" rel="noopener" target="_blank">OpenSCAD</a> for code-based parametric models, <a href="https://github.com/CadQuery/cadquery" rel="noopener" target="_blank">CadQuery</a> for Python, and <a href="https://www.blender.org" rel="noopener" target="_blank">Blender</a> for sculpting and organic shapes.</p></div>
+  </div>
+  <p>See <a href="../software/cad-modeling.html">CAD &amp; modeling software</a> and the <a href="../design/parametric-cad-workflow.html">parametric workflow</a>.</p>
+
+  <h3>Mesh and file tools</h3>
+  <ul>
+    <li><a href="https://www.meshlab.net" rel="noopener" target="_blank">MeshLab</a>, an open-source mesh processing and repair tool.</li>
+    <li>The repair functions inside your slicer and CAD tools are often enough for simple cases.</li>
+  </ul>
+
+  <h3>Calculators and planning</h3>
+  <p>This site includes its own <a href="../tools/calculators.html">calculators</a> for cost, flow, shrinkage, drying and time, the <a href="../tools/material-picker.html">material picker</a> and the <a href="../tools/visual-lab.html">visual lab</a>. Your slicer's estimates for time and weight are the best planning source, and a kitchen scale or caliper is the best check on them.</p>
+
+  <h2 id="docs">Documentation worth bookmarking</h2>
+  <p>Official documentation is more current and more accurate than any summary, including this one. When this site and an official page disagree, trust the official page and let us know.</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Topic</th><th>Where</th><th>Use it for</th></tr></thead>
+    <tbody>
+      <tr><td>Bambu Lab printers, AMS, Studio</td><td><a href="https://wiki.bambulab.com" rel="noopener" target="_blank">wiki.bambulab.com</a></td><td>Setup, maintenance, specifications, troubleshooting, filament guidance.</td></tr>
+      <tr><td>OrcaSlicer</td><td><a href="https://github.com/SoftFever/OrcaSlicer/wiki" rel="noopener" target="_blank">OrcaSlicer wiki</a></td><td>Calibration tests, settings explanations.</td></tr>
+      <tr><td>Prusa printers and slicer</td><td><a href="https://help.prusa3d.com" rel="noopener" target="_blank">Prusa Knowledge Base</a></td><td>Well-written troubleshooting and material guides that apply broadly.</td></tr>
+      <tr><td>Klipper firmware</td><td><a href="https://www.klipper3d.org" rel="noopener" target="_blank">klipper3d.org</a></td><td>Configuration, pressure advance, input shaping theory.</td></tr>
+      <tr><td>Marlin firmware</td><td><a href="https://marlinfw.org" rel="noopener" target="_blank">marlinfw.org</a></td><td>G-code reference and configuration.</td></tr>
+      <tr><td>OpenSCAD</td><td><a href="https://openscad.org/documentation.html" rel="noopener" target="_blank">OpenSCAD documentation</a></td><td>Language manual, cheat sheet, tutorials.</td></tr>
+      <tr><td>Open-hardware printers</td><td><a href="https://vorondesign.com" rel="noopener" target="_blank">Voron Design</a></td><td>Community-built enclosed printers and their documentation.</td></tr>
+    </tbody></table></div>
+  <p>For a G-code and firmware primer in this compendium, see <a href="../software/gcode-and-firmware.html">G-code, firmware &amp; ecosystem</a>.</p>
+
+  <h2 id="books">Books</h2>
+  <p>Books age more slowly than videos but still lag behind fast-moving printers. They are best for fundamentals: how the processes work, how to design for them, and the industrial context. These are real, widely held titles; check the current edition and its date before buying.</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Title and authors</th><th>Good for</th></tr></thead>
+    <tbody>
+      <tr><td><em>Additive Manufacturing Technologies: 3D Printing, Rapid Prototyping, and Direct Digital Manufacturing</em> by Ian Gibson, David Rosen and Brent Stucker</td><td>A university-level textbook on all processes and industrial practice.</td></tr>
+      <tr><td><em>Fabricated: The New World of 3D Printing</em> by Hod Lipson and Melba Kurman</td><td>An accessible overview of the technology's promise and early history.</td></tr>
+      <tr><td><em>Make: Getting Started with 3D Printing</em> by Liza Wallach Kloski and Nick Kloski</td><td>A beginner guide to buying, using and designing for desktop printers.</td></tr>
+      <tr><td><em>3D Printing Failures</em> by Sean Aranda</td><td>Diagnosing and fixing common FDM problems.</td></tr>
+      <tr><td><em>Fusion 360 for Makers</em> by Lydia Sloan Cline</td><td>CAD for printing with a popular parametric tool. Software menus change, so concepts outlast screenshots.</td></tr>
+    </tbody></table></div>
+  <div class="callout warn"><span class="callout-title">Reading old books</span>
+    <p>Older beginner books describe open-frame printers, manual bed leveling and slow speeds. Principles such as cooling, layers and orientation still hold; specific settings and machine advice may not. Combine books with current documentation.</p></div>
+
+  <h2 id="channels">Video channels and creators (popular community resources)</h2>
+  <p>Video is excellent for seeing a technique. Quality varies, and sponsored content blurs into reviews, so use it as one source among several. The creators below are widely known and publish educational material on printers, materials and testing; we list them as <strong>popular community resources</strong>, not as endorsements or guarantees of accuracy.</p>
+  <ul>
+    <li><strong>Teaching Tech</strong>: calibration, printer guides and testing, including a well-known calibration guide.</li>
+    <li><strong>CNC Kitchen</strong>: material and strength testing, heat-set inserts, practical engineering experiments.</li>
+    <li><strong>Thomas Sanladerer</strong>: printer reviews and clear explanations of how printers work.</li>
+    <li><strong>Make Anything</strong>: practical projects and design ideas for printing and making.</li>
+  </ul>
+  <p>Beyond named creators, look for these <em>types</em> of channel: manufacturers' own tutorials (accurate on their products, naturally promotional), independent testers who publish methods and raw data, CAD teachers who work through full designs, and repair or restoration channels that show real-world use. See <a href="#evaluate">how to evaluate information</a> before acting on any single video.</p>
+
+  <h2 id="communities">Forums and communities</h2>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Where</th><th>What you get</th><th>Etiquette</th></tr></thead>
+    <tbody>
+      <tr><td>Reddit communities such as <a href="https://www.reddit.com/r/3Dprinting/" rel="noopener" target="_blank">r/3Dprinting</a>, <a href="https://www.reddit.com/r/functionalprint/" rel="noopener" target="_blank">r/functionalprint</a> and a Bambu Lab printer community</td><td>Fast feedback, photos of failures, large audience</td><td>Post clear photos, settings and what you tried. Search before asking.</td></tr>
+      <tr><td>Manufacturer forums and wikis, linked from <a href="https://bambulab.com" rel="noopener" target="_blank">bambulab.com</a> and <a href="https://www.prusa3d.com" rel="noopener" target="_blank">prusa3d.com</a></td><td>Official answers, firmware news, known issues</td><td>Include model, firmware version and slicer version in every question.</td></tr>
+      <tr><td><a href="https://klipper.discourse.group" rel="noopener" target="_blank">Klipper Discourse</a></td><td>Deep technical discussion for Klipper users</td><td>Read the docs first; share your config and logs.</td></tr>
+      <tr><td>Chat servers (such as Discord) run by printer brands or open projects</td><td>Real-time help and community</td><td>Respect channel rules; search the history first.</td></tr>
+      <tr><td>Local makerspaces, libraries and school clubs</td><td>Hands-on help, shared machines, mentors</td><td>Follow safety rules; share what you learn.</td></tr>
+      <tr><td><a href="https://www.repaircafe.org" rel="noopener" target="_blank">Repair Café</a> events</td><td>Practical repair culture where printing can help</td><td>Bring the broken item and be ready to learn.</td></tr>
+      <tr><td><a href="https://hackaday.com" rel="noopener" target="_blank">Hackaday</a>, <a href="https://makezine.com" rel="noopener" target="_blank">Make:</a> and <a href="https://all3dp.com" rel="noopener" target="_blank">All3DP</a></td><td>News, projects and guides</td><td>Read critically; compare articles with official documentation.</td></tr>
+    </tbody></table></div>
+  <div class="callout trick"><span class="callout-title">How to ask for help so you get it</span>
+    <p>Say what printer, material, slicer and firmware you use; what you expected and what happened; and what you have already tried. Attach one clear photo of the defect, the key settings and, if relevant, the project file. Questions that include this information get faster and better answers. The <a href="../techniques/troubleshooting.html">Troubleshooting gallery</a> will often identify the defect first.</p></div>
+
+  <h2 id="standards-resources">Standards and committees</h2>
+  <p>Standards organizations publish the formal vocabulary and test methods behind the industry. The documents themselves are usually paid, but committee pages and overviews are free.</p>
+  <ul>
+    <li><a href="https://www.astm.org" rel="noopener" target="_blank">ASTM International</a> runs committee F42 on additive manufacturing technologies.</li>
+    <li><a href="https://www.iso.org" rel="noopener" target="_blank">ISO</a> and ASTM jointly publish ISO/ASTM 52900, the terminology standard for additive manufacturing, along with other 5290x documents on design, qualification and test methods.</li>
+    <li><a href="https://www.ul.com" rel="noopener" target="_blank">UL</a> is known for plastic flammability ratings such as UL 94, commonly cited on filament data sheets.</li>
+    <li><a href="https://creativecommons.org" rel="noopener" target="_blank">Creative Commons</a> explains the license family used on many shared models.</li>
+  </ul>
+  <p>More context in <a href="economics-and-ethics.html#standards">Standards and certification notes</a>.</p>
+
+  <h2 id="test-models">Test model libraries</h2>
+  <p>Standard test prints let you compare settings and share problems in a way others understand.</p>
+  <ul>
+    <li><strong>3DBenchy</strong>, a tiny boat designed as a printer torture test, from <a href="https://www.3dbenchy.com" rel="noopener" target="_blank">3dbenchy.com</a>.</li>
+    <li><strong>Calibration cubes, temperature towers, retraction and bridge tests</strong>, available on all repositories above and in slicer calibration menus.</li>
+    <li><strong>Ellis' Print Tuning Guide</strong>, a popular community guide to tuning, at <a href="https://ellis3dp.com" rel="noopener" target="_blank">ellis3dp.com</a>. It targets general printers and Klipper in particular.</li>
+    <li><strong>This site's own models</strong>: parametric OpenSCAD calibration and practice models on <a href="../exercises/models.html">Downloadable test models</a>, with matching <a href="../exercises/index.html">exercises</a>.</li>
+  </ul>
+
+  <h2 id="suppliers">Supplier categories</h2>
+  <p>We do not list shops or affiliate links. Instead, here is what to look for in each category so you can compare for yourself.</p>
+  <div class="grid cols-2">
+    <div class="card accent-orange"><h4>Filament makers and resellers</h4>
+      <ul>
+        <li>Published diameter tolerance and data sheets with test conditions.</li>
+        <li>Vacuum-sealed packaging with desiccant and clear drying advice.</li>
+        <li>Consistent color across batches, and customer reviews with photos.</li>
+        <li>Return policy for mis-wound or wet spools.</li>
+      </ul></div>
+    <div class="card accent-blue"><h4>Printer makers and spare parts</h4>
+      <ul>
+        <li>Official stores for nozzles, plates and AMS parts avoid fit problems.</li>
+        <li>Check compatibility with your exact model; see <a href="../x2d/filament-compatibility.html">Filament compatibility</a> for the X2D.</li>
+        <li>Look for clear warranty and shipping terms.</li>
+      </ul></div>
+    <div class="card accent-green"><h4>Hardware and electronics</h4>
+      <ul>
+        <li>Fastener, heat-set insert, magnet and bearing suppliers with metric sizes and clear specifications.</li>
+        <li>Electronic component distributors for sensors, LEDs and wire.</li>
+        <li>Check certifications for anything mains-connected.</li>
+      </ul></div>
+    <div class="card accent-purple"><h4>Local and community sources</h4>
+      <ul>
+        <li>Makerspaces for large-format, resin or laser tools you do not own.</li>
+        <li>Hardware stores for abrasives, adhesives, primers and tools.</li>
+        <li>Service bureaus for metal, SLS or MJF parts when FDM is not enough; see <a href="../foundations/printing-processes.html">Printing processes compared</a>.</li>
+      </ul></div>
+  </div>
+
+  <h2 id="shopping">Tool and consumables shopping lists by tier</h2>
+  <p>Buy tools when a project needs them. The tiers below are suggestions, not rules; tick the items you own and your selections stay saved in this browser.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 300" role="img" aria-label="Three-tier pyramid of tool and consumable purchases: starter kit at the base, enthusiast additions in the middle, and professional or farm additions at the top, with budget and time of purchase noted for each">
+      <path class="f-green" d="M60 280 H800 L720 200 H140 Z"/><text class="t t-b" x="430" y="236" style="text-anchor:middle">Starter · first month</text><text class="t-sm" x="430" y="258" style="text-anchor:middle">measure, remove, clean, store, protect</text>
+      <path class="f-blue" d="M140 192 H720 L650 112 H210 Z"/><text class="t t-b" x="430" y="148" style="text-anchor:middle">Enthusiast · months 2 to 6</text><text class="t-sm" x="430" y="170" style="text-anchor:middle">finish, assemble, dry, modify</text>
+      <path class="f-orange" d="M210 104 H650 L580 24 H280 Z"/><text class="t t-b" x="430" y="60" style="text-anchor:middle">Professional or farm · later</text><text class="t-sm" x="430" y="82" style="text-anchor:middle">safety, throughput, packaging</text>
+      <text class="t-xs t-m" x="20" y="296">Spend more only when a recurring job justifies it.</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> Equipment tiers. Most hobbyists never need the top tier, and the starter tier alone covers the great majority of first-year projects.</figcaption>
+  </figure>
+
+  <div class="grid cols-3">
+    <div class="card accent-green"><h4>Starter</h4>
+      <ul class="checklist">
+        <li>Digital caliper (0.01 mm resolution)</li>
+        <li>Flush cutters and a deburring tool</li>
+        <li>Spatula or scraper for plates</li>
+        <li>Isopropyl alcohol and lint-free wipes</li>
+        <li>Hex keys and a small screwdriver set</li>
+        <li>Spare nozzle and spare plate for your model</li>
+        <li>Sealed storage with desiccant and a hygrometer</li>
+        <li>One or two spools of well-reviewed PLA and PETG</li>
+        <li>Safety glasses and cut-resistant gloves</li>
+        <li>Smoke detector in the printing room</li>
+      </ul></div>
+    <div class="card accent-blue"><h4>Enthusiast</h4>
+      <ul class="checklist">
+        <li>Filament dryer for hygroscopic materials</li>
+        <li>Soldering iron with heat-set insert tips</li>
+        <li>Digital scale (0.1 g) for filament and parts</li>
+        <li>Sanding sheets in several grits, files and a hobby knife</li>
+        <li>Primer, paints and clear coats suited to plastics</li>
+        <li>Plug-in power meter to measure real energy use</li>
+        <li>Taps, drill bits and a small hand drill</li>
+        <li>Spare AMS and printer parts you wear out</li>
+        <li>A label system for spools and settings</li>
+        <li>Respirator and dust control for sanding</li>
+      </ul></div>
+    <div class="card accent-orange"><h4>Professional or farm</h4>
+      <ul class="checklist">
+        <li>Fire detection and extinguisher suited to electrical fires</li>
+        <li>Ventilation or filtration matched to materials used</li>
+        <li>Shelving, bins and a labeled queue system</li>
+        <li>Hardened nozzles and a schedule for replacing them</li>
+        <li>Packaging stock, scale and label printer</li>
+        <li>Spare machine or critical spare parts</li>
+        <li>Backup of files, profiles and orders</li>
+        <li>Business, tax and insurance advice for your jurisdiction</li>
+        <li>Inspection tools for repeat quality checks</li>
+      </ul></div>
+  </div>
+  <p>Cost context for consumables: <a href="economics-and-ethics.html#cost-model">The cost model</a>. Drying and storing: <a href="../materials/drying-and-storage.html">Drying &amp; storage</a>.</p>
+
+  <h2 id="events">Conferences, events and meetups</h2>
+  <ul>
+    <li><strong>Maker faires and local maker fairs</strong>: general maker events where printing is one skill among many; see <a href="https://makerfaire.com" rel="noopener" target="_blank">makerfaire.com</a>.</li>
+    <li><strong>Industrial trade fairs</strong>, such as <a href="https://formnext.com" rel="noopener" target="_blank">Formnext</a>: the professional and industrial face of additive manufacturing, useful for seeing what is possible beyond the desktop.</li>
+    <li><strong>Printer-brand and community meetups</strong>: user groups and workshops run by retailers, libraries and makerspaces.</li>
+    <li><strong>Academic conferences</strong> on additive manufacturing and materials: papers and talks for those who want depth.</li>
+    <li><strong>Online live streams and Q&amp;A sessions</strong>: occasional, announced by manufacturers and creators.</li>
+  </ul>
+  <p>Dates and formats change, so check the organizer's own page before planning travel.</p>
+
+  <h2 id="roadmap">Learning roadmap: your first twelve months</h2>
+  <p>A suggested path, not a schedule. Move faster or slower as it suits you; skipping the early basics is the most common reason for later frustration.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 380" role="img" aria-label="Timeline of a twelve month learning roadmap: months 0 to 1 first prints and safety, months 1 to 3 settings and calibration, months 3 to 6 design your own parts, months 6 to 9 materials and multi-color, months 9 to 12 projects, sharing and teaching">
+      <path class="d-ink arrow" d="M30 130 H830" style="stroke-width:3"/>
+      <g class="t-sm t-b" style="text-anchor:middle"><text x="40" y="156">0</text><text x="170" y="156">1</text><text x="300" y="156">3</text><text x="430" y="156">6</text><text x="560" y="156">9</text><text x="690" y="156">12 months</text></g>
+      <circle class="s-green" cx="40" cy="130" r="8"/><circle class="s-blue" cx="170" cy="130" r="8"/><circle class="s-purple" cx="300" cy="130" r="8"/><circle class="s-orange" cx="430" cy="130" r="8"/><circle class="s-red" cx="560" cy="130" r="8"/><circle class="s-teal" cx="690" cy="130" r="8"/>
+      <rect class="f-green" x="20" y="16" width="148" height="100" rx="10"/><text class="t t-b" x="30" y="38">Month 0 to 1</text><text class="t-xs" x="30" y="58">Safety and set-up</text><text class="t-xs" x="30" y="74">First prints, PLA</text><text class="t-xs" x="30" y="90">Read the manual</text>
+      <rect class="f-blue" x="152" y="170" width="150" height="110" rx="10"/><text class="t t-b" x="162" y="192">Month 1 to 3</text><text class="t-xs" x="162" y="212">Slicer settings</text><text class="t-xs" x="162" y="228">Calibration, first layer</text><text class="t-xs" x="162" y="244">Fixing common defects</text><text class="t-xs" x="162" y="260">Print 10 useful things</text>
+      <rect class="f-purple" x="282" y="16" width="150" height="100" rx="10"/><text class="t t-b" x="292" y="38">Month 3 to 6</text><text class="t-xs" x="292" y="58">Basic CAD, tolerances</text><text class="t-xs" x="292" y="74">Design a fitted part</text><text class="t-xs" x="292" y="90">PETG, drying, supports</text>
+      <rect class="f-orange" x="412" y="170" width="150" height="110" rx="10"/><text class="t t-b" x="422" y="192">Month 6 to 9</text><text class="t-xs" x="422" y="212">Engineering materials</text><text class="t-xs" x="422" y="228">Multi-color, AMS</text><text class="t-xs" x="422" y="244">Strength and orientation</text><text class="t-xs" x="422" y="260">Assemblies with inserts</text>
+      <rect class="f-red" x="542" y="16" width="150" height="100" rx="10"/><text class="t t-b" x="552" y="38">Month 9 to 12</text><text class="t-xs" x="552" y="58">Larger projects</text><text class="t-xs" x="552" y="74">Parametric designs</text><text class="t-xs" x="552" y="90">Costing and licensing</text>
+      <rect class="f-teal" x="672" y="170" width="170" height="110" rx="10"/><text class="t t-b" x="682" y="192">Beyond a year</text><text class="t-xs" x="682" y="212">Share designs</text><text class="t-xs" x="682" y="228">Teach a beginner</text><text class="t-xs" x="682" y="244">Specialize: functional,</text><text class="t-xs" x="682" y="260">art, business, robotics</text>
+      <rect class="d-surface2" x="20" y="300" width="820" height="66" rx="10"/>
+      <text class="t-sm" x="34" y="324">Checkpoints: print a calibration set at month 1, a fitted assembly at month 6, and a project you designed end to end at month 12.</text>
+      <text class="t-sm" x="34" y="346">Use the <tspan class="t-b">practice hub</tspan> and quizzes to track progress; ask a community member to review one print per month.</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> Twelve months at a glance. Matching guides: <a href="../foundations/first-print.html">first print</a>, <a href="../techniques/calibration.html">calibration</a>, <a href="../design/principles.html">design principles</a>, <a href="../materials/engineering-plastics.html">engineering plastics</a> and the <a href="../exercises/index.html">practice hub</a>.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Phase</th><th>Read</th><th>Practice</th></tr></thead>
+    <tbody>
+      <tr><td>Month 0 to 1</td><td><a href="../foundations/safety-and-workspace.html">Safety &amp; workspace</a>, <a href="../foundations/first-print.html">Your first print</a></td><td><a href="../exercises/level-1-beginner.html">Level 1 exercises</a></td></tr>
+      <tr><td>Month 1 to 3</td><td><a href="../software/slicer-settings.html">Slicer settings</a>, <a href="../techniques/first-layer-and-adhesion.html">First layer</a>, <a href="../techniques/troubleshooting.html">Troubleshooting</a></td><td>Calibration prints, a useful-things list</td></tr>
+      <tr><td>Month 3 to 6</td><td><a href="../design/principles.html">Design principles</a>, <a href="../design/tolerances-and-fits.html">Tolerances</a></td><td><a href="../exercises/level-2-intermediate.html">Level 2 exercises</a></td></tr>
+      <tr><td>Month 6 to 9</td><td><a href="../materials/engineering-plastics.html">Engineering plastics</a>, <a href="../techniques/multi-color-and-multi-material.html">Multi-color</a></td><td><a href="../exercises/x2d-challenges.html">X2D challenges</a></td></tr>
+      <tr><td>Month 9 to 12</td><td><a href="../design/strength-and-orientation.html">Strength &amp; orientation</a>, <a href="economics-and-ethics.html">Economics &amp; ethics</a></td><td><a href="../exercises/level-3-advanced.html">Level 3 exercises</a></td></tr>
+    </tbody></table></div>
+
+  <h2 id="evaluate">How to evaluate information online</h2>
+  <p>3D printing advice spreads fast and rarely comes with sources. Some of it is excellent; some is a habit that worked once. A few minutes of checking before you change a setting, buy a material or trust a claim saves spools and money.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 330" role="img" aria-label="Pyramid of source reliability from official documentation and standards at the top through independent tests with data, experienced community answers, single anecdotes and sponsored or unsourced claims at the base, with notes on how to use each level">
+      <path class="f-green" d="M430 14 L520 80 H340 Z"/><text class="t t-b" x="430" y="68" style="text-anchor:middle">Primary</text>
+      <path class="f-teal" d="M336 86 H524 L580 134 H280 Z"/><text class="t t-b" x="430" y="118" style="text-anchor:middle">Tests with method and data</text>
+      <path class="f-yellow" d="M276 140 H584 L640 188 H220 Z"/><text class="t t-b" x="430" y="172" style="text-anchor:middle">Experienced community consensus</text>
+      <path class="f-orange" d="M216 194 H644 L700 242 H160 Z"/><text class="t t-b" x="430" y="226" style="text-anchor:middle">Single anecdote or opinion</text>
+      <path class="f-red" d="M156 248 H704 L760 300 H100 Z"/><text class="t t-b" x="430" y="280" style="text-anchor:middle">Sponsored, unsourced or viral claims</text>
+      <text class="t-sm" x="740" y="64">Official docs, standards,</text><text class="t-sm" x="740" y="80">manufacturer specifications</text>
+      <text class="t-sm" x="740" y="118">Repeatable, shared raw data</text>
+      <text class="t-sm" x="740" y="172">Many independent reports agree</text>
+      <text class="t-sm" x="30" y="226">"This worked for me"</text>
+      <text class="t-sm" x="30" y="274">Treat as a lead, not a fact</text>
+      <text class="t-xs t-m" x="30" y="322">Higher is not always right (specs can be wrong or outdated), but you should know which level you are standing on.</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> A pyramid of reliability. Upper levels are not infallible, and lower levels often contain valuable hints; what matters is weighting them correctly and cross-checking.</figcaption>
+  </figure>
+
+  <h3>🔰 A quick checklist</h3>
+  <ol class="steps">
+    <li><strong>Who says it, and what do they gain?</strong> Sellers, sponsors and affiliates have an incentive. That does not make them wrong, but it changes how much proof you should expect.</li>
+    <li><strong>Is it a number with a method?</strong> A strength figure with no specimen, orientation or test method is decoration.</li>
+    <li><strong>Does it apply to your printer and material?</strong> Settings for another machine or filament may mislead you.</li>
+    <li><strong>Is it current?</strong> Firmware, slicer versions and products change. Check the date and the version.</li>
+    <li><strong>Do independent sources agree?</strong> Compare official documentation, a test with data and several community reports.</li>
+    <li><strong>Can you test it cheaply?</strong> Print a small test before committing a big job.</li>
+  </ol>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 220" role="img" aria-label="Flow for checking a claim: read the claim, find the original source, check method and date, compare with official documentation, run a small test, then adopt or discard">
+      <rect class="f-blue" x="10" y="70" width="120" height="70" rx="10"/><text class="t t-b" x="70" y="100" style="text-anchor:middle">1 · Claim</text><text class="t-xs" x="70" y="120" style="text-anchor:middle">read it calmly</text>
+      <rect class="f-purple" x="160" y="70" width="130" height="70" rx="10"/><text class="t t-b" x="225" y="100" style="text-anchor:middle">2 · Source</text><text class="t-xs" x="225" y="120" style="text-anchor:middle">find the original</text>
+      <rect class="f-yellow" x="320" y="70" width="130" height="70" rx="10"/><text class="t t-b" x="385" y="100" style="text-anchor:middle">3 · Method</text><text class="t-xs" x="385" y="120" style="text-anchor:middle">data, date, scope</text>
+      <rect class="f-orange" x="480" y="70" width="140" height="70" rx="10"/><text class="t t-b" x="550" y="100" style="text-anchor:middle">4 · Compare</text><text class="t-xs" x="550" y="120" style="text-anchor:middle">official docs, others</text>
+      <rect class="f-teal" x="650" y="70" width="90" height="70" rx="10"/><text class="t t-b" x="695" y="100" style="text-anchor:middle">5 · Test</text><text class="t-xs" x="695" y="120" style="text-anchor:middle">small, cheap</text>
+      <rect class="f-green" x="770" y="30" width="80" height="50" rx="10"/><text class="t t-b" x="810" y="60" style="text-anchor:middle">Adopt</text>
+      <rect class="f-red" x="770" y="130" width="80" height="50" rx="10"/><text class="t t-b" x="810" y="160" style="text-anchor:middle">Discard</text>
+      <path class="d-ink arrow" d="M132 105 H158"/><path class="d-ink arrow" d="M292 105 H318"/><path class="d-ink arrow" d="M452 105 H478"/><path class="d-ink arrow" d="M622 105 H648"/><path class="d-ink arrow" d="M742 90 L768 60"/><path class="d-ink arrow" d="M742 120 L768 150"/>
+      <text class="t-xs t-m" x="10" y="206">Skipping steps 2 and 3 is how myths spread: the claim sounds plausible, so nobody checks where it came from.</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> Five steps to test a claim. It sounds slow, but with practice it takes minutes, and it builds the instincts of an experienced printer.</figcaption>
+  </figure>
+
+  <h3>🔧 Myth-busting</h3>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Common claim</th><th>More accurate view</th></tr></thead>
+    <tbody>
+      <tr><td>"Higher temperature always gives stronger parts."</td><td>Within a material's range, temperature affects layer bonding, but too hot causes stringing, degradation and poor cooling. Test within the recommended range for your filament.</td></tr>
+      <tr><td>"PLA is totally safe to breathe because it is natural."</td><td>Heated plastics emit particles and compounds regardless of origin. Ventilate or filter; see <a href="../foundations/safety-and-workspace.html">Safety &amp; workspace</a>.</td></tr>
+      <tr><td>"More infill means stronger parts."</td><td>Walls and orientation often matter more than infill percentage. See <a href="../design/strength-and-orientation.html">Strength &amp; orientation</a>.</td></tr>
+      <tr><td>"Filament does not need drying if it is new."</td><td>Many filaments absorb moisture from air quickly, including inside the box once opened. Moisture symptoms are discussed in <a href="../materials/drying-and-storage.html">Drying &amp; storage</a>.</td></tr>
+      <tr><td>"A more expensive printer always prints better."</td><td>Calibration, materials and design matter as much as hardware, though better machines reduce tinkering.</td></tr>
+      <tr><td>"A print is food safe because the filament says so."</td><td>The material, layer lines, additives and nozzle all matter. See <a href="economics-and-ethics.html#standards">standards notes</a>.</td></tr>
+      <tr><td>"This setting list works for every printer."</td><td>Settings are specific to machine, nozzle, material and even spool. Use them as starting points and calibrate.</td></tr>
+      <tr><td>"3D printing will replace all factories soon."</td><td>It wins in specific niches; see <a href="applications.html#trends">industry trends</a>.</td></tr>
+    </tbody></table></div>
+
+  <h3>Reading reviews and benchmarks</h3>
+  <ul>
+    <li>Check whether the reviewer bought the product or received it free, and whether they disclose it.</li>
+    <li>Look for failures and limits in a review; a review without any is promotional.</li>
+    <li>Compare benchmark numbers only when produced with the same test; speed claims in particular depend on part, acceleration limits and quality targets.</li>
+    <li>Wait for a few weeks of owner reports after any new product or firmware release.</li>
+  </ul>
+
+  <h2 id="contribute">Contribute corrections and improvements</h2>
+  <p>This compendium is open and improves when readers report mistakes. You do not need to be an expert, and you do not need to write code: a precise note about an error is a real contribution. The project lives on GitHub at <a href="https://github.com/pKasprowicz/bambu-x2d-bible" rel="noopener" target="_blank">github.com/pKasprowicz/bambu-x2d-bible</a>. The file named <code>CONTRIBUTING.md</code> in that repository describes the page structure, components and style rules in detail; it is a repository file, not a page of this site, so read it on GitHub.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 330" role="img" aria-label="Two contribution routes on GitHub: open an issue describing the problem with the page, section and source, or fork the repository, edit the HTML file, run the site checker and open a pull request that is reviewed and merged">
+      <rect class="f-blue" x="20" y="14" width="820" height="36" rx="8"/><text class="t t-b" x="36" y="38">Route A · Report it (fastest, no tools needed)</text>
+      <rect class="f-gray" x="20" y="62" width="190" height="64" rx="10"/><text class="t t-b" x="115" y="88" style="text-anchor:middle">Open Issues tab</text><text class="t-xs" x="115" y="108" style="text-anchor:middle">on the repository</text>
+      <rect class="f-gray" x="240" y="62" width="190" height="64" rx="10"/><text class="t t-b" x="335" y="88" style="text-anchor:middle">New issue</text><text class="t-xs" x="335" y="108" style="text-anchor:middle">clear title with page name</text>
+      <rect class="f-gray" x="460" y="62" width="190" height="64" rx="10"/><text class="t t-b" x="555" y="88" style="text-anchor:middle">Describe</text><text class="t-xs" x="555" y="108" style="text-anchor:middle">section, problem, source</text>
+      <rect class="f-green" x="680" y="62" width="160" height="64" rx="10"/><text class="t t-b" x="760" y="88" style="text-anchor:middle">Maintainers fix</text><text class="t-xs" x="760" y="108" style="text-anchor:middle">and reply</text>
+      <path class="d-ink arrow" d="M212 94 H238"/><path class="d-ink arrow" d="M432 94 H458"/><path class="d-ink arrow" d="M652 94 H678"/>
+      <rect class="f-purple" x="20" y="146" width="820" height="36" rx="8"/><text class="t t-b" x="36" y="170">Route B · Fix it yourself (pull request)</text>
+      <rect class="f-gray" x="20" y="194" width="140" height="64" rx="10"/><text class="t t-b" x="90" y="220" style="text-anchor:middle">Fork</text><text class="t-xs" x="90" y="240" style="text-anchor:middle">your own copy</text>
+      <rect class="f-gray" x="180" y="194" width="140" height="64" rx="10"/><text class="t t-b" x="250" y="220" style="text-anchor:middle">Branch</text><text class="t-xs" x="250" y="240" style="text-anchor:middle">one topic per branch</text>
+      <rect class="f-gray" x="340" y="194" width="140" height="64" rx="10"/><text class="t t-b" x="410" y="220" style="text-anchor:middle">Edit HTML</text><text class="t-xs" x="410" y="240" style="text-anchor:middle">keep the style rules</text>
+      <rect class="f-yellow" x="500" y="194" width="160" height="64" rx="10"/><text class="t t-b" x="580" y="220" style="text-anchor:middle">Run checker</text><text class="t-xs" x="580" y="240" style="text-anchor:middle">scripts/check_site.py</text>
+      <rect class="f-green" x="680" y="194" width="160" height="64" rx="10"/><text class="t t-b" x="760" y="220" style="text-anchor:middle">Pull request</text><text class="t-xs" x="760" y="240" style="text-anchor:middle">review, merge</text>
+      <path class="d-ink arrow" d="M162 226 H178"/><path class="d-ink arrow" d="M322 226 H338"/><path class="d-ink arrow" d="M482 226 H498"/><path class="d-ink arrow" d="M662 226 H678"/>
+      <text class="t-sm" x="20" y="290">Both routes need a free GitHub account. Small changes can be edited directly in the browser on GitHub.</text>
+      <text class="t-sm" x="20" y="312">Pull requests are checked by the site checker and reviewed before merging.</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> Two ways to contribute. When in doubt, open an issue; a good report is often as useful as a fix.</figcaption>
+  </figure>
+
+  <h3>What makes a good report</h3>
+  <ul>
+    <li><strong>Where:</strong> the page name and section heading (or the link with its anchor).</li>
+    <li><strong>What is wrong:</strong> quote the sentence or number, and say whether it is incorrect, outdated, unclear or missing.</li>
+    <li><strong>Evidence:</strong> a link to official documentation, a standard or a test you ran, with the printer, firmware and material.</li>
+    <li><strong>Suggested wording</strong>, if you have one.</li>
+  </ul>
+
+  <h3>Rules for pull requests</h3>
+  <ol class="steps">
+    <li>Change one topic per pull request, and describe the change and its source.</li>
+    <li>Follow the repository's writing and component rules in <code>CONTRIBUTING.md</code>: metric units first, American spelling, hedged numbers and no placeholder text.</li>
+    <li>Keep SVG figures well-formed, with a <code>viewBox</code> and an accessible label.</li>
+    <li>Run <code>python scripts/check_site.py</code> and fix errors in the files you touched.</li>
+    <li>For X2D facts, cite the official Bambu Lab documentation. Do not copy text or images from other sites.</li>
+    <li>Be kind in reviews. Everyone here is learning.</li>
+  </ol>
+  <div class="callout info"><span class="callout-title">Licensing of contributions</span>
+    <p>Only contribute text and images you wrote yourself or are allowed to share. The repository's license file states under which terms contributions are published; read it before submitting.</p></div>
+
+  <h2 id="changelog">Version and changelog</h2>
+  <p>This is a living reference. It describes products, firmware and software that change; the page you read may be newer or older than the version of the printer you own. The repository's commit history on GitHub is the authoritative record of what changed and when.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 240" role="img" aria-label="Maintenance loop of the compendium: reports arrive, claims are verified against official sources, pages are corrected, changes are reviewed and published, and pages are re-checked as products change">
+      <circle class="f-blue" cx="120" cy="90" r="56"/><text class="t t-b" x="120" y="86" style="text-anchor:middle">Report</text><text class="t-xs" x="120" y="104" style="text-anchor:middle">issue or PR</text>
+      <circle class="f-purple" cx="290" cy="90" r="56"/><text class="t t-b" x="290" y="86" style="text-anchor:middle">Verify</text><text class="t-xs" x="290" y="104" style="text-anchor:middle">official sources</text>
+      <circle class="f-orange" cx="460" cy="90" r="56"/><text class="t t-b" x="460" y="86" style="text-anchor:middle">Correct</text><text class="t-xs" x="460" y="104" style="text-anchor:middle">edit the page</text>
+      <circle class="f-green" cx="630" cy="90" r="56"/><text class="t t-b" x="630" y="86" style="text-anchor:middle">Review</text><text class="t-xs" x="630" y="104" style="text-anchor:middle">checker + reader</text>
+      <circle class="f-teal" cx="800" cy="90" r="46"/><text class="t t-b" x="800" y="86" style="text-anchor:middle">Publish</text><text class="t-xs" x="800" y="104" style="text-anchor:middle">GitHub Pages</text>
+      <path class="d-ink arrow" d="M178 90 H232"/><path class="d-ink arrow" d="M348 90 H402"/><path class="d-ink arrow" d="M518 90 H572"/><path class="d-ink arrow" d="M688 90 H752"/>
+      <path class="d-dash k-gray arrow" d="M800 138 V200 H120 V148"/>
+      <text class="t-sm" x="300" y="194" style="text-anchor:middle">Products and firmware change, so facts are re-checked</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> How the compendium stays accurate. The loop only works if readers report what they find.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Version</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>1.0</td><td>First edition. Foundations, materials, software, techniques, design, Bambu Lab X2D and AMS 2 Pro guides, exercises, calculators, and the reference section (FAQ, applications, economics and ethics, resources, glossary, cheat sheets).</td></tr>
+      <tr><td>Later</td><td>Corrections and additions are recorded in the repository history on GitHub. Check the page you are reading against the official documentation for your exact firmware.</td></tr>
+    </tbody></table></div>
+
+  <h2 id="glossary-link">Glossary and quick references</h2>
+  <p>Unsure about a term? The <a href="glossary.html">Glossary</a> defines the vocabulary used across this compendium. For one-page summaries to print or pin up, see the <a href="cheat-sheets.html">Cheat sheets</a>, and for quick answers the <a href="faq.html">FAQ</a>. New here? Go to <a href="../start-here.html">How to use this compendium</a>.</p>
+
+  <h2 id="acknowledgements">Acknowledgements</h2>
+  <p>This compendium stands on the shoulders of the open 3D printing community: the RepRap pioneers, the maintainers of open-source slicers and firmware, the designers who share models, the testers who publish methods and data, the manufacturers who document their products, and the volunteers who answer beginners' questions every day. Thank you. Product facts about the Bambu Lab X2D and AMS 2 Pro come from the manufacturer's public documentation.</p>
+
+  <h2 id="disclaimer">Disclaimer</h2>
+  <div class="callout warn"><span class="callout-title">Unofficial, educational, use at your own risk</span>
+    <ul>
+      <li>This site is an independent, unofficial educational project. It is <strong>not affiliated with, endorsed by or sponsored by Bambu Lab</strong> or any other company, project or person named on these pages. Product and company names are trademarks of their respective owners.</li>
+      <li>Information is provided in good faith but without warranty. Specifications, prices, policies and software change; verify anything important against the manufacturer's current documentation.</li>
+      <li>3D printing involves heat, moving parts, electricity, fumes and sharp tools. Follow the manufacturer's safety instructions and local regulations. You are responsible for what you print and how you use it.</li>
+      <li>Nothing here is legal, financial, medical or engineering advice. See <a href="economics-and-ethics.html">Economics, licensing &amp; sustainability</a> for limits and cautions.</li>
+      <li>Listing a link or resource is not an endorsement, and external sites are outside our control.</li>
+    </ul></div>
+
+  <p>Next: return to the <a href="../index.html">home page</a>, pick a level in the <a href="../exercises/index.html">practice hub</a>, or read <a href="applications.html">Applications &amp; project ideas</a> for inspiration.</p>
+</main>
+</body>
+</html>

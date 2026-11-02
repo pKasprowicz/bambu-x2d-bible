@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Advanced techniques · 3D Printing Compendium</title>
+  <meta name="description" content="Vase mode, variable layer height, ironing, fuzzy skin, modifiers, print-in-place mechanisms, embedded inserts, lithophanes, lattice infill, casting molds, batch production and more advanced FDM techniques.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="techniques/advanced-techniques.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 4 · Techniques</div>
+    <h1>Advanced techniques</h1>
+    <p class="lead">Once a printer prints reliably, the interesting part begins: tricks that make parts faster, stronger, prettier, smarter or simply impossible to make any other way. This page is a toolbox of more than thirty techniques, each with when to use it, how to do it, and what can go wrong.</p>
+    <div class="meta"><span class="badge advanced">Advanced</span><span class="badge time">⏱ 40 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <p>How to pick the right special technique for a job, set it up in any slicer, and avoid its typical failure modes. Every technique below follows the same pattern: <b>When to use it → How → Caveats</b>, usually with a diagram. You should be comfortable with <a href="calibration.html">calibration</a>, <a href="supports-bridges-overhangs.html">supports</a> and <a href="../software/slicer-settings.html">slicer settings</a> before you start.</p></div>
+
+  <h2 id="map">The technique map</h2>
+  <p>Advanced techniques fall into a handful of families. Knowing the family tells you which part of the process you are changing: the <em>toolpath</em> (what the nozzle does), the <em>geometry</em> (what you model), the <em>material</em> (what goes in), or the <em>workflow</em> (what happens around the print).</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 330" role="img" aria-label="Map of advanced technique families: toolpath, geometry, material, workflow">
+      <rect class="f-blue" x="20" y="20" width="170" height="40" rx="10"/><text class="t t-c t-b" x="105" y="45">Toolpath tricks</text>
+      <rect class="f-green" x="205" y="20" width="170" height="40" rx="10"/><text class="t t-c t-b" x="290" y="45">Geometry tricks</text>
+      <rect class="f-orange" x="390" y="20" width="170" height="40" rx="10"/><text class="t t-c t-b" x="475" y="45">Material tricks</text>
+      <rect class="f-purple" x="575" y="20" width="165" height="40" rx="10"/><text class="t t-c t-b" x="657" y="45">Workflow tricks</text>
+      <g class="t-sm">
+        <text class="t t-sm t-c" x="105" y="90">Vase mode</text><text class="t t-sm t-c" x="105" y="112">Ironing</text><text class="t t-sm t-c" x="105" y="134">Fuzzy skin</text><text class="t t-sm t-c" x="105" y="156">Variable layer height</text><text class="t t-sm t-c" x="105" y="178">Non-planar slicing</text><text class="t t-sm t-c" x="105" y="200">Sequential printing</text>
+        <text class="t t-sm t-c" x="290" y="90">Print-in-place</text><text class="t t-sm t-c" x="290" y="112">Tolerance joints</text><text class="t t-sm t-c" x="290" y="134">Lattice / TPMS</text><text class="t t-sm t-c" x="290" y="156">Topology optimization</text><text class="t t-sm t-c" x="290" y="178">Lithophanes</text><text class="t t-sm t-c" x="290" y="200">Segmented parts</text>
+        <text class="t t-sm t-c" x="475" y="90">Inserts &amp; magnets</text><text class="t t-sm t-c" x="475" y="112">Color swaps</text><text class="t t-sm t-c" x="475" y="134">Gradients / dithering</text><text class="t t-sm t-c" x="475" y="156">Conductive filament</text><text class="t t-sm t-c" x="475" y="178">Printing on fabric</text><text class="t t-sm t-c" x="475" y="200">Pellet extrusion</text>
+        <text class="t t-sm t-c" x="657" y="90">Vapor smoothing</text><text class="t t-sm t-c" x="657" y="112">Casting &amp; molds</text><text class="t t-sm t-c" x="657" y="134">Vacuum forming</text><text class="t t-sm t-c" x="657" y="156">Investment casting</text><text class="t t-sm t-c" x="657" y="178">Batch / farm production</text><text class="t t-sm t-c" x="657" y="200">Cutting &amp; gluing</text>
+      </g>
+      <path class="d-dash" d="M105 215 V250 M290 215 V250 M475 215 V250 M657 215 V250"/>
+      <rect class="d-surface2" x="20" y="250" width="720" height="60" rx="12"/>
+      <text class="t t-c t-b" x="380" y="276">Same question every time</text>
+      <text class="t t-sm t-c" x="380" y="298">What does the part need that default settings cannot give it: speed, strength, looks, function or scale?</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> Four families of advanced technique. Most real projects combine two or three of them.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Technique</th><th>Main benefit</th><th>Difficulty</th><th>Typical cost</th></tr></thead>
+    <tbody>
+      <tr><td><a href="#vase">Vase / spiral mode</a></td><td>Fast, leak-free single-wall shells</td><td><span class="chip green">Easy</span></td><td>None</td></tr>
+      <tr><td><a href="#adaptive-layers">Variable layer height</a></td><td>Smooth curves without long print times</td><td><span class="chip green">Easy</span></td><td>None</td></tr>
+      <tr><td><a href="#ironing">Ironing</a></td><td>Mirror-flat top surfaces</td><td><span class="chip yellow">Medium</span></td><td>Extra time</td></tr>
+      <tr><td><a href="#fuzzy">Fuzzy skin</a></td><td>Grip texture, hides layer lines</td><td><span class="chip green">Easy</span></td><td>None</td></tr>
+      <tr><td><a href="#modifiers">Modifiers / per-region settings</a></td><td>Strength or speed only where needed</td><td><span class="chip yellow">Medium</span></td><td>None</td></tr>
+      <tr><td><a href="#pip">Print-in-place mechanisms</a></td><td>Assembled moving parts from one job</td><td><span class="chip red">Hard</span></td><td>Test prints</td></tr>
+      <tr><td><a href="#inserts">Embedded hardware</a></td><td>Threads, magnets, weights, electronics</td><td><span class="chip yellow">Medium</span></td><td>Hardware</td></tr>
+      <tr><td><a href="#litho">Lithophanes</a></td><td>Photos in relief that glow when backlit</td><td><span class="chip yellow">Medium</span></td><td>Light source</td></tr>
+      <tr><td><a href="#lattice">Lattice / TPMS</a></td><td>Light, tunable, energy-absorbing parts</td><td><span class="chip red">Hard</span></td><td>Software</td></tr>
+      <tr><td><a href="#hybrid">Casting &amp; molds</a></td><td>Metal, silicone or resin copies of prints</td><td><span class="chip red">Hard</span></td><td>Materials</td></tr>
+      <tr><td><a href="#farm">Batch production</a></td><td>Many parts per day</td><td><span class="chip yellow">Medium</span></td><td>Time, printers</td></tr>
+    </tbody></table></div>
+
+  <h2 id="toolpath">Part A · Toolpath techniques</h2>
+
+  <h3 id="vase">🔰 Vase mode (spiral contour)</h3>
+  <p><b>Vase mode</b> (Cura calls it <em>Spiralize outer contour</em>, Bambu Studio and Orca call it <em>Spiral vase</em>) prints a single continuous wall that rises slowly with every revolution. The nozzle never lifts, never retracts and never leaves a seam, because the Z height increases smoothly along the path instead of in discrete steps.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 330" role="img" aria-label="Vase mode: normal layers with a seam versus a continuous spiral path with rising Z">
+      <text class="t t-lg" x="20" y="28">Normal layers</text>
+      <text class="t t-lg" x="400" y="28">Spiral vase mode</text>
+      <g>
+        <rect class="d-plastic" x="60" y="250" width="240" height="14" rx="3"/><rect class="d-plastic" x="60" y="236" width="240" height="14" rx="3"/><rect class="d-plastic" x="55" y="222" width="250" height="14" rx="3"/><rect class="d-plastic" x="52" y="208" width="256" height="14" rx="3"/><rect class="d-plastic" x="55" y="194" width="250" height="14" rx="3"/><rect class="d-plastic" x="62" y="180" width="236" height="14" rx="3"/><rect class="d-plastic" x="75" y="166" width="210" height="14" rx="3"/><rect class="d-plastic" x="95" y="152" width="170" height="14" rx="3"/>
+        <path class="k-red" d="M64 160 V258" stroke-dasharray="4 4"/>
+        <text class="t t-sm c-red" x="70" y="282">Seam: one start/stop per layer</text>
+        <text class="t t-sm" x="20" y="304">Retraction and travel at every layer change → seam, possible blobs</text>
+      </g>
+      <g>
+        <path class="d-plastic" d="M440 258 C470 270 590 270 620 258 L620 250 C590 262 470 262 440 250 Z"/>
+        <path class="k-orange" d="M440 250 C470 262 590 262 620 250 M436 236 C470 250 595 250 624 236 M432 222 C470 236 600 236 628 222 M430 208 C470 222 602 222 630 208 M432 194 C470 208 600 208 628 194 M440 180 C470 194 590 194 620 180 M455 166 C480 178 580 178 605 166 M470 152 C490 162 570 162 590 152"/>
+        <path class="d-ink arrow" d="M650 250 V160"/>
+        <text class="t t-sm" x="660" y="205">Z rises</text><text class="t t-sm" x="660" y="221">continuously</text>
+        <text class="t t-sm" x="400" y="304">One unbroken extrusion line: no seam, no retraction, fastest possible</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 2.</b> In vase mode the contour climbs by one layer height per revolution. The base is printed solid; everything above is a single wall.</figcaption>
+  </figure>
+
+  <h4>When to use it</h4>
+  <ul>
+    <li>Vases, cups, lampshades, planters, desk organizers: anything that is a smooth, open-top shell.</li>
+    <li>Fast, watertight containers (a single continuous wall has no seam to leak through).</li>
+    <li>Translucent lamp shades: wall thickness is uniform, so light glows evenly.</li>
+    <li>Material tests: a single-wall vase quickly shows stringing, cooling and temperature behavior.</li>
+  </ul>
+  <h4>How</h4>
+  <ol class="steps">
+    <li><strong>Choose a model that works</strong>A closed outer surface, no internal walls, no overhangs steeper than your printer tolerates. Anything that needs a second perimeter in the same layer cannot be printed.</li>
+    <li><strong>Enable spiral mode</strong>Turn on <em>Spiral vase</em>. Set top solid layers to 0 (there is no lid) and bottom layers to 3–5 so the base is watertight. Sparse infill is ignored.</li>
+    <li><strong>Pick a wide nozzle line</strong>Wall thickness equals the extrusion width. A 0.4 mm nozzle with a 0.45–0.6 mm line gives a thin, flexible wall; a 0.8 mm nozzle gives a sturdy 0.8–1.0 mm wall and prints faster.</li>
+    <li><strong>Raise flow and lower speed slightly</strong>Because there is no overlap with neighboring walls, flow errors show immediately. Start at 100 % flow and compare wall thickness with calipers; a 3 % change is already visible.</li>
+    <li><strong>Print it</strong>Use a brim for tall, narrow shapes. Remove the finished object by twisting gently; the thin base can crack otherwise.</li>
+  </ol>
+  <h4>Caveats</h4>
+  <div class="callout warn"><span class="callout-title">Single wall = weak in Z</span><p>Every layer is bonded only to the one below it by a thin strip of plastic. Vase-mode parts are stiff around the circumference but can split along layers when squeezed or dropped. Use higher nozzle temperature (+5–10 °C) and a slightly slower speed for better layer bonding. For parts that must hold liquid and take abuse, add 2 perimeters instead (a normal print).</p></div>
+  <div class="callout trick"><span class="callout-title">Pro trick: patterned vases</span><p>Because the wall height changes continuously, you can twist, ripple or wave the model's outline in CAD. The seamless path makes these shapes look stunning in silk or translucent filaments. Dual-color filament gradients (see <a href="#gradients">gradients</a>) turn a plain vase into a showpiece.</p></div>
+
+  <h3 id="adaptive-layers">🔰 Variable (adaptive) layer height</h3>
+  <p>Layer height is a trade between speed and surface quality. <b>Variable layer height</b> lets the slicer use <em>thin layers where the shape curves slowly</em> (shoulders, domes, tilted faces) and <em>thick layers on vertical walls</em>, where thickness hardly affects the look. A 200 mm tall bust may drop from 12 hours to 8 hours with almost no visible loss.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 360" role="img" aria-label="Variable layer height: thick layers on vertical walls, thin layers on a curved dome">
+      <path class="d-surface" d="M120 320 V200 C120 110 300 110 300 200 V320 Z"/>
+      <g class="d-thin">
+        <path d="M120 312 H300 M120 296 H300 M120 280 H300 M120 264 H300 M120 248 H300 M120 232 H300"/>
+        <path d="M120 218 H300 M122 207 H298 M126 197 H294 M132 188 H288 M139 179 H281 M148 171 H272 M158 164 H262 M170 158 H250 M185 153 H235"/>
+      </g>
+      <path class="d-ink arrow" d="M330 270 H380"/><path class="d-ink arrow" d="M330 170 H380"/>
+      <text class="t t-b" x="390" y="262">0.28 mm layers</text><text class="t t-sm" x="390" y="282">straight wall: step size is invisible</text>
+      <text class="t t-b" x="390" y="162">0.08 mm layers</text><text class="t t-sm" x="390" y="182">shallow dome: stair-stepping would show</text>
+      <rect class="d-surface2" x="520" y="40" width="220" height="240" rx="10"/>
+      <text class="t t-b t-c" x="630" y="64">Layer height vs. slope</text>
+      <path class="d-grid" d="M545 80 V250 H720"/>
+      <path class="k-orange" d="M545 100 C590 100 600 110 625 160 C645 200 680 235 720 240"/>
+      <text class="t t-xs" x="548" y="268">vertical wall</text><text class="t t-xs t-r" x="720" y="268">flat top</text>
+      <text class="t t-xs" x="550" y="92">thick</text><text class="t t-xs" x="676" y="232">thin</text>
+      <text class="t t-sm" x="20" y="30">Cross-section of a dome-topped part</text>
+      <text class="t t-sm" x="20" y="344">The slicer measures surface slope at every height and picks the layer height that keeps the step error below a target.</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> Stair-stepping error is largest where the surface is almost horizontal. Variable layer height puts the fine layers only there.</figcaption>
+  </figure>
+
+  <h4>How</h4>
+  <ul>
+    <li><b>Automatic:</b> Bambu Studio, OrcaSlicer, PrusaSlicer and Cura (via the <em>Adaptive layers</em> option or experimental setting) have a smoothing slider that trades quality against time. Start at the middle value and preview the layer-height color map.</li>
+    <li><b>Manual:</b> Paint a layer-height profile or use a <em>height range modifier</em> (see <a href="#modifiers">modifiers</a>) to say “from Z = 40 to 60 mm use 0.08 mm”. Ideal for a face, a logo or a threaded section.</li>
+    <li><b>Sensible limits:</b> keep layer height between 20 % and 75 % of the nozzle diameter, and stay within what your cooling can handle.</li>
+  </ul>
+  <h4>Caveats</h4>
+  <ul>
+    <li>Z-axis speed and extrusion pressure must cope with sudden layer height changes; use a smoothing value of at least medium.</li>
+    <li>Thicker layers cool slower; very thin layers heat up the previous layer. Watch for blobs on tiny features.</li>
+    <li>Layer adhesion varies: thin layers bond better than thick ones, so do not use extremes on functional load-bearing walls.</li>
+    <li>Pressure advance and flow calibrations done at 0.20 mm are still good for 0.12–0.28 mm in most cases; recalibrate for extremes.</li>
+  </ul>
+
+  <h3 id="ironing">🔧 Ironing</h3>
+  <p><b>Ironing</b> makes a final pass over each top surface with the hot nozzle moving slowly and extruding only a trickle of plastic (typically 5–15 % of normal flow). The nozzle acts like a clothes iron: it melts the ridges flat and fills tiny gaps with a small amount of fresh plastic.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 300" role="img" aria-label="Top surface before and after ironing: ridged layer, then flattened by hot nozzle with low flow">
+      <text class="t t-lg" x="20" y="26">Without ironing</text>
+      <path class="d-plastic" d="M30 240 V180 C40 160 60 160 70 180 C80 160 100 160 110 180 C120 160 140 160 150 180 C160 160 180 160 190 180 C200 160 220 160 230 180 C240 160 260 160 270 180 V240 Z"/>
+      <text class="t t-sm" x="30" y="268">ridges between top-layer lines catch light</text>
+      <text class="t t-lg" x="400" y="26">With ironing</text>
+      <path class="d-plastic" d="M410 240 V170 H680 V240 Z"/>
+      <path class="d-metal" d="M520 90 L560 90 L560 130 L545 160 H535 L520 130 Z"/>
+      <rect class="d-metal2" x="508" y="60" width="64" height="30" rx="4"/>
+      <path class="d-ink arrow" d="M580 150 H640"/>
+      <text class="t t-sm" x="590" y="140">pass at</text><text class="t t-sm" x="590" y="182">~15–30 mm/s</text>
+      <path class="k-orange" d="M538 163 V170"/>
+      <text class="t t-sm" x="410" y="268">hot nozzle smears and fills; tiny flow tops up gaps</text>
+      <text class="t t-xs" x="410" y="290">Typical: speed 15–30 mm/s · flow 5–15 % · line spacing ≈ 0.1 mm</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> Ironing trades a few extra minutes for a glass-like top. It only affects surfaces that face up.</figcaption>
+  </figure>
+
+  <h4>When to use it</h4>
+  <p>Lids, logos and nameplates, tabletop miniatures bases, buttons, anything touched or seen from above. Also useful as a cheap way to hide pillowing on thin top layers.</p>
+  <h4>How</h4>
+  <ol class="steps">
+    <li><strong>Make sure the top is already decent</strong>Ironing cannot fix pillowing caused by too few top layers. Use at least 5–7 top layers (about 1 mm).</li>
+    <li><strong>Enable ironing</strong>Choose <em>Top surfaces only</em> (or <em>Topmost surface</em> to iron only the final layer) and keep the pattern <em>rectilinear</em> or <em>zigzag</em>.</li>
+    <li><strong>Start with flow 10 %, speed 20 mm/s, spacing 0.1–0.15 mm</strong>Preview the toolpath: lines should cover every top area without overlapping excessively.</li>
+    <li><strong>Check the result and tune</strong>Smeared edges: lower flow. Remaining ridges: lower speed or flow slightly higher. Scratchy lines: clean the nozzle and lower the temperature by 5 °C.</li>
+  </ol>
+  <h4>Caveats</h4>
+  <ul>
+    <li>Print time can grow by 20–60 % on large flat areas. Iron only the topmost layer.</li>
+    <li>Over-ironing leaves a wavy or blotchy surface or burns the filament.</li>
+    <li>Works best with matte PLA, PETG and ABS. Silk and glitter filaments already look shiny; ironing may scuff them.</li>
+    <li>Very small top areas (under 2 mm) are skipped by most slicers.</li>
+  </ul>
+
+  <h3 id="fuzzy">🔰 Fuzzy skin</h3>
+  <p><b>Fuzzy skin</b> adds tiny random in-and-out wiggles to the outer perimeter so the surface becomes a fine, rough texture, like a pebbled leather or sand-coated finish. Layer lines and small defects disappear, and handles become grippy.</p>
+  <ul>
+    <li><b>Use for:</b> tool handles, grips, phone cases, stands, anything that benefits from a matte, non-slip, forgiving surface.</li>
+    <li><b>Settings:</b> thickness (amplitude) 0.1–0.3 mm, point distance 0.3–0.8 mm; larger values give coarser texture. Apply to <em>outer walls only</em> or to <em>all walls</em>; use a <a href="#modifiers">modifier</a> to texture only part of a model.</li>
+    <li><b>Caveats:</b> reduces dimensional accuracy (the surface is up to the amplitude off), makes the part slightly heavier and prints slower because the toolhead constantly changes direction. Do not use on mating surfaces or threads. It does not help overhang quality.</li>
+  </ul>
+  <div class="callout tip"><span class="callout-title">Disguise a rough first filament</span><p>If a spool prints with visible banding or if a part has layer-line artifacts you cannot calibrate away, fuzzy skin on the outer wall is a quick cosmetic trick. The grainy texture reads as intentional.</p></div>
+
+  <h3 id="nonplanar">🚀 Non-planar and conical slicing (overview)</h3>
+  <p>Standard slicing assumes every layer is a flat plane. <b>Non-planar slicing</b> breaks that assumption: the nozzle moves in Z while printing, so layers follow curved surfaces. Benefits are smoother tops, stronger parts (layers can follow stress directions) and fewer supports.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 320" role="img" aria-label="Planar layers versus non-planar curved layers and conical slicing with a tilted nozzle">
+      <text class="t t-lg" x="20" y="26">Planar slicing</text>
+      <path class="d-surface" d="M30 250 V150 C80 90 160 90 210 150 V250 Z"/>
+      <path class="d-thin" d="M30 238 H210 M30 226 H210 M30 214 H210 M30 202 H210 M30 190 H210 M30 178 H210 M30 166 H210 M44 154 H196 M62 142 H178 M80 132 H160 M104 122 H136"/>
+      <text class="t t-sm" x="30" y="278">Flat layers → steps on curved top</text>
+      <text class="t t-lg" x="260" y="26">Non-planar top layers</text>
+      <path class="d-surface" d="M270 250 V150 C320 90 400 90 450 150 V250 Z"/>
+      <path class="d-thin" d="M270 238 H450 M270 226 H450 M270 214 H450 M270 202 H450 M270 190 H450"/>
+      <path class="k-orange" d="M270 178 C320 118 400 118 450 178 M270 166 C320 106 400 106 450 166 M270 154 C320 94 400 94 450 154"/>
+      <text class="t t-sm" x="270" y="278">Final layers follow the curve → smooth surface</text>
+      <text class="t t-lg" x="520" y="26">Conical slicing</text>
+      <path class="d-surface" d="M530 250 H740 L680 130 H590 Z"/>
+      <path class="k-orange" d="M530 250 L590 130 M560 250 L615 130 M590 250 L640 130 M620 250 L660 130"/>
+      <path class="d-metal" d="M650 50 L690 50 L675 105 L665 105 Z"/>
+      <rect class="d-metal2" x="645" y="30" width="50" height="24" rx="4"/>
+      <text class="t t-sm" x="520" y="278">Tilted layers print an overhang</text>
+      <text class="t t-sm" x="520" y="296">like a normal cone (tilt ≤ ~45°)</text>
+      <text class="t t-xs" x="20" y="310">Non-planar needs a tall, slim nozzle tip and collision checks so the heater block never hits finished geometry.</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> Left: normal planar layers. Middle: non-planar top surfaces follow the curve. Right: conical (tilted) layers print shallow overhangs without support.</figcaption>
+  </figure>
+
+  <h4>What exists today</h4>
+  <ul>
+    <li><b>Non-planar top surfaces</b> in community slicers and plugins: the last few layers over a curved top are projected onto the surface. The nozzle needs a long, thin tip and the printer needs room around it.</li>
+    <li><b>Conical slicing</b> (a research-driven approach popularized by open-source projects): by tilting layers into cones, overhangs up to 45° or more print as if they were vertical. It requires a toolhead that can tilt or a bed that can tilt/rotate, or an extremely clever Z-while-XY algorithm on a 3-axis machine with a narrow nozzle.</li>
+    <li><b>Bed-tilting machines and robot arms</b> can do the full thing (see <a href="#multiaxis">multi-axis</a>).</li>
+  </ul>
+  <div class="callout info"><span class="callout-title">Should you try it?</span><p>For most users, <em>no</em>: standard enclosed CoreXY printers have heater blocks and fan ducts that crash into finished prints once you move in Z while traveling. Treat non-planar as a research toy for modified printers, and be ready to lose some prints. Variable layer height and ironing give 80 % of the visual benefit with no risk.</p></div>
+
+  <h2 id="perregion">Part B · Controlling different regions</h2>
+
+  <h3 id="modifiers">🔧 Modifiers and per-region settings</h3>
+  <p>A <b>modifier</b> is a shape (box, cylinder, sphere or imported mesh) placed over part of the model. Inside that shape the slicer replaces chosen settings. Think of it as “paint this region with different rules”. Most settings can be overridden: infill density and pattern, wall count, layer height, speed, fuzzy skin, top/bottom layers and more.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 330" role="img" aria-label="A bracket with a modifier box around a screw hole that increases walls and infill locally">
+      <path class="d-surface" d="M60 80 H380 V240 H60 Z"/>
+      <circle class="d-thin" cx="140" cy="160" r="26"/><circle class="d-thin" cx="300" cy="160" r="26"/>
+      <rect class="f-orange" x="95" y="105" width="90" height="110" rx="6" stroke-dasharray="6 4"/>
+      <rect class="f-orange" x="255" y="105" width="90" height="110" rx="6" stroke-dasharray="6 4"/>
+      <text class="t t-sm t-c" x="140" y="96">modifier A</text><text class="t t-sm t-c" x="300" y="96">modifier A</text>
+      <text class="t t-b" x="420" y="100">Global settings</text>
+      <text class="t t-sm" x="420" y="120">Walls 2 · Infill 15 % gyroid · 0.20 mm layers</text>
+      <text class="t t-b c-orange" x="420" y="160">Inside modifier A</text>
+      <text class="t t-sm" x="420" y="180">Walls 5 · Infill 60 % · same layer height</text>
+      <text class="t t-sm" x="420" y="204">→ strong screw bosses, light elsewhere</text>
+      <path class="d-ink arrow" d="M412 170 H350"/>
+      <text class="t t-sm" x="60" y="276">Rule: the modifier decides only what you override.</text>
+      <text class="t t-sm" x="60" y="298">Everything else still comes from the object or global preset.</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> Modifier boxes around fastener holes: more walls and denser infill exactly where the load is.</figcaption>
+  </figure>
+
+  <h4>Practical uses</h4>
+  <div class="grid cols-2">
+    <div class="card accent-orange"><h4>Strength where needed</h4><p>Add walls and 50–100 % infill around screw holes, hinge pins and snap-fit roots instead of making the whole part dense.</p></div>
+    <div class="card accent-blue"><h4>Quality where seen</h4><p>Slow speed and thinner layers only on the face or a logo; fast, coarse layers on the hidden base.</p></div>
+    <div class="card accent-green"><h4>Support control</h4><p>A support blocker modifier prevents support in a pocket; an enforcer adds it under a tiny island the auto-support missed.</p></div>
+    <div class="card accent-purple"><h4>Texture zones</h4><p>Fuzzy skin on the grip, smooth on the rest. Different infill pattern (e.g. gyroid in the middle, grid near the surface).</p></div>
+  </div>
+  <h4>Where to find them</h4>
+  <p>In Bambu Studio and OrcaSlicer: right-click the object → <em>Add modifier</em> → choose Cube/Cylinder/Sphere/Slab/Mesh, then use the settings list that appears beneath the object name. In PrusaSlicer: right-click → <em>Add modifier</em>. Cura: use <em>Per Model Settings</em> in the left toolbar and add a modifier mesh. Variable-layer-height “height range modifiers” are a variant that apply to a Z interval across the entire object.</p>
+  <div class="callout warn"><span class="callout-title">Common mistakes</span><ul><li>Placing the modifier too small: it must fully enclose the region, including a margin of 1–2 line widths.</li><li>Mixing settings that change perimeter counts mid-layer without checking the preview; look at the layer view for gaps.</li><li>Forgetting the modifier moves with the object only if it is a child of that object.</li></ul></div>
+
+  <h3 id="sequential">🔧 Sequential (one-at-a-time) printing</h3>
+  <p>Normally all objects on a plate print layer by layer together. <b>Sequential printing</b> (called <em>By object</em> in Bambu Studio and Orca, <em>One at a time</em> in Cura) finishes each object completely before starting the next. The advantage is that a failure only destroys one object and travel moves between parts are avoided; the disadvantage is the nozzle assembly must not hit a finished neighbor.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 320" role="img" aria-label="Sequential printing: gantry clearance height versus object height, with objects separated by a clearance gap">
+      <rect class="d-surface2" x="40" y="260" width="680" height="16" rx="3"/>
+      <rect class="d-plastic" x="90" y="200" width="70" height="60"/><rect class="d-plastic" x="210" y="200" width="70" height="60"/><rect class="d-plastic" x="330" y="200" width="70" height="60"/>
+      <rect class="d-metal2" x="430" y="140" width="110" height="30" rx="4"/><path class="d-metal" d="M470 170 H500 L492 200 H478 Z"/>
+      <rect class="d-plastic" x="440" y="206" width="90" height="54" stroke-dasharray="4 3"/>
+      <path class="d-dash" d="M40 105 H720"/><text class="t t-sm" x="46" y="98">Gantry / x-axis rods clearance height (printer specific, e.g. 40–150 mm)</text>
+      <path class="k-red" d="M360 105 V200"/><text class="t t-sm c-red" x="370" y="155">objects taller than this limit</text><text class="t t-sm c-red" x="370" y="172">collide with the gantry</text>
+      <path class="d-ink arrow arrow-start" d="M280 240 H330"/><text class="t t-sm" x="282" y="232">gap</text>
+      <text class="t t-sm" x="40" y="304">Done objects stay on the plate while the toolhead and rods pass over them. Keep gaps ≥ nozzle housing width.</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> Everything already printed must stay below the clearance height of the gantry, and far enough from the next object to let the toolhead fit between them.</figcaption>
+  </figure>
+
+  <h4>When to use it</h4>
+  <ul>
+    <li>Printing many identical small parts where a single failure should not ruin the batch.</li>
+    <li>Multi-part jobs with stringy materials: no travel across other objects.</li>
+    <li>Parts that must be removed one by one (e.g. while the printer continues).</li>
+  </ul>
+  <h4>Caveats</h4>
+  <ul>
+    <li>Height limit: on printers with a fixed gantry bar, objects must be shorter than the clearance height. On many enclosed machines the limit is only a few centimeters; check your printer's documentation.</li>
+    <li>Prime towers and multi-color work generally cannot be combined with sequential printing.</li>
+    <li>Printing is often slower because each object is travelled to separately; use it when reliability beats speed.</li>
+    <li>Heat is concentrated in a small area for a long time, which can warp small parts less (good) but also leave the first printed objects exposed to chamber heat (bad for PLA in a hot enclosure).</li>
+  </ul>
+
+  <h2 id="mechanisms">Part C · Mechanisms and joints</h2>
+
+  <h3 id="pip">🚀 Print-in-place mechanisms</h3>
+  <p>A <b>print-in-place</b> (PiP) design prints an assembly in one job: hinges, chains, ball joints, gears, even whole articulated dragons. The moving parts are separated by a thin air gap, so after printing they only need to be “broken free”. No assembly, no extra hardware, and one-off geometries that are impossible to mold.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 340" role="img" aria-label="Cross-section of a print-in-place hinge showing pin, sleeve, radial clearance and vertical clearance">
+      <rect class="d-plastic" x="60" y="60" width="200" height="180" rx="6"/>
+      <circle class="d-surface" cx="260" cy="150" r="70"/>
+      <circle class="d-plastic" cx="260" cy="150" r="40"/>
+      <rect class="d-plastic" x="260" y="110" width="200" height="80"/>
+      <path class="d-surface" d="M260 80 A70 70 0 0 1 330 150 A70 70 0 0 1 260 220" opacity="0"/>
+      <circle class="s-none d-thin" cx="260" cy="150" r="44"/><circle class="s-none d-thin" cx="260" cy="150" r="40"/>
+      <path class="d-ink arrow" d="M340 60 L292 118"/>
+      <text class="t t-sm" x="345" y="52">radial gap 0.3–0.5 mm</text>
+      <text class="t t-sm" x="345" y="70">(between pin and sleeve)</text>
+      <path class="d-ink arrow" d="M520 250 L420 192"/>
+      <text class="t t-sm" x="470" y="268">vertical gap 0.3–0.4 mm</text>
+      <text class="t t-sm" x="470" y="286">(over and under moving part)</text>
+      <path class="d-ink arrow" d="M120 300 L180 232"/>
+      <text class="t t-sm" x="40" y="320">fixed knuckle</text>
+      <text class="t t-b" x="470" y="110">Rotating leaf</text>
+      <text class="t t-xs" x="20" y="28">Side view of a hinge knuckle (not to scale). Gaps are drawn exaggerated.</text>
+      <text class="t t-sm" x="560" y="170">Rule of thumb:</text><text class="t t-sm" x="560" y="188">gap ≈ 1 to 2 layer</text><text class="t t-sm" x="560" y="206">heights more than</text><text class="t t-sm" x="560" y="224">your first guess</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> A PiP hinge needs radial gaps for rotation and vertical gaps so the parts do not fuse. Tune the gap to your printer, not to a generic table.</figcaption>
+  </figure>
+
+  <h4>Design rules that work</h4>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Feature</th><th>Typical gap (0.4 mm nozzle, 0.2 mm layers)</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Hinge pin / sleeve (radial)</td><td>0.30–0.50 mm</td><td>Looser if hot enclosure or PETG</td></tr>
+      <tr><td>Vertical gaps (z)</td><td>0.30–0.40 mm</td><td>Must be at least 1.5 layers or layers fuse</td></tr>
+      <tr><td>Chain link spacing</td><td>0.40–0.60 mm</td><td>Printed flat, links parallel to the bed</td></tr>
+      <tr><td>Ball-and-socket joint</td><td>0.30–0.50 mm</td><td>Use sphere with flat bottom, 45° friendly socket</td></tr>
+      <tr><td>Gear mesh (backlash)</td><td>0.20–0.40 mm</td><td>More backlash for larger modules</td></tr>
+      <tr><td>Living hinge (flexure)</td><td>0.4–0.8 mm thick, 5–10 mm long</td><td>PETG, PP, TPU; layers must run <em>across</em> the bend</td></tr>
+    </tbody></table></div>
+  <ul>
+    <li><b>Orient so moving surfaces are vertical.</b> Round pins printed on their side are slightly oval. Print cylinders upright, or print flats on their side.</li>
+    <li><b>Make bridges, not supports:</b> supports inside gaps are impossible to remove. Design 45° chamfers under moving parts.</li>
+    <li><b>Cool aggressively</b> around the gap so the hot plastic does not droop into it. Use a fan at 100 % for PLA (see <a href="speed-cooling-quality.html">speed, cooling &amp; quality</a>).</li>
+    <li><b>Reduce flow slightly</b> (95–97 %) for PiP, or compensate inner holes (“XY hole compensation”) to keep gaps open.</li>
+    <li><b>Keep a clean first layer.</b> Elephant foot at the bottom of a hinge locks the parts together. Enable elephant-foot compensation (0.1–0.2 mm).</li>
+  </ul>
+
+  <h4>Breaking the joint free</h4>
+  <ol class="steps">
+    <li><strong>Heat gently</strong>Warm PLA parts in hot (not boiling) water at ~50 °C for a minute, or use a hair dryer. Cold plastic is brittle and snaps.</li>
+    <li><strong>Wiggle small, then large</strong>Rock the joint through a few degrees, then widen the motion. Do not force: if the joint will not budge, cut it apart and increase the gap by 0.1 mm.</li>
+    <li><strong>Remove debris</strong>Blow out strings; a drop of silicone grease or a dry lubricant powder smooths the motion.</li>
+  </ol>
+
+  <h4>Hinges, chains, ball joints and living hinges</h4>
+  <div class="tabs">
+    <div class="tab" data-title="Hinges">
+      <p><b>Pin hinge.</b> Pin printed vertically with a conical (45°) tip so it needs no support. Leaves around the sleeve have a 0.3–0.5 mm gap. Best for boxes, lids and flip phones. Increase the contact length (≥ 3× pin diameter) to reduce wobble.</p>
+      <p><b>Caveat:</b> printed vertically with the bed as base, layer lines run around the pin, which is fine; printed flat, the pin is weak across layers.</p>
+    </div>
+    <div class="tab" data-title="Chains">
+      <p>Chain links print flat in a row, each link loosely threaded through the next with a 0.4–0.6 mm gap. Bridging the inside of each link without supports requires a top-down-friendly shape: a rounded diamond rather than a circle. Combine with a first-layer brim and hot, slow initial layers.</p>
+      <p><b>Caveat:</b> links fuse easily if layer height is too coarse; use 0.12–0.16 mm layers for fine chains.</p>
+    </div>
+    <div class="tab" data-title="Ball joints">
+      <p>A sphere inside a socket with the open end oriented up. A 45° wedge cut at the socket base replaces supports. Use diameters ≥ 12 mm (smaller spheres are hard to free). Add slots in the socket to make it a snap-fit flexible cup.</p>
+      <p><b>Caveat:</b> stiction between PLA surfaces is high; add a pinch of PTFE powder or a thin coat of dry lube after freeing.</p>
+    </div>
+    <div class="tab" data-title="Living hinges">
+      <p>A thin flexing strip (0.4–0.8 mm) joins two rigid panels. Works in <b>PETG</b>, <b>PP</b> or <b>TPU</b>; PLA cracks after a few bends, nylon lasts long. Layers must be continuous <em>across</em> the strip (strip parallel to the bed, bending axis along the nozzle path), so the plastic fibres run perpendicular to the bend. Annealing and slow bending extend life.</p>
+      <p><b>Caveat:</b> a living hinge is a wear part; design it replaceable or double up.</p>
+    </div>
+  </div>
+
+  <div class="callout trick"><span class="callout-title">Test coupon first</span><p>Print a 10-minute test strip with gaps of 0.2, 0.3, 0.4, 0.5 and 0.6 mm before printing a four-hour articulated model. The smallest gap that moves freely on your printer with your filament is your design clearance. Write it on the printer. More about clearances in <a href="../design/tolerances-and-fits.html">tolerances &amp; fits</a>.</p></div>
+
+  <h3 id="tolerance">🔧 Tolerance-compensated joints</h3>
+  <p>Printers are never perfectly accurate. Walls expand into holes, filament shrinks as it cools and elephant foot pushes bottom layers outward. A <b>tolerance-compensated joint</b> bakes known errors into the design so two parts fit without sanding.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 300" role="img" aria-label="Press fit, sliding fit and loose fit pegs in holes with typical clearances">
+      <g>
+        <rect class="d-surface2" x="40" y="90" width="150" height="110"/><rect class="d-surface" x="95" y="90" width="40" height="110" opacity="0"/>
+        <rect class="d-plastic" x="105" y="40" width="30" height="130"/><rect class="d-surface2" x="40" y="90" width="55" height="110"/><rect class="d-surface2" x="145" y="90" width="45" height="110"/>
+        <text class="t t-b t-c" x="115" y="228">Press fit</text><text class="t t-sm t-c" x="115" y="248">–0.05 … +0.1 mm</text>
+      </g>
+      <g>
+        <rect class="d-surface2" x="290" y="90" width="55" height="110"/><rect class="d-surface2" x="395" y="90" width="55" height="110"/>
+        <rect class="d-plastic" x="350" y="40" width="40" height="130"/>
+        <path class="k-green" d="M345 100 V120 M395 100 V120"/>
+        <text class="t t-b t-c" x="370" y="228">Sliding fit</text><text class="t t-sm t-c" x="370" y="248">+0.15 … +0.25 mm</text>
+      </g>
+      <g>
+        <rect class="d-surface2" x="540" y="90" width="55" height="110"/><rect class="d-surface2" x="660" y="90" width="55" height="110"/>
+        <rect class="d-plastic" x="605" y="40" width="40" height="130"/>
+        <path class="k-orange" d="M595 100 V120 M605 100 V120 M645 100 V120 M660 100 V120"/>
+        <text class="t t-b t-c" x="627" y="228">Loose fit</text><text class="t t-sm t-c" x="627" y="248">+0.3 … +0.5 mm</text>
+      </g>
+      <text class="t t-xs" x="40" y="285">Clearance added to nominal hole size. Start in the middle and tune with a test coupon.</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> Three fit classes as extra diameter in the hole compared with the peg. Holes print smaller than designed; pegs print larger.</figcaption>
+  </figure>
+
+  <ul>
+    <li><b>Calibrate once, apply everywhere:</b> print a hole/peg coupon and write down the offset that gives a slip fit. Apply it in CAD (parameter <code>clearance</code>) or via slicer XY compensation (<em>XY hole compensation</em>, <em>XY contour compensation</em>).</li>
+    <li><b>Compensate holes more than pegs:</b> small holes are often 0.1–0.2 mm too small; slicers often offer a dedicated horizontal expansion for holes.</li>
+    <li><b>Use shape, not just size:</b> chamfers lead the peg in; crush ribs (0.2–0.3 mm tall, 0.4 mm wide) give a tight friction fit that tolerates ±0.1 mm error; tapered pins and snap tabs self-center.</li>
+    <li><b>Mind the material:</b> ABS/ASA/nylon shrink more (0.5–2 %); PLA shrinks little; TPU squishes. Scale or offset by material, not by printer alone.</li>
+  </ul>
+  <p>For the full theory, see <a href="../design/tolerances-and-fits.html">tolerances &amp; fits</a> and <a href="calibration.html">calibration</a>.</p>
+
+  <h2 id="embedding">Part D · Embedding things inside prints</h2>
+
+  <h3 id="inserts">🔧 Embedded inserts, magnets, nuts and weights (pause-and-insert)</h3>
+  <p>The slicer can pause the print at a chosen layer. You drop a magnet, nut, bearing, weight or circuit board into a pocket, resume, and the next layers bridge over and lock it in. The result looks like a solid part with hidden hardware: invisible magnets for lids, nuts captured in a hex trap for screws, steel weights for stable bases.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 330" role="img" aria-label="Three stages: print pocket, pause and insert magnet, resume and bridge over">
+      <g>
+        <text class="t t-b" x="20" y="28">1 · Print to pocket depth</text>
+        <rect class="d-plastic" x="30" y="150" width="200" height="50"/>
+        <rect class="d-plastic" x="30" y="100" width="55" height="50"/><rect class="d-plastic" x="175" y="100" width="55" height="50"/>
+        <text class="t t-sm" x="30" y="228">Pocket is 0.1–0.2 mm</text><text class="t t-sm" x="30" y="246">larger than the part</text>
+      </g>
+      <g>
+        <text class="t t-b" x="280" y="28">2 · Pause, insert</text>
+        <rect class="d-plastic" x="280" y="150" width="200" height="50"/>
+        <rect class="d-plastic" x="280" y="100" width="55" height="50"/><rect class="d-plastic" x="425" y="100" width="55" height="50"/>
+        <rect class="s-purple" x="345" y="118" width="70" height="30" rx="3"/>
+        <text class="t t-sm t-w t-c" x="380" y="138">magnet</text>
+        <path class="d-ink arrow" d="M380 60 V110"/>
+        <text class="t t-sm" x="280" y="228">Check polarity first!</text>
+      </g>
+      <g>
+        <text class="t t-b" x="530" y="28">3 · Resume, bridge</text>
+        <rect class="d-plastic" x="530" y="150" width="200" height="50"/>
+        <rect class="d-plastic" x="530" y="100" width="55" height="50"/><rect class="d-plastic" x="675" y="100" width="55" height="50"/>
+        <rect class="s-purple" x="595" y="118" width="70" height="30" rx="3"/>
+        <rect class="d-plastic" x="530" y="82" width="200" height="18"/>
+        <text class="t t-sm" x="530" y="228">2–4 top layers bridge</text><text class="t t-sm" x="530" y="246">over the inserted part</text>
+      </g>
+      <text class="t t-sm" x="20" y="300">Typical pockets: magnet diameter + 0.2 mm, depth = magnet height + 0.1 mm. Keep ≥ 0.6 mm (2 layers) of plastic above.</text>
+    </svg>
+    <figcaption><b>Figure 10.</b> The three phases of pause-and-insert. The slicer’s “pause at layer” (or a custom M600/M601 G-code) triggers step 2.</figcaption>
+  </figure>
+
+  <h4>How</h4>
+  <ol class="steps">
+    <li><strong>Design the pocket</strong>Make it 0.1–0.3 mm larger than the object in X/Y and 0.1 mm deeper. Round pockets for round magnets; hexagonal traps for nuts (a nut sized M3 is 5.5 mm across flats; add 0.2–0.3 mm).</li>
+    <li><strong>Make the roof bridgeable</strong>Pockets under 15 mm bridge easily. Larger pockets need a sacrificial thin layer or a stepped roof.</li>
+    <li><strong>Insert a pause</strong>In the layer slider, right-click the first layer <em>above</em> the pocket and choose <em>Add pause</em> (Bambu Studio: <em>Add pause</em>, OrcaSlicer: <em>Add pause print (M601)</em>, PrusaSlicer: <em>Add color change / custom G-code</em>).</li>
+    <li><strong>Insert and resume</strong>When the printer pauses, use tweezers, insert the part fully flat, check it sits below the next layer, then resume. If the nozzle might catch, lower the print speed for the first bridging layer.</li>
+  </ol>
+  <h4>Caveats and tricks</h4>
+  <ul>
+    <li><b>Heat:</b> neodymium magnets lose strength above ~80 °C (grade dependent). PLA at 215 °C on top of a magnet is fine for seconds. A thin bridging layer cools it. Never print directly onto a hot nozzle-adjacent magnet in a hot chamber for long periods.</li>
+    <li><b>Polarity:</b> mark one face with a permanent marker or use a test magnet to stack them all the same way. Mistakes are permanent.</li>
+    <li><b>Adhesion:</b> a drop of CA glue in the pocket stops a magnet from being yanked out by the nozzle. Use loose fit pockets and pull the magnet with a spare magnet for removal.</li>
+    <li><b>Pause position:</b> a pause moves the nozzle away and cools it. The printer should resume at the same temperature; test it so you do not get under-extrusion at the restart.</li>
+    <li><b>Weights:</b> steel shot, bolts or coins in cavities make desk toys, chess pieces and camera tripods heavy and stable. Seal with epoxy so nothing rattles.</li>
+    <li><b>Alternatives:</b> if pausing is awkward, press-fit magnets afterwards in oversized pockets, or use <a href="post-processing.html">heat-set inserts</a> after printing.</li>
+  </ul>
+  <div class="callout danger"><span class="callout-title">Magnet safety</span><p>Strong neodymium magnets can pinch skin, shatter, and interfere with pacemakers and magnetic media. Insert them slowly, keep them away from the printer’s electronics, and never let small magnets near children (swallowed magnets are an emergency).</p></div>
+
+  <h3 id="electronics">🚀 Conductive and electronics embedding</h3>
+  <ul>
+    <li><b>Embedded PCBs and sensors:</b> design a cavity with the board’s footprint, pause, drop the board in (cables routed through a groove), resume. Provide a vent or cooling path for heat-generating parts. Use a 0.4–0.6 mm roof and slow the first bridging layer.</li>
+    <li><b>Wire channels:</b> print 1.2–2 mm grooves or tubes; use a wire-pulling thread (a tiny hook) to feed conductors afterwards. LEDs fit in 5 mm or 3 mm holes with a diffuser layer of translucent filament on top.</li>
+    <li><b>Conductive filament:</b> carbon- or graphite-doped PLA/TPU can make resistive traces, capacitive touch pads and strain sensors, but resistance is 10²–10⁵ Ω/cm, far above copper. Use it for sensing, not for power.</li>
+    <li><b>Conductive paint or silver ink</b> in printed channels gives lower resistance; fill the channel, let it cure, cover with a second layer.</li>
+    <li><b>Safety:</b> do not embed batteries (puncture, short and heat risk). Keep battery cavities removable and ventilated.</li>
+  </ul>
+  <div class="callout warn"><span class="callout-title">Electronics and heat</span><p>Check each component’s temperature limit. A microcontroller is fine at 80 °C but a lithium cell is not. Printing PETG or ABS on top of electronics can transfer 100+ °C momentarily. Use thin bridging layers and rest the nozzle away between passes if possible.</p></div>
+
+  <h3 id="fabric">🔧 Printing on fabric</h3>
+  <p>Printing the first layers directly onto a mesh or knit fabric bonds the plastic mechanically as it flows through the weave. This makes flexible hinges, textile buttons, patches and shaped fabric stiffeners.</p>
+  <ol class="steps">
+    <li><strong>Choose the fabric</strong>An open weave (tulle, organza, chiffon, fine mesh) works best: the plastic flows through the holes and locks around the threads. Dense cotton gives only surface adhesion.</li>
+    <li><strong>Fix it flat</strong>Stretch it onto the bed with painter’s tape at the edges or clips, keeping it perfectly flat. Wrinkles are the main failure.</li>
+    <li><strong>Print the first layer thick and hot</strong>Set the first layer to 0.3–0.4 mm at +5–10 °C and slow speed (15–25 mm/s). Pause the print after the first layer to inspect it if you can.</li>
+    <li><strong>Print as normal</strong>Remove the fabric, trim the edges. A drop of CA glue on the edges stops fraying.</li>
+  </ol>
+  <p><b>Caveats:</b> wash cycles and tension eventually peel the print; PLA is brittle on stretch fabric, TPU is a better match. Never print on fabric that is flammable or synthetic with a melting point lower than the nozzle (nylon and polyester tolerate it, but check by testing first).</p>
+
+  <h2 id="color-texture">Part E · Color, texture and optical effects</h2>
+
+  <h3 id="swaps">🔰 Filament swaps for color and texture</h3>
+  <p>The simplest multi-color technique needs no special hardware: the slicer pauses at a layer, you pull out the filament, push in a new color, resume. The visible result is a stripe, a lettered plate, or a rainbow gradient with hard steps. Use it for badges, signs, lithophane color plates, relief maps and layered topographic art.</p>
+  <ul>
+    <li><b>Insert the change at the start of a layer</b> so the color boundary is a clean horizontal line.</li>
+    <li><b>Purge the old color</b> by extruding 30–60 mm of filament after loading until the color is pure. Slicers often add a purge move; use a bucket or the purge chute.</li>
+    <li><b>Keep temperatures compatible:</b> if the new material needs a hotter nozzle, set a temperature change in the same slicer pause code.</li>
+    <li><b>Texture swaps:</b> swap to a matte, silk or glow-in-the-dark filament for part of the print (like the top 3 mm of a sign). Silk and matte have different gloss, which looks like a premium two-tone finish.</li>
+    <li><b>Automated systems</b> (<a href="multi-color-and-multi-material.html">AMS, toolchangers, multi-extruder</a>) do the swapping in seconds instead of minutes. On the Bambu X2D, the dual nozzle lets two colors be ready at all times, drastically reducing purge waste.</li>
+  </ul>
+
+  <h3 id="gradients">🔧 Colour gradients and dithering</h3>
+  <p>Many slicers can blend two filaments inside a layer without a visible boundary. Two techniques exist: <b>gradient layers</b> (the ratio of color A to color B changes with height) and <b>dithering</b> (small color A/B patches alternate, so the eye mixes them like pixels in a printed photo). A mix of 50 % yellow and 50 % blue dither reads as green at arm’s length.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 300" role="img" aria-label="Gradient bands versus dithering dots between two colors">
+      <text class="t t-lg" x="20" y="26">Gradient by layers</text>
+      <rect class="s-blue" x="30" y="50" width="200" height="30"/>
+      <rect x="30" y="80" width="200" height="30" fill="#4a8fc7"/><rect x="30" y="110" width="200" height="30" fill="#6aa99a"/><rect x="30" y="140" width="200" height="30" fill="#8fc06a"/><rect class="s-green" x="30" y="170" width="200" height="30"/>
+      <text class="t t-sm" x="30" y="224">Smooth steps; needs 5+ mixing ratios</text>
+      <text class="t t-lg" x="300" y="26">Dither pattern</text>
+      <g>
+        <rect class="s-blue" x="310" y="50" width="200" height="150"/>
+        <g class="s-green">
+          <rect x="310" y="50" width="10" height="10"/><rect x="330" y="50" width="10" height="10"/><rect x="350" y="50" width="10" height="10"/><rect x="370" y="50" width="10" height="10"/><rect x="390" y="50" width="10" height="10"/><rect x="410" y="50" width="10" height="10"/><rect x="430" y="50" width="10" height="10"/><rect x="450" y="50" width="10" height="10"/><rect x="470" y="50" width="10" height="10"/><rect x="490" y="50" width="10" height="10"/>
+          <rect x="320" y="70" width="10" height="10"/><rect x="340" y="70" width="10" height="10"/><rect x="360" y="70" width="10" height="10"/><rect x="380" y="70" width="10" height="10"/><rect x="400" y="70" width="10" height="10"/><rect x="420" y="70" width="10" height="10"/><rect x="440" y="70" width="10" height="10"/><rect x="460" y="70" width="10" height="10"/><rect x="480" y="70" width="10" height="10"/><rect x="500" y="70" width="10" height="10"/>
+        </g>
+        <rect x="310" y="90" width="200" height="110" fill="none"/>
+      </g>
+      <text class="t t-sm" x="300" y="224">Alternating dots: mixed by the eye</text>
+      <text class="t t-lg" x="560" y="26">Pairs vs. mixers</text>
+      <text class="t t-sm" x="560" y="56">• Layer-wise ratios via</text><text class="t t-sm" x="560" y="74">  Bambu/Orca “mixed filament”</text><text class="t t-sm" x="560" y="92">• Dual-nozzle: gradient</text><text class="t t-sm" x="560" y="110">  by alternating layers</text><text class="t t-sm" x="560" y="128">• Full-color (CMYK-style)</text><text class="t t-sm" x="560" y="146">  uses filament pixels</text>
+      <text class="t t-xs" x="30" y="268">Smaller layer height → finer mix. Every color change costs flush volume, so gradients are slow and wasteful on purge-heavy systems.</text>
+    </svg>
+    <figcaption><b>Figure 11.</b> Two ways to fake a blend: stacked bands by height and alternating pixels within a layer.</figcaption>
+  </figure>
+
+  <ul>
+    <li><b>When to use:</b> sunset vases, lithophane color, gradient name tags, decorative art.</li>
+    <li><b>How:</b> assign several filaments and use the slicer’s mixed-filament / gradient feature (e.g. <em>Mixed filament</em> or <em>Gradient</em> in recent Bambu Studio / OrcaSlicer builds), or a dedicated gradient plug-in. Set the number of layers per color to at least 2–3 so the pigment mixes in the melt.</li>
+    <li><b>Caveats:</b> mixed filaments in a single nozzle produce streaks, not true blends; layer-height changes the effect; waste can exceed the part’s own weight if purge volumes are large. A cheaper alternative is two-material gradient filament spools that change color along their length.</li>
+  </ul>
+
+  <h3 id="litho">🔧 Lithophanes</h3>
+  <p>A <b>lithophane</b> is a thin plastic panel whose thickness varies according to the brightness of a photograph. Dark areas are thick (little light passes); bright areas are thin (more light shines through). Backlit by a lamp, the picture appears in stunning gray tones.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 320" role="img" aria-label="Lithophane cross-section: thick plastic blocks light for dark pixels, thin plastic lets light pass for bright pixels, light source behind">
+      <rect class="f-yellow" x="30" y="70" width="60" height="180" rx="8"/><text class="t t-sm t-c" x="60" y="164">Lamp</text><text class="t t-sm t-c" x="60" y="182">(LED panel)</text>
+      <g class="d-plastic">
+        <rect x="200" y="60" width="30" height="40"/><rect x="230" y="60" width="30" height="105"/><rect x="260" y="60" width="30" height="140"/><rect x="290" y="60" width="30" height="85"/><rect x="320" y="60" width="30" height="55"/><rect x="350" y="60" width="30" height="120"/><rect x="380" y="60" width="30" height="75"/><rect x="410" y="60" width="30" height="165"/><rect x="440" y="60" width="30" height="100"/>
+      </g>
+      <g class="k-yellow"><path class="arrow" d="M100 80 H196"/><path class="arrow" d="M100 110 H196" opacity="0.5"/><path class="arrow" d="M100 150 H196" opacity="0.2"/></g>
+      <g class="k-yellow" stroke-dasharray="3 3"><path d="M200 80 H500"/><path d="M230 112 H500" opacity="0.6"/></g>
+      <text class="t t-b" x="530" y="80">Thin = bright</text><text class="t t-sm" x="530" y="98">0.6–0.8 mm: most light passes</text>
+      <text class="t t-b" x="530" y="150">Medium = gray</text><text class="t t-sm" x="530" y="168">1.2–2 mm</text>
+      <text class="t t-b" x="530" y="212">Thick = dark</text><text class="t t-sm" x="530" y="230">3–4 mm: almost opaque</text>
+      <text class="t t-sm" x="30" y="290">Print flat on the bed, upright, in white or very light filament. Thickness encodes brightness.</text>
+    </svg>
+    <figcaption><b>Figure 12.</b> A lithophane converts brightness into plastic thickness, so the light source does the “printing”.</figcaption>
+  </figure>
+
+  <h4>How</h4>
+  <ol class="steps">
+    <li><strong>Create the model</strong>Use a lithophane generator (many free web tools and slicer plug-ins exist). Choose a high-contrast photo, crop it, apply auto-contrast and a gentle blur. Typical size: 100 × 150 mm.</li>
+    <li><strong>Set thickness range</strong>Minimum (brightest) 0.6–0.8 mm; maximum (darkest) 3–4 mm. Fine detail needs resolution ≈ 0.2 mm per pixel; the file may reach hundreds of MB.</li>
+    <li><strong>Slice for light quality</strong>0.08–0.12 mm layers, 100 % infill (or no infill: it is thin), 3 walls, a very fine nozzle (0.2 mm) if available. Print upright, backed with a brim, in white filament; avoid galaxy or silk colors.</li>
+    <li><strong>Choose the light</strong>A cool-white LED panel or a lamp box; warm light gives a sepia tone. Keep the lamp 5–20 mm behind the plate with a diffuser to avoid hot spots.</li>
+  </ol>
+  <h4>Caveats</h4>
+  <ul>
+    <li>Upright printing wobbles on tall lithophanes: add a base and use a brim; consider printing them as a curved/lamp shape, whose geometry self-stiffens.</li>
+    <li>Layer lines read as faint horizontal stripes; choose a subject without large flat areas.</li>
+    <li>Color lithophanes (CMYK stacks of translucent filaments) are possible but demand a multi-material printer and careful calibration.</li>
+  </ul>
+
+  <h3 id="vapor">🔧 Vapor smoothing</h3>
+  <p><b>Vapor smoothing</b> exposes a print to solvent fumes that soften the outer surface until surface tension flattens layer lines. It is a post-process, but used as a design technique because it also seals parts. Acetone smooths ABS/ASA; other solvents work on PETG-adjacent materials with more risk and different results. The full procedure, with safety guidance, is in <a href="post-processing.html">post-processing</a>.</p>
+  <ul>
+    <li><b>Use for:</b> cosplay props, enclosures, parts that should look injection-molded or be watertight.</li>
+    <li><b>Caveats:</b> loses fine detail, rounds sharp edges, weakens the surface until solvent evaporates, and involves flammable vapors. Design with 0.5–1 mm extra on mating faces to allow for rounding.</li>
+  </ul>
+
+  <h2 id="large">Part F · Large parts, cutting and gluing</h2>
+
+  <h3 id="cutting">🔧 Cutting and gluing large parts</h3>
+  <p>When a model does not fit the bed, split it. Done well, the seams disappear; done poorly, they become the weakest and ugliest part of the print.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 320" role="img" aria-label="Four ways to join split parts: flat butt, dovetail, pins and sockets, tongue and groove">
+      <g>
+        <text class="t t-b t-c" x="100" y="26">Flat butt joint</text>
+        <rect class="d-plastic" x="30" y="60" width="70" height="120"/><rect class="d-plastic" x="105" y="60" width="70" height="120"/>
+        <text class="t t-sm t-c" x="100" y="210">weakest</text><text class="t t-sm t-c" x="100" y="228">needs big glue area</text>
+      </g>
+      <g>
+        <text class="t t-b t-c" x="290" y="26">Pins + sockets</text>
+        <rect class="d-plastic" x="220" y="60" width="70" height="120"/><rect class="d-plastic" x="295" y="60" width="70" height="120"/>
+        <rect class="d-metal2" x="270" y="85" width="50" height="10"/><rect class="d-metal2" x="270" y="145" width="50" height="10"/>
+        <text class="t t-sm t-c" x="290" y="210">alignment + shear</text><text class="t t-sm t-c" x="290" y="228">pins 3–6 mm, ±0.15 gap</text>
+      </g>
+      <g>
+        <text class="t t-b t-c" x="480" y="26">Dovetail</text>
+        <path class="d-plastic" d="M410 60 H480 L470 90 V150 L480 180 H410 Z"/><path class="d-plastic" d="M485 60 H555 V180 H485 L475 150 V90 Z"/>
+        <text class="t t-sm t-c" x="480" y="210">mechanical lock</text><text class="t t-sm t-c" x="480" y="228">self-aligning</text>
+      </g>
+      <g>
+        <text class="t t-b t-c" x="660" y="26">Tongue &amp; groove</text>
+        <path class="d-plastic" d="M590 60 H655 V100 H665 V140 H655 V180 H590 Z"/><path class="d-plastic" d="M660 60 H725 V180 H660 V140 H670 V100 H660 Z"/>
+        <text class="t t-sm t-c" x="660" y="210">big glue area</text><text class="t t-sm t-c" x="660" y="228">for walls and panels</text>
+      </g>
+      <text class="t t-sm" x="30" y="268">Cut so the seam falls on a natural edge, a panel line or a hidden face. Cut flat faces onto the bed.</text>
+      <text class="t t-sm" x="30" y="290">Plan glue: CA for quick tacking, epoxy for gaps and strength, solvent weld for ABS/ASA.</text>
+    </svg>
+    <figcaption><b>Figure 13.</b> Common split-joint designs. Add alignment features: the tolerance you saved in CAD becomes seamless in real life.</figcaption>
+  </figure>
+
+  <ol class="steps">
+    <li><strong>Choose the cut</strong>Slice along natural lines, away from stressed zones. Aim for flat cut faces that sit on the bed with no supports. Mesh tools (Meshmixer, the slicer’s Cut tool, Blender) can add pins and sockets automatically.</li>
+    <li><strong>Add alignment</strong>Use pins, dowels (filament scraps work), tongue-and-groove or dovetails. Clearance 0.1–0.2 mm for glue joints; tighter makes mis-assembly impossible.</li>
+    <li><strong>Print, dry-fit and sand mating faces flat</strong>Sand with 120 grit on a flat sheet.</li>
+    <li><strong>Glue</strong>Epoxy gives gap filling and strength; CA (cyanoacrylate) is quick; solvent welding bonds ABS, ASA and PLA with the right solvent (see <a href="post-processing.html">post-processing</a>). Clamp with tape or rubber bands, not too tight.</li>
+    <li><strong>Hide the seam</strong>Fill with putty, sand, prime and paint. A thin joint line along a feature edge is practically invisible.</li>
+  </ol>
+  <div class="callout tip"><span class="callout-title">Dowel with filament</span><p>Drill or print a 1.75 mm hole at each corner and glue a piece of spare filament across as a pin. It costs nothing, aligns perfectly and adds shear strength.</p></div>
+
+  <h3 id="large-format">🔰 Large-format and segmented parts</h3>
+  <ul>
+    <li><b>Segmented prints:</b> sections can be printed in parallel on several printers; keep joins on structural ribs; add internal tubes (carbon rod or PVC pipe) across seams for stiffness.</li>
+    <li><b>Large-format printers</b> (500–1000 mm per axis, Voron 500, Creality K2-class, BigRep, CR-30 belt, etc.) offer huge volumes but have low acceleration and longer thermal paths. Bed heating and enclosure temperature uniformity are the biggest challenges.</li>
+    <li><b>Warping at scale:</b> long parts curl at the ends; use brims 8–15 mm wide, raised enclosure temperature, ABS/ASA slurry or heated chamber filament, and rounded corners.</li>
+    <li><b>Print time planning:</b> a 40-hour print needs a power-loss plan, filament runout sensor, and enough filament on the spool (weigh it). Use spools of at least 1 kg; for long jobs use a dryer box or the AMS.</li>
+  </ul>
+  <h3 id="pellet">🚀 Pellet extrusion (mention)</h3>
+  <p>Large-scale printers (furniture, boat molds, architecture) often skip filament and feed plastic pellets into a screw extruder. Pellets cost 3–10× less per kg than filament and give throughputs of kilograms per hour, but layer lines are 2–6 mm thick and the machines cost far more than hobby printers. A few DIY and desktop pellet extruders exist; they are best for fabricators who need volume, not fine detail.</p>
+  <h3 id="belt">🔧 Belt printers</h3>
+  <p>A <b>belt printer</b> replaces the flat bed by a continuous conveyor belt, with the print head tilted at 45°. Parts print at an angle and slide out the end, so you can print effectively infinite length and unattended batches (the printer ejects each part and keeps going).</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 280" role="img" aria-label="Belt printer: tilted nozzle prints angled part on a moving belt that carries finished parts away">
+      <rect class="d-surface2" x="40" y="190" width="580" height="22" rx="11"/>
+      <circle class="d-metal" cx="60" cy="201" r="22"/><circle class="d-metal" cx="600" cy="201" r="22"/>
+      <path class="d-ink arrow" d="M300 238 H460"/><text class="t t-sm" x="320" y="258">belt moves → parts leave</text>
+      <path class="d-plastic" d="M300 190 L360 190 L400 120 L340 120 Z"/>
+      <path class="d-plastic" d="M130 190 H190 L230 120 H170 Z"/>
+      <rect class="d-metal2" x="360" y="60" width="50" height="40" rx="4" transform="rotate(-45 385 80)"/>
+      <path class="d-metal" d="M400 100 L412 118 L398 120 Z"/>
+      <text class="t t-sm" x="430" y="80">nozzle at 45° to belt</text>
+      <text class="t t-sm" x="640" y="170">Z is the diagonal:</text><text class="t t-sm" x="640" y="188">layers lean at 45°</text>
+      <text class="t t-sm" x="40" y="30">Length is limited only by how long you can run the belt.</text>
+    </svg>
+    <figcaption><b>Figure 14.</b> On a belt printer, layers lean at about 45°, so overhangs facing one direction are always supported by the previous layer.</figcaption>
+  </figure>
+  <ul>
+    <li><b>Good for:</b> long profiles, hinges, repeated small parts, batch production with automatic part ejection.</li>
+    <li><b>Caveats:</b> models must be re-oriented (the slicer shears the model); the belt surface is a thin PET sheet that needs glue or a coated belt; z-error accumulates; accuracy and surface differ across the axes.</li>
+  </ul>
+
+  <h2 id="structure">Part G · Smart structure: lattices, topology and supports</h2>
+
+  <h3 id="lattice">🚀 Lattice and TPMS infill</h3>
+  <p>Regular infill (grid, triangles, honeycomb) is only one way to fill space. A <b>lattice</b> is a repeating 3D truss; a <b>TPMS</b> (triply periodic minimal surface, e.g. <em>gyroid</em>, <em>Schwarz diamond</em>, <em>Schwarz P</em>) is a smooth, continuous sheet that divides space into two interwoven channels with no sharp corners and no flat horizontal bridges. Slicers already offer a gyroid pattern; CAD tools such as nTop, Fusion lattices, or open-source Python/OpenSCAD libraries can generate TPMS bodies as <em>geometry</em>.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 300" role="img" aria-label="Infill comparison: grid, honeycomb, gyroid wave pattern and strut lattice cell">
+      <g>
+        <rect class="d-surface" x="30" y="50" width="150" height="150"/><path class="d-thin" d="M30 85 H180 M30 120 H180 M30 155 H180 M65 50 V200 M100 50 V200 M135 50 V200"/>
+        <text class="t t-b t-c" x="105" y="30">Grid</text><text class="t t-sm t-c" x="105" y="224">simple, fast; nodes overlap</text>
+      </g>
+      <g>
+        <rect class="d-surface" x="215" y="50" width="150" height="150"/>
+        <path class="d-thin" d="M240 70 L260 60 L280 70 L280 95 L260 105 L240 95 Z M280 70 L300 60 L320 70 L320 95 L300 105 L280 95 M260 105 L280 95 L300 105 L300 130 L280 140 L260 130 Z M300 105 L320 95 L340 105 L340 130 L320 140 L300 130 M240 95 L260 105 L260 130 L240 140 L220 130 L220 105 Z M260 130 L280 140 L280 165 L260 175 L240 165 L240 140 L260 130 Z"/>
+        <text class="t t-b t-c" x="290" y="30">Honeycomb</text><text class="t t-sm t-c" x="290" y="224">strong in-plane; slower</text>
+      </g>
+      <g>
+        <rect class="d-surface" x="400" y="50" width="150" height="150"/>
+        <path class="k-purple" d="M400 90 C430 50 460 130 490 90 S530 60 550 100 M400 130 C430 90 460 170 490 130 S530 100 550 140 M400 170 C430 130 460 210 490 170 S530 140 550 180" fill="none"/>
+        <text class="t t-b t-c" x="475" y="30">Gyroid (TPMS)</text><text class="t t-sm t-c" x="475" y="224">smooth, isotropic, no overlaps</text>
+      </g>
+      <g>
+        <rect class="d-surface" x="585" y="50" width="150" height="150"/>
+        <path class="k-teal" d="M610 75 L710 75 L710 175 L610 175 Z M610 75 L660 110 L710 75 M610 175 L660 140 L710 175 M660 110 V140 M610 75 L660 140 L710 75 M610 175 L660 110 L710 175"/>
+        <text class="t t-b t-c" x="660" y="30">Strut lattice</text><text class="t t-sm t-c" x="660" y="224">tunable stiffness cell</text>
+      </g>
+      <text class="t t-sm" x="30" y="268">Smooth TPMS paths avoid sharp direction changes, so printers can run them faster with less ringing and less stress concentration.</text>
+    </svg>
+    <figcaption><b>Figure 15.</b> Four infill families. TPMS and strut lattices can be made as actual geometry and graded in density from one region to another.</figcaption>
+  </figure>
+
+  <h4>When to use it</h4>
+  <ul>
+    <li><b>Lightweight stiffness:</b> drone parts, brackets, helmets, running shoes: the lattice can be graded (denser near loads).</li>
+    <li><b>Energy absorption:</b> printed in TPU or PETG, a gyroid or diamond lattice makes cushions, insoles, bumpers and protective cases.</li>
+    <li><b>Heat exchange and filtration:</b> TPMS gives a large internal surface and two separate flow channels (resin printers do this best).</li>
+    <li><b>Aesthetics:</b> visible lattice lamps and vases are structural art.</li>
+  </ul>
+  <h4>Caveats</h4>
+  <ul>
+    <li>FDM resolution limits cell size: with a 0.4 mm nozzle use struts ≥ 0.8–1 mm and cells ≥ 5–8 mm. Smaller structures need resin printing (<a href="../foundations/printing-processes.html">printing processes</a>).</li>
+    <li>Powder or resin cannot drain from a closed lattice; leave open drain holes where relevant.</li>
+    <li>Lattice STL files become huge (hundreds of MB). Use 3MF or let the slicer generate the pattern when possible.</li>
+    <li>Gyroid infill in the slicer is not the same as a graded lattice: it has constant density unless you add density modifiers.</li>
+  </ul>
+
+  <h3 id="topology">🚀 Topology optimization and generative design</h3>
+  <p><b>Topology optimization</b> starts with a block of material, loads and supports, then removes material that carries little stress until a minimum-weight organic shape remains. <b>Generative design</b> software (Fusion, nTop, FreeCAD plugins, open-source solvers) adds manufacturing constraints and produces many alternatives. The results look bone-like and often weigh 30–60 % less at equal stiffness.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 280" role="img" aria-label="Topology optimization: solid block with load turns into a truss-like organic bracket">
+      <rect class="d-surface" x="40" y="60" width="200" height="140"/>
+      <path class="d-ink arrow" d="M140 20 V58"/><text class="t t-sm" x="150" y="38">load</text>
+      <path class="d-thin" d="M40 200 H240" /><rect class="s-gray" x="40" y="200" width="200" height="8"/>
+      <path class="d-ink arrow" d="M270 130 H350"/><text class="t t-sm t-c" x="310" y="116">optimize</text>
+      <path class="d-plastic" d="M400 200 L440 110 L470 90 L500 110 L540 200 L520 200 L490 130 L470 120 L450 130 L420 200 Z M455 140 L485 140 L495 160 L445 160 Z"/>
+      <path class="d-plastic" d="M440 200 H520 V210 H440 Z"/>
+      <path class="d-ink arrow" d="M470 50 V86"/><text class="t t-sm" x="480" y="70">same load</text>
+      <text class="t t-sm" x="600" y="110">Result: –40…60 % mass</text><text class="t t-sm" x="600" y="130">Needs print orientation</text><text class="t t-sm" x="600" y="150">and support planning.</text>
+      <text class="t t-xs" x="40" y="252">Schematic only. Real results come from finite-element solvers, not drawn shapes.</text>
+    </svg>
+    <figcaption><b>Figure 16.</b> Topology optimization removes lightly stressed material. For FDM, constrain overhang angles to 45° so the result prints without supports.</figcaption>
+  </figure>
+  <ul>
+    <li><b>Workflow:</b> define loads and fixtures → set overhang and minimum thickness constraints (≥ 2 × nozzle diameter) → solve → smooth → check by FEA → print and test.</li>
+    <li><b>Layer direction matters:</b> FDM parts are 30–70 % weaker across layers than along them. Apply the load case with the correct print orientation. See <a href="../design/strength-and-orientation.html">strength &amp; orientation</a>.</li>
+    <li><b>Caveat:</b> optimized parts are only as good as the load case. Unexpected loads or a wrong boundary condition means failure. Test with a safety factor of at least 2–3 for printed plastic.</li>
+  </ul>
+
+  <h3 id="conformal">🚀 Conformal and organic supports</h3>
+  <p><b>Tree (organic) supports</b> branch from a few contact points on the build plate and touch the model only at small tips, wasting less material and leaving cleaner surfaces than classic grid supports. <b>Conformal supports</b> follow the underside of the model at a small constant gap, giving a smooth interface everywhere but taking longer to remove.</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Support style</th><th>Material</th><th>Surface under overhang</th><th>Removal</th><th>Best for</th></tr></thead>
+    <tbody>
+      <tr><td>Normal (grid)</td><td>Medium</td><td>Good (wide contact)</td><td>Medium</td><td>Flat undersides, large overhangs</td></tr>
+      <tr><td>Tree / organic</td><td>Low</td><td>Spots, a little rougher</td><td>Easy</td><td>Figurines, organic shapes</td></tr>
+      <tr><td>Conformal (thin interface)</td><td>Medium-high</td><td>Excellent</td><td>Hard if not tuned</td><td>Mechanical parts needing a smooth underside</td></tr>
+      <tr><td>Soluble (PVA/BVOH) interface</td><td>Highest cost</td><td>Excellent</td><td>Dissolve in water</td><td>Complex internal cavities</td></tr>
+    </tbody></table></div>
+  <div class="callout trick"><span class="callout-title">Tune the interface gap</span><p>For easy-peel supports, set the top Z gap to roughly the layer height (0.2 mm layers → 0.2 mm gap), interface speed slow, interface density 70–90 %. For PETG use a larger gap (0.25–0.3 mm) because it sticks to itself aggressively. More in <a href="supports-bridges-overhangs.html">supports, bridges &amp; overhangs</a>.</p></div>
+  <div class="callout x2d"><span class="callout-title">X2D: the second nozzle as a support nozzle</span><p>On the Bambu X2D the main nozzle can print the part while the auxiliary nozzle lays down a different support material (different temperature or even a different filament such as PVA, or a different color for easy identification), avoiding most of the purge waste of a single-nozzle swap. See <a href="../x2d/dual-nozzle-printing.html">dual-nozzle printing</a>.</p></div>
+
+  <h2 id="hybrid">Part H · Hybrid manufacturing: printing as a pattern maker</h2>
+  <p>A 3D print does not have to be the final part. It can be the <em>master</em> from which you cast metal, silicone, resin or concrete, or the <em>form</em> for vacuum forming. Printing the pattern and casting the object combines the shape freedom of printing with the material properties and production speed of classical methods.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 320" role="img" aria-label="Workflow from printed master to silicone mold to cast resin parts; branch to investment casting and vacuum forming">
+      <rect class="f-orange" x="20" y="40" width="130" height="60" rx="10"/><text class="t t-c t-b" x="85" y="66">Printed</text><text class="t t-c t-b" x="85" y="86">master</text>
+      <path class="d-ink arrow" d="M152 70 H190"/>
+      <rect class="f-blue" x="195" y="40" width="140" height="60" rx="10"/><text class="t t-c t-b" x="265" y="66">Sand, seal,</text><text class="t t-c t-b" x="265" y="86">release agent</text>
+      <path class="d-ink arrow" d="M337 70 H375"/>
+      <rect class="f-purple" x="380" y="40" width="140" height="60" rx="10"/><text class="t t-c t-b" x="450" y="66">Silicone</text><text class="t t-c t-b" x="450" y="86">mold</text>
+      <path class="d-ink arrow" d="M522 70 H560"/>
+      <rect class="f-green" x="565" y="40" width="175" height="60" rx="10"/><text class="t t-c t-b" x="652" y="66">Cast resin,</text><text class="t t-c t-b" x="652" y="86">wax, plaster, concrete</text>
+      <path class="d-ink arrow" d="M85 100 V170"/>
+      <rect class="f-yellow" x="20" y="175" width="210" height="60" rx="10"/><text class="t t-c t-b" x="125" y="200">PLA pattern burned out</text><text class="t t-c t-sm" x="125" y="220">→ ceramic shell → metal</text>
+      <path class="d-ink arrow" d="M265 100 V170"/>
+      <rect class="f-teal" x="260" y="175" width="210" height="60" rx="10"/><text class="t t-c t-b" x="365" y="200">Vacuum forming</text><text class="t t-c t-sm" x="365" y="220">heated plastic sheet over the master</text>
+      <path class="d-ink arrow" d="M450 100 V170 M450 170 H480" opacity="0"/>
+      <text class="t t-sm" x="20" y="280">Masters can be PLA, PETG or resin-printed. Smooth surfaces transfer into the cast part exactly.</text>
+      <text class="t t-sm" x="20" y="302">Every sanded flaw on the master is reproduced in every copy.</text>
+    </svg>
+    <figcaption><b>Figure 17.</b> The master-to-copy workflow. Printing gets you one perfect original; molds make as many copies as you like.</figcaption>
+  </figure>
+
+  <h3 id="silicone">🔧 Silicone molds and resin casting</h3>
+  <ol class="steps">
+    <li><strong>Print the master</strong>Use fine layers (0.08–0.12 mm), 100 % walls, and sand + prime until perfectly smooth (see <a href="post-processing.html">post-processing</a>). Seal porous surfaces with a lacquer or epoxy coat; silicone does not cure against sulfur- or amine-contaminated surfaces, so test a scrap first.</li>
+    <li><strong>Build a mold box</strong>Make a box from LEGO or foam board 10–15 mm larger than the master on every side. Glue the master to the floor and seal the edges with hot glue or clay.</li>
+    <li><strong>Mix and pour</strong>Use a two-part platinum-cure or tin-cure silicone with a hardness of Shore A 10–30 for flexible molds. Degas if possible, then pour slowly from one corner so bubbles do not form on the pattern.</li>
+    <li><strong>Cure, demold, cut</strong>Wait for the full cure time (4–24 h). Cut the mold open along a planned parting line with a sharp blade in a zig-zag so it re-registers.</li>
+    <li><strong>Cast</strong>Mix a polyurethane resin (always follow the manufacturer’s ratio and safety data), pour, optionally pressure-cast to remove bubbles, demold after the pot life and post-cure.</li>
+  </ol>
+  <ul>
+    <li><b>Great for:</b> small series (10–100 pieces), parts in rigid or flexible urethane, wax patterns for jewelry, chocolate and soap molds (use food-safe silicone and fresh molds).</li>
+    <li><b>Caveats:</b> resins and silicones are chemicals: use nitrile gloves, ventilation and eye protection; never reuse mixing cups for food; food-contact casting needs certified materials.</li>
+  </ul>
+
+  <h3 id="vacuum">🔧 Vacuum forming</h3>
+  <p>A thermoplastic sheet (typically 0.5–2 mm styrene, PETG or ABS) is heated until floppy, draped over a pattern and sucked tight by a vacuum. The sheet takes the pattern’s shape, creating packaging, helmets, display trays or masks. Your printed pattern must survive 120–180 °C sheet temperature briefly and the vacuum force, and cannot have undercuts.</p>
+  <ul>
+    <li><b>Pattern design:</b> draft angles ≥ 5°, rounded edges, small vent holes (0.5–1 mm) in valleys so air escapes.</li>
+    <li><b>Material:</b> PETG, ABS or annealed PLA patterns. Print with 4+ walls and 40 %+ infill to avoid crushing; fill and seal the pattern to prevent leaks.</li>
+    <li><b>Caveat:</b> hot plastic sheet and heaters are a burn and fire hazard; always use a purpose-built machine or a well-designed DIY frame with fire protection.</li>
+  </ul>
+
+  <h3 id="investment">🚀 Investment casting with PLA</h3>
+  <p>In <b>lost-PLA casting</b> a printed pattern is embedded in a ceramic investment (gypsum-based for jewelry or silica-based for higher temperatures), then burned out in a kiln. The PLA vaporizes, leaving a cavity that molten aluminum, brass or bronze fills. After cooling the ceramic is broken away and the metal part is cleaned. It turns a printer into a foundry pattern shop.</p>
+  <ul>
+    <li><b>Pattern rules:</b> print with 1–2 walls and sparse (or <em>no</em>) infill so the polymer burns out without cracking the shell, add vents and a sprue (funnel), and print in a material rated for burnout. Special burn-out resins and wax-like filaments exist and leave less ash.</li>
+    <li><b>Sequence:</b> attach sprues → coat with ceramic slurry or fill a flask → cure → burn out in a ramped kiln schedule → pour metal into the hot mold → cool → break the shell.</li>
+    <li><b>Caveat:</b> this involves molten metal, kiln temperatures of 700–900 °C and toxic fumes from burning plastic. It is for experienced people with proper PPE, ventilation and training. Do not improvise it at home without instruction.</li>
+  </ul>
+  <div class="callout danger"><span class="callout-title">Molten metal is not a weekend experiment</span><p>Moisture in a mold causes steam explosions. If you want to explore casting, learn from a local foundry, makerspace or jewelry class first. A professional service can cast your printed pattern for a small fee.</p></div>
+
+  <h2 id="production">Part I · Production and multi-axis</h2>
+
+  <h3 id="farm">🔧 Batch production and print farms</h3>
+  <p>A <b>print farm</b> is simply many printers working in parallel, with process rules so that output is reliable. Even a single printer can run like a mini factory if you design the workflow well.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 280" role="img" aria-label="Batch production loop: queue, print, eject, inspect, pack, with a dashed maintenance and quality loop">
+      <rect class="f-blue" x="20" y="60" width="110" height="56" rx="10"/><text class="t t-c t-b" x="75" y="94">Queue</text>
+      <rect class="f-orange" x="165" y="60" width="110" height="56" rx="10"/><text class="t t-c t-b" x="220" y="94">Print</text>
+      <rect class="f-yellow" x="310" y="60" width="110" height="56" rx="10"/><text class="t t-c t-b" x="365" y="94">Cool / eject</text>
+      <rect class="f-green" x="455" y="60" width="110" height="56" rx="10"/><text class="t t-c t-b" x="510" y="94">Inspect</text>
+      <rect class="f-purple" x="600" y="60" width="140" height="56" rx="10"/><text class="t t-c t-b" x="670" y="94">Finish / pack</text>
+      <path class="d-ink arrow" d="M132 88 H162 M277 88 H307 M422 88 H452 M567 88 H597"/>
+      <path class="d-dash arrow" d="M510 118 V170 H220 V120"/>
+      <text class="t t-sm t-c" x="365" y="190">fail → log cause → adjust settings or retire the plate</text>
+      <rect class="d-surface2" x="20" y="210" width="720" height="52" rx="10"/>
+      <text class="t t-sm" x="34" y="232">Standardize: one filament brand per product, one proven profile, dry spools, labeled plates, a maintenance rota.</text>
+      <text class="t t-sm" x="34" y="250">Measure: parts/day, failure rate, grams per part, minutes of handling.</text>
+    </svg>
+    <figcaption><b>Figure 18.</b> A batch loop with an explicit failure path. A farm is a process, not just a rack of printers.</figcaption>
+  </figure>
+  <ul>
+    <li><b>Plan the plate:</b> fill the plate but leave space for airflow; a 3D arrangement test with 4 corners and the center catches bed-leveling variations. Print a full-plate dry run before the order.</li>
+    <li><b>Reduce handling:</b> flexible plates that pop parts free, auto-eject (belt printer, plate swapping, push-off G-code) and sorted bins.</li>
+    <li><b>Cost per part:</b> filament + electricity + machine wear + labor + failures. Use <a href="../tools/calculators.html">the calculators</a> to include failure rate (5–10 % is normal).</li>
+    <li><b>Failure prevention:</b> dried filament, runout sensors, camera monitoring, and an agreed “first-layer check before leaving” rule.</li>
+    <li><b>Consistent output:</b> use a profile locked in version control. Change one thing at a time.</li>
+  </ul>
+  <div class="callout x2d"><span class="callout-title">AMS 2 Pro in a small farm</span><p>With the AMS 2 Pro’s drying and automatic backup spools (when the same filament in two slots is configured), the X2D can run long overnight jobs with fewer failures from moisture and runout. See <a href="../x2d/ams-2-pro.html">AMS 2 Pro deep dive</a>.</p></div>
+
+  <h3 id="multiaxis">🚀 Multi-axis printing</h3>
+  <p>Printers with 4 or 5 axes (rotating bed, tilting head or robot arm) can orient the nozzle <em>normal to the surface</em>, so layers can wrap around curves or follow stress directions. Supports can almost disappear and fiber-reinforced parts can be laid along load paths.</p>
+  <ul>
+    <li><b>Today:</b> a few commercial 5-axis desktop and industrial machines, robot-arm cells and open-source projects. Slicing software is still research-grade and highly machine-specific.</li>
+    <li><b>Benefits:</b> overhangs without supports, continuous fibres around bends, smooth curved surfaces, printing around inserts.</li>
+    <li><b>Caveats:</b> calibration of rotation centers, collision avoidance, heavier toolheads, and very custom toolpath planning. For most makers, a conventional printer plus a good <a href="../design/principles.html">design strategy</a> is far more productive.</li>
+  </ul>
+
+  <h2 id="choosing">Choosing the right technique</h2>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 360" role="img" aria-label="Decision tree to choose an advanced technique by goal: speed, look, strength, function or scale">
+      <rect class="f-orange" x="290" y="14" width="180" height="40" rx="10"/><text class="t t-c t-b" x="380" y="40">What is your goal?</text>
+      <path class="d-ink arrow" d="M380 54 V80 M380 80 H100 V100 M380 80 H260 V100 M380 80 H500 V100 M380 80 H660 V100"/>
+      <rect class="f-blue" x="30" y="100" width="140" height="40" rx="8"/><text class="t t-c t-b" x="100" y="125">Faster</text>
+      <rect class="f-purple" x="190" y="100" width="140" height="40" rx="8"/><text class="t t-c t-b" x="260" y="125">Prettier</text>
+      <rect class="f-green" x="430" y="100" width="140" height="40" rx="8"/><text class="t t-c t-b" x="500" y="125">Stronger / lighter</text>
+      <rect class="f-teal" x="590" y="100" width="140" height="40" rx="8"/><text class="t t-c t-b" x="660" y="125">Functional / bigger</text>
+      <path class="d-ink arrow" d="M100 140 V170 M260 140 V170 M500 140 V170 M660 140 V170"/>
+      <text class="t t-sm t-c" x="100" y="190">Vase mode</text><text class="t t-sm t-c" x="100" y="208">Variable layers</text><text class="t t-sm t-c" x="100" y="226">Batch / farm</text>
+      <text class="t t-sm t-c" x="260" y="190">Ironing</text><text class="t t-sm t-c" x="260" y="208">Fuzzy skin</text><text class="t t-sm t-c" x="260" y="226">Gradients, litho</text><text class="t t-sm t-c" x="260" y="244">Vapor smoothing</text>
+      <text class="t t-sm t-c" x="500" y="190">Modifiers</text><text class="t t-sm t-c" x="500" y="208">Lattice / TPMS</text><text class="t t-sm t-c" x="500" y="226">Topology optimization</text><text class="t t-sm t-c" x="500" y="244">Annealing, orientation</text>
+      <text class="t t-sm t-c" x="660" y="190">Print-in-place</text><text class="t t-sm t-c" x="660" y="208">Inserts / magnets</text><text class="t t-sm t-c" x="660" y="226">Cut &amp; glue, segments</text><text class="t t-sm t-c" x="660" y="244">Casting &amp; molds</text>
+      <rect class="d-surface2" x="30" y="290" width="700" height="50" rx="10"/>
+      <text class="t t-sm" x="46" y="312">Try one technique at a time on a small test, record settings that worked, then combine.</text>
+      <text class="t t-sm" x="46" y="330">Each technique adds a failure mode; change nothing else while you learn it.</text>
+    </svg>
+    <figcaption><b>Figure 19.</b> A quick chooser. When two techniques fit, pick the one that does not add risk to the printer itself.</figcaption>
+  </figure>
+
+  <h2 id="mistakes">Common mistakes and pro tricks</h2>
+  <div class="grid cols-2">
+    <div class="callout warn" style="margin:0"><span class="callout-title">Common mistakes</span>
+      <ul>
+        <li>Stacking five new techniques in one print, then not knowing which one failed.</li>
+        <li>Using print-in-place gaps from a downloaded model on your printer without a coupon test.</li>
+        <li>Ironing a top surface that is already pillowing instead of adding top layers.</li>
+        <li>Embedding magnets without confirming polarity or heat limits.</li>
+        <li>Splitting a model across the stress path rather than at a natural seam.</li>
+        <li>Casting with an unsealed, unprimed master (silicone inhibition, rough copies).</li>
+      </ul></div>
+    <div class="callout trick" style="margin:0"><span class="callout-title">Pro tricks</span>
+      <ul>
+        <li>Keep a “technique notebook” with your tuned values (gap, ironing flow, fuzzy skin thickness) per material.</li>
+        <li>Use a modifier mesh as a <em>negative</em> volume to add a hidden pocket for a magnet without re-modeling.</li>
+        <li>Print a half-size test of any complex mechanism to catch design bugs in 20 minutes.</li>
+        <li>Combine vase mode with a dual-color gradient filament for instant pro-looking decor.</li>
+        <li>For lamp lithophanes, curve the plate into a cylinder; it prints stiffer and glows more evenly.</li>
+      </ul></div>
+  </div>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul>
+    <li>Pick the technique by goal (speed, look, strength, function, scale), then test on a small coupon.</li>
+    <li>Vase mode, variable layer height, ironing and fuzzy skin are safe, low-risk upgrades available in every modern slicer.</li>
+    <li>Modifiers put strength and quality exactly where they matter; sequential printing protects batches from single failures.</li>
+    <li>Print-in-place and compensated joints depend on a measured clearance for <em>your</em> printer and material.</li>
+    <li>Pause-and-insert hides hardware inside the part; mind polarity, heat and safety.</li>
+    <li>Lattices and topology optimization save weight but require orientation and overhang discipline.</li>
+    <li>Printing can be the pattern for casting and forming: treat chemistry and molten metal with proper safety training.</li>
+  </ul>
+  <p>Next steps: practice in the <a href="../exercises/level-3-advanced.html">Level 3 exercises</a> and the <a href="../exercises/level-4-expert.html">Level 4 challenges</a>, finish your prints with <a href="post-processing.html">post-processing</a>, and diagnose problems with the <a href="troubleshooting.html">troubleshooting gallery</a>.</p>
+
+
+</main>
+</body>
+</html>

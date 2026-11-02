@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Safety &amp; workspace · 3D Printing Compendium</title>
+  <meta name="description" content="Practical, evidence-based 3D printing safety: burns, moving parts, electrical and fire risk, fumes and particles by material, ventilation and filtration, resin chemical safety, tool safety, a workspace layout, and an emergency checklist.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="foundations/safety-and-workspace.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 1 · Foundations</div>
+    <h1>Safety &amp; workspace</h1>
+    <p class="lead">A 3D printer is a small, hot, moving, electrically powered machine that makes particles and vapours. None of that is a reason to be afraid of it; it is a reason to set it up sensibly. This page covers the real hazards, how big they actually are, and the practical habits that keep them small.</p>
+    <div class="meta"><span class="badge beginner">Beginner</span><span class="badge intermediate">Practical</span><span class="badge time">⏱ 40 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <ul>
+      <li>The main hazards of FDM and resin printing and how to rank them.</li>
+      <li>How fire risk arises and the layered defences that reduce it.</li>
+      <li>What fumes and ultrafine particles are, which materials emit more, and how ventilation and filtration help.</li>
+      <li>How to handle resin and chemicals safely.</li>
+      <li>How to lay out a workspace, choose a stable bench and plan power and storage.</li>
+      <li>What to buy for a beginner tool kit, and what to do in an emergency.</li>
+    </ul>
+  </div>
+
+  <div class="callout info"><span class="callout-title">Calm, evidence-based, not alarmist</span>
+    <p>Millions of people print at home without incident. The sensible approach is the same as for a kitchen or a workshop: know the main hazards, apply a few inexpensive controls, and do not rely on a single safeguard. This page gives general guidance, not legal, medical or insurance advice; the manufacturer's manual and your local rules always take precedence.</p>
+  </div>
+
+  <h2 id="overview">🔰 The hazard map</h2>
+  <p>Hazards cluster in a few places on the machine. Seeing them on a drawing makes the list below easier to remember.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 360" role="img" aria-label="Printer outline marked with hazard zones: hot nozzle and bed (burns), gantry and belts (pinch points), power supply and wiring (electrical and fire), nozzle area and chamber (fumes and particles), and tools around the machine.">
+      <rect class="d-dash" x="40" y="30" width="330" height="280" style="fill:none"/>
+      <rect class="d-metal" x="50" y="90" width="310" height="12"/>
+      <rect class="d-surface2" x="170" y="102" width="70" height="56"/>
+      <path class="d-metal2" d="M195 158 H215 L205 178Z"/>
+      <rect class="d-hot" x="70" y="220" width="270" height="12"/>
+      <rect class="d-plastic" x="170" y="198" width="60" height="22"/>
+      <rect class="d-surface2" x="40" y="270" width="330" height="40"/>
+      <circle class="f-red" cx="205" cy="172" r="12"/><text class="t-sm t-b t-c" x="205" y="177" style="text-anchor:middle">1</text>
+      <circle class="f-red" cx="110" cy="226" r="12"/><text class="t-sm t-b t-c" x="110" y="231" style="text-anchor:middle">1</text>
+      <circle class="f-orange" cx="60" cy="96" r="12"/><text class="t-sm t-b t-c" x="60" y="101" style="text-anchor:middle">2</text>
+      <circle class="f-yellow" cx="100" cy="290" r="12"/><text class="t-sm t-b t-c" x="100" y="295" style="text-anchor:middle">3</text>
+      <circle class="f-purple" cx="300" cy="150" r="12"/><text class="t-sm t-b t-c" x="300" y="155" style="text-anchor:middle">4</text>
+      <circle class="f-teal" cx="340" cy="290" r="12"/><text class="t-sm t-b t-c" x="340" y="295" style="text-anchor:middle">5</text>
+      <text class="t-b" x="420" y="50">Where the hazards are</text>
+      <text class="t-sm" x="420" y="82"><tspan class="t-b">1 · Burns</tspan>  nozzle 200–300 °C, bed 40–110 °C</text>
+      <text class="t-sm" x="420" y="112"><tspan class="t-b">2 · Moving parts</tspan>  gantry, belts, fans</text>
+      <text class="t-sm" x="420" y="142"><tspan class="t-b">3 · Electrical / fire</tspan>  PSU, connectors, heater wiring</text>
+      <text class="t-sm" x="420" y="172"><tspan class="t-b">4 · Fumes, particles</tspan>  melting plastic, resin vapour</text>
+      <text class="t-sm" x="420" y="202"><tspan class="t-b">5 · Tools &amp; chemicals</tspan>  knives, IPA, resin</text>
+      <text class="t-xs" x="420" y="240">Most real incidents involve burns, cuts from tools, and (rarely, but seriously)</text>
+      <text class="t-xs" x="420" y="256">fire from faulty wiring or disabled safety features.</text>
+      <text class="t-xs" x="420" y="272">Particle and fume exposure is a long-term, low-level concern managed by</text>
+      <text class="t-xs" x="420" y="288">choosing materials and ventilating.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> The five hazard groups. Burn and cut injuries are common and minor; fire is uncommon but severe; fumes are chronic and controllable.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Hazard</th><th>How likely</th><th>How severe</th><th>Main control</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Burns</strong></td><td><span class="chip red">Common</span></td><td><span class="chip yellow">Minor to moderate</span></td><td>Let it cool; use tools; keep hands out while hot.</td></tr>
+      <tr><td><strong>Cuts</strong></td><td><span class="chip red">Common</span></td><td><span class="chip yellow">Minor</span></td><td>Cut away from the body; sharp tools used on a stable surface.</td></tr>
+      <tr><td><strong>Pinching / entanglement</strong></td><td><span class="chip yellow">Occasional</span></td><td><span class="chip yellow">Minor</span></td><td>Power off before reaching in; tie hair; no loose sleeves.</td></tr>
+      <tr><td><strong>Fire</strong></td><td><span class="chip green">Rare</span></td><td><span class="chip red">High</span></td><td>Safeguards on; smoke detector; no modified firmware limits; supervision.</td></tr>
+      <tr><td><strong>Electric shock</strong></td><td><span class="chip green">Rare</span></td><td><span class="chip red">High</span></td><td>Grounded outlet; no opened PSU; unplug before repair.</td></tr>
+      <tr><td><strong>Fumes / particles</strong></td><td><span class="chip yellow">Continuous</span></td><td><span class="chip green">Low per print</span></td><td>Material choice, ventilation, enclosure and filtration.</td></tr>
+      <tr><td><strong>Resin chemicals</strong></td><td><span class="chip yellow">Frequent</span></td><td><span class="chip yellow">Skin sensitisation</span></td><td>Gloves, ventilation, containment, correct disposal.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="burns">🔥 Burns and moving parts</h2>
+  <p>The nozzle runs at 200–300 °C and the bed at 40–110 °C depending on the material; many chamber-heated machines keep the whole interior warm. A bare-skin touch of the nozzle causes a burn within a fraction of a second, and molten plastic sticks to skin and makes it worse. The bed stays hot for several minutes after the end of a print.</p>
+  <ul>
+    <li>Treat everything inside the printer as hot until the display says otherwise.</li>
+    <li>Use pliers or tweezers for stray strands, never your fingers near the nozzle.</li>
+    <li>When removing parts from a hot bed, wait or wear heat-resistant gloves.</li>
+    <li>Treat a burn with cool running water for at least 10 minutes and seek medical help for blisters or large areas.</li>
+  </ul>
+
+  <h3>Moving parts</h3>
+  <p>Gantries, belts, fans and extruder gears move with enough force to pinch or pull. Printers are usually slow enough that injuries are minor, but fast machines accelerate hard. Good habits: power off before reaching in for maintenance; tie back long hair; avoid loose sleeves and jewellery near belts; and keep fingers out of the door opening during motion. Many enclosed printers pause when the door opens; do not rely on this as the only protection.</p>
+
+  <div class="callout warn"><span class="callout-title">Never bypass interlocks</span>
+    <p>If your machine has a door sensor or a protective cover, leave it enabled. Taping over a door switch to keep printing with the door open removes a safeguard that was designed with the manufacturer's testing in mind.</p>
+  </div>
+
+  <h2 id="electrical">⚡ Electrical safety</h2>
+  <p>A printer draws more power than most desk electronics: a heated bed alone can use several hundred watts, and fast machines peak above 1 kW. That current flows through connectors and thin wires that move with the toolhead and bed, which fatigue over time.</p>
+  <ul>
+    <li><strong>Outlet:</strong> use a properly grounded wall outlet. Avoid long daisy chains of power strips and cheap adapters; use a quality strip rated for the load if you must.</li>
+    <li><strong>Mains voltage switch:</strong> where present, set it before power-up.</li>
+    <li><strong>PSU and mainboard:</strong> never open the power supply with the cable connected. Capacitors store charge after unplugging.</li>
+    <li><strong>Connectors:</strong> inspect heater and bed connectors for discolouration, melting or loose pins every few months. A hot, browned connector is a warning that must be fixed before the next print.</li>
+    <li><strong>Modifications:</strong> if you replace a heater, thermistor or board, use parts rated for the current and match the firmware settings. Many fire incidents trace back to a mismatched upgrade.</li>
+    <li><strong>Residual current device (RCD / GFCI):</strong> workshop circuits with a protective breaker reduce shock risk. Many homes already have one.</li>
+  </ul>
+
+  <h3>Power loss and UPS</h3>
+  <p>Mid-print power loss happens. Many modern printers can resume from the last layer. A UPS (uninterruptible power supply) can keep a printer running through short outages but must be sized for the machine's peak draw, including the bed heater; small desktop UPS units are often too small and can overload. If you want resume protection, check the printer's features before buying a UPS.</p>
+
+  <h2 id="fire">🧯 Fire risk and defence in depth</h2>
+  <p>Fire is the rare but serious hazard, so it deserves layered defences. Typical causes are a failed or disabled thermal runaway protection, a loose heater connector that overheats, incorrect modification, dust and filament debris near hot parts, and a flammable object left near the machine. Single failures happen; the aim is to make sure no single failure becomes a fire.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 340" role="img" aria-label="Concentric layers of fire defence: firmware thermal protection, hardware quality and maintenance, housekeeping, detection and alarm, extinguishing, and supervision.">
+      <circle class="d-surface2" cx="180" cy="170" r="150"/>
+      <circle class="d-surface" cx="180" cy="170" r="122"/>
+      <circle class="d-surface2" cx="180" cy="170" r="94"/>
+      <circle class="d-surface" cx="180" cy="170" r="66"/>
+      <circle class="d-hot" cx="180" cy="170" r="38"/>
+      <text class="t-sm t-b t-c" x="180" y="168" style="text-anchor:middle">Heat</text>
+      <text class="t-xs t-c" x="180" y="184" style="text-anchor:middle">source</text>
+      <text class="t-b" x="380" y="36">Layers (inner to outer)</text>
+      <text class="t-sm" x="380" y="70"><tspan class="t-b">1 · Firmware</tspan>  thermal runaway protection, limits</text>
+      <text class="t-sm" x="380" y="104"><tspan class="t-b">2 · Hardware</tspan>  rated heaters, sound connectors, no hacks</text>
+      <text class="t-sm" x="380" y="138"><tspan class="t-b">3 · Housekeeping</tspan>  no dust, paper or solvents nearby</text>
+      <text class="t-sm" x="380" y="172"><tspan class="t-b">4 · Detection</tspan>  smoke detector in the room, optional camera</text>
+      <text class="t-sm" x="380" y="206"><tspan class="t-b">5 · Extinguishing</tspan>  extinguisher near the exit, blanket</text>
+      <text class="t-sm" x="380" y="240"><tspan class="t-b">6 · Supervision</tspan>  stay present; limit unattended prints</text>
+      <text class="t-xs" x="380" y="280">If any layer fails the next one should still hold. Detection is the layer most</text>
+      <text class="t-xs" x="380" y="296">people skip, and the cheapest to add.</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> Fire safety works as concentric layers. Outer layers catch what inner layers miss.</figcaption>
+  </figure>
+
+  <ul class="checklist">
+    <li>Smoke detector (preferably photoelectric) in the room where the printer sits, tested monthly.</li>
+    <li>Extinguisher rated for electrical fires (CO₂ or dry-powder ABC) within reach of the exit, not above the printer.</li>
+    <li>Thermal runaway protection is enabled in the firmware; never flash firmware with protections removed.</li>
+    <li>Heater, bed and PSU connectors inspected for heat discolouration.</li>
+    <li>Surfaces around the printer free of paper, rags, solvents and plastic bags.</li>
+    <li>You can see or hear the printer from the room you are in during long prints.</li>
+  </ul>
+
+  <div class="callout warn"><span class="callout-title">On overnight and unattended prints</span>
+    <p>There is no absolute rule, but the safe baseline is: avoid long unattended prints on any machine whose protections you have not verified, and never leave an unattended printer in a room without a working smoke detector. Machines with enclosed chambers and camera monitoring reduce, but do not remove, the risk.</p>
+  </div>
+
+  <div class="callout fact"><span class="callout-title">What certification does and does not say</span>
+    <p>Safety standards exist for electrical safety, and some printers carry additional testing for emissions. For example, <strong>UL 2904</strong> is a method for measuring particle and chemical emissions from desktop 3D printers; a product tested to that method has had its emissions measured under defined conditions. It is a useful data point, but it does not mean that no emissions exist, nor that every material or every room is safe. Treat certification as one piece of evidence, not a guarantee.</p>
+  </div>
+
+  <h2 id="fumes">💨 Fumes, ultrafine particles and VOCs</h2>
+  <p>Melting plastic releases two kinds of emissions. <strong>Ultrafine particles (UFPs)</strong> are tiny solid or liquid droplets, much smaller than a dust speck, formed when vapours condense. <strong>Volatile organic compounds (VOCs)</strong> are gases released from the plastic and its additives. Both rise with nozzle temperature and depend on the specific filament and colourants, not only the polymer type.</p>
+  <p>What is known: peer-reviewed studies repeatedly measure UFPs and VOCs near running desktop printers, with large differences between materials. What is less clear: long-term health effects from typical hobby use, because exposure is hard to measure and studies are limited. The sensible response is precaution, proportionate to the material: easy with PLA, more careful with ABS and resin.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 900 380" role="img" aria-label="Bar chart ranking typical relative emission concern of common materials on an ordinal scale from 1 to 5: PLA, PETG and TPU lower, nylon and polycarbonate medium, ABS, ASA and uncured resin higher.">
+      <text class="t-b" x="20" y="26">Relative emission concern (ordinal, typical desktop use)</text>
+      <path class="d-thin" d="M180 44 V330"/>
+      <path class="d-grid" d="M260 44 V330 M340 44 V330 M420 44 V330 M500 44 V330 M580 44 V330"/>
+      <text class="t-xs t-c" x="260" y="346" style="text-anchor:middle">1</text><text class="t-xs t-c" x="340" y="346" style="text-anchor:middle">2</text><text class="t-xs t-c" x="420" y="346" style="text-anchor:middle">3</text><text class="t-xs t-c" x="500" y="346" style="text-anchor:middle">4</text><text class="t-xs t-c" x="580" y="346" style="text-anchor:middle">5</text>
+      <text class="t-sm t-r" x="170" y="68" style="text-anchor:end">PLA</text><rect class="f-green" x="180" y="52" width="160" height="22"/><text class="t-xs" x="600" y="68">UFPs; low VOCs, mild sweet smell</text>
+      <text class="t-sm t-r" x="170" y="106" style="text-anchor:end">PETG</text><rect class="f-green" x="180" y="90" width="160" height="22"/><text class="t-xs" x="600" y="106">UFPs; low VOCs, little odour</text>
+      <text class="t-sm t-r" x="170" y="144" style="text-anchor:end">TPU</text><rect class="f-green" x="180" y="128" width="160" height="22"/><text class="t-xs" x="600" y="144">UFPs; low odour; low temperature</text>
+      <text class="t-sm t-r" x="170" y="182" style="text-anchor:end">Nylon (PA)</text><rect class="f-yellow" x="180" y="166" width="240" height="22"/><text class="t-xs" x="600" y="182">UFPs; caprolactam odour; high temperature</text>
+      <text class="t-sm t-r" x="170" y="220" style="text-anchor:end">Polycarbonate</text><rect class="f-yellow" x="180" y="204" width="240" height="22"/><text class="t-xs" x="600" y="220">Very high temperature; UFPs and VOCs</text>
+      <text class="t-sm t-r" x="170" y="258" style="text-anchor:end">ABS</text><rect class="f-orange" x="180" y="242" width="320" height="22"/><text class="t-xs" x="600" y="258">Styrene, UFPs; strong smell</text>
+      <text class="t-sm t-r" x="170" y="296" style="text-anchor:end">ASA</text><rect class="f-orange" x="180" y="280" width="320" height="22"/><text class="t-xs" x="600" y="296">Styrene-type VOCs and UFPs</text>
+      <text class="t-xs" x="20" y="368">Ordinal ranking for orientation only, not measured concentrations. Real values vary with brand, colour, additives, temperature, enclosure and ventilation.</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> A rough ordering of typical emission concern. FDM materials are shown on the bars; resin is discussed separately in the resin section because its hazard is mainly liquid contact.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Material</th><th>Typical nozzle temp.</th><th>Main emission notes</th><th>Practical advice</th></tr></thead>
+    <tbody>
+      <tr><td><strong>PLA</strong></td><td>190–220 °C</td><td>Mostly UFPs; low VOC; mild smell</td><td>Fine in a ventilated room; open-door printing is okay.</td></tr>
+      <tr><td><strong>PETG</strong></td><td>230–250 °C</td><td>Low odour; UFPs present</td><td>Ventilate the room; consider a filter in small rooms.</td></tr>
+      <tr><td><strong>TPU</strong></td><td>210–240 °C</td><td>Low odour</td><td>Standard ventilation.</td></tr>
+      <tr><td><strong>ABS</strong></td><td>240–270 °C</td><td>Styrene and other VOCs; strong smell; UFPs</td><td>Enclosure, exhaust or filtration; not in a bedroom or office.</td></tr>
+      <tr><td><strong>ASA</strong></td><td>240–270 °C</td><td>Similar to ABS</td><td>Same as ABS.</td></tr>
+      <tr><td><strong>Nylon (PA)</strong></td><td>250–290 °C</td><td>Caprolactam odour; UFPs</td><td>Enclosure and ventilation; dry the filament.</td></tr>
+      <tr><td><strong>Polycarbonate</strong></td><td>260–310 °C</td><td>High temperature, UFPs and VOCs</td><td>Enclosure with exhaust or filtration.</td></tr>
+      <tr><td><strong>Carbon / glass fibre filled</strong></td><td>Varies</td><td>Same as base polymer plus abrasive dust when sanding</td><td>Wet-sand; mask for dry sanding or cutting.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="ventilation">🌬️ Ventilation, enclosures and filtration</h2>
+  <p>You have three tools: dilute the air (general ventilation), remove it (exhaust to outdoors), or clean it (filtration). Each has strengths. The most effective method for strong-smelling materials is to enclose the printer and exhaust the chamber air outdoors through a duct, replacing it with fresh air. The easiest is to keep the room well ventilated and the printer away from where you sit or sleep.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 340" role="img" aria-label="Side view of a printer in an enclosure with a recirculating HEPA and carbon filter loop and an exhaust duct to an open window, with fresh air coming in low on the opposite side.">
+      <rect class="d-dash" x="20" y="30" width="820" height="280" style="fill:none"/>
+      <rect class="d-cool" x="800" y="60" width="30" height="100" style="fill-opacity:.35"/>
+      <text class="t-xs" x="720" y="54">open window</text>
+      <rect class="d-surface" x="40" y="230" width="500" height="30"/>
+      <text class="t-xs" x="50" y="250">table or bench</text>
+      <rect class="d-dash" x="130" y="90" width="260" height="140" style="fill:none"/>
+      <rect class="d-metal" x="150" y="120" width="220" height="8"/>
+      <rect class="d-surface2" x="240" y="128" width="40" height="34"/>
+      <rect class="d-hot" x="170" y="200" width="180" height="8"/>
+      <rect class="d-plastic" x="240" y="180" width="40" height="20"/>
+      <rect class="d-surface2" x="400" y="100" width="70" height="60"/>
+      <text class="t-xs t-c" x="435" y="126" style="text-anchor:middle">HEPA +</text><text class="t-xs t-c" x="435" y="142" style="text-anchor:middle">carbon</text>
+      <path class="d-ink arrow" d="M370 140 H400"/>
+      <path class="d-ink arrow" d="M435 100 V70 H200 V90" style="fill:none"/>
+      <text class="t-xs" x="210" y="64">cleaned air returns to chamber</text>
+      <rect class="d-surface2" x="520" y="100" width="40" height="40"/>
+      <text class="t-xs" x="480" y="96">exhaust fan</text>
+      <path class="d-ink arrow" d="M390 190 H540 V142" style="fill:none"/>
+      <path class="d-ink arrow" d="M560 120 H800"/>
+      <text class="t-xs" x="590" y="112">duct to outside</text>
+      <path class="d-cool arrow" d="M820 280 H600"/>
+      <text class="t-xs" x="620" y="298">fresh air in (low, opposite side)</text>
+      <text class="t-xs" x="30" y="326">Pick either loop (filter) or exhaust (duct), or combine them for strong-smelling materials.</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> Two ways to deal with emissions. A filtered recirculation loop catches particles and gases; a duct sends chamber air outdoors with fresh air entering elsewhere.</figcaption>
+  </figure>
+
+  <div class="grid cols-3">
+    <div class="card accent-blue"><span class="ico">🪟</span><h3>Dilute: open window</h3><p>Cheap and effective for PLA. Place the printer near a window and keep a cross-draught that does not blow across the print.</p></div>
+    <div class="card accent-green"><span class="ico">🧪</span><h3>Clean: HEPA + carbon</h3><p>HEPA captures particles including UFPs; activated carbon adsorbs many gases and odours but saturates and must be replaced on schedule.</p></div>
+    <div class="card accent-orange"><span class="ico">🏭</span><h3>Remove: exhaust duct</h3><p>Move enclosure air outdoors with a duct and fan. Strongest for ABS and nylon, but needs a safe outlet and make-up air.</p></div>
+  </div>
+
+  <div class="callout trick"><span class="callout-title">Filters are not magic</span>
+    <p>A filter only works on air that passes through it, so leaks and open doors matter. Carbon is consumable, and a smell returning is the signal that it is spent. Do not use an air purifier as a reason to print high-emission materials in a bedroom. Where possible keep the printer outside the room where you sleep.</p>
+  </div>
+
+  <h2 id="resin">🧴 Resin chemical safety</h2>
+  <p>Resin printing swaps hot-plastic hazards for chemical ones. Liquid photopolymer resin contains reactive monomers and photoinitiators. Contact can cause skin irritation and, with repeated exposure, <strong>allergic sensitisation</strong>, after which even tiny amounts trigger a rash. The goal is simple: <em>never let liquid resin touch your skin or the environment</em>.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 250" role="img" aria-label="Resin workflow with safety steps: put on nitrile gloves and eye protection, print, drain, wash in isopropyl alcohol, dry, UV cure, remove supports, then dispose of waste correctly.">
+      <g>
+        <rect class="d-surface2" x="10" y="50" width="96" height="70" rx="8"/><text class="t-sm t-b t-c" x="58" y="76" style="text-anchor:middle">1 PPE</text><text class="t-xs t-c" x="58" y="94" style="text-anchor:middle">gloves, glasses</text><text class="t-xs t-c" x="58" y="108" style="text-anchor:middle">ventilation</text>
+        <path class="d-ink arrow" d="M106 85 H120"/>
+        <rect class="d-surface2" x="120" y="50" width="96" height="70" rx="8"/><text class="t-sm t-b t-c" x="168" y="76" style="text-anchor:middle">2 Print</text><text class="t-xs t-c" x="168" y="94" style="text-anchor:middle">lid closed,</text><text class="t-xs t-c" x="168" y="108" style="text-anchor:middle">no draughts</text>
+        <path class="d-ink arrow" d="M216 85 H230"/>
+        <rect class="d-surface2" x="230" y="50" width="96" height="70" rx="8"/><text class="t-sm t-b t-c" x="278" y="76" style="text-anchor:middle">3 Drain</text><text class="t-xs t-c" x="278" y="94" style="text-anchor:middle">let resin drip</text><text class="t-xs t-c" x="278" y="108" style="text-anchor:middle">back to the vat</text>
+        <path class="d-ink arrow" d="M326 85 H340"/>
+        <rect class="d-surface2" x="340" y="50" width="96" height="70" rx="8"/><text class="t-sm t-b t-c" x="388" y="76" style="text-anchor:middle">4 Wash</text><text class="t-xs t-c" x="388" y="94" style="text-anchor:middle">IPA or water-</text><text class="t-xs t-c" x="388" y="108" style="text-anchor:middle">washable, covered</text>
+        <path class="d-ink arrow" d="M436 85 H450"/>
+        <rect class="d-surface2" x="450" y="50" width="96" height="70" rx="8"/><text class="t-sm t-b t-c" x="498" y="76" style="text-anchor:middle">5 Dry</text><text class="t-xs t-c" x="498" y="94" style="text-anchor:middle">air dry fully</text><text class="t-xs t-c" x="498" y="108" style="text-anchor:middle">before curing</text>
+        <path class="d-ink arrow" d="M546 85 H560"/>
+        <rect class="d-surface2" x="560" y="50" width="96" height="70" rx="8"/><text class="t-sm t-b t-c" x="608" y="76" style="text-anchor:middle">6 Cure</text><text class="t-xs t-c" x="608" y="94" style="text-anchor:middle">UV chamber,</text><text class="t-xs t-c" x="608" y="108" style="text-anchor:middle">eyes shielded</text>
+        <path class="d-ink arrow" d="M656 85 H670"/>
+        <rect class="d-surface2" x="670" y="50" width="96" height="70" rx="8"/><text class="t-sm t-b t-c" x="718" y="76" style="text-anchor:middle">7 Finish</text><text class="t-xs t-c" x="718" y="94" style="text-anchor:middle">remove supports,</text><text class="t-xs t-c" x="718" y="108" style="text-anchor:middle">wet sand</text>
+        <path class="d-ink arrow" d="M766 85 H780"/>
+        <rect class="f-green" x="780" y="50" width="70" height="70" rx="8" style="fill-opacity:.3"/><text class="t-sm t-b t-c" x="815" y="76" style="text-anchor:middle">8 Waste</text><text class="t-xs t-c" x="815" y="94" style="text-anchor:middle">cure, then</text><text class="t-xs t-c" x="815" y="108" style="text-anchor:middle">dispose</text>
+      </g>
+      <text class="t-xs" x="10" y="160">Uncured resin and used wash liquid are chemical waste in many places: cure them in the sun or a UV chamber first, filter out solids, and follow local rules.</text>
+      <text class="t-xs" x="10" y="180">Do not pour resin or wash liquid down a drain. Cured resin is typically handled as ordinary solid waste, but check locally.</text>
+      <text class="t-xs" x="10" y="200">Wipe spills at once with paper towels, then treat them as contaminated waste.</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> A resin job from gloves to waste. Safety is a habit repeated at every step, not a single piece of kit.</figcaption>
+  </figure>
+
+  <ul class="checklist">
+    <li>Nitrile gloves, changed whenever contaminated; thin nitrile gives short protection, so do not wear contaminated gloves around the house.</li>
+    <li>Safety glasses or goggles, especially when handling IPA and UV curing equipment.</li>
+    <li>Work in a ventilated room, preferably with the machine covered and near a window or in an enclosure.</li>
+    <li>Cover the work surface with disposable paper or a silicone mat.</li>
+    <li>Isopropyl alcohol is flammable: store in a closed container, away from ignition sources, in small quantities.</li>
+    <li>Never look at a UV source directly; use a covered curing station.</li>
+    <li>Store resin bottles upright, closed, labelled, away from light and out of reach of children and pets.</li>
+    <li>Wash skin with soap and water immediately after contact; do not use solvents on skin.</li>
+  </ul>
+
+  <div class="callout danger"><span class="callout-title">Skin sensitisation is cumulative</span>
+    <p>You can handle resin for months with no problem and then develop a permanent allergy. Do not treat a first trouble-free week as proof of safety. Keep gloves on, and wash cured parts thoroughly before handling them barehanded.</p>
+  </div>
+
+  <h2 id="tools">🔧 Tool safety</h2>
+  <ul>
+    <li><strong>Deburring knives and craft blades:</strong> cut away from the body, on a stable surface, with a fresh sharp blade (blunt blades slip). Keep a cut-resistant glove for the non-cutting hand.</li>
+    <li><strong>Flush cutters:</strong> snipped plastic can fly; point cutters downward and wear safety glasses.</li>
+    <li><strong>Heat-set insert tips and soldering irons:</strong> use a stand and heat-proof mat. Treat as burn hazards; vapours from melted plastic should be ventilated.</li>
+    <li><strong>Sanding:</strong> plastic dust is fine and irritating. Sand wet when possible, and use a dust mask when dry-sanding, especially with carbon-fibre-filled materials.</li>
+    <li><strong>Scrapers:</strong> push away from yourself; use plastic ones on coated plates.</li>
+    <li><strong>Hot-air and heat guns:</strong> mind flammables; do not leave switched on.</li>
+    <li><strong>Hand drills and rotary tools:</strong> clamp the part; eye protection; hair and clothing secured.</li>
+  </ul>
+
+  <h2 id="layout">🏠 Workspace layout</h2>
+  <p>A good layout separates the machine, the messy tasks and the storage, and keeps an exit clear. You do not need a dedicated room; a corner of a garage, basement or spare room is enough as long as it follows the same logic.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 440" role="img" aria-label="Floor plan of a printing room: door and extinguisher at the lower left, filament shelf and tool cabinet on the left wall, main printer bench by a window, ventilated resin station, post-processing bench, waste bins, smoke detector on the ceiling and a walking path from the door.">
+      <rect class="d-ink" x="20" y="20" width="820" height="380" style="fill:none;stroke-width:4"/>
+      <rect class="d-surface" x="60" y="394" width="90" height="12"/><text class="t-xs" x="72" y="424">door</text>
+      <rect class="d-cool" x="560" y="14" width="200" height="12"/><text class="t-xs" x="580" y="46">window (open for PLA/PETG)</text>
+      <rect class="d-surface" x="300" y="40" width="300" height="90"/>
+      <rect class="d-metal" x="340" y="56" width="110" height="60"/><text class="t-xs t-c" x="395" y="90" style="text-anchor:middle">printer</text>
+      <text class="t-xs" x="470" y="76">main bench:</text><text class="t-xs" x="470" y="90">heavy, level,</text><text class="t-xs" x="470" y="104">next to outlet</text>
+      <rect class="f-green" x="610" y="48" width="12" height="12"/><text class="t-xs" x="626" y="58">outlet</text>
+      <path class="d-ink arrow" d="M395 56 V32 H555" style="fill:none"/><text class="t-xs" x="400" y="26">exhaust duct (if used)</text>
+      <rect class="d-surface" x="30" y="60" width="44" height="170"/><text class="t-xs" x="30" y="248">filament shelf</text><text class="t-xs" x="30" y="262">(dry boxes, dark)</text>
+      <rect class="d-surface2" x="30" y="290" width="44" height="80"/><text class="t-xs" x="30" y="384">tool cabinet</text>
+      <rect class="d-surface" x="690" y="60" width="140" height="90" style="fill-opacity:.8"/><text class="t-xs" x="698" y="84">Resin station</text><text class="t-xs" x="698" y="100">ventilated, by</text><text class="t-xs" x="698" y="116">window, tray,</text><text class="t-xs" x="698" y="132">gloves, wash/cure</text>
+      <rect class="d-surface" x="690" y="200" width="140" height="120"/><text class="t-xs" x="698" y="224">Post-processing</text><text class="t-xs" x="698" y="240">cutters, sanding</text><text class="t-xs" x="698" y="256">(wet sand), mask,</text><text class="t-xs" x="698" y="272">good light</text>
+      <rect class="d-surface2" x="640" y="340" width="40" height="44"/><text class="t-xs" x="600" y="396">bins</text>
+      <circle class="d-surface2" cx="395" cy="180" r="16"/><text class="t-xs" x="418" y="184">chair</text>
+      <circle cx="450" cy="250" r="12" style="fill:var(--red);fill-opacity:.25;stroke:var(--red);stroke-dasharray:4 3"/><text class="t-xs" x="470" y="254">smoke detector (ceiling)</text>
+      <rect class="f-red" x="160" y="364" width="14" height="26"/><text class="t-xs" x="180" y="380">extinguisher by the exit</text>
+      <path class="d-ink arrow" d="M105 390 V330 H240 V150 H300" style="fill:none;stroke-dasharray:6 4"/>
+      <text class="t-xs" x="250" y="300">clear walking path</text>
+      <text class="t-xs" x="20" y="436">Keep printers, spools and flammable materials (paper, solvents) apart. Keep resin and chemicals away from food and sleeping areas.</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> One sensible arrangement. The printer sits near the window and an outlet, the exit stays clear, and the resin station is separate from the filament storage.</figcaption>
+  </figure>
+
+  <h3>The bench: stability matters for quality and safety</h3>
+  <p>A printer on a shaky table prints poorly and can walk off the edge. Fast machines accelerate hard enough to make a light shelf vibrate; the vibration appears as ripples on your walls and may disturb input shaping calibration. Choose a <strong>heavy, rigid, level surface</strong> whose depth is a few centimetres larger than the printer. A solid wooden workbench, a steel frame table or a sturdy shelf bolted to a wall all work well.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 840 280" role="img" aria-label="Comparison of a wobbly light table that transmits vibration and shows ripples in prints versus a heavy solid bench with a paving slab and damping feet that keeps the printer steady.">
+      <g>
+        <text class="t-b" x="20" y="26" style="fill:var(--red)">Wobbly</text>
+        <rect class="d-metal" x="80" y="100" width="240" height="60"/>
+        <path class="d-ink" d="M60 90 q-10 10 0 20 M52 84 q-16 16 0 32 M340 90 q10 10 0 20 M348 84 q16 16 0 32" style="fill:none"/>
+        <rect class="d-surface" x="60" y="160" width="280" height="10"/>
+        <path class="d-ink" d="M80 170 L70 250 M320 170 L330 250" style="fill:none;stroke-width:3"/>
+        <text class="t-xs" x="20" y="268">Thin legs, light top, soft floor: sway and ghosting.</text>
+      </g>
+      <g transform="translate(440,0)">
+        <text class="t-b" x="20" y="26" style="fill:var(--green)">Stable</text>
+        <rect class="d-metal" x="80" y="100" width="240" height="60" style="stroke-width:2"/>
+        <rect class="d-surface2" x="60" y="160" width="280" height="14"/>
+        <rect class="d-surface" x="100" y="148" width="200" height="12" style="fill-opacity:.5"/>
+        <rect class="d-surface" x="60" y="174" width="30" height="80"/><rect class="d-surface" x="310" y="174" width="30" height="80"/>
+        <rect class="d-surface2" x="52" y="254" width="46" height="8"/><rect class="d-surface2" x="302" y="254" width="46" height="8"/>
+        <text class="t-xs" x="20" y="268">Heavy top, sturdy legs, level feet, optional slab or mat.</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 7.</b> A heavier, stiffer bench reduces vibration. A concrete paving slab or dense foam under the printer can help, but check the manufacturer's advice because the printer's own feet are designed to work on a hard surface.</figcaption>
+  </figure>
+
+  <h3>Power outlets and surge protection</h3>
+  <p>Plan one wall outlet per printer and keep the cable run short. If you use a power strip, choose one rated above the printer's maximum draw with a built-in breaker. A <strong>smart plug</strong> that can switch the printer off remotely is convenient, but it must be rated for the load; do not use a cheap plug on a 10 A machine. Do not rely on a remote switch as the only defence against failures.</p>
+
+  <h3>Filament storage area</h3>
+  <p>Filament absorbs moisture, and some materials (nylon, PVA, TPU) are very sensitive. Keep spools in sealed boxes or bags with desiccant, away from direct sun, radiators and damp walls. A cool, dark shelf in the same room as the printer reduces handling time. Never store spools above or immediately next to the printer where a fire would involve them; the plastic is a fuel load.</p>
+
+  <h3>Noise</h3>
+  <p>A running printer typically produces noise in the range of a quiet room to a normal conversation, and it rises with speed because of fans and motors. Even moderate noise becomes tiring for long prints. Options: put the printer in a separate room or cabinet (with ventilation), use vibration-damping feet, run quieter profiles, and avoid placing it on a hollow table that acts as a speaker.</p>
+
+  <h3>Pets and children</h3>
+  <p>Treat the printer like a small workshop machine. Keep children and pets out of the room or well away from it when it runs. Hot parts, sharp tools, small pieces that can be swallowed and chemicals (IPA, resin) are the main risks. Keep resin, solvents and tools locked or out of reach, and supervise any child who helps.</p>
+
+  <h2 id="legal">📜 Insurance and legal notes</h2>
+  <p>These points are general reminders, not legal advice. Rules differ by country.</p>
+  <ul>
+    <li><strong>Home insurance:</strong> check whether your policy covers a fire caused by hobby equipment, and whether running a printing business from home changes that.</li>
+    <li><strong>Tenancy:</strong> rented accommodation may restrict equipment, solvents or modifications to ventilation.</li>
+    <li><strong>Resin and solvents:</strong> chemical waste rules apply in many places; check your local authority guidance.</li>
+    <li><strong>Intellectual property:</strong> respect licences on downloaded models; personal-use licences usually prohibit selling copies.</li>
+    <li><strong>Regulated items:</strong> manufacturing firearms or certain restricted items is illegal in many jurisdictions regardless of the technology.</li>
+    <li><strong>Products you sell or give away:</strong> a printed part used in safety-critical situations (helmets, climbing gear, medical, child products, food contact) can carry liability. Use materials and designs suited to the purpose, and do not claim certification you do not have.</li>
+  </ul>
+
+  <h2 id="toolkit">🧰 A beginner tool kit, ranked</h2>
+  <p>You do not need a workshop. These tools, in roughly this order of value, cover almost everything in the first year.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 400" role="img" aria-label="Ranked horizontal bar chart of beginner tools by usefulness: flush cutters, plastic scraper, digital calipers, hobby knife, hex keys and screwdrivers, isopropyl alcohol, spare nozzles, pliers and tweezers, desiccant boxes and sandpaper.">
+      <text class="t-b" x="20" y="26">Beginner tools by usefulness</text>
+      <g>
+        <text class="t-sm t-r" x="320" y="62" style="text-anchor:end">1 · Flush cutters</text><rect class="f-green" x="330" y="46" width="400" height="22"/>
+        <text class="t-sm t-r" x="320" y="94" style="text-anchor:end">2 · Plastic scraper</text><rect class="f-green" x="330" y="78" width="368" height="22"/>
+        <text class="t-sm t-r" x="320" y="126" style="text-anchor:end">3 · Digital calipers</text><rect class="f-green" x="330" y="110" width="340" height="22"/>
+        <text class="t-sm t-r" x="320" y="158" style="text-anchor:end">4 · Hobby knife + deburrer</text><rect class="f-yellow" x="330" y="142" width="312" height="22"/>
+        <text class="t-sm t-r" x="320" y="190" style="text-anchor:end">5 · Hex keys, screwdrivers</text><rect class="f-yellow" x="330" y="174" width="280" height="22"/>
+        <text class="t-sm t-r" x="320" y="222" style="text-anchor:end">6 · IPA + lint-free wipes</text><rect class="f-yellow" x="330" y="206" width="248" height="22"/>
+        <text class="t-sm t-r" x="320" y="254" style="text-anchor:end">7 · Spare nozzles</text><rect class="f-orange" x="330" y="238" width="220" height="22"/>
+        <text class="t-sm t-r" x="320" y="286" style="text-anchor:end">8 · Pliers, tweezers</text><rect class="f-orange" x="330" y="270" width="192" height="22"/>
+        <text class="t-sm t-r" x="320" y="318" style="text-anchor:end">9 · Desiccant, sealed boxes</text><rect class="f-orange" x="330" y="302" width="160" height="22"/>
+        <text class="t-sm t-r" x="320" y="350" style="text-anchor:end">10 · Sandpaper assortment</text><rect class="f-red" x="330" y="334" width="128" height="22"/>
+      </g>
+      <text class="t-xs" x="20" y="386">Safety add-ons worth having from day one: safety glasses, heat-resistant gloves, a cut-resistant glove, and a small fire extinguisher.</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> A suggested priority ranking, based on how often each tool is needed in the first months. Bars show relative usefulness, not price.</figcaption>
+  </figure>
+
+  <h2 id="emergency">🚨 Emergency checklist</h2>
+  <p>Decide what you would do <em>before</em> something goes wrong. Pin a version of the flow chart near the printer.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 380" role="img" aria-label="Emergency flow chart: smoke or burning smell leads to a question about visible flames. If yes, decide whether a small contained fire can be fought with an extinguisher, otherwise leave and call emergency services. If no, switch off, ventilate, let cool and find the cause before restarting.">
+      <rect class="d-surface2" x="20" y="60" width="200" height="60" rx="8"/><text class="t-sm t-b t-c" x="120" y="86" style="text-anchor:middle">Smoke, flames, melting</text><text class="t-sm t-c" x="120" y="104" style="text-anchor:middle">or burning smell</text>
+      <path class="d-ink arrow" d="M220 90 H300"/>
+      <path class="d-surface2" d="M400 40 L500 90 L400 140 L300 90 Z"/><text class="t-sm t-c" x="400" y="94" style="text-anchor:middle">Visible flames?</text>
+      <path class="d-ink arrow" d="M400 140 V190"/><text class="t-xs" x="408" y="168">yes</text>
+      <path class="d-surface2" d="M400 190 L520 240 L400 290 L280 240 Z"/><text class="t-xs t-c" x="400" y="236" style="text-anchor:middle">Small, contained,</text><text class="t-xs t-c" x="400" y="252" style="text-anchor:middle">exit behind you?</text>
+      <path class="d-ink arrow" d="M280 240 H240"/><text class="t-xs" x="246" y="230">yes</text>
+      <rect class="f-yellow" x="20" y="205" width="220" height="70" rx="8" style="fill-opacity:.3"/><text class="t-sm t-b t-c" x="130" y="230" style="text-anchor:middle">Use extinguisher</text><text class="t-xs t-c" x="130" y="248" style="text-anchor:middle">Pull · Aim · Squeeze · Sweep</text><text class="t-xs t-c" x="130" y="264" style="text-anchor:middle">Retreat if it grows</text>
+      <path class="d-ink arrow" d="M520 240 H560"/><text class="t-xs" x="522" y="230">no</text>
+      <rect class="f-red" x="560" y="205" width="280" height="70" rx="8" style="fill-opacity:.3"/><text class="t-sm t-b t-c" x="700" y="230" style="text-anchor:middle">Leave now</text><text class="t-xs t-c" x="700" y="248" style="text-anchor:middle">Close the door behind you,</text><text class="t-xs t-c" x="700" y="264" style="text-anchor:middle">alert others, call emergency services</text>
+      <path class="d-ink arrow" d="M500 90 H560"/><text class="t-xs" x="508" y="80">no</text>
+      <rect class="f-blue" x="560" y="50" width="280" height="80" rx="8" style="fill-opacity:.25"/><text class="t-sm t-b t-c" x="700" y="74" style="text-anchor:middle">Power off at the wall</text><text class="t-xs t-c" x="700" y="92" style="text-anchor:middle">if safe. Ventilate, keep clear,</text><text class="t-xs t-c" x="700" y="108" style="text-anchor:middle">let it cool. Do not restart</text><text class="t-xs t-c" x="700" y="124" style="text-anchor:middle">until the cause is fixed.</text>
+      <text class="t-xs" x="20" y="330">Never use water on an electrical fire or a burning solvent (IPA). Your safety comes first; property can be replaced.</text>
+      <text class="t-xs" x="20" y="350">After any incident, inspect connectors, check the smoke detector and replace any damaged part before printing again.</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> Emergency decision flow. Rehearse it once so the steps are automatic.</figcaption>
+  </figure>
+
+  <ul class="checklist">
+    <li>I know where the nearest power switch or plug is and can reach it without leaning over the printer.</li>
+    <li>I know where the extinguisher is and which class it is rated for.</li>
+    <li>The room has a working smoke detector that I tested this month.</li>
+    <li>Everyone in the household knows what to do if the alarm goes off.</li>
+    <li>I know the emergency number and have first aid supplies for burns and cuts.</li>
+    <li>For resin: I know where the spill kit and gloves are, and have poison-control contact details.</li>
+  </ul>
+
+  <h2 id="takeaways">✅ Key takeaways</h2>
+  <div class="callout fact"><span class="callout-title">Remember these</span>
+    <ul>
+      <li>Burns and cuts are the common hazards; fire and electric shock are rare but severe. Layer your defences.</li>
+      <li>Keep thermal runaway protection and interlocks enabled; inspect heater connectors periodically.</li>
+      <li>PLA is the low-emission starting material; ABS, ASA and nylon need enclosure plus exhaust or filtration; resin needs gloves and containment.</li>
+      <li>Certification such as UL 2904 documents measured emissions; it is evidence, not a guarantee.</li>
+      <li>A heavy, level bench, a nearby outlet, a smoke detector and an extinguisher near the exit cover most of the workspace basics.</li>
+      <li>Do not run long unattended prints without detection; stay for the first layer.</li>
+      <li>Plan your response to an incident before you need it.</li>
+    </ul>
+  </div>
+
+  <p>With a safe place set up, you are ready to choose a machine: see <a href="buying-guide.html">Choosing a printer</a>, or revisit <a href="first-print.html">Your first print</a>.</p>
+
+</main>
+</body>
+</html>

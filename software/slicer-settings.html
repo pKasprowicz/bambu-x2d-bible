@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Slicer settings explained · 3D Printing Compendium</title>
+  <meta name="description" content="Every important slicer setting explained: quality, strength, speed, support, adhesion, filament, multi-material and special modes, with typical values, trade-offs, illustrations and starting profiles for PLA, PETG, ABS and TPU.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+  <style>
+    .ss-rows { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 6px 16px; margin: .3em 0 1em; font-size: .96rem; }
+    .ss-rows dt { font-weight: 700; color: var(--brand-ink); }
+    .ss-rows dd { margin: 0; color: var(--ink-2); }
+    @media (max-width: 560px) { .ss-rows { grid-template-columns: 1fr; gap: 0; } .ss-rows dd { margin-bottom: .6em; } }
+    details.accordion > summary .ss-name { font-weight: 750; }
+    details.accordion > summary .ss-range { margin-left: auto; font-weight: 500; font-size: .85rem; color: var(--muted); }
+  </style>
+</head>
+<body data-page="software/slicer-settings.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 3 · Software</div>
+    <h1>Slicer settings explained</h1>
+    <p class="lead">Hundreds of sliders, dozens that matter, a handful that decide most of your results. This page explains each important setting in plain language, with typical values, the trade-offs, and pictures of what actually changes inside the print.</p>
+    <div class="meta"><span class="badge beginner">Beginner</span><span class="badge intermediate">Intermediate</span><span class="badge advanced">Advanced</span><span class="badge time">⏱ 55 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">How to use this page</span>
+    <ul>
+      <li>Skim <a href="#priority">the priority pyramid</a> first. It tells you where to spend your attention.</li>
+      <li>Each setting lives in a collapsible panel with the same four rows: <strong>What it does</strong>, <strong>Typical</strong>, <strong>Change it when</strong>, <strong>Trade-offs</strong>. Names vary slightly between Bambu Studio, OrcaSlicer, PrusaSlicer and Cura; the descriptions use the most common wording.</li>
+      <li>Values are starting points for a 0.4 mm nozzle on a well-tuned printer. Tune from there, one change at a time, and check <a href="#starting-profiles">the starting profiles</a> at the bottom.</li>
+    </ul>
+  </div>
+
+  <h2 id="priority">Where to focus: the priority pyramid</h2>
+  <p>A slicer exposes an overwhelming number of settings, but they do not all matter equally. A wrong filament temperature ruins a print; a slightly different seam gap does not. Work from the base of the pyramid upward: only fine-tune the tip after everything beneath it is right.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 360" role="img" aria-label="Priority pyramid with five tiers: correct filament and printer presets and dry filament, orientation and supports, walls infill layer height, speeds accelerations and cooling, fine tuning like seam and ironing">
+      <path class="f-purple" d="M300 20 L356 84 H244 Z"/>
+      <path class="f-blue" d="M244 84 H356 L412 148 H188 Z"/>
+      <path class="f-teal" d="M188 148 H412 L468 212 H132 Z"/>
+      <path class="f-orange" d="M132 212 H468 L524 276 H76 Z"/>
+      <path class="f-green" d="M76 276 H524 L580 340 H20 Z"/>
+      <text class="t t-c t-b" x="300" y="68" style="text-anchor:middle">5</text>
+      <text class="t t-c t-b" x="300" y="122" style="text-anchor:middle">4</text>
+      <text class="t t-c t-b" x="300" y="186" style="text-anchor:middle">3</text>
+      <text class="t t-c t-b" x="300" y="250" style="text-anchor:middle">2</text>
+      <text class="t t-c t-b" x="300" y="314" style="text-anchor:middle">1</text>
+      <path class="d-mute" d="M330 52 H600"/><path class="d-mute" d="M380 116 H600"/><path class="d-mute" d="M440 180 H600"/><path class="d-mute" d="M496 244 H600"/><path class="d-mute" d="M552 308 H600"/>
+      <text class="t t-b" x="610" y="48">Fine tuning</text><text class="t-sm" x="610" y="66">seam, ironing, fuzzy skin, scarf seam, arc fitting</text>
+      <text class="t t-b" x="610" y="112">Speed &amp; cooling</text><text class="t-sm" x="610" y="130">accelerations, volumetric flow, fan, layer time</text>
+      <text class="t t-b" x="610" y="176">Structure</text><text class="t-sm" x="610" y="194">layer height, walls, top/bottom, infill density</text>
+      <text class="t t-b" x="610" y="240">Orientation, support, adhesion</text><text class="t-sm" x="610" y="258">how the part sits and hangs on the plate</text>
+      <text class="t t-b" x="610" y="304">Foundations</text><text class="t-sm" x="610" y="322">right printer/nozzle/filament preset, dry filament,</text><text class="t-sm" x="610" y="338">clean plate, first layer height and flow</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> Settings that matter most sit at the bottom. If your first layer or filament profile is wrong, no amount of seam tuning or ironing will rescue the print.</figcaption>
+  </figure>
+
+  <h3>🔰 Vocabulary you will see everywhere</h3>
+  <div class="grid cols-3">
+    <div class="card accent-blue"><h4>Perimeter / wall / loop</h4><p>A closed line of plastic following the outline of a layer. "Wall loops" and "perimeters" mean the same thing.</p></div>
+    <div class="card accent-orange"><h4>Infill</h4><p>The pattern that fills the inside of the part, mostly air with thin lines of plastic to hold the walls up.</p></div>
+    <div class="card accent-green"><h4>Shell</h4><p>The solid skin: walls plus the top and bottom solid layers. Together they carry most of the strength.</p></div>
+    <div class="card accent-purple"><h4>Line width</h4><p>How wide each extruded line is, normally 100–125 % of the nozzle diameter.</p></div>
+    <div class="card accent-teal"><h4>Extrusion multiplier / flow ratio</h4><p>A scale factor on the amount of plastic extruded; 1.0 = theoretical amount, tuned per filament.</p></div>
+    <div class="card accent-pink"><h4>Volumetric speed</h4><p>Plastic volume per second (mm³/s); the true limit of a hotend, more meaningful than mm/s.</p></div>
+  </div>
+
+  <h2 id="anatomy">Anatomy of a printed part</h2>
+  <p>Before the individual settings, picture what a slice looks like from the side. Every setting below acts on some part of this cross-section.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 380" role="img" aria-label="Cross-section of a printed box showing outer walls, inner walls, sparse infill, top solid layers, bottom solid layers, first layer, brim and layer lines">
+      <rect class="d-surface2" x="40" y="320" width="560" height="12" rx="3"/>
+      <text class="t-sm t-b" x="48" y="352">Build plate</text>
+      <!-- bottom layers -->
+      <rect class="f-orange" x="140" y="300" width="360" height="20"/>
+      <rect class="f-orange" x="140" y="280" width="360" height="20"/>
+      <!-- top layers -->
+      <rect class="f-orange" x="140" y="62" width="360" height="20"/>
+      <rect class="f-orange" x="140" y="82" width="360" height="20"/>
+      <rect class="f-orange" x="140" y="42" width="360" height="20"/>
+      <!-- walls -->
+      <rect class="f-red" x="140" y="102" width="12" height="178"/><rect class="f-purple" x="152" y="102" width="12" height="178"/><rect class="f-purple" x="164" y="102" width="12" height="178"/>
+      <rect class="f-red" x="488" y="102" width="12" height="178"/><rect class="f-purple" x="476" y="102" width="12" height="178"/><rect class="f-purple" x="464" y="102" width="12" height="178"/>
+      <!-- infill -->
+      <rect class="d-surface" x="176" y="102" width="288" height="178" rx="0"/>
+      <path class="k-teal" d="M176 280 L220 102 M220 280 L264 102 M264 280 L308 102 M308 280 L352 102 M352 280 L396 102 M396 280 L440 102 M440 280 L464 170" style="stroke-width:2"/>
+      <path class="k-teal" d="M176 102 L220 280 M220 102 L264 280 M264 102 L308 280 M308 102 L352 280 M352 102 L396 280 M396 102 L440 280 M440 102 L464 215" style="stroke-width:2;opacity:.55"/>
+      <!-- brim -->
+      <rect class="f-yellow" x="96" y="318" width="44" height="2"/><rect class="f-yellow" x="500" y="318" width="44" height="2"/>
+      <!-- callouts -->
+      <path class="d-thin arrow" d="M640 52 L520 52"/><text class="t t-b" x="648" y="48">Top solid layers</text><text class="t-sm" x="648" y="66">closed skin, 4–7 layers typical</text>
+      <path class="d-thin arrow" d="M640 120 L506 120"/><text class="t t-b" x="648" y="116">Outer wall</text><text class="t-sm" x="648" y="134">visible surface, slowest and most precise</text>
+      <path class="d-thin arrow" d="M640 184 L482 184"/><text class="t t-b" x="648" y="180">Inner walls</text><text class="t-sm" x="648" y="198">bulk of the strength per gram</text>
+      <path class="d-thin arrow" d="M640 238 L440 238"/><text class="t t-b" x="648" y="234">Sparse infill</text><text class="t-sm" x="648" y="252">pattern + density, mostly supports top</text>
+      <path class="d-thin arrow" d="M640 292 L506 292"/><text class="t t-b" x="648" y="288">Bottom solid layers</text><text class="t-sm" x="648" y="306">plate-contact face, 3–5 layers</text>
+      <path class="d-thin arrow" d="M110 270 L100 312"/><text class="t-sm t-b" x="26" y="262">Brim</text><text class="t-sm" x="26" y="278">extra width</text>
+      <path class="d-thin" d="M104 40 V102 M96 40 H112 M96 102 H112"/><text class="t-sm t-r" x="92" y="76" style="text-anchor:end">layer</text>
+      <path class="d-dash" d="M140 320 V280"/>
+      <text class="t-sm t-c" x="320" y="26" style="text-anchor:middle">Vertical section through a printed box (not to scale)</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> The anatomy of a slice. Red: outer wall. Purple: inner walls. Teal: sparse infill. Orange: solid top and bottom layers. Yellow: brim lines on the first layer.</figcaption>
+  </figure>
+
+  <!-- ==================== QUALITY ==================== -->
+  <h2 id="quality">Quality settings</h2>
+  <p>These control the resolution and finish of the surface: how smooth, how accurate and how clean it looks.</p>
+
+  <h3 id="layer-height">Layer height</h3>
+  <details class="accordion" open><summary><span class="ss-name">🔰 Layer height</span><span class="ss-range">0.08–0.32 mm (0.4 mm nozzle: 0.20 mm)</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Sets the thickness of each layer (the Z distance between slice planes). Thinner layers make smaller steps on curved and sloped surfaces; thicker layers print faster.</dd>
+      <dt>Typical</dt><dd>0.12 mm fine, 0.16 mm quality, <strong>0.20 mm standard</strong>, 0.24 mm functional, 0.28–0.32 mm draft. A good range is 25–75 % of the nozzle diameter; 0.4 mm nozzles work from roughly 0.08 to 0.30 mm.</dd>
+      <dt>Change it when</dt><dd>Fine details, small text, curved figures or smooth threads call for 0.08–0.16 mm. Large functional parts that will be sanded or hidden suit 0.24–0.32 mm. Tall thin prints can benefit from thicker layers to reduce vibration time.</dd>
+      <dt>Trade-offs</dt><dd>Print time scales roughly with 1/layer height: halving it about doubles print time. Thick layers have stronger inter-layer bonds per line (more contact area per line) but visible banding; very thin layers on a 0.4 nozzle may have flow problems.</dd>
+    </dl>
+  </details>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 330" role="img" aria-label="Three staircase profiles of the same sloped surface printed at 0.08, 0.20 and 0.32 millimeter layer heights with a smooth ideal curve overlaid">
+      <text class="t t-b" x="30" y="30">0.08 mm</text><text class="t t-b" x="320" y="30">0.20 mm</text><text class="t t-b" x="600" y="30">0.32 mm</text>
+      <g transform="translate(30,240)">
+        <path class="d-plastic" d="M0 0 v-8h8v-8h8v-8h8v-8h8v-8h8v-8h8v-8h8v-8h8v-8h8v-8h8v-8h8v-8h8v-8h8v-8h8v-8h8v-8h8v-8h8v-8h8v-8h8v-8h8v-8h8v-8h8v-8h8v-8h8v-8h8V0Z"/>
+        <path class="d-dash" d="M0 0 L200 -200"/>
+      </g>
+      <g transform="translate(320,240)">
+        <path class="d-plastic" d="M0 0 v-20h20v-20h20v-20h20v-20h20v-20h20v-20h20v-20h20v-20h20v-20h20v-20h20V0Z"/>
+        <path class="d-dash" d="M0 0 L200 -200"/>
+      </g>
+      <g transform="translate(600,240)">
+        <path class="d-plastic" d="M0 0 v-32h32v-32h32v-32h32v-32h32v-32h32v-32h32V0Z"/>
+        <path class="d-dash" d="M0 0 L192 -192"/>
+      </g>
+      <text class="t-sm" x="30" y="268">smoothest surface, slowest</text><text class="t-sm" x="320" y="268">balanced everyday choice</text><text class="t-sm" x="600" y="268">visible steps, fastest</text>
+      <text class="t-xs t-m" x="30" y="288">relative to a 0.20 mm baseline: ×2.5 time</text><text class="t-xs t-m" x="320" y="288">baseline: ×1 time</text><text class="t-xs t-m" x="600" y="288">×0.65 time</text>
+      <text class="t-sm" x="30" y="316">Dashed line: the ideal slope. Shaded area between steps and the line is the "stair-step error" you see and feel.</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> Stair-stepping on a 45° surface (steps drawn at 100× scale). Notice how the error shrinks with layer height; near-vertical and near-horizontal surfaces show almost no stair-stepping, shallow slopes show the most.</figcaption>
+  </figure>
+
+  <div class="callout tip"><span class="callout-title">Adaptive / variable layer height</span>
+    <p>Rather than one layer height for the whole part, let the slicer use thin layers on curved or shallow areas and thick layers on vertical walls. In Bambu Studio and OrcaSlicer it is under the "adaptive layer height" or "variable layer height" tool; in Cura it is "Use adaptive layers". Expect 10–40 % time saving compared with using the fine height everywhere.</p>
+  </div>
+
+  <h3 id="first-layer">First-layer height, width and speed</h3>
+  <details class="accordion"><summary><span class="ss-name">🔰 Initial layer height</span><span class="ss-range">0.20–0.30 mm</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Sets the thickness of the very first layer. A slightly thicker first layer is more forgiving of a bed that is a little uneven, and sticks better because the line is squeezed wide.</dd>
+      <dt>Typical</dt><dd>0.20 mm on a 0.4 mm nozzle (0.25–0.30 mm if your bed is not perfectly flat or you print big parts). Some slicers also set a wider first-layer line (e.g. 120–150 % of nozzle).</dd>
+      <dt>Change it when</dt><dd>Poor adhesion on large parts, slightly uneven plates, or textured plates that need more squish. Thinner (0.12–0.16 mm) for very smooth, precise bottoms on a perfectly calibrated bed.</dd>
+      <dt>Trade-offs</dt><dd>Thicker first layer = more tolerance but a rougher bottom and a larger elephant's foot. First-layer speed should be slow (20–50 mm/s) for good contact.</dd>
+    </dl>
+  </details>
+  <p>The first layer is everything. See <a href="../techniques/first-layer-and-adhesion.html">First layer &amp; bed adhesion</a> for squish, cleaning, glue and calibration.</p>
+
+  <h3 id="line-width">Line width</h3>
+  <details class="accordion" open><summary><span class="ss-name">🔧 Line width (per feature)</span><span class="ss-range">100–125 % of the nozzle</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Controls how wide each extruded line is. The slicer flattens the round filament into a rounded rectangle, so line width and layer height together decide how much plastic is laid down per mm.</dd>
+      <dt>Typical</dt><dd>Outer wall 0.40–0.42 mm (about 100–105 %) for crisp edges; inner wall, infill and top surface 0.42–0.50 mm; first layer 0.42–0.50 mm. For a 0.4 mm nozzle the usable range is roughly 0.35–0.60 mm.</dd>
+      <dt>Change it when</dt><dd>Wider lines fill thin gaps and make faster, stronger infill; narrower outer lines resolve fine detail. Using 0.6 mm lines from a 0.4 mm nozzle is a classic speed hack, but only if the hotend can melt enough plastic.</dd>
+      <dt>Trade-offs</dt><dd>Wider = more flow needed, faster fill, stronger bond to neighbors, softer corners. Narrower = more detail, more lines (slower), and a risk of gaps if narrower than the nozzle opening.</dd>
+    </dl>
+  </details>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 300" role="img" aria-label="Nozzle tip squashing a round filament into extruded lines at 80 percent, 100 percent and 125 percent of nozzle diameter, showing cross-sections">
+      <g transform="translate(20,20)">
+        <path class="d-metal" d="M70 0 H130 L118 56 H82 Z"/>
+        <rect class="d-metal2" x="82" y="56" width="36" height="8"/>
+        <rect class="s-white" x="90" y="40" width="20" height="24" style="opacity:0"/>
+        <rect class="d-plastic" x="76" y="64" width="48" height="16" rx="8"/>
+        <path class="d-ink" d="M20 82 H180"/>
+        <text class="t-sm t-b" x="100" y="108" style="text-anchor:middle">80 % (0.32 mm)</text>
+        <text class="t-xs t-c" x="100" y="124" style="text-anchor:middle">narrow: round edge, less bond</text>
+      </g>
+      <g transform="translate(300,20)">
+        <path class="d-metal" d="M70 0 H130 L118 56 H82 Z"/>
+        <rect class="d-metal2" x="82" y="56" width="36" height="8"/>
+        <rect class="d-plastic" x="64" y="64" width="72" height="16" rx="8"/>
+        <path class="d-ink" d="M20 82 H180"/>
+        <text class="t-sm t-b" x="100" y="108" style="text-anchor:middle">105 % (0.42 mm)</text>
+        <text class="t-xs t-c" x="100" y="124" style="text-anchor:middle">balanced: standard setting</text>
+      </g>
+      <g transform="translate(580,20)">
+        <path class="d-metal" d="M70 0 H130 L118 56 H82 Z"/>
+        <rect class="d-metal2" x="82" y="56" width="36" height="8"/>
+        <rect class="d-plastic" x="52" y="64" width="96" height="16" rx="8"/>
+        <path class="d-ink" d="M20 82 H180"/>
+        <text class="t-sm t-b" x="100" y="108" style="text-anchor:middle">125 % (0.50 mm)</text>
+        <text class="t-xs t-c" x="100" y="124" style="text-anchor:middle">wide: strong, fast, softer detail</text>
+      </g>
+      <rect class="d-surface2" x="20" y="170" width="820" height="110" rx="10"/>
+      <text class="t-sm t-b" x="36" y="194">Rule of thumb for flow per line</text>
+      <text class="t-sm t-mono" x="36" y="216">cross-section ≈ (width − height) × height + π × (height/2)²</text>
+      <text class="t-sm" x="36" y="240">The slicer assumes a stadium (rounded-rectangle) profile. With 0.42 × 0.20 mm lines that is about 0.083 mm² of area per line.</text>
+      <text class="t-sm" x="36" y="260">Multiply by feed speed to get the volumetric flow in mm³/s, for example 0.083 mm² × 100 mm/s ≈ 8.3 mm³/s.</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> The same nozzle can produce lines of different widths. The molten plastic is squashed between the nozzle tip and the layer below; the wider the line, the more material per millimeter and the larger the contact area.</figcaption>
+  </figure>
+
+  <h3 id="seam">Seam position and scarf seams</h3>
+  <p>Every closed loop has a start and end. The point where they meet leaves a small scar called the <strong>seam</strong> (the "z-seam"). You cannot remove it, but you can choose where it appears.</p>
+  <details class="accordion" open><summary><span class="ss-name">🔧 Seam position</span><span class="ss-range">Aligned · Nearest · Back · Random</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Chooses where each layer's outer wall starts and stops. <em>Aligned</em> stacks the seams into a single vertical line; <em>nearest</em> starts at the closest point to the previous move (hides in corners but scatters); <em>back</em> puts them at the back; <em>random</em> spreads them everywhere, avoiding a clear line.</dd>
+      <dt>Typical</dt><dd>Aligned or back for decorative parts so the scar is a single line you can sand or face away. Random for round parts that must look uniform from all sides. Nearest for quick draft prints. Seam gap 0–10 % of the nozzle diameter.</dd>
+      <dt>Change it when</dt><dd>The seam shows as a blob or gap on a visible face; you want to hide the seam in a concave corner; you plan to paint or sand.</dd>
+      <dt>Trade-offs</dt><dd>Random hides the line but makes the whole surface slightly rough. Aligned is neat and sandable but looks like a visible stripe. Seam quality also depends on pressure advance and retraction.</dd>
+    </dl>
+  </details>
+  <details class="accordion"><summary><span class="ss-name">🚀 Scarf seam (Orca / Bambu "scarf joint seam")</span><span class="ss-range">length ≈ 10–20 mm, start height 0.3–0.5 layer</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Instead of ending the loop abruptly, the line tapers: the first part of the outer wall ramps up in height (and the last part ramps down) so that the two ends overlap along a diagonal "scarf" joint, like a woodworker's scarf joint. It reduces the visible bump and gap.</dd>
+      <dt>Typical</dt><dd>Enable on smooth, round or flat vertical outer walls; scarf length 10–20 mm; start height about 0.3–0.5 of a layer; use on outer wall only. Often combined with "seam gap" 0 and slower outer wall.</dd>
+      <dt>Change it when</dt><dd>You print smooth cylinders, vases or product-style parts and the straight seam bothers you.</dd>
+      <dt>Trade-offs</dt><dd>Slightly longer print, requires well-tuned flow and pressure advance, may cause artifacts on tiny perimeters, and can leave a faint diagonal mark. Not useful on very small loops where the scarf would be longer than the perimeter.</dd>
+    </dl>
+  </details>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 330" role="img" aria-label="Seam positions: aligned line of seams, random scattered seams, back seam, and a scarf joint drawn as a taper in side view">
+      <g transform="translate(20,30)">
+        <circle class="d-surface2" cx="80" cy="90" r="64"/>
+        <circle class="d-plastic" cx="80" cy="90" r="64" style="fill:none"/>
+        <g class="s-red"><circle cx="80" cy="26" r="6"/><circle cx="80" cy="150" r="0"/></g>
+        <text class="t-sm t-b" x="80" y="184" style="text-anchor:middle">Aligned / back</text>
+        <text class="t-xs t-c" x="80" y="200" style="text-anchor:middle">one vertical line, easy to sand</text>
+      </g>
+      <g transform="translate(240,30)">
+        <circle class="d-surface2" cx="80" cy="90" r="64"/>
+        <g class="s-red"><circle cx="54" cy="36" r="5"/><circle cx="118" cy="52" r="5"/><circle cx="134" cy="104" r="5"/><circle cx="96" cy="150" r="5"/><circle cx="40" cy="128" r="5"/><circle cx="26" cy="72" r="5"/></g>
+        <text class="t-sm t-b" x="80" y="184" style="text-anchor:middle">Random</text>
+        <text class="t-xs t-c" x="80" y="200" style="text-anchor:middle">no line, but textured surface</text>
+      </g>
+      <g transform="translate(460,30)">
+        <path class="d-surface2" d="M18 40 H142 V150 H18 Z"/>
+        <g class="s-red"><circle cx="18" cy="40" r="6"/><circle cx="142" cy="40" r="6"/><circle cx="142" cy="150" r="6"/><circle cx="18" cy="150" r="6"/></g>
+        <text class="t-sm t-b" x="80" y="184" style="text-anchor:middle">Nearest / corners</text>
+        <text class="t-xs t-c" x="80" y="200" style="text-anchor:middle">hides in sharp corners</text>
+      </g>
+      <g transform="translate(660,30)">
+        <text class="t-sm t-b" x="90" y="10" style="text-anchor:middle">Scarf joint, side view</text>
+        <path class="d-plastic" d="M0 40 H120 L170 76 V100 H0 Z"/>
+        <path class="d-plastic2" d="M50 100 L100 62 L170 62 V100 Z" style="opacity:.55"/>
+        <path class="d-ink" d="M0 40 H120 L170 76 M0 100 H170"/>
+        <path class="d-thin arrow" d="M96 138 L110 82"/>
+        <text class="t-xs" x="0" y="152">end tapers down while start</text>
+        <text class="t-xs" x="0" y="166">ramps up: the overlap fuses</text>
+      </g>
+      <rect class="d-surface2" x="20" y="260" width="820" height="56" rx="10"/>
+      <text class="t-sm" x="36" y="283">Red dots mark where loops start or end. Think about what the viewer sees: choose a place facing the wall, the bed edge,</text>
+      <text class="t-sm" x="36" y="302">or a corner that already has an edge line to hide the scar.</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> Seam strategies as viewed from above, and a side-view sketch of a scarf joint (heights exaggerated).</figcaption>
+  </figure>
+
+  <h3 id="ironing-fuzzy">Ironing, fuzzy skin and arc fitting</h3>
+  <details class="accordion"><summary><span class="ss-name">🔧 Ironing</span><span class="ss-range">flow 8–15 %, speed 15–40 mm/s, spacing 0.1–0.25 mm</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>After the top surface is printed, the nozzle makes an extra pass at the same height with very little extrusion, smoothing out the ridges between lines (like ironing a shirt).</dd>
+      <dt>Typical</dt><dd>Ironing type "top surfaces only"; flow 10–15 %; speed 20–30 mm/s; line spacing 0.10–0.20 mm; works best with PLA and PETG, poorly with very stringy or soft materials.</dd>
+      <dt>Change it when</dt><dd>Flat top faces need a glossy, smooth finish (lids, nameplates, sliding surfaces). Disable for strength-only parts and for textured finishes.</dd>
+      <dt>Trade-offs</dt><dd>Adds substantial print time on large flat areas (often +20–60 % on lid-like parts), can leave scratches if the flow is too low or too high, and will smudge fuzzy-skin or lines intended to be a pattern.</dd>
+    </dl>
+  </details>
+  <details class="accordion"><summary><span class="ss-name">🔧 Fuzzy skin</span><span class="ss-range">point distance 0.3–0.8 mm, thickness 0.1–0.3 mm</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Randomly jitters the outer wall in and out as it prints, creating a rough, matte, tactile surface that hides layer lines, fingerprints and imperfections.</dd>
+      <dt>Typical</dt><dd>Point distance 0.4–0.8 mm; thickness 0.1–0.3 mm. Apply to the outer wall only ("outside only"), sometimes with a modifier on grips and handles.</dd>
+      <dt>Change it when</dt><dd>You need grip, anti-glare surfaces, or want to mask layer lines on large objects.</dd>
+      <dt>Trade-offs</dt><dd>Reduces dimensional accuracy, weakens detail, slows printing slightly, and creates rough spots that collect dirt. Never use on precise fit surfaces.</dd>
+    </dl>
+  </details>
+  <details class="accordion"><summary><span class="ss-name">🚀 Arc fitting (G2/G3)</span><span class="ss-range">on/off, tolerance ≈ 0.05 mm</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Replaces runs of tiny straight segments on curves with arc commands (<code>G2/G3</code>), shrinking the G-code file and reducing the stream of tiny moves the controller has to process.</dd>
+      <dt>Typical</dt><dd>Off for most users on Bambu printers (the slicer already outputs a compact, tuned stream). On for Marlin or Klipper machines with limited serial/processing bandwidth or stutter on high-resolution curves.</dd>
+      <dt>Change it when</dt><dd>You see surface blobs on fine curves due to controller bottlenecks; or your G-code is huge and you print over a slow connection.</dd>
+      <dt>Trade-offs</dt><dd>Requires firmware support for arcs. A tolerance that is too large can slightly distort circles. See <a href="gcode-and-firmware.html">G-code &amp; firmware</a> for how arcs work.</dd>
+    </dl>
+  </details>
+
+  <!-- ==================== STRENGTH ==================== -->
+  <h2 id="strength">Strength settings</h2>
+  <p>A printed part is a laminate of lines. Its strength depends far more on <strong>walls and orientation</strong> than on infill, which surprises many beginners. The usual order of influence is: orientation → wall count → top/bottom layers → infill density → infill pattern. See <a href="../design/strength-and-orientation.html">Strength &amp; orientation</a> for the physics of layer adhesion.</p>
+
+  <h3 id="walls">Walls (perimeters)</h3>
+  <details class="accordion" open><summary><span class="ss-name">🔰 Wall loops / perimeters</span><span class="ss-range">2–6 loops (3 for standard)</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Sets how many concentric outlines are printed around each layer. The outermost shows on the surface; the inner ones carry load and give the part its stiffness.</dd>
+      <dt>Typical</dt><dd>2 for decorative/draft, <strong>3 for general use</strong>, 4–6 for functional parts that bend, clamp or hold screws. A wall total of about 1.2–2.4 mm is a good target regardless of nozzle size.</dd>
+      <dt>Change it when</dt><dd>Parts break at thin sections (add walls); you need a lightweight decorative piece (use 2); screws or inserts go into the part (use 4+ so the wall, not the infill, grips the thread).</dd>
+      <dt>Trade-offs</dt><dd>Each extra wall adds time and material but gives a bigger strength gain per gram than infill does. Beyond ~5 walls the interior is mostly solid anyway, so also consider raising infill only if loads act inside the part.</dd>
+    </dl>
+  </details>
+
+  <details class="accordion"><summary><span class="ss-name">🔧 Wall printing order &amp; direction</span><span class="ss-range">inner/outer, outer/inner, inner/outer/inner</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Chooses whether the outer wall prints first, last, or sandwiched. <em>Inner-first</em> lets the outer wall rest on an already-laid inner line and typically gives the best dimensional accuracy and surface; <em>outer-first</em> improves overhang quality and reduces visible bulging at tiny details; <em>inner/outer/inner</em> is a compromise.</dd>
+      <dt>Typical</dt><dd>Inner → outer for most prints. Outer → inner for threads and fine, precise exterior details if layer adhesion is not a concern.</dd>
+      <dt>Change it when</dt><dd>You see wall ripples ("ghost" lines) or bumps at seams, or an overhang that sags.</dd>
+      <dt>Trade-offs</dt><dd>Changes seam appearance and dimensional bias by tens of microns; test on a small calibration piece.</dd>
+    </dl>
+  </details>
+
+  <h3 id="wall-generator">Wall generator: Classic vs Arachne</h3>
+  <p>The wall generator is the algorithm that builds the loops. <strong>Classic</strong> offsets the outline inward in constant-width steps; where a feature is narrower than a whole number of lines it leaves a gap or overlaps. <strong>Arachne</strong> (a variable-width-line algorithm, originally developed for Cura and adopted by PrusaSlicer, Bambu Studio and OrcaSlicer) fits lines of varying width so that thin features and tapered shapes are filled without gaps.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 300" role="img" aria-label="Classic walls leave a gap in a tapering shape while Arachne varies line width to fill it">
+      <text class="t t-b" x="30" y="30">Classic (constant width)</text>
+      <text class="t t-b" x="450" y="30">Arachne (variable width)</text>
+      <g transform="translate(30,50)">
+        <path class="d-surface2" d="M0 10 L380 60 L380 120 L0 170 Z"/>
+        <path class="k-orange" d="M8 24 L372 70" style="stroke-width:7"/>
+        <path class="k-orange" d="M8 156 L372 110" style="stroke-width:7"/>
+        <path class="k-orange" d="M8 40 L250 70" style="stroke-width:7"/>
+        <path class="k-orange" d="M8 140 L250 110" style="stroke-width:7"/>
+        <path class="k-red" d="M258 80 H372 V100 H258 Z" style="stroke-width:1.5;stroke-dasharray:4 3"/>
+        <text class="t-sm c-red" x="266" y="94">gap / hole</text>
+      </g>
+      <g transform="translate(450,50)">
+        <path class="d-surface2" d="M0 10 L380 60 L380 120 L0 170 Z"/>
+        <path class="k-orange" d="M8 24 L372 68" style="stroke-width:7"/>
+        <path class="k-orange" d="M8 156 L372 112" style="stroke-width:7"/>
+        <path class="k-orange" d="M8 40 L372 76" style="stroke-width:6"/>
+        <path class="k-orange" d="M8 140 L372 104" style="stroke-width:6"/>
+        <path class="k-green" d="M8 90 L372 90" style="stroke-width:12;opacity:.35"/>
+        <path class="k-green" d="M8 90 L372 90" style="stroke-width:4"/>
+        <text class="t-sm c-green" x="150" y="84">line width shrinks to fit</text>
+      </g>
+      <rect class="d-surface2" x="30" y="236" width="800" height="50" rx="10"/>
+      <text class="t-sm" x="46" y="258">Where a feature tapers from 1.6 mm to 0.5 mm, classic walls can only place whole lines and leave a void;</text>
+      <text class="t-sm" x="46" y="276">Arachne stretches or narrows lines (typically within about ±50 % of nominal width) so the region is solid.</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> Gap filling in a tapering feature. This matters for text, thin ribs, sharp tips and small holes.</figcaption>
+  </figure>
+
+  <details class="accordion"><summary><span class="ss-name">🔧 Wall generator choice</span><span class="ss-range">Arachne (default in most modern presets) or Classic</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Selects the algorithm. Arachne also exposes options such as minimum feature size, minimum wall width and the wall-transition length/angle that control when the line count switches.</dd>
+      <dt>Typical</dt><dd>Arachne for general use, including thin walls and organic shapes. Classic for ultra-predictable constant-width loops, e.g. precise calibration or when comparing with older results.</dd>
+      <dt>Change it when</dt><dd>You see gaps in thin features or odd width changes; or an old profile behaves differently after updating.</dd>
+      <dt>Trade-offs</dt><dd>Arachne can create noisy flow changes on small features (line width oscillation) and larger G-code; Classic is predictable but leaves gaps. Tune pressure advance well if using Arachne.</dd>
+    </dl>
+  </details>
+
+  <h3 id="top-bottom">Top and bottom shell layers</h3>
+  <details class="accordion" open><summary><span class="ss-name">🔰 Top shell &amp; bottom shell layers</span><span class="ss-range">top 4–7 layers, bottom 3–5 layers (≥ 0.8–1.2 mm thick)</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Specifies how many solid layers cap the infill. The top shell bridges over the sparse infill; the bottom shell forms the plate-contact skin.</dd>
+      <dt>Typical</dt><dd>Aim for a shell thickness of 0.8–1.2 mm (e.g. 5 layers at 0.2 mm). Raise to 1.5–2.0 mm for waterproof or pressurized parts. Many slicers can enforce a minimum shell thickness in mm instead of counts, which keeps results consistent across layer heights.</dd>
+      <dt>Change it when</dt><dd>You see "pillowing" (bumpy, holey top surfaces) or low-density infill showing through; at 0.08–0.12 mm layers the layer count must be higher to reach the same thickness.</dd>
+      <dt>Trade-offs</dt><dd>More layers = stronger, smoother tops and better sealing, but slower. Too few top layers over low infill density cause sagging and gaps; this is usually fixed by 1–2 more layers or more infill under the top.</dd>
+    </dl>
+  </details>
+
+  <details class="accordion"><summary><span class="ss-name">🚀 Top surface pattern &amp; bottom surface pattern</span><span class="ss-range">monotonic · monotonic lines · concentric · Hilbert · Archimedean</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Controls how the visible solid top (and bottom) is filled. <em>Monotonic</em> prints all lines in one direction for a uniform look with no overlapping stripes; concentric echoes the outline; space-filling curves (Hilbert, Archimedean chords) distribute stress evenly and eliminate direction bias.</dd>
+      <dt>Typical</dt><dd>Monotonic (or "monotonic lines") for the top surface of most parts; rectilinear for the bottom. Use concentric for round parts.</dd>
+      <dt>Change it when</dt><dd>Lines show a visible stripe pattern, or flatness/reflection quality matters.</dd>
+      <dt>Trade-offs</dt><dd>Fancy space-filling patterns can be slower and show corners; monotonic is a reliable default.</dd>
+    </dl>
+  </details>
+
+  <h3 id="infill">Infill density and pattern</h3>
+  <details class="accordion" open><summary><span class="ss-name">🔰 Sparse infill density</span><span class="ss-range">0–100 % (decorative 5–10 %, general 15–20 %, functional 30–50 %)</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Sets how much of the interior volume is plastic versus air. It is the fill that supports the top layers and shares compression and bending loads.</dd>
+      <dt>Typical</dt><dd>10–15 % for display parts; <strong>15–20 % standard</strong>; 25–40 % for functional brackets; 60–100 % only for tiny parts, screw bosses or where weight is irrelevant. With 3+ walls and 20 % infill, most parts are already stiff enough for ordinary use.</dd>
+      <dt>Change it when</dt><dd>Compression-loaded parts (higher), flexible/soft TPU (lower), parts that float or need low weight (lower), and when material is cheap and time is not (higher). For tall columns subject to crushing, raise the wall count first.</dd>
+      <dt>Trade-offs</dt><dd>Infill time and weight grow almost linearly with density, but strength grows sub-linearly: doubling infill from 20 % to 40 % gives much less than double the stiffness. Density also changes sound, heat dissipation and perceived quality.</dd>
+    </dl>
+  </details>
+
+  <details class="accordion" open><summary><span class="ss-name">🔧 Sparse infill pattern</span><span class="ss-range">Gyroid · Cubic · Grid · Lines · Triangles · Honeycomb · Lightning · TPMS</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Decides the geometric shape of the sparse interior. Patterns differ in strength direction, print speed, noise, material use and how well they support top layers.</dd>
+      <dt>Typical</dt><dd><strong>Gyroid</strong> (isotropic, good strength to weight, smooth motion), <strong>cubic</strong> or <strong>grid</strong> (fast, simple), <strong>lightning</strong> (only supports top surfaces: minimal material for display pieces), <strong>honeycomb</strong> (even, classic, slower), <strong>TPMS</strong> variants (Fischer-Koch, Schwarz diamond; continuous lattices, good for impact absorption and heat exchange).</dd>
+      <dt>Change it when</dt><dd>You need uniform strength in all directions (gyroid/cubic), you want the fastest prints (lines, grid, lightning), or you need impact damping (TPMS/gyroid).</dd>
+      <dt>Trade-offs</dt><dd>Gyroid and TPMS use curved paths that are slightly slower and larger in G-code; grid overlaps lines at intersections (extra flow and bumps); lightning has weak bending performance beyond supporting the top.</dd>
+    </dl>
+  </details>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 470" role="img" aria-label="Nine infill pattern swatches: grid, lines, triangles, cubic, gyroid, honeycomb, concentric, lightning and TPMS lattice with notes on speed and strength">
+      <defs>
+        <clipPath id="ss-clip"><rect x="0" y="0" width="100" height="100"/></clipPath>
+        <pattern id="ss-hex" width="26" height="45" patternUnits="userSpaceOnUse"><path d="M0 7.5 L13 0 L26 7.5 V22.5 L13 30 L0 22.5 Z M13 30 V45" fill="none" stroke="var(--orange)" stroke-width="2"/></pattern>
+        <pattern id="ss-tpms" width="25" height="25" patternUnits="userSpaceOnUse"><path d="M12.5 0 Q16 9 25 12.5 Q16 16 12.5 25 Q9 16 0 12.5 Q9 9 12.5 0Z" fill="none" stroke="var(--teal)" stroke-width="2"/></pattern>
+      </defs>
+      <g transform="translate(20,20)"><rect class="d-surface2" width="100" height="100" rx="4"/><g clip-path="url(#ss-clip)"><path class="k-orange" style="stroke-width:2" d="M20 0V100M0 20H100M40 0V100M0 40H100M60 0V100M0 60H100M80 0V100M0 80H100"/></g></g>
+      <text class="t t-b" x="136" y="44">Grid</text><text class="t-sm" x="136" y="62">fast, simple</text><text class="t-sm" x="136" y="78">crossings = bumps</text><text class="t-xs" x="136" y="96">good all-rounder</text>
+      <g transform="translate(300,20)"><rect class="d-surface2" width="100" height="100" rx="4"/><g clip-path="url(#ss-clip)"><path class="k-orange" style="stroke-width:2" d="M0 7H100M0 21H100M0 35H100M0 49H100M0 63H100M0 77H100M0 91H100"/></g></g>
+      <text class="t t-b" x="416" y="44">Lines</text><text class="t-sm" x="416" y="62">fastest, one direction</text><text class="t-sm" x="416" y="78">weak across lines</text><text class="t-xs" x="416" y="96">alternates 90° per layer</text>
+      <g transform="translate(580,20)"><rect class="d-surface2" width="100" height="100" rx="4"/><g clip-path="url(#ss-clip)"><path class="k-orange" style="stroke-width:2" d="M0 0H100M0 23H100M0 45H100M0 68H100M0 90H100M-40 100L18 0M18 100L-40 0M-14 100L44 0M44 100L-14 0M12 100L70 0M70 100L12 0M38 100L96 0M96 100L38 0M64 100L122 0M122 100L64 0M90 100L148 0M148 100L90 0"/></g></g>
+      <text class="t t-b" x="696" y="44">Triangles</text><text class="t-sm" x="696" y="62">stiff in-plane</text><text class="t-sm" x="696" y="78">overlapping nodes</text><text class="t-xs" x="696" y="96">strong for shear</text>
+      <g transform="translate(20,170)"><rect class="d-surface2" width="100" height="100" rx="4"/><g clip-path="url(#ss-clip)"><path class="k-orange" style="stroke-width:2" d="M-20 100L80 0M0 100L100 0M20 100L120 0M40 100L140 0M60 100L160 0"/><path class="k-orange" style="stroke-width:1.4;opacity:.45" d="M0 20L100 100M0 0L100 80M0 40L100 120M0 60L100 140"/></g></g>
+      <text class="t t-b" x="136" y="194">Cubic</text><text class="t-sm" x="136" y="212">3D, isotropic</text><text class="t-sm" x="136" y="228">no overlaps in 2D</text><text class="t-xs" x="136" y="246">faint = next layer's lines</text>
+      <g transform="translate(300,170)"><rect class="d-surface2" width="100" height="100" rx="4"/><g clip-path="url(#ss-clip)"><path class="k-purple" style="stroke-width:2" d="M0 15 Q25 -11 50 15 T100 15 M0 40 Q25 14 50 40 T100 40 M0 65 Q25 39 50 65 T100 65 M0 90 Q25 64 50 90 T100 90"/><path class="k-purple" style="stroke-width:2;opacity:.6" d="M0 28 Q25 54 50 28 T100 28 M0 53 Q25 79 50 53 T100 53 M0 78 Q25 104 50 78 T100 78"/></g></g>
+      <text class="t t-b" x="416" y="194">Gyroid</text><text class="t-sm" x="416" y="212">smooth curves, isotropic</text><text class="t-sm" x="416" y="228">good strength/weight</text><text class="t-xs" x="416" y="246">favorite for general use</text>
+      <g transform="translate(580,170)"><rect class="d-surface2" width="100" height="100" rx="4"/><rect width="100" height="100" fill="url(#ss-hex)"/></g>
+      <text class="t t-b" x="696" y="194">Honeycomb</text><text class="t-sm" x="696" y="212">even, high strength</text><text class="t-sm" x="696" y="228">slower, more travel</text><text class="t-xs" x="696" y="246">good for stiff panels</text>
+      <g transform="translate(20,320)"><rect class="d-surface2" width="100" height="100" rx="4"/><path class="k-green" style="stroke-width:2" d="M6 6H94V94H6ZM14 14H86V86H14ZM22 22H78V78H22ZM30 30H70V70H30ZM38 38H62V62H38Z"/></g>
+      <text class="t t-b" x="136" y="344">Concentric</text><text class="t-sm" x="136" y="362">follows the outline</text><text class="t-sm" x="136" y="378">good for flexibles</text><text class="t-xs" x="136" y="396">weak against crushing</text>
+      <g transform="translate(300,320)"><rect class="d-surface2" width="100" height="100" rx="4"/><path class="k-green" style="stroke-width:2" d="M50 100V60M50 60L20 30M50 60L80 28M20 30L10 8M20 30L34 6M80 28L92 8M80 28L66 10M35 80L50 68M70 82L50 70"/></g>
+      <text class="t t-b" x="416" y="344">Lightning</text><text class="t-sm" x="416" y="362">branches only under tops</text><text class="t-sm" x="416" y="378">least material, fast</text><text class="t-xs" x="416" y="396">for display parts only</text>
+      <g transform="translate(580,320)"><rect class="d-surface2" width="100" height="100" rx="4"/><rect width="100" height="100" fill="url(#ss-tpms)"/></g>
+      <text class="t t-b" x="696" y="344">TPMS lattice</text><text class="t-sm" x="696" y="362">continuous, no crossings</text><text class="t-sm" x="696" y="378">energy absorbing</text><text class="t-xs" x="696" y="396">newer; check slicer support</text>
+      <text class="t-sm t-m" x="20" y="454">Swatches show one layer in simplified form; real infill rotates, shifts or varies its shape from layer to layer.</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> Common sparse-infill patterns. Choose by use: gyroid or cubic for general strength, grid/lines for speed, lightning for display pieces, honeycomb or TPMS for panels and impact parts.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Pattern</th><th>Speed</th><th>Strength / weight</th><th>Direction bias</th><th>Best for</th></tr></thead>
+    <tbody>
+      <tr><td>Lines / rectilinear</td><td><span class="chip green">Very fast</span></td><td><span class="rate"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></td><td>High</td><td>Quick drafts, flat panels</td></tr>
+      <tr><td>Grid</td><td><span class="chip green">Fast</span></td><td><span class="rate"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></td><td>Medium</td><td>General purpose, models, boxes</td></tr>
+      <tr><td>Triangles</td><td><span class="chip yellow">Medium</span></td><td><span class="rate"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td><td>Low in-plane</td><td>Parts under shear or torsion</td></tr>
+      <tr><td>Cubic</td><td><span class="chip green">Fast</span></td><td><span class="rate"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td><td>Low</td><td>Isotropic strength, good default</td></tr>
+      <tr><td>Gyroid</td><td><span class="chip yellow">Medium</span></td><td><span class="rate"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td><td>Very low</td><td>Best all-round for functional parts</td></tr>
+      <tr><td>Honeycomb</td><td><span class="chip red">Slow</span></td><td><span class="rate"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td><td>Low</td><td>Stiff lightweight panels</td></tr>
+      <tr><td>Concentric</td><td><span class="chip yellow">Medium</span></td><td><span class="rate"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></td><td>Follows shape</td><td>TPU, flexible parts, round shapes</td></tr>
+      <tr><td>Lightning</td><td><span class="chip green">Very fast</span></td><td><span class="rate"><i class="on"></i><i></i><i></i><i></i><i></i></span></td><td>Only under tops</td><td>Display pieces, minimal material</td></tr>
+      <tr><td>TPMS / Schwarz / Fischer-Koch</td><td><span class="chip yellow">Medium</span></td><td><span class="rate"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td><td>Very low</td><td>Impact absorption, lattices</td></tr>
+    </tbody></table></div>
+
+  <details class="accordion"><summary><span class="ss-name">🚀 Solid infill thresholds &amp; internal solid infill</span><span class="ss-range">threshold area ≈ 2–5 cm², infill/wall overlap ≈ 10–25 %</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>When a small region of sparse infill would be tiny (below a threshold area, often a few cm²), the slicer converts it to solid infill, because sparse infill in a small pocket just adds travel and weak spots. Other related settings: <em>infill/wall overlap</em> (how much infill is pushed into the walls for bonding), <em>infill anchor length</em> (extra stub that ties infill lines into walls), and <em>ensure vertical shell thickness</em> (adds solid layers where walls are thin or steep).</dd>
+      <dt>Typical</dt><dd>Keep the default threshold (about 2–5 cm²). Infill/wall overlap 10–25 % for good bonding without ghosting; anchor 400 % of line width or a few mm. Enable "ensure vertical shell thickness" for strength and sealing.</dd>
+      <dt>Change it when</dt><dd>You see infill pattern ghosting through thin walls (reduce overlap), weak infill-to-wall bond (increase overlap/anchor), or spongy tiny pockets (raise the threshold).</dd>
+      <dt>Trade-offs</dt><dd>More solid area = more weight and time; less overlap = cleaner surface, weaker bond. Tune for the filament: stiff materials hold a cleaner surface; soft ones need stronger anchoring.</dd>
+    </dl>
+  </details>
+
+  <h3 id="strength-vs-time">Strength versus print time</h3>
+  <p>Printing more plastic is not the same as making the part stronger. The charts below are an <em>illustrative</em> model for a mid-sized, thin-walled functional part loaded in bending; the exact numbers depend on geometry, material and orientation, but the shape of the curve (rapid gains, then diminishing returns) is representative.</p>
+  <div class="bars"><div class="bars-title">Relative print time (baseline 3 walls / 15 % gyroid = 100)</div>
+    <div class="bar green"><span>2 walls · 10 %</span><i style="--v:28%"></i><em>≈ 82</em></div>
+    <div class="bar green"><span>3 walls · 15 %</span><i style="--v:34%"></i><em>100</em></div>
+    <div class="bar yellow"><span>4 walls · 20 %</span><i style="--v:43%"></i><em>≈ 125</em></div>
+    <div class="bar yellow"><span>4 walls · 40 %</span><i style="--v:55%"></i><em>≈ 160</em></div>
+    <div class="bar red"><span>6 walls · 40 %</span><i style="--v:66%"></i><em>≈ 190</em></div>
+    <div class="bar red"><span>6 walls · 100 %</span><i style="--v:100%"></i><em>≈ 290</em></div>
+  </div>
+  <div class="bars"><div class="bars-title">Relative bending strength index (same baseline = 100)</div>
+    <div class="bar blue"><span>2 walls · 10 %</span><i style="--v:37%"></i><em>≈ 70</em></div>
+    <div class="bar blue"><span>3 walls · 15 %</span><i style="--v:53%"></i><em>100</em></div>
+    <div class="bar blue"><span>4 walls · 20 %</span><i style="--v:66%"></i><em>≈ 125</em></div>
+    <div class="bar blue"><span>4 walls · 40 %</span><i style="--v:74%"></i><em>≈ 140</em></div>
+    <div class="bar blue"><span>6 walls · 40 %</span><i style="--v:90%"></i><em>≈ 170</em></div>
+    <div class="bar blue"><span>6 walls · 100 %</span><i style="--v:100%"></i><em>≈ 190</em></div>
+  </div>
+  <div class="callout fact"><span class="callout-title">Why walls beat infill</span>
+    <p>In bending, the outer fibers carry the largest stress, and the stiffness of a hollow section grows with the cube of its thickness, so thick outer shells contribute disproportionately. The core carries comparatively little load. Adding infill mainly helps in compression and in resisting local crushing, not in bending. This is the same reason a tube is nearly as stiff as a solid rod at a fraction of the weight.</p>
+  </div>
+
+  <!-- ==================== SPEED ==================== -->
+  <h2 id="speed">Speed, acceleration and cooling</h2>
+  <p>Speed is the most misunderstood group of settings. The headline "mm/s" number is only a ceiling; what you actually achieve depends on acceleration, the hotend's ability to melt plastic, and how long each move is. The deeper physics is in <a href="../techniques/speed-cooling-quality.html">Speed, cooling &amp; quality</a>.</p>
+
+  <h3 id="feature-speeds">Per-feature speeds</h3>
+  <p>Slicers let you set a separate speed for each feature type, because different features have different priorities: outer walls need precision, infill needs throughput, overhangs need cooling time.</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Feature</th><th>Slow printer (bed-slinger / Marlin)</th><th>Fast CoreXY class</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>First layer</td><td>20–30 mm/s</td><td>30–50 mm/s</td><td>Adhesion and squish need time</td></tr>
+      <tr><td>Outer wall</td><td>30–50 mm/s</td><td>60–200 mm/s</td><td>Visible, sets accuracy; slower = cleaner</td></tr>
+      <tr><td>Inner wall</td><td>50–80 mm/s</td><td>120–300 mm/s</td><td>Hidden; speed limited by flow</td></tr>
+      <tr><td>Sparse infill</td><td>60–100 mm/s</td><td>150–300 mm/s</td><td>Hidden; limited by volumetric flow</td></tr>
+      <tr><td>Top surface</td><td>25–40 mm/s</td><td>60–150 mm/s</td><td>Smooth finish, avoids ridging</td></tr>
+      <tr><td>Overhang / bridge</td><td>15–30 mm/s</td><td>30–80 mm/s</td><td>More cooling per mm, less sag</td></tr>
+      <tr><td>Support</td><td>50–80 mm/s</td><td>100–250 mm/s</td><td>Not visible; interface slower</td></tr>
+      <tr><td>Travel</td><td>100–150 mm/s</td><td>300–500 mm/s</td><td>No extrusion; limited by acceleration</td></tr>
+    </tbody></table></div>
+  <div class="callout warn"><span class="callout-title">Auxiliary nozzle on the X2D</span>
+    <p>If you print with the right (auxiliary) nozzle of an X2D, its extruder is limited to roughly 200 mm/s and about 1000 mm/s² acceleration, so the fast-CoreXY numbers above do not apply to features printed by the auxiliary nozzle. See <a href="../x2d/dual-nozzle-printing.html">Dual-nozzle printing</a>.</p>
+  </div>
+
+  <h3 id="accel">Acceleration, jerk and junction deviation</h3>
+  <details class="accordion" open><summary><span class="ss-name">🔧 Acceleration (mm/s²)</span><span class="ss-range">print 1,000–20,000 depending on printer</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Sets how quickly the toolhead speeds up and slows down. It limits the real speed on short moves, which never reach the set cruise speed; a printer set to 300 mm/s that spends most of its time on tiny moves is really running much slower.</dd>
+      <dt>Typical</dt><dd>Bed-slingers: 500–3,000 mm/s². Light CoreXY printers with input shaping: 5,000–20,000. Outer wall accelerations are usually set lower (e.g. 2,000–5,000) than infill (10,000+). Bambu and Klipper printers tune this together with vibration compensation (input shaping).</dd>
+      <dt>Change it when</dt><dd>Ringing (ghosting) appears behind sharp features, or the printer rattles; reduce acceleration on tall, thin, wobbly parts.</dd>
+      <dt>Trade-offs</dt><dd>Higher accelerations = faster prints, more ringing and more load on belts and frame. Use lower accelerations for the outer wall and top surface to protect surface quality.</dd>
+    </dl>
+  </details>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 310" role="img" aria-label="Velocity versus time for a long move that reaches cruise speed and a short move that never reaches it because of the acceleration limit">
+      <path class="d-thin" d="M60 240 H420 M60 240 V40"/>
+      <path class="d-thin" d="M470 240 H830 M470 240 V40"/>
+      <text class="t-sm t-m" x="20" y="48">speed</text><text class="t-sm t-m" x="420" y="258" style="text-anchor:end">time</text>
+      <path class="k-orange" d="M60 240 L140 80 H340 L420 240" style="stroke-width:3"/>
+      <path class="d-dash" d="M60 80 H420"/><text class="t-xs" x="64" y="72">set speed</text>
+      <text class="t-sm t-b" x="240" y="108" style="text-anchor:middle">Long move: reaches full speed</text>
+      <text class="t-xs t-c" x="240" y="126" style="text-anchor:middle">area under curve = distance</text>
+      <path class="k-blue" d="M470 240 L560 110 L650 240" style="stroke-width:3"/>
+      <path class="d-dash" d="M470 80 H830"/><text class="t-xs" x="474" y="72">set speed (never reached)</text>
+      <text class="t-sm t-b" x="560" y="268" style="text-anchor:middle">Short move: triangle profile</text>
+      <text class="t-sm" x="60" y="296">Doubling acceleration raises the peak speed on short moves by roughly 40 % (peak speed grows with √(distance × acceleration)).</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> Motion profiles. A move of distance d at acceleration a peaks at about √(a·d); small details and curved perimeters spend all their time accelerating.</figcaption>
+  </figure>
+
+  <details class="accordion"><summary><span class="ss-name">🚀 Jerk / junction deviation / square-corner velocity</span><span class="ss-range">jerk 5–10 mm/s · junction deviation 0.01–0.05 mm · SCV 5–10 mm/s</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Defines how fast the toolhead may take a corner without stopping. Classic <em>jerk</em> is the instantaneous speed change allowed; <em>junction deviation</em> (Marlin 2.x) and <em>square corner velocity</em> (Klipper) do the same job using corner geometry: sharper corners cause lower corner speeds.</dd>
+      <dt>Typical</dt><dd>Leave at the printer vendor's defaults unless you troubleshoot. Common: jerk 5–10 mm/s on Marlin; junction deviation 0.013–0.05 mm; Klipper SCV 5 mm/s.</dd>
+      <dt>Change it when</dt><dd>Corners bulge or lose precision; the printer shakes at corners; you want smoother, quieter motion.</dd>
+      <dt>Trade-offs</dt><dd>High corner speed = faster but corner bulging and vibration; low = cleaner corners but slower and more pressure-advance sensitivity. On Bambu printers this is not an exposed setting.</dd>
+    </dl>
+  </details>
+
+  <h3 id="volumetric">Volumetric flow limit</h3>
+  <details class="accordion" open><summary><span class="ss-name">🔧 Max volumetric speed</span><span class="ss-range">PLA 12–25 mm³/s · PETG 8–14 · ABS/ASA 10–18 · TPU 3–8</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Caps the amount of plastic per second (width × layer height × speed) so the hotend is never asked to melt more than it can. Speeds are automatically reduced where features would exceed this ceiling.</dd>
+      <dt>Typical</dt><dd>Standard hotends manage about 10–15 mm³/s with PLA, high-flow hotends 20–30+, and soft TPU about 3–8 mm³/s. The exact value depends on hotend, nozzle, temperature and material; calibrate it with a "max volumetric speed" test.</dd>
+      <dt>Change it when</dt><dd>You see under-extrusion on infill or thick layers at high speed, or clicks from the extruder. Raise temperature slightly before lowering speed.</dd>
+      <dt>Trade-offs</dt><dd>Higher limit = faster but risks under-extrusion, weak layers and dull surfaces. Lower limit = more reliable but slower, and may hide a thermal problem.</dd>
+    </dl>
+  </details>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 330" role="img" aria-label="Chart of maximum feed speed versus layer height for three hotend flow limits of 8, 12 and 18 cubic millimeters per second with a 0.42 millimeter line width">
+      <defs><clipPath id="ss-clip2"><rect x="70" y="20" width="430" height="240"/></clipPath></defs>
+      <path class="d-grid" d="M70 20 H500 M70 77 H500 M70 135 H500 M70 192 H500 M70 260 H500"/>
+      <path class="d-thin" d="M70 20 V260 H500"/>
+      <text class="t-xs t-r" x="64" y="264" style="text-anchor:end">0</text><text class="t-xs t-r" x="64" y="196" style="text-anchor:end">120</text><text class="t-xs t-r" x="64" y="139" style="text-anchor:end">200</text><text class="t-xs t-r" x="64" y="81" style="text-anchor:end">280</text><text class="t-xs t-r" x="64" y="24" style="text-anchor:end">380</text>
+      <text class="t-sm t-m" x="12" y="14">max speed, mm/s</text>
+      <text class="t-xs" x="62" y="278">0.08</text><text class="t-xs" x="205" y="278">0.16</text><text class="t-xs" x="348" y="278">0.24</text><text class="t-xs" x="480" y="278">0.32</text>
+      <text class="t-sm t-m" x="285" y="298" style="text-anchor:middle">layer height (mm)</text>
+      <g clip-path="url(#ss-clip2)">
+        <path class="k-red" d="M70 123 L141.6 168.6 L213 191.6 L285 205.4 L356 214.6 L428 220.9 L500 225.5" style="stroke-width:3"/>
+        <path class="k-orange" d="M70 54.7 L141.6 123 L213 157 L285 177.8 L356 191.6 L428 201.3 L500 208.8" style="stroke-width:3"/>
+        <path class="k-green" d="M70 -48 L141.6 54.7 L213 105.9 L285 137 L356 157 L428 172 L500 183" style="stroke-width:3"/>
+      </g>
+      <rect class="s-red" x="530" y="60" width="16" height="6" rx="2"/><text class="t-sm" x="554" y="68">8 mm³/s (PETG, ABS, basic hotend)</text>
+      <rect class="s-orange" x="530" y="86" width="16" height="6" rx="2"/><text class="t-sm" x="554" y="94">12 mm³/s (PLA, standard hotend)</text>
+      <rect class="s-green" x="530" y="112" width="16" height="6" rx="2"/><text class="t-sm" x="554" y="120">18 mm³/s (high-flow hotend)</text>
+      <text class="t-sm" x="530" y="160">speed = flow ÷ (line width × layer height)</text>
+      <text class="t-sm" x="530" y="182">Line width 0.42 mm assumed.</text>
+      <text class="t-sm" x="530" y="214">Thin layers allow very high mm/s on paper,</text>
+      <text class="t-sm" x="530" y="232">but the motion system and acceleration</text>
+      <text class="t-sm" x="530" y="250">usually become the real limit first.</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> Why "faster" is limited by melting. At 0.2 mm layers with 12 mm³/s flow the maximum feed speed is only about 140 mm/s; to print faster at that flow you must use thinner or narrower lines.</figcaption>
+  </figure>
+
+  <details class="accordion"><summary><span class="ss-name">🔧 Slow down for small perimeters / overhangs</span><span class="ss-range">small perimeter: ≈ 50 % speed on loops under ≈ 15 mm</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Reduces speed on tiny loops (small holes, thin posts) and overhanging walls so the plastic has time to cool and the toolhead isn't jerked around.</dd>
+      <dt>Typical</dt><dd>Small perimeters at 40–60 % of normal speed (threshold roughly 10–20 mm); overhang slowdown in tiers by overhang angle (e.g. 10 % / 25 % / 50 % / 75 % / 100 % overhang with progressively lower speeds).</dd>
+      <dt>Change it when</dt><dd>Holes come out blobby or small posts break or smear; overhangs curl.</dd>
+      <dt>Trade-offs</dt><dd>A little extra time for much better detail. Disabling it speeds up prints but increases defects on tiny features.</dd>
+    </dl>
+  </details>
+
+  <details class="accordion"><summary><span class="ss-name">🔰 Layer time and part cooling</span><span class="ss-range">minimum layer time 4–10 s · fan 0–100 %</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>If a layer prints faster than the <em>minimum layer time</em>, the slicer slows down (and increases fan speed) to give the plastic time to solidify before the next layer lands on it. Fan thresholds define when the fan starts and how it ramps up with bridges and overhangs.</dd>
+      <dt>Typical</dt><dd>PLA: 100 % fan after layer 2–3, min layer time 6–10 s. PETG: 30–60 % fan, min layer time 8–15 s. ABS/ASA: 0–20 % fan, as little as possible. TPU: 30–80 % fan with slow speed. Bridges: raise the fan to 100 % for almost every material.</dd>
+      <dt>Change it when</dt><dd>Tiny details, towers and sharp tips droop (more cooling or slower); layers delaminate (less cooling); ABS warps (less cooling, closed chamber).</dd>
+      <dt>Trade-offs</dt><dd>More cooling = better overhangs and small detail but weaker layer bonds and more warping risk. Slower layers = cleaner tips but longer print.</dd>
+    </dl>
+  </details>
+
+  <!-- ==================== SUPPORT ==================== -->
+  <h2 id="support">Support settings</h2>
+  <p>Supports are temporary scaffolding for overhangs and bridges that are too steep or too long to print in mid-air. The best support is the one you avoid by <a href="../design/principles.html">orienting and designing</a> the part sensibly, but when you need it, these settings decide how much it costs you in time, material and surface quality.</p>
+
+  <details class="accordion" open><summary><span class="ss-name">🔰 Support type &amp; style</span><span class="ss-range">normal (grid) · tree (organic/slim) · custom enforcers/blockers</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd><strong>Normal</strong> support builds a straight-walled lattice column from the plate (or the model) up to every overhang. <strong>Tree</strong> support grows thin branches that fan out from a few trunks and touch the model only where needed; it uses much less plastic and leaves fewer marks. Slicers also let you paint <em>enforcers</em> (force support here) and <em>blockers</em> (never here).</dd>
+      <dt>Typical</dt><dd>Tree for organic, figurine-like parts and most general prints; normal for flat, boxy overhangs under large horizontal surfaces, where a tree's few contact points can leave a poor underside.</dd>
+      <dt>Change it when</dt><dd>Support scars on a visible face are unacceptable (tree + interface or paint a blocker), support collapses mid-print (switch type or add base width), or tree branches fuse to the model.</dd>
+      <dt>Trade-offs</dt><dd>Tree is faster and leaves less waste but can be less stable on tall, thin prints and slow to compute; normal is predictable and strong but wasteful and harder to remove from complex shapes.</dd>
+    </dl>
+  </details>
+
+  <details class="accordion"><summary><span class="ss-name">🔧 Overhang threshold angle</span><span class="ss-range">≈ 30–50° (support when steeper than this from vertical)</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Defines the overhang angle beyond which supports are generated. Many slicers measure from the vertical, so a lower value means <em>more</em> support; always check the tooltip, since some tools measure from the horizontal.</dd>
+      <dt>Typical</dt><dd>PLA with good cooling often prints 45–55° overhangs unsupported; a threshold around 30–40° (from vertical, as Bambu Studio and OrcaSlicer define it) is a safe default for general use.</dd>
+      <dt>Change it when</dt><dd>You have clean overhangs and want less support (raise the angle), or a material that droops (lower it). Use a test overhang ladder before trusting a number.</dd>
+      <dt>Trade-offs</dt><dd>Aggressive thresholds save plastic but risk sagging and failure; conservative ones cost time and surface quality.</dd>
+    </dl>
+  </details>
+
+  <details class="accordion" open><summary><span class="ss-name">🔧 Support Z distance &amp; interface layers</span><span class="ss-range">Z gap ≈ 1 layer (0.15–0.25 mm) · 2–3 interface layers · interface spacing 0–0.2 mm</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>The <em>top Z distance</em> is the vertical air gap between support top and model underside; it decides how easily the support breaks away. <em>Interface layers</em> are dense layers at the contact zone that form a smooth platform for the model's first layer above it. A <em>bottom Z distance</em> does the same where support sits on top of the model.</dd>
+      <dt>Typical</dt><dd>Top Z distance 0.1–0.2 mm (PLA) up to 0.25 mm (PETG, which bonds strongly). 2–3 interface layers with a tight pattern for a smooth underside. Dissolvable or purpose-made support filaments can run with 0 gap.</dd>
+      <dt>Change it when</dt><dd>Support is welded on (increase gap), or the underside is rough and sagging (decrease gap, add interface layers or use a denser interface pattern).</dd>
+      <dt>Trade-offs</dt><dd>A bigger gap releases easily but gives rougher underside; a smaller gap is smoother but harder to remove and can break details.</dd>
+    </dl>
+  </details>
+
+  <details class="accordion"><summary><span class="ss-name">🚀 Support density, pattern, and base</span><span class="ss-range">density 10–20 % · pattern rectilinear / grid / snug · base spacing ~2.5 mm</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Controls how much material the support body has. Lower density = quicker removal and less plastic but less stable. <em>Snug</em> or contoured support follows the model outline closely, while <em>default</em> expands a bit for stability. Support also benefits from a slightly wider base layer to anchor it to the plate.</dd>
+      <dt>Typical</dt><dd>10–15 % density, a rectilinear or zig-zag pattern, and an anchoring base of 2–3 layers.</dd>
+      <dt>Change it when</dt><dd>Supports tip over (more density, wider base), or take forever to print (less density).</dd>
+      <dt>Trade-offs</dt><dd>Wasteful if over-built; unstable if under-built. In multi-material printers, supports in a separate filament or a different material can also be purged or flushed, which costs extra waste (see multi-material below).</dd>
+    </dl>
+  </details>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 330" role="img" aria-label="Normal support as a column grid and tree support as branching trunks both holding up an overhanging arm, with the top Z gap and interface layers labeled">
+      <text class="t t-b" x="30" y="28">Normal (grid) support</text><text class="t t-b" x="450" y="28">Tree support</text>
+      <g transform="translate(30,40)">
+        <rect class="d-metal" x="0" y="226" width="380" height="14" rx="3"/>
+        <path class="d-plastic" d="M120 70 H340 V110 H120 Z"/>
+        <path class="d-plastic" d="M60 110 H160 V226 H60 Z" opacity=".95"/>
+        <path class="d-plastic" d="M120 10 H160 V110 H120 Z"/>
+        <g class="k-orange" style="stroke-width:2"><path d="M180 112 V226 M200 112 V226 M220 112 V226 M240 112 V226 M260 112 V226 M280 112 V226 M300 112 V226 M320 112 V226"/><path d="M180 150 H330 M180 190 H330"/></g>
+        <path class="k-green" d="M180 112 H336" style="stroke-width:4"/>
+        <text class="t-xs c-green" x="190" y="104">interface layers</text>
+        <path class="d-ink arrow" d="M356 118 V112"/>
+        <text class="t-xs" x="200" y="254">support column · ≈ 15 % density</text>
+        <path class="d-dash" d="M340 110 V113"/>
+        <text class="t-xs t-m" x="4" y="150">model</text>
+      </g>
+      <g transform="translate(450,40)">
+        <rect class="d-metal" x="0" y="226" width="380" height="14" rx="3"/>
+        <path class="d-plastic" d="M120 70 H340 V110 H120 Z"/>
+        <path class="d-plastic" d="M60 110 H160 V226 H60 Z"/>
+        <path class="d-plastic" d="M120 10 H160 V110 H120 Z"/>
+        <g class="k-orange" style="stroke-width:5;stroke-linecap:round"><path d="M240 226 V176 M240 176 L196 120 M240 176 L240 120 M240 176 L286 120 M320 226 V190 M320 190 L330 120 M320 190 L300 120"/></g>
+        <g class="k-green" style="stroke-width:4"><circle cx="196" cy="116" r="3"/><circle cx="240" cy="116" r="3"/><circle cx="286" cy="116" r="3"/><circle cx="300" cy="116" r="3"/><circle cx="330" cy="116" r="3"/></g>
+        <text class="t-xs" x="170" y="254">thin trunks, branches meet the model only at tips</text>
+      </g>
+      <rect class="d-surface2" x="30" y="298" width="800" height="26" rx="8"/>
+      <text class="t-sm" x="46" y="316">Tree support: roughly half the plastic of normal support on organic parts, but flat undersides may be rougher.</text>
+    </svg>
+    <figcaption><b>Figure 10.</b> Normal versus tree support under the same overhang. The thin gap (top Z distance) between support and part is what lets the support snap off.</figcaption>
+  </figure>
+
+  <div class="callout tip"><span class="callout-title">Paint, don't generate</span>
+    <p>Rather than turning on supports everywhere, enable them only <em>on build plate</em> or use the support-paint brush to enforce them under the two or three places that need it. It often halves support volume and keeps visible faces clean. For parts with mating faces, orient so those surfaces face upward or sideways.</p>
+  </div>
+
+  <!-- ==================== ADHESION ==================== -->
+  <h2 id="adhesion">Bed adhesion settings</h2>
+  <p>A print that lifts at the corners or slides on the plate is usually a first-layer problem; start with a clean plate and a good <a href="#first-layer">first layer</a>. When geometry or material still threatens adhesion (tall, narrow, ABS-like warping) add one of these.</p>
+
+  <div class="grid cols-3">
+    <div class="card accent-blue"><h4>Skirt</h4><p>One or more loops around the part, not touching it. Primes the nozzle and shows the first-layer quality before the print starts. Typical: 1–2 loops, 3–6 mm away.</p></div>
+    <div class="card accent-green"><h4>Brim</h4><p>A flat ring of extra lines attached to the part's base to increase contact area and resist corner lift. Typical width: 3–8 mm (5–10 lines); tight "inner/outer" brims for tricky shapes.</p></div>
+    <div class="card accent-orange"><h4>Raft</h4><p>A multi-layer platform under the whole model, separated by an interface gap. Fixes poor plate contact and warping at the cost of a rough underside. Typical: 2–4 raft layers + 1–2 interface layers.</p></div>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 280" role="img" aria-label="Top view of skirt and brim around a square part, and a side view of a raft with interface gap under a part">
+      <text class="t t-b" x="30" y="28">Top view: skirt vs brim</text>
+      <g transform="translate(30,44)">
+        <rect class="d-surface2" x="0" y="0" width="360" height="200" rx="6"/>
+        <rect class="k-green" x="76" y="46" width="208" height="108" rx="2" style="stroke-width:6;opacity:.55"/>
+        <rect class="k-green" x="94" y="60" width="172" height="80" rx="1" style="stroke-width:3"/>
+        <rect class="d-plastic" x="110" y="72" width="140" height="56" rx="2"/>
+        <rect class="k-blue" x="30" y="12" width="300" height="176" rx="6" style="stroke-width:2.5;stroke-dasharray:6 4"/>
+        <text class="t-xs" x="118" y="104">part footprint</text>
+        <text class="t-xs c-green" x="94" y="174">brim: attached ring</text>
+        <text class="t-xs c-blue" x="38" y="30">skirt: detached loop</text>
+      </g>
+      <text class="t t-b" x="450" y="28">Side view: raft</text>
+      <g transform="translate(450,44)">
+        <rect class="d-metal" x="0" y="170" width="380" height="14" rx="3"/>
+        <rect class="d-plastic2" x="40" y="146" width="300" height="24"/>
+        <path class="k-orange" d="M40 158 H340" style="stroke-width:1.5;stroke-dasharray:3 3"/>
+        <rect class="d-plastic" x="60" y="136" width="260" height="6"/>
+        <path class="d-dash" d="M40 142 H340"/>
+        <rect class="d-plastic" x="100" y="40" width="180" height="94"/>
+        <text class="t-sm t-b" x="190" y="92" style="text-anchor:middle">part</text>
+        <text class="t-xs" x="346" y="162">raft base layers</text>
+        <text class="t-xs" x="326" y="142">interface layers</text>
+        <text class="t-xs" x="326" y="132">+ air gap ≈ 0.1–0.2 mm</text>
+        <text class="t-xs t-m" x="40" y="206">smooth top is replaced by the raft's texture on the bottom face</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 11.</b> A skirt never touches the part; a brim is part of the first layer and is cut away afterward; a raft replaces the first layers entirely and peels off with a roughened underside.</figcaption>
+  </figure>
+
+  <details class="accordion" open><summary><span class="ss-name">🔰 Brim width, type and gap</span><span class="ss-range">0 · 3–8 mm · "brim-object gap" 0–0.1 mm</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Adds adhesion area. Types include outer brim, inner brim (inside holes) and "mouse ears" (small discs on corners only). A small gap makes removal easier.</dd>
+      <dt>Typical</dt><dd>5 mm outer brim for ABS/ASA, nylon and tall narrow parts; mouse ears for flat rectangular parts that only lift at the corners; no brim for well-adhering PLA on a clean plate.</dd>
+      <dt>Change it when</dt><dd>Corners curl or the part has a small footprint compared with its height.</dd>
+      <dt>Trade-offs</dt><dd>Costs time and leaves a ring to remove; an aggressive brim can mark the part's lower edge.</dd>
+    </dl>
+  </details>
+
+  <details class="accordion"><summary><span class="ss-name">🔧 Raft layers &amp; contact distance</span><span class="ss-range">raft 2–4 layers · contact Z distance 0.1–0.2 mm · raft expansion 1–3 mm</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Creates a flat, wide base with an air gap to the part so the part can be peeled off. Useful on warped or uneven plates, for materials that don't stick to the plate, and when supports must sit on a clean surface.</dd>
+      <dt>Typical</dt><dd>A raft is the last resort for normal printing; for nylon on a glue-stick-coated plate it's common.</dd>
+      <dt>Change it when</dt><dd>A brim isn't sufficient, or your bed isn't flat.</dd>
+      <dt>Trade-offs</dt><dd>Rougher bottom face, dimension change on the Z axis (the part starts higher), more time and plastic.</dd>
+    </dl>
+  </details>
+
+  <details class="accordion"><summary><span class="ss-name">🔧 Elephant foot compensation</span><span class="ss-range">0.1–0.3 mm</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>The squished first layers bulge outward by a tenth of a millimeter or so ("elephant's foot"), especially with a hot bed or an over-squished first layer. This setting shrinks the first layer(s) inward by a set distance to compensate.</dd>
+      <dt>Typical</dt><dd>0.1–0.2 mm for PLA; 0.2–0.3 mm for hotter-bed materials (ABS, PETG). First fix the first-layer height and nozzle-to-bed distance; then measure.</dd>
+      <dt>Change it when</dt><dd>Parts don't fit into pockets or lids bind at the lower edge. Check with a calibration cube measured with calipers.</dd>
+      <dt>Trade-offs</dt><dd>Too much compensation causes a thin, weak first perimeter and a visible undercut; keep it minimal and fix squish first.</dd>
+    </dl>
+  </details>
+
+  <!-- ==================== FILAMENT ==================== -->
+  <h2 id="filament">Filament settings</h2>
+  <p>The <strong>filament preset</strong> carries the material-specific numbers: temperatures, flow, retraction, cooling and pressure advance. They interact, so change one at a time and keep notes. Material properties themselves are covered in <a href="../materials/overview.html">Materials</a>; for the X2D, check <a href="../x2d/filament-compatibility.html">Filament compatibility</a>.</p>
+
+  <h3 id="temperatures">Temperatures</h3>
+  <details class="accordion" open><summary><span class="ss-name">🔰 Nozzle &amp; bed temperature</span><span class="ss-range">PLA 190–230 / 50–65 · PETG 230–260 / 70–85 · ABS 240–270 / 90–110 · TPU 210–240 / 30–60</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Nozzle temperature sets melt viscosity, layer bonding and flow; bed temperature sets first-layer adhesion and warp resistance. A separate (usually 5–10 °C higher) first-layer nozzle and bed temperature is common.</dd>
+      <dt>Typical</dt><dd>Start at the filament label's mid-range. Higher speed and flow need higher nozzle temperature; thin, detailed or bridged prints prefer the lower end.</dd>
+      <dt>Change it when</dt><dd>Stringing or oozing (lower by 5–10 °C), weak or dull layers (raise), clicking extruder (raise or slow down), warping (raise bed / chamber).</dd>
+      <dt>Trade-offs</dt><dd>Hot = strong layers, glossy surfaces, more stringing; cold = crisp details, weaker layers. Use a temperature tower to find the sweet spot for each spool.</dd>
+    </dl>
+  </details>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 300" role="img" aria-label="Temperature ladder showing typical nozzle ranges for PLA, PETG, ABS and ASA, TPU and nylon, with outcomes of too cold and too hot">
+      <path class="d-thin" d="M60 230 H820"/>
+      <g class="t-xs"><text x="60" y="248" style="text-anchor:middle">180</text><text x="187" y="248" style="text-anchor:middle">200</text><text x="313" y="248" style="text-anchor:middle">220</text><text x="440" y="248" style="text-anchor:middle">240</text><text x="567" y="248" style="text-anchor:middle">260</text><text x="693" y="248" style="text-anchor:middle">280</text><text x="820" y="248" style="text-anchor:middle">300 °C</text></g>
+      <path class="d-grid" d="M187 40 V230 M313 40 V230 M440 40 V230 M567 40 V230 M693 40 V230"/>
+      <rect class="f-blue" x="187" y="46" width="152" height="24" rx="6" opacity=".85"/><text class="t-sm t-w" x="196" y="63">PLA  190–230</text>
+      <rect class="f-teal" x="340" y="82" width="152" height="24" rx="6" opacity=".85"/><text class="t-sm t-w" x="348" y="99">PETG  230–260</text>
+      <rect class="f-orange" x="440" y="118" width="190" height="24" rx="6" opacity=".85"/><text class="t-sm t-w" x="448" y="135">ABS / ASA  240–270</text>
+      <rect class="f-purple" x="262" y="154" width="152" height="24" rx="6" opacity=".85"/><text class="t-sm t-w" x="270" y="171">TPU  210–240</text>
+      <rect class="f-red" x="567" y="190" width="190" height="24" rx="6" opacity=".85"/><text class="t-sm t-w" x="575" y="207">Nylon / PC  260–300</text>
+      <text class="t-sm t-m" x="60" y="28">Too cold: weak layers, under-extrusion, clicking</text>
+      <text class="t-sm t-m" x="820" y="28" style="text-anchor:end">Too hot: stringing, oozing, degradation</text>
+      <rect class="d-surface2" x="60" y="262" width="760" height="26" rx="8"/>
+      <text class="t-sm" x="74" y="280">Ranges are typical vendor spans. Always prefer the spool label and your own temperature tower.</text>
+    </svg>
+    <figcaption><b>Figure 12.</b> Typical nozzle temperature windows by material. Many specialty filaments (carbon-fiber nylon, PC blends) need hardened nozzles and an enclosure.</figcaption>
+  </figure>
+
+  <h3 id="flow">Flow ratio, pressure advance and Flow Dynamics</h3>
+  <details class="accordion" open><summary><span class="ss-name">🔧 Flow ratio (extrusion multiplier)</span><span class="ss-range">0.94–1.02 (start at 1.0 or vendor value)</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Scales the amount of plastic extruded for every move. It compensates for filament diameter variation, material shrinkage and how soft the plastic is.</dd>
+      <dt>Typical</dt><dd>PLA ≈ 0.98–1.0; PETG ≈ 0.95–0.98; TPU ≈ 0.95–1.0. Calibrate with a flow test (single-wall cube or a pass-based print) rather than copying other people's numbers.</dd>
+      <dt>Change it when</dt><dd>Top surfaces show gaps (raise) or ridges, bulging corners and rough surfaces (lower); dimensions are consistently off.</dd>
+      <dt>Trade-offs</dt><dd>Too high: blobs, elephant foot, rough walls. Too low: under-extrusion, weak parts, pinholes on top surfaces. Changes of 1–2 % matter.</dd>
+    </dl>
+  </details>
+
+  <details class="accordion" open><summary><span class="ss-name">🚀 Pressure advance / linear advance / Flow Dynamics</span><span class="ss-range">PA K ≈ 0.02–0.1 (direct drive), 0.3–1.0 (Bowden)</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Plastic is compressible, so pressure in the nozzle lags the extruder motor. Pressure advance (Klipper, Marlin's <em>linear advance</em>, Bambu's <em>Flow Dynamics Calibration</em>) pushes slightly more filament while accelerating and pulls it back while decelerating, keeping the line width constant through corners and at start/stop points.</dd>
+      <dt>Typical</dt><dd>Calibrate per filament and nozzle. Typical K values for direct-drive extruders are 0.02–0.1; for Bowden setups much higher. On Bambu printers this is stored as a K factor per filament in the preset.</dd>
+      <dt>Change it when</dt><dd>Corners bulge (K too low) or are rounded and gappy (K too high); seams show a blob or a gap.</dd>
+      <dt>Trade-offs</dt><dd>It has to be recalibrated after changing the nozzle, temperature or filament brand. On a dual-nozzle X2D, Flow Dynamics Calibration applies only to the main nozzle.</dd>
+    </dl>
+  </details>
+
+  <h3 id="retraction">Retraction, wipe and Z-hop</h3>
+  <p>When the nozzle crosses an open gap, molten plastic can ooze and leave strings. <strong>Retraction</strong> pulls the filament back a short distance before a travel move and pushes it forward again afterwards. <strong>Wipe</strong> drags the nozzle along the last part of the wall to clean the tip, and <strong>Z-hop</strong> lifts the nozzle during travel to avoid knocking printed features.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 280" role="img" aria-label="Retraction sequence: extrude, retract and wipe, lift for Z-hop and travel, then un-retract and resume">
+      <g class="t-sm t-b"><text x="30" y="28">① Extrude</text><text x="240" y="28">② Retract + wipe</text><text x="450" y="28">③ Z-hop + travel</text><text x="660" y="28">④ Prime + resume</text></g>
+      <g id="ss-r1" transform="translate(30,48)"><rect class="d-metal" x="0" y="150" width="170" height="10" rx="2"/><path class="d-plastic" d="M0 130 H60 V150 H0Z"/><path class="d-hot" d="M58 80 L82 80 L76 128 L64 128 Z"/><path class="d-metal" d="M54 50 H86 V80 H54Z"/><path class="k-orange" d="M70 0 V50" style="stroke-width:3"/><path class="d-ink arrow" d="M70 4 V30" style="stroke-width:2"/><text class="t-xs" x="96" y="20">filament pushed in</text></g>
+      <g transform="translate(240,48)"><rect class="d-metal" x="0" y="150" width="170" height="10" rx="2"/><path class="d-plastic" d="M0 130 H80 V150 H0Z"/><path class="d-hot" d="M78 80 L102 80 L96 128 L84 128 Z"/><path class="d-metal" d="M74 50 H106 V80 H74Z"/><path class="k-orange" d="M90 0 V50" style="stroke-width:3"/><path class="d-ink arrow" d="M90 30 V4" style="stroke-width:2"/><path class="d-dash" d="M60 124 H100"/><text class="t-xs" x="6" y="20">filament pulled back</text><text class="t-xs" x="6" y="36">≈ 0.4–1 mm direct drive</text><text class="t-xs" x="6" y="52">2–6 mm Bowden</text></g>
+      <g transform="translate(450,48)"><rect class="d-metal" x="0" y="150" width="170" height="10" rx="2"/><path class="d-plastic" d="M0 130 H80 V150 H0Z"/><path class="d-plastic" d="M120 130 H160 V150 H120Z"/><path class="d-hot" d="M98 40 L122 40 L116 88 L104 88 Z"/><path class="d-metal" d="M94 10 H126 V40 H94Z"/><path class="d-dash" d="M80 128 Q100 60 110 90 L110 90"/><path class="d-ink arrow" d="M110 108 V92" style="stroke-width:2"/><text class="t-xs" x="4" y="20">Z-hop ≈ 0.2–0.4 mm</text><text class="t-xs" x="4" y="36">travel across gap</text><path class="d-dash" d="M80 128 C84 100 160 100 160 128"/></g>
+      <g transform="translate(660,48)"><rect class="d-metal" x="0" y="150" width="170" height="10" rx="2"/><path class="d-plastic" d="M0 130 H40 V150 H0Z"/><path class="d-plastic" d="M0 130 H20 V150 H0Z" opacity="0"/><path class="d-hot" d="M58 80 L82 80 L76 128 L64 128 Z"/><path class="d-metal" d="M54 50 H86 V80 H54Z"/><path class="k-orange" d="M70 0 V50" style="stroke-width:3"/><path class="d-ink arrow" d="M70 4 V30" style="stroke-width:2"/><text class="t-xs" x="94" y="20">prime back; resume</text></g>
+      <rect class="d-surface2" x="30" y="224" width="800" height="44" rx="8"/>
+      <text class="t-sm" x="46" y="244">Too little retraction: strings. Too much: grinding, jams, heat creep, gaps after travel. Start with the vendor's profile and tune in 0.2 mm steps.</text>
+      <text class="t-sm" x="46" y="260">Speeds are typically 30–60 mm/s; on Bambu printers a short retraction (≈ 0.8 mm) is standard.</text>
+    </svg>
+    <figcaption><b>Figure 13.</b> The four-step retraction cycle. Wipe and Z-hop are optional add-ons that trade a little time for cleaner surfaces.</figcaption>
+  </figure>
+
+  <details class="accordion"><summary><span class="ss-name">🔧 Retraction length &amp; speed</span><span class="ss-range">0.4–1.0 mm direct drive · 3–7 mm Bowden · 30–60 mm/s</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Defines how far and how fast the filament backs up before travel. Also includes <em>extra length on restart</em> and <em>minimum travel for retraction</em> (skip retraction on very short travels, typically 1–2 mm).</dd>
+      <dt>Typical</dt><dd>PLA 0.5–1 mm; PETG 0.8–1.5 mm (stringy, so keep it hotter-bed and cooler-nozzle); TPU 0–1 mm (long retractions jam flexible filament); ABS 0.5–1 mm.</dd>
+      <dt>Change it when</dt><dd>You see strings between towers (increase slightly, lower temperature, try wipe), grinding or clicking, or gaps after travel moves (reduce).</dd>
+      <dt>Trade-offs</dt><dd>Aggressive retraction can cause heat creep and jams, particularly on all-metal hotends with soft filament.</dd>
+    </dl>
+  </details>
+
+  <details class="accordion"><summary><span class="ss-name">🔧 Z-hop &amp; wipe</span><span class="ss-range">Z-hop 0.2–0.4 mm (only when needed) · wipe distance 1–2 mm</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Z-hop lifts the nozzle on travel moves so it cannot knock over printed features or scratch the top surface. Variants include "only on top surfaces" and "slope" hops. Wipe retracts while moving back along the last bit of the printed path to clean the nozzle.</dd>
+      <dt>Typical</dt><dd>Leave Z-hop off for most prints (it adds strings and time); enable it for warp-prone parts, for ironing or on top surfaces. Wipe distance ~1–2 mm with a small retraction.</dd>
+      <dt>Change it when</dt><dd>The nozzle hits curled edges or leaves scars (enable Z-hop), blobs sit at seams (try wipe), or you see stringing at the hop point (disable).</dd>
+      <dt>Trade-offs</dt><dd>Z-hop slows printing, can string, and with some firmware causes visible Z-axis artifacts.</dd>
+    </dl>
+  </details>
+
+  <h3 id="fan">Cooling fans, bridges and overhangs</h3>
+  <details class="accordion"><summary><span class="ss-name">🔰 Fan speed &amp; fan thresholds</span><span class="ss-range">min/max fan 0–100 % · full fan from layer 3 · bridge fan 100 %</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Adjusts cooling per layer time; the first layers get little or no fan to maximise adhesion, then the fan ramps up. Overhang and bridge fan boosts add extra cooling for those moves only. Bambu printers also have an auxiliary part cooling fan and chamber fans that profiles control.</dd>
+      <dt>Typical</dt><dd>PLA 80–100 %, PETG 30–60 %, ABS/ASA 0–30 % (higher only for bridges), TPU 40–80 %, nylon 0–30 %.</dd>
+      <dt>Change it when</dt><dd>Corners curl at the top (more fan), layers split (less fan or higher temperature), overhangs sag (more fan, slower).</dd>
+      <dt>Trade-offs</dt><dd>More fan = crisper details, weaker layers. Closed-chamber printers with hot materials need less fan and may need the chamber vented for PLA.</dd>
+    </dl>
+  </details>
+
+  <details class="accordion"><summary><span class="ss-name">🚀 Bridge flow, speed and thick bridges</span><span class="ss-range">bridge flow 0.85–1.0 · speed 20–50 mm/s · fan 100 %</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>A bridge is a line printed across thin air; reducing its flow (a "thinner" line) and cooling hard helps it stay straight and tight instead of sagging. "Thick bridges" prints round, overlapping strands that are more robust over longer spans.</dd>
+      <dt>Typical</dt><dd>Bridge flow ~0.9; speed 25–50 mm/s; fan 100 %; bridge angle auto (or perpendicular to the supports).</dd>
+      <dt>Change it when</dt><dd>Bridges sag (lower flow, cool more, slower) or break/pull apart (raise flow, slower, hotter).</dd>
+      <dt>Trade-offs</dt><dd>Very long bridges (&gt; 50 mm) still need support. Better bridging often costs a small slowdown.</dd>
+    </dl>
+  </details>
+
+  <!-- ==================== MULTI-MATERIAL ==================== -->
+  <h2 id="multi-material">Multi-material and multi-color</h2>
+  <p>Every filament change on a single-nozzle printer needs a clean-out of the previous color from the melt zone. The settings below control how much plastic you throw away and how clean the result is. The full workflow lives in <a href="../techniques/multi-color-and-multi-material.html">Multi-color &amp; multi-material</a>; here is the short settings reference.</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Setting</th><th>What it does</th><th>Typical</th><th>Trade-off</th></tr></thead>
+    <tbody>
+      <tr><td>Prime / wipe tower</td><td>A tower printed beside the model where the nozzle purges and wipes after each change</td><td>Width 30–60 mm; enabled whenever a single nozzle switches filaments</td><td>Costs plastic and time; shrinking it risks color bleed</td></tr>
+      <tr><td>Flush (purge) volumes</td><td>Amount pushed through the nozzle per color pair, set as a matrix (dark→light needs more than light→dark)</td><td>Roughly 100–400 mm³ per change depending on colors</td><td>Too little = color contamination; too much = waste</td></tr>
+      <tr><td>Flush into infill / objects / support</td><td>Uses the purge in hidden regions instead of the tower</td><td>Enable "flush into infill" and "into support"</td><td>Saves plastic, but can weaken infill or tint it</td></tr>
+      <tr><td>Ooze prevention</td><td>Lowers the idle nozzle's temperature (and wipes it) while it is not printing</td><td>Standby 20–30 °C lower</td><td>Needs a heating delay; helpful on dual-nozzle or toolchanger designs</td></tr>
+      <tr><td>Prime volume / purge after change</td><td>Extra extrusion to prime a freshly loaded nozzle</td><td>Vendor default</td><td>Increase if the first line after a change is thin</td></tr>
+      <tr><td>Interlocking / wall between colors</td><td>Beam-like interface between touching color regions</td><td>Enable for multi-material parts needing bonding</td><td>Extra time; may weaken at the boundary</td></tr>
+    </tbody></table></div>
+  <div class="callout x2d"><span class="callout-title">Dual-nozzle advantage</span>
+    <p>With two nozzles, each filament can stay loaded in its own nozzle, so filament changes between the left and right nozzles do not need a purge tower at all. Assign the filaments that alternate most (for example a model material and its support) to different nozzles. Details: <a href="../x2d/settings-and-profiles.html">X2D settings and profiles</a>.</p>
+  </div>
+
+  <!-- ==================== OTHER ==================== -->
+  <h2 id="other">Other useful settings</h2>
+
+  <details class="accordion"><summary><span class="ss-name">🚀 Spiral vase (vase mode)</span><span class="ss-range">1 wall · no top infill · continuous Z rise</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Prints a single continuous outer wall that rises gradually, with a solid bottom and no seam. Ideal for vases, cups and decorative shells.</dd>
+      <dt>Typical</dt><dd>Line width of 0.6–1.0 mm with a 0.4–0.6 mm nozzle for sturdy, watertight walls; 0 % infill; no top layers; seam smoothing on.</dd>
+      <dt>Change it when</dt><dd>You want fast, seamless thin-walled objects. It cannot do solid objects or multiple loops.</dd>
+      <dt>Trade-offs</dt><dd>Wall strength is limited to a single line; thin tall vases tip over easily on bed shaking.</dd>
+    </dl>
+  </details>
+
+  <details class="accordion"><summary><span class="ss-name">🔧 Sequential (by-object) printing</span><span class="ss-range">print each object to completion before the next</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Prints one object completely, then the next, instead of layer by layer across all objects. Reduces stringing between objects and lets you cancel individual failed items.</dd>
+      <dt>Typical</dt><dd>Objects must be shorter than the gantry clearance height (a few cm on many printers), spaced to avoid the toolhead hitting printed parts. The slicer warns when it detects a collision.</dd>
+      <dt>Change it when</dt><dd>Printing many small, identical parts where one failure should not ruin the batch.</dd>
+      <dt>Trade-offs</dt><dd>Needs wide spacing, limits height, and the extruder or fan duct can strike finished parts. Some printers cannot do it safely.</dd>
+    </dl>
+  </details>
+
+  <details class="accordion"><summary><span class="ss-name">🔧 Adaptive layer height</span><span class="ss-range">0.08–0.28 mm range, smoothing</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd>Varies layer height along Z: thin where curves or details need fidelity, thick on vertical walls. See <a href="#layer-height">layer height</a>.</dd>
+      <dt>Typical</dt><dd>Min 0.08–0.12 mm, max 0.24–0.28 mm, with a quality-vs-speed slider.</dd>
+      <dt>Change it when</dt><dd>Organic or sloped models that are both large and detailed.</dd>
+      <dt>Trade-offs</dt><dd>Mixed layer heights may produce uneven strength; it can conflict with variable-height supports and tuned pressure advance.</dd>
+    </dl>
+  </details>
+
+  <details class="accordion"><summary><span class="ss-name">🔧 Slicing resolution &amp; gap closing</span><span class="ss-range">resolution ≈ 0.01 mm · gap closing radius 0–0.5 mm</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd><em>Resolution</em> (or "max deviation") simplifies the sliced outline: high values merge points and shrink G-code, low values keep every vertex. <em>Slice gap closing radius</em> bridges tiny cracks in the mesh so thin cracks do not cut the outline.</dd>
+      <dt>Typical</dt><dd>Resolution 0.01–0.02 mm for most prints (higher for huge, faceted models); gap closing radius ≈ 0.001–0.05 mm. Arc fitting can then convert the polyline to G2/G3 arcs.</dd>
+      <dt>Change it when</dt><dd>The G-code file is gigantic or the printer stutters on dense curves (raise resolution slightly), or a model with tiny cracks has missing walls (raise the gap closing radius).</dd>
+      <dt>Trade-offs</dt><dd>Too coarse a resolution rounds off fine details; too wide a gap closing fills real features.</dd>
+    </dl>
+  </details>
+
+  <details class="accordion"><summary><span class="ss-name">🔰 XY contour &amp; hole compensation</span><span class="ss-range">± 0.02–0.15 mm</span></summary>
+    <dl class="ss-rows">
+      <dt>What it does</dt><dd><em>XY contour compensation</em> grows or shrinks the outer outline; <em>XY hole compensation</em> does the same for inner holes. Because printed holes tend to be undersized and outer dimensions slightly oversized, small corrections make press-fits and screws work.</dd>
+      <dt>Typical</dt><dd>Start at 0; measure a calibration plate with holes of 3–10 mm; apply +0.05–0.15 mm on holes if they print small. Combine with design clearances from <a href="../design/principles.html">design principles</a>.</dd>
+      <dt>Change it when</dt><dd>Dimensions are consistently off in XY after you have tuned flow ratio and first layer.</dd>
+      <dt>Trade-offs</dt><dd>Compensations are global; if one part needs a different value, use per-object settings or fix it in the CAD model instead.</dd>
+    </dl>
+  </details>
+
+  <!-- ==================== STARTING PROFILES ==================== -->
+  <h2 id="starting-profiles">Starting profiles</h2>
+  <p>These starting values assume a 0.4 mm nozzle, 0.2 mm layers and a reasonably fast, enclosed or draft-protected printer with a direct-drive extruder. They are <em>starting points</em>: filament brands differ, so always follow the spool label and tune with temperature, flow and retraction tests.</p>
+
+  <div class="tabs">
+    <div class="tab" data-title="PLA">
+      <div class="table-wrap"><table class="data compact"><thead><tr><th>Setting</th><th>Value</th></tr></thead><tbody>
+        <tr><td>Nozzle / bed</td><td>210 °C (first layer 215) / 55–60 °C</td></tr>
+        <tr><td>Walls / top / bottom</td><td>3 / 5 / 4</td></tr>
+        <tr><td>Infill</td><td>15 % gyroid or cubic</td></tr>
+        <tr><td>Outer wall / inner wall / infill speed</td><td>60–100 / 120–200 / 150–250 mm/s (limit by volumetric flow ≈ 15 mm³/s)</td></tr>
+        <tr><td>Fan</td><td>100 % from layer 3, bridge 100 %</td></tr>
+        <tr><td>Retraction</td><td>0.8 mm @ 40 mm/s (direct drive)</td></tr>
+        <tr><td>Flow ratio</td><td>0.98–1.0</td></tr>
+        <tr><td>Support Z gap</td><td>0.2 mm</td></tr>
+      </tbody></table></div>
+    </div>
+    <div class="tab" data-title="PETG">
+      <div class="table-wrap"><table class="data compact"><thead><tr><th>Setting</th><th>Value</th></tr></thead><tbody>
+        <tr><td>Nozzle / bed</td><td>245 °C (first layer 250) / 70–80 °C</td></tr>
+        <tr><td>Walls / top / bottom</td><td>3 / 5 / 4</td></tr>
+        <tr><td>Infill</td><td>15–20 % gyroid</td></tr>
+        <tr><td>Speeds</td><td>Outer 40–80, inner 80–150, infill 100–180 mm/s (volumetric ≈ 10–12 mm³/s)</td></tr>
+        <tr><td>Fan</td><td>30–60 %, bridges 100 %</td></tr>
+        <tr><td>Retraction</td><td>1.0 mm @ 30 mm/s; keep temperature moderate to limit strings</td></tr>
+        <tr><td>Flow ratio</td><td>0.95–0.98</td></tr>
+        <tr><td>Support Z gap</td><td>0.25–0.3 mm (PETG bonds strongly)</td></tr>
+      </tbody></table></div>
+    </div>
+    <div class="tab" data-title="ABS / ASA">
+      <div class="table-wrap"><table class="data compact"><thead><tr><th>Setting</th><th>Value</th></tr></thead><tbody>
+        <tr><td>Nozzle / bed</td><td>255–265 °C / 95–110 °C, enclosure preheated</td></tr>
+        <tr><td>Walls / top / bottom</td><td>3–4 / 5 / 4</td></tr>
+        <tr><td>Infill</td><td>15–25 % cubic or gyroid</td></tr>
+        <tr><td>Speeds</td><td>Outer 50–100, inner 100–180, infill 120–200 mm/s (volumetric ≈ 12–15 mm³/s)</td></tr>
+        <tr><td>Fan</td><td>0–20 %, bridges up to 100 %</td></tr>
+        <tr><td>Brim</td><td>5–8 mm on larger parts to resist warping</td></tr>
+        <tr><td>Notes</td><td>Print in an enclosure with ventilation or filtration; fumes (styrene) require good airflow</td></tr>
+      </tbody></table></div>
+    </div>
+    <div class="tab" data-title="TPU">
+      <div class="table-wrap"><table class="data compact"><thead><tr><th>Setting</th><th>Value</th></tr></thead><tbody>
+        <tr><td>Nozzle / bed</td><td>220–235 °C / 35–50 °C</td></tr>
+        <tr><td>Walls / top / bottom</td><td>2–3 / 4 / 3</td></tr>
+        <tr><td>Infill</td><td>10–25 % gyroid; flexibility rises with fewer walls and lower density</td></tr>
+        <tr><td>Speeds</td><td>20–45 mm/s all features (volumetric ≈ 3–6 mm³/s); slower for softer shores</td></tr>
+        <tr><td>Fan</td><td>40–80 %</td></tr>
+        <tr><td>Retraction</td><td>0–1 mm (or disabled); avoid fast retractions</td></tr>
+        <tr><td>Notes</td><td>Direct drive extruder with a tight filament path; dry the filament; avoid AMS-style long paths unless the manufacturer states support for the specific TPU</td></tr>
+      </tbody></table></div>
+    </div>
+  </div>
+
+  <div class="callout trick"><span class="callout-title">Tuning order that saves time</span>
+    <p>Dry the filament → calibrate flow ratio and pressure advance → find the temperature that gives clean surfaces → set volumetric flow → then adjust cooling and speed → only then touch retraction and supports. Doing it in a different order means retesting everything.</p>
+  </div>
+
+  <h2 id="quiz">Quick self-check</h2>
+  <div class="quiz"><p class="q">You want a stronger bracket that does not take much longer to print. Which change gives the best return?</p>
+    <ul class="options"><li>Infill from 15 % to 60 %</li><li data-correct>Increase walls from 2 to 4 and orient the layers across the load</li><li>Switch to a rectilinear infill</li></ul>
+    <p class="explain">Walls and orientation dominate strength; infill beyond 20–40 % mostly adds time and weight.</p></div>
+  <div class="quiz"><p class="q">A print at 250 mm/s shows under-extrusion on infill. What is the most likely limit?</p>
+    <ul class="options"><li>The slicer seam position</li><li data-correct>The hotend's maximum volumetric flow</li><li>The elephant foot compensation</li></ul>
+    <p class="explain">Feed speed × line width × layer height must stay under the hotend's melt rate.</p></div>
+  <div class="quiz"><p class="q">Strings between two posts keep appearing in PETG. Which is the best first move?</p>
+    <ul class="options"><li>Increase the fan to 100 %</li><li data-correct>Lower the nozzle temperature a few degrees, dry the filament and tune retraction</li><li>Add a raft</li></ul>
+    <p class="explain">Stringing is a combination of wet filament, excess heat and insufficient retraction.</p></div>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul>
+    <li>Orientation and wall count decide strength; infill density has diminishing returns.</li>
+    <li>Layer height trades surface quality for time; adaptive layer height and tuned seams hide most artifacts.</li>
+    <li>Real speed is limited by acceleration and volumetric flow, not by the headline mm/s.</li>
+    <li>Use tree support and painted enforcers to reduce scars; keep the Z gap around one layer.</li>
+    <li>Calibrate filament by filament: temperature, flow ratio, pressure advance, then retraction.</li>
+    <li>Change one setting at a time and save working presets under clear names.</li>
+  </ul>
+  <p>Practice: <a href="../exercises/level-1-beginner.html">Level 1 exercises</a> include calibration prints, and <a href="../exercises/x2d-challenges.html">X2D challenges</a> cover dual-nozzle settings. Return to the <a href="slicers.html">slicer overview</a> for workflow and presets.</p>
+
+</main>
+</body>
+</html>

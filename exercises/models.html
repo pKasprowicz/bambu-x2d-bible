@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Test models gallery · 3D Printing Compendium</title>
+  <meta name="description" content="Gallery of fourteen parametric OpenSCAD test models for 3D printing: calibration cube, temperature tower, bridge test, overhang ladder, tolerance gauge, hole gauge, retraction test, flow cube, ringing tower, snap-fit test, hinge test, text label test, cable clip and parametric box, with previews, purpose and downloads.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+  <style>
+    .mdl-links { display: flex; gap: 10px; flex-wrap: wrap; margin: .6em 0 0; }
+    .mdl-links a { display: inline-block; padding: 6px 14px; border: 1px solid var(--brand); border-radius: 10px; font-weight: 650; text-decoration: none; background: var(--surface); }
+    .mdl-links a:hover { background: var(--blue-s); }
+    .mdl-card { margin: 2.2em 0; padding-top: .4em; border-top: 1px solid var(--line); }
+  </style>
+</head>
+<body data-page="exercises/models.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 7 · Practice &amp; exercises</div>
+    <h1>Test models gallery</h1>
+    <p class="lead">Fourteen small, parametric OpenSCAD models that answer one question each: how accurate is my printer, how far can it bridge, how hot should I print this filament? Every file is plain text, uses no external libraries and starts with a comment block that lists its parameters and which exercises use it.</p>
+    <div class="meta"><span class="badge beginner">All levels</span><span class="badge time">14 .scad files</span><span class="badge time">each prints in about 5–90 min</span></div>
+  </header>
+
+  <h2>How to use these files</h2>
+  <p>OpenSCAD is a free program in which a model is defined by code. That makes the files tiny, easy to adapt (change a number, press render) and easy to share. You do not need to understand the code to use a model: the first lines of each file are the parameters you can change.</p>
+  <ol class="steps">
+    <li><strong>Download</strong> the <code>.scad</code> file with the link below its preview (or right-click → save link as).</li>
+    <li><strong>Open</strong> it in <a href="https://openscad.org/" rel="noopener">OpenSCAD</a> (or any compatible editor). Press <kbd>F5</kbd> for a quick preview.</li>
+    <li><strong>Edit parameters</strong> at the top of the file, such as <code>size</code> or <code>start_temp</code>. Preview again.</li>
+    <li><strong>Render</strong> with <kbd>F6</kbd>, then export as STL or 3MF (<em>File → Export</em>). Rendering text and many holes can take a few seconds.</li>
+    <li><strong>Slice and print</strong> with the settings recommended in each section, and use the exercise that goes with the model.</li>
+  </ol>
+  <div class="callout tip"><span class="callout-title">No OpenSCAD? No problem</span>
+    <p>Rendering is only needed to produce an STL. If you cannot install OpenSCAD, ask a friend to export the files once, or recreate the simple shapes in your CAD tool from the dimensions in each section. Several models also need only a few primitives (blocks, cylinders).</p></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 200" role="img" aria-label="Workflow: download a .scad file, edit parameters, render in OpenSCAD, export STL or 3MF, slice, print, measure and note results">
+      <g class="t-sm t-c t-b">
+        <rect class="f-blue" x="10" y="50" width="100" height="60" rx="10"/><text x="60" y="76">Download</text><text class="t-xs t-m" x="60" y="94">.scad file</text>
+        <rect class="f-teal" x="135" y="50" width="100" height="60" rx="10"/><text x="185" y="76">Edit</text><text class="t-xs t-m" x="185" y="94">parameters</text>
+        <rect class="f-green" x="260" y="50" width="100" height="60" rx="10"/><text x="310" y="76">Render</text><text class="t-xs t-m" x="310" y="94">F6 in OpenSCAD</text>
+        <rect class="f-orange" x="385" y="50" width="100" height="60" rx="10"/><text x="435" y="76">Export</text><text class="t-xs t-m" x="435" y="94">STL or 3MF</text>
+        <rect class="f-purple" x="510" y="50" width="100" height="60" rx="10"/><text x="560" y="76">Slice, print</text><text class="t-xs t-m" x="560" y="94">your profile</text>
+        <rect class="f-red" x="635" y="50" width="130" height="60" rx="10"/><text x="700" y="76">Measure, note</text><text class="t-xs t-m" x="700" y="94">in your journal</text>
+      </g>
+      <path class="d-ink arrow" d="M110 80 H133 M235 80 H258 M360 80 H383 M485 80 H508 M610 80 H633"/>
+      <text class="t-sm t-c t-m" x="390" y="160">Write down the printer, material and settings next to every result, so you can compare later.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> From file to measurement. Every model follows the same pipeline.</figcaption>
+  </figure>
+
+  <h2>Which model for which question?</h2>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Question</th><th>Model</th><th>Used in</th></tr></thead>
+    <tbody>
+      <tr><td>Are my axes the right size?</td><td><a href="#cal-cube">Calibration cube</a></td><td><a href="level-1-beginner.html#L1-2">L1-2</a>, <a href="level-1-beginner.html#L1-7">L1-7</a></td></tr>
+      <tr><td>Which nozzle temperature is best?</td><td><a href="#temp-tower">Temperature tower</a></td><td><a href="level-1-beginner.html#L1-11">L1-11</a>, <a href="level-2-intermediate.html#L2-1">L2-1</a></td></tr>
+      <tr><td>Do I get strings between towers?</td><td><a href="#retraction">Retraction test</a></td><td><a href="level-2-intermediate.html#L2-2">L2-2</a></td></tr>
+      <tr><td>Is my flow ratio right?</td><td><a href="#flow-cube">Flow cube</a></td><td><a href="level-2-intermediate.html#L2-3">L2-3</a></td></tr>
+      <tr><td>How far can I bridge?</td><td><a href="#bridge">Bridge test</a></td><td><a href="level-2-intermediate.html#L2-4">L2-4</a></td></tr>
+      <tr><td>Which overhang angle still prints well?</td><td><a href="#overhang">Overhang ladder</a></td><td><a href="level-2-intermediate.html#L2-5">L2-5</a></td></tr>
+      <tr><td>What clearance do I need?</td><td><a href="#tolerance">Tolerance gauge</a>, <a href="#hole-gauge">hole gauge</a></td><td><a href="level-2-intermediate.html#L2-6">L2-6</a>, <a href="level-3-advanced.html#L3-4">L3-4</a>, <a href="level-4-expert.html#L4-5">L4-5</a></td></tr>
+      <tr><td>Where is my printer ringing?</td><td><a href="#ringing">Ringing tower</a></td><td><a href="level-3-advanced.html#L3-2">L3-2</a></td></tr>
+      <tr><td>How strong is a snap-fit beam?</td><td><a href="#snap-fit">Snap-fit test</a></td><td><a href="level-3-advanced.html#L3-5">L3-5</a></td></tr>
+      <tr><td>Do print-in-place hinges move?</td><td><a href="#hinge">Hinge test</a></td><td><a href="level-3-advanced.html#L3-4">L3-4</a></td></tr>
+      <tr><td>What is the smallest readable text?</td><td><a href="#text-label">Text label test</a></td><td><a href="level-2-intermediate.html#L2-10">L2-10</a></td></tr>
+      <tr><td>A useful first practical print?</td><td><a href="#cable-clip">Cable clip</a></td><td><a href="level-1-beginner.html#L1-9">L1-9</a></td></tr>
+      <tr><td>A starting point for my own box</td><td><a href="#param-box">Parametric box</a></td><td><a href="level-2-intermediate.html#L2-7">L2-7</a></td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>🧪 The models</h2>
+
+  <section class="mdl-card" id="cal-cube">
+    <h3>1 · Calibration cube</h3>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 360 180" role="img" aria-label="Isometric calibration cube with engraved letters X, Y and Z on its faces and a ruler indicating 20 mm">
+        <path class="d-plastic" d="M90 60 H210 V170 H90 z"/>
+        <path class="d-plastic2" d="M90 60 L130 25 H250 L210 60 z"/>
+        <path class="d-plastic2" d="M210 60 L250 25 V135 L210 170 z" style="fill-opacity:.8"/>
+        <text class="t-lg t-c t-b" x="150" y="130">X</text>
+        <text class="t t-c t-b" x="230" y="100">Y</text>
+        <path class="d-thin arrow arrow-start" d="M90 178 H210"/>
+        <text class="t-sm t-c" x="300" y="100">20 mm</text>
+      </svg>
+      <figcaption><b>Figure 2.</b> The calibration cube: three engraved letters tell you which axis you are measuring.</figcaption>
+    </figure>
+    <p><strong>Purpose:</strong> Check dimensional accuracy in X, Y and Z with calipers, spot elephant foot, ringing and layer quality in one 20-minute print. The engraved letters X, Y, Z help you tell the faces apart when you compare notes.</p>
+    <ul>
+      <li><strong>Parameters:</strong> <code>size</code> (20 mm), <code>letter_h</code>, <code>engrave</code> depth, optional bottom <code>chamfer</code>.</li>
+      <li><strong>Print:</strong> 0.2 mm layers, 2–3 walls, 15 % infill, no supports. Measure after the part cools.</li>
+      <li><strong>Read the result:</strong> Within ±0.1 mm is a good result for an FDM printer; an error that is consistent suggests a scale or flow correction, while an error only on one axis points to the mechanics.</li>
+    </ul>
+    <div class="mdl-links"><a href="models/calibration_cube.scad" download>⬇ calibration_cube.scad</a><a href="level-1-beginner.html#L1-2">Exercise L1-2</a></div>
+  </section>
+
+  <section class="mdl-card" id="temp-tower">
+    <h3>2 · Temperature tower</h3>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 360 200" role="img" aria-label="A seven-tier temperature tower with temperatures from 220 to 250 degrees, each tier with a bridge and an overhang">
+        <g class="d-plastic">
+          <rect x="100" y="20" width="80" height="22"/><rect x="100" y="42" width="80" height="22"/><rect x="100" y="64" width="80" height="22"/><rect x="100" y="86" width="80" height="22"/><rect x="100" y="108" width="80" height="22"/><rect x="100" y="130" width="80" height="22"/><rect x="100" y="152" width="80" height="22"/>
+        </g>
+        <g class="t-sm"><text x="196" y="36">190 °C</text><text x="196" y="58">195</text><text x="196" y="80">200</text><text x="196" y="102">205</text><text x="196" y="124">210</text><text x="196" y="146">215</text><text x="196" y="168">220 (start)</text></g>
+        <path class="d-thin arrow" d="M60 170 V26"/><text class="t-xs t-c" x="60" y="186">print direction</text>
+      </svg>
+      <figcaption><b>Figure 3.</b> Default tower: seven tiers, hottest at the bottom (220 °C) and 5 °C cooler with each tier. Tier labels are engraved in the model.</figcaption>
+    </figure>
+    <p><strong>Purpose:</strong> Find the temperature that gives the best combination of surface, strength and stringing for a new spool, in a single print.</p>
+    <ul>
+      <li><strong>Parameters:</strong> <code>start_temp</code> (220, the bottom tier), <code>step</code> (5 °C drop per tier), <code>tiers</code> (7); each tier has an engraved temperature, a bridge opening and a 45° overhang fin.</li>
+      <li><strong>Print:</strong> Change the nozzle temperature in the slicer at each tier boundary (a temperature-calibration tool in the slicer can do this for you). Adjust start and step for the material: for example start at 260 °C with a 5 °C step for PETG.</li>
+      <li><strong>Read the result:</strong> Compare bridges, overhangs and stringing per tier; also try to break the tiers by hand: layer bonding gets better with temperature.</li>
+    </ul>
+    <div class="mdl-links"><a href="models/temp_tower.scad" download>⬇ temp_tower.scad</a><a href="level-2-intermediate.html#L2-1">Exercise L2-1</a><a href="level-1-beginner.html#L1-11">Exercise L1-11</a></div>
+  </section>
+
+  <section class="mdl-card" id="bridge">
+    <h3>3 · Bridge test</h3>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 360 180" role="img" aria-label="Side view of five bridges between pillars with spans of 10, 20, 30, 40 and 50 millimeters on a base plate">
+        <rect class="d-plastic2" x="10" y="150" width="340" height="10"/>
+        <g class="d-plastic">
+          <rect x="20" y="100" width="8" height="50"/><rect x="38" y="100" width="8" height="50"/><rect x="20" y="100" width="26" height="6"/>
+          <rect x="58" y="100" width="8" height="50"/><rect x="86" y="100" width="8" height="50"/><rect x="58" y="100" width="36" height="6"/>
+          <rect x="106" y="100" width="8" height="50"/><rect x="144" y="100" width="8" height="50"/><rect x="106" y="100" width="46" height="6"/>
+          <rect x="164" y="100" width="8" height="50"/><rect x="212" y="100" width="8" height="50"/><rect x="164" y="100" width="56" height="6"/>
+          <rect x="232" y="100" width="8" height="50"/><rect x="290" y="100" width="8" height="50"/><rect x="232" y="100" width="66" height="6"/>
+        </g>
+        <g class="t-xs t-c"><text x="33" y="90">10</text><text x="76" y="90">20</text><text x="129" y="90">30</text><text x="192" y="90">40</text><text x="265" y="90">50</text></g>
+        <text class="t-sm t-c t-m" x="180" y="30">Free spans from 10 to 50 mm (default)</text>
+      </svg>
+      <figcaption><b>Figure 4.</b> Bridges of increasing length. The longest span that stays flat tells you how far you can bridge with your cooling and speed.</figcaption>
+    </figure>
+    <p><strong>Purpose:</strong> Find the maximum reliable unsupported span for your material, speed and fan setting.</p>
+    <ul>
+      <li><strong>Parameters:</strong> <code>spans</code> list (10–50 mm), <code>pillar_h</code>, <code>deck_t</code>, <code>depth</code>.</li>
+      <li><strong>Print:</strong> 0.2 mm layers, fan at maximum for PLA, no supports. Run once at the default speed and once with a slower bridge speed.</li>
+      <li><strong>Read the result:</strong> Look at the underside of each deck: smooth and flat is good, sagging strands or a droop are not.</li>
+    </ul>
+    <div class="mdl-links"><a href="models/bridge_test.scad" download>⬇ bridge_test.scad</a><a href="level-2-intermediate.html#L2-4">Exercise L2-4</a></div>
+  </section>
+
+  <section class="mdl-card" id="overhang">
+    <h3>4 · Overhang ladder</h3>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 360 200" role="img" aria-label="A spine with six wedges whose undersides slope at 30, 40, 50, 60, 70 and 80 degrees from vertical">
+        <rect class="d-plastic2" x="40" y="20" width="14" height="160"/>
+        <g class="d-plastic">
+          <path d="M54 30 L120 30 L54 50 z"/><path d="M54 56 L120 56 L54 76 z"/><path d="M54 82 L120 82 L54 102 z"/>
+          <path d="M54 108 L120 108 L54 128 z"/><path d="M54 134 L120 134 L54 154 z"/><path d="M54 160 L120 160 L54 180 z"/>
+        </g>
+        <g class="t-sm"><text x="130" y="44">30°</text><text x="130" y="70">40°</text><text x="130" y="96">50°</text><text x="130" y="122">60°</text><text x="130" y="148">70°</text><text x="130" y="174">80°</text></g>
+        <text class="t-sm t-m" x="190" y="100">Angles measured from vertical.</text>
+        <text class="t-sm t-m" x="190" y="120">The steepest clean wedge is your limit.</text>
+      </svg>
+      <figcaption><b>Figure 5.</b> Overhang ladder (schematic). Each wedge has a differently sloped underside.</figcaption>
+    </figure>
+    <p><strong>Purpose:</strong> Find the largest overhang angle that prints without support at your cooling and speed settings.</p>
+    <ul>
+      <li><strong>Parameters:</strong> <code>angles</code> (30–80° from vertical), <code>slope_len</code>, <code>wedge_w</code>.</li>
+      <li><strong>Print:</strong> Print without supports. Note the first wedge whose underside is rough or drooping.</li>
+      <li><strong>Read the result:</strong> A typical result for PLA with good cooling is a clean surface to about 50–60° from vertical; use your own value as the design limit.</li>
+    </ul>
+    <div class="mdl-links"><a href="models/overhang_ladder.scad" download>⬇ overhang_ladder.scad</a><a href="level-2-intermediate.html#L2-5">Exercise L2-5</a></div>
+  </section>
+
+  <section class="mdl-card" id="tolerance">
+    <h3>5 · Tolerance gauge</h3>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 360 190" role="img" aria-label="A plate with a row of holes and a second part with pegs; clearance values from 0.0 to 0.5 mm are written under each pair">
+        <rect class="d-plastic" x="20" y="30" width="320" height="50" rx="4"/>
+        <g class="d-surface"><circle cx="50" cy="55" r="12"/><circle cx="105" cy="55" r="13"/><circle cx="165" cy="55" r="14"/><circle cx="230" cy="55" r="15"/><circle cx="300" cy="55" r="16"/></g>
+        <rect class="d-plastic2" x="20" y="110" width="320" height="30" rx="4"/>
+        <g class="d-plastic"><circle cx="50" cy="125" r="8"/><circle cx="105" cy="125" r="8"/><circle cx="165" cy="125" r="8"/><circle cx="230" cy="125" r="8"/><circle cx="300" cy="125" r="8"/></g>
+        <g class="t-xs t-c"><text x="50" y="170">0.0</text><text x="105" y="170">0.1</text><text x="165" y="170">0.2</text><text x="230" y="170">0.3</text><text x="300" y="170">0.4</text></g>
+        <text class="t-sm t-c t-m" x="180" y="20">Plate with holes above, pegs below (schematic)</text>
+      </svg>
+      <figcaption><b>Figure 6.</b> The tolerance gauge: a plate with holes and a matching peg strip. The labels give the clearance for each pair.</figcaption>
+    </figure>
+    <p><strong>Purpose:</strong> Decide which clearance to design for a press fit, a sliding fit and a loose fit.</p>
+    <ul>
+      <li><strong>Parameters:</strong> <code>part</code> (<code>plate</code>, <code>pegs</code> or <code>both</code>), peg diameter (8 mm) and a list of clearances from 0 to 0.5 mm.</li>
+      <li><strong>Print:</strong> Use the settings you will use for real parts and print both parts in the same orientation. Test the fit after removing all brim and first-layer flare.</li>
+      <li><strong>Read the result:</strong> Note the smallest clearance that moves freely (sliding) and the one that needs a light press (snug). Use these numbers in your CAD tables.</li>
+    </ul>
+    <div class="mdl-links"><a href="models/tolerance_gauge.scad" download>⬇ tolerance_gauge.scad</a><a href="level-2-intermediate.html#L2-6">Exercise L2-6</a></div>
+  </section>
+
+  <section class="mdl-card" id="hole-gauge">
+    <h3>6 · Hole gauge</h3>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 360 150" role="img" aria-label="A plate with six holes of increasing diameter 3, 4, 5, 6, 8 and 10 millimeters">
+        <rect class="d-plastic" x="10" y="30" width="340" height="90" rx="6"/>
+        <g class="d-surface"><circle cx="35" cy="75" r="6"/><circle cx="80" cy="75" r="8"/><circle cx="130" cy="75" r="10"/><circle cx="185" cy="75" r="12"/><circle cx="245" cy="75" r="16"/><circle cx="310" cy="75" r="20"/></g>
+        <g class="t-xs t-c"><text x="35" y="112">3</text><text x="80" y="112">4</text><text x="130" y="112">5</text><text x="185" y="112">6</text><text x="245" y="112">8</text><text x="310" y="112">10</text></g>
+        <text class="t-sm t-c t-m" x="180" y="20">Nominal diameters in millimeters</text>
+      </svg>
+      <figcaption><b>Figure 7.</b> Hole gauge with six nominal diameters. The measured diameters show how much your printer shrinks holes.</figcaption>
+    </figure>
+    <p><strong>Purpose:</strong> Measure how much smaller than nominal printed holes come out, using drill bits or pin gauges, and derive a compensation per diameter.</p>
+    <ul>
+      <li><strong>Parameters:</strong> <code>diameters</code> (3, 4, 5, 6, 8, 10 mm), optional <code>comp</code> (diameter compensation added to every hole), <code>height</code>, <code>gap</code>.</li>
+      <li><strong>Print:</strong> The block has a row of vertical holes and a row of horizontal holes (axis along Y), so one print compares both. Print it with your normal profile.</li>
+      <li><strong>Read the result:</strong> Try drill bits or pins: the largest bit that fits is your measure. Typical shrinkage is 0.1–0.3 mm, but depends on printer and material.</li>
+    </ul>
+    <div class="mdl-links"><a href="models/hole_gauge.scad" download>⬇ hole_gauge.scad</a><a href="level-2-intermediate.html#L2-6">Exercise L2-6</a><a href="level-4-expert.html#L4-5">Project L4-5</a></div>
+  </section>
+
+  <section class="mdl-card" id="retraction">
+    <h3>7 · Retraction test</h3>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 360 190" role="img" aria-label="Four thin towers on a base plate with thin strings between the towers where retraction is too low">
+        <rect class="d-plastic2" x="20" y="160" width="320" height="10"/>
+        <g class="d-plastic"><rect x="50" y="30" width="22" height="130"/><rect x="135" y="30" width="22" height="130"/><rect x="220" y="30" width="22" height="130"/><rect x="305" y="30" width="22" height="130"/></g>
+        <g class="d-thin"><path d="M72 120 Q104 128 135 120"/><path d="M72 90 Q104 98 135 90"/><path d="M157 100 Q188 108 220 100"/></g>
+        <text class="t-sm t-c t-m" x="180" y="20">Strings between towers = not enough retraction</text>
+      </svg>
+      <figcaption><b>Figure 8.</b> Retraction test (schematic): fine strings between towers show where the retraction settings are too weak.</figcaption>
+    </figure>
+    <p><strong>Purpose:</strong> Judge stringing quickly, and compare retraction length, speed and temperature settings with one plate.</p>
+    <ul>
+      <li><strong>Parameters:</strong> <code>towers</code> (4), <code>tower_d</code> (8 mm), <code>tower_h</code> (40 mm), <code>spacing</code> (30 mm).</li>
+      <li><strong>Print:</strong> Change one retraction value per print (for example 0.4, 0.8, 1.2 mm on a direct-drive extruder). Dry the filament first.</li>
+      <li><strong>Read the result:</strong> Count the strings between towers for each setting, and keep the lowest retraction that gives a clean print.</li>
+    </ul>
+    <div class="mdl-links"><a href="models/retraction_test.scad" download>⬇ retraction_test.scad</a><a href="level-2-intermediate.html#L2-2">Exercise L2-2</a></div>
+  </section>
+
+  <section class="mdl-card" id="flow-cube">
+    <h3>8 · Flow cube</h3>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 360 180" role="img" aria-label="Top view of a hollow cube with a thin wall of 0.84 millimeters, with a caliper measuring the wall">
+        <rect class="d-plastic" x="110" y="20" width="140" height="140"/>
+        <rect class="d-surface" x="122" y="32" width="116" height="116"/>
+        <path class="d-thin arrow arrow-start" d="M110 175 H122"/>
+        <text class="t-sm" x="132" y="178">wall 0.84 mm (2 × 0.42)</text>
+        <text class="t-sm t-c t-m" x="180" y="94">hollow, open top</text>
+      </svg>
+      <figcaption><b>Figure 9.</b> A single-wall flow cube seen from above: the wall thickness must match the modeled value.</figcaption>
+    </figure>
+    <p><strong>Purpose:</strong> Calibrate the flow ratio (extrusion multiplier) by measuring a wall that is exactly two extrusion lines thick.</p>
+    <ul>
+      <li><strong>Parameters:</strong> <code>size</code>, <code>height</code>, <code>wall</code> (0.84 mm), <code>bottom</code> (1.0 mm), optional <code>corner_r</code>.</li>
+      <li><strong>Print:</strong> Use a slicer profile with 2 walls, no top layers and no infill so the cube prints as a hollow shell, or use vase mode with a line width of 0.84 mm.</li>
+      <li><strong>Read the result:</strong> Measure the wall in several places. New flow = old flow × (modeled wall ÷ measured wall). Change flow in small steps (1–3 %).</li>
+    </ul>
+    <div class="mdl-links"><a href="models/flow_cube.scad" download>⬇ flow_cube.scad</a><a href="level-2-intermediate.html#L2-3">Exercise L2-3</a></div>
+  </section>
+
+  <section class="mdl-card" id="ringing">
+    <h3>9 · Ringing tower</h3>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 360 190" role="img" aria-label="A block with a notch at the upper edge and ripples of decreasing amplitude after the notch, with the letters X and Y on the faces">
+        <rect class="d-plastic" x="110" y="20" width="140" height="150"/>
+        <rect class="d-surface" x="110" y="20" width="26" height="26"/>
+        <g class="d-thin"><path d="M136 60 q-4 3 0 6 q4 3 0 6 q-3 3 0 6"/><path d="M136 110 q-3 3 0 6"/></g>
+        <text class="t-lg t-b t-c" x="190" y="110">X</text>
+        <text class="t-sm t-m" x="262" y="40">notch triggers the</text><text class="t-sm t-m" x="262" y="58">vibration</text>
+        <text class="t-sm t-m" x="262" y="150">ripples fade with distance</text>
+      </svg>
+      <figcaption><b>Figure 10.</b> The ringing tower: a sharp notch excites the frame and leaves ripples on the wall behind it.</figcaption>
+    </figure>
+    <p><strong>Purpose:</strong> Visualize ringing and compare accelerations, speeds and input-shaping settings.</p>
+    <ul>
+      <li><strong>Parameters:</strong> <code>width</code>, <code>depth</code>, <code>height</code> (30 × 30 × 50 mm), notch size (<code>notch_w</code>, <code>notch_d</code>), <code>text_h</code>; the notch is cut into the +X face.</li>
+      <li><strong>Print:</strong> Print at a fast speed. Repeat at lower acceleration or with input shaping on. Keep the printer on the same surface for all prints.</li>
+      <li><strong>Read the result:</strong> Count ripples and measure their spacing with calipers; the spacing together with the print speed gives the ringing frequency (f = v ÷ spacing).</li>
+    </ul>
+    <div class="mdl-links"><a href="models/ringing_tower.scad" download>⬇ ringing_tower.scad</a><a href="level-3-advanced.html#L3-2">Exercise L3-2</a></div>
+  </section>
+
+  <section class="mdl-card" id="snap-fit">
+    <h3>10 · Snap-fit test</h3>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 360 190" role="img" aria-label="A cantilever snap-fit beam with a hook on the end, with beam thickness t, length L and hook height h marked">
+        <rect class="d-plastic2" x="30" y="40" width="40" height="120"/>
+        <rect class="d-plastic" x="70" y="40" width="190" height="14"/>
+        <path class="d-plastic" d="M260 40 H276 L276 68 L260 54 z"/>
+        <path class="d-thin arrow arrow-start" d="M70 30 H260"/><text class="t-sm t-c" x="165" y="24">L = 14 mm (default)</text>
+        <path class="d-thin arrow arrow-start" d="M300 40 V54"/><text class="t-sm" x="306" y="52">t</text>
+        <path class="d-thin arrow arrow-start" d="M290 54 V68"/><text class="t-sm" x="296" y="68">h</text>
+        <text class="t-sm t-m" x="30" y="180">ε = 1.5 · t · h ÷ L² (about 1.2 % for t = 1.6, h = 1.0, L = 14)</text>
+      </svg>
+      <figcaption><b>Figure 11.</b> A cantilever snap-fit and its main dimensions. The strain follows from thickness, deflection and length.</figcaption>
+    </figure>
+    <p><strong>Purpose:</strong> Test beams of different length and thickness to find out which ones snap repeatedly without breaking.</p>
+    <ul>
+      <li><strong>Parameters:</strong> <code>part</code> (<code>clip</code>, <code>socket</code> or <code>both</code>), <code>beam_t</code> (1.6), <code>beam_l</code> (14), <code>hook_h</code> (1.0), <code>beam_w</code>, <code>clearance</code>.</li>
+      <li><strong>Print:</strong> Print with the layers running along the beam (print the part on its side or flat, never standing). Use PETG or nylon for repeated use.</li>
+      <li><strong>Read the result:</strong> Count the number of snaps until the first crack; compare with the calculated strain and the allowable strain of the material.</li>
+    </ul>
+    <div class="mdl-links"><a href="models/snap_fit_test.scad" download>⬇ snap_fit_test.scad</a><a href="level-3-advanced.html#L3-5">Exercise L3-5</a></div>
+  </section>
+
+  <section class="mdl-card" id="hinge">
+    <h3>11 · Hinge test</h3>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 360 160" role="img" aria-label="A print-in-place hinge with five knuckles alternating between two leaves and a central pin, with a clearance gap marked">
+        <rect class="d-plastic" x="20" y="60" width="90" height="60" rx="4"/>
+        <rect class="d-plastic2" x="250" y="60" width="90" height="60" rx="4"/>
+        <g class="d-plastic"><rect x="110" y="55" width="28" height="70" rx="12"/><rect x="170" y="55" width="28" height="70" rx="12"/><rect x="222" y="55" width="28" height="70" rx="12"/></g>
+        <g class="d-plastic2"><rect x="140" y="55" width="28" height="70" rx="12"/><rect x="198" y="55" width="22" height="70" rx="12"/></g>
+        <rect class="d-metal" x="100" y="86" width="160" height="8"/>
+        <text class="t-sm t-c t-m" x="180" y="30">5 knuckles, central pin, 0.4 mm gaps (default)</text>
+        <text class="t-sm t-c" x="180" y="150">leaf A  ·  knuckles alternate  ·  leaf B</text>
+      </svg>
+      <figcaption><b>Figure 12.</b> Hinge test (schematic): the two leaves must rotate freely after printing in one piece.</figcaption>
+    </figure>
+    <p><strong>Purpose:</strong> Find the smallest clearance at which a print-in-place hinge moves without breaking loose by force.</p>
+    <ul>
+      <li><strong>Parameters:</strong> <code>knuckles</code> (5), <code>clearance</code> (0.4), <code>pin_r</code> (2 mm), <code>R</code>, <code>seg</code>, <code>leaf_w</code>.</li>
+      <li><strong>Print:</strong> Print flat on the bed with the pin axis along the plate, with no supports in the gaps. Try several clearances in a row.</li>
+      <li><strong>Read the result:</strong> The hinge should swing through 180° after a first firm movement. Too tight: fused. Too loose: wobble.</li>
+    </ul>
+    <div class="mdl-links"><a href="models/hinge_test.scad" download>⬇ hinge_test.scad</a><a href="level-3-advanced.html#L3-4">Exercise L3-4</a></div>
+  </section>
+
+  <section class="mdl-card" id="text-label">
+    <h3>12 · Text label test</h3>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 360 190" role="img" aria-label="A plate with six lines of sample text at increasing heights from 3 to 10 millimeters">
+        <rect class="d-plastic" x="20" y="10" width="320" height="170" rx="6"/>
+        <g class="t-mono"><text class="t-xs" x="34" y="34">3 Print 123</text><text class="t-xs" x="34" y="54" style="font-size:11px">4 Print 123</text><text class="t-sm" x="34" y="76">5 Print 123</text><text class="t-sm" x="34" y="100" style="font-size:15px">6 Print 123</text><text class="t" x="34" y="130" style="font-size:19px">8 Print 123</text><text class="t-lg" x="34" y="166">10 Print 123</text></g>
+      </svg>
+      <figcaption><b>Figure 13.</b> Text rows from small to large (schematic). The smallest row that is still readable is your lower limit.</figcaption>
+    </figure>
+    <p><strong>Purpose:</strong> Find the smallest readable raised or engraved text for your nozzle, layer height and orientation.</p>
+    <ul>
+      <li><strong>Parameters:</strong> <code>sizes</code> list (3–10 mm), <code>sample</code> text, <code>bold</code>, <code>relief</code> (0.6 mm), <code>plate_t</code>.</li>
+      <li><strong>Print:</strong> Print twice: raised and engraved. Use a bold font. OpenSCAD needs a font (Liberation Sans is bundled with most installations).</li>
+      <li><strong>Read the result:</strong> Raised text is generally more readable than engraved text at small sizes; note the smallest row you can read at arm's length.</li>
+    </ul>
+    <div class="mdl-links"><a href="models/text_label_test.scad" download>⬇ text_label_test.scad</a><a href="level-2-intermediate.html#L2-10">Exercise L2-10</a></div>
+  </section>
+
+  <section class="mdl-card" id="cable-clip">
+    <h3>13 · Cable clip</h3>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 360 180" role="img" aria-label="Front view of a cable clip: a ring with a narrow slot on top, a flat foot with a screw hole, and a cable circle inside">
+        <rect class="d-plastic" x="40" y="120" width="280" height="26" rx="4"/>
+        <circle class="d-surface" cx="75" cy="133" r="6"/><circle class="d-surface" cx="285" cy="133" r="6"/>
+        <circle class="d-plastic" cx="180" cy="80" r="46"/>
+        <circle class="d-surface" cx="180" cy="80" r="26"/>
+        <rect class="d-surface" x="170" y="28" width="20" height="30"/>
+        <text class="t-sm t-c t-m" x="180" y="168">Slot (3.6 mm) is narrower than the cable (5 mm): it snaps in</text>
+      </svg>
+      <figcaption><b>Figure 14.</b> The cable clip: a ring with a narrow opening and a foot with two screw holes.</figcaption>
+    </figure>
+    <p><strong>Purpose:</strong> A first useful print: tidy a cable on a desk or wall, and practice measuring and adapting a parametric design.</p>
+    <ul>
+      <li><strong>Parameters:</strong> <code>cable_d</code> (5 mm), <code>fit</code> (0.3), <code>wall</code> (2.4), <code>opening</code>, <code>width</code>, <code>foot_w</code>, <code>screw_d</code>.</li>
+      <li><strong>Print:</strong> Lay the clip on its side so that the ring layers run around the cable, in PLA or PETG, 3 walls.</li>
+      <li><strong>Read the result:</strong> The cable should snap in with a light push and hold without sliding. Adjust <code>fit</code> and <code>opening</code> for thicker or thinner cables.</li>
+    </ul>
+    <div class="mdl-links"><a href="models/cable_clip.scad" download>⬇ cable_clip.scad</a><a href="level-1-beginner.html#L1-9">Exercise L1-9</a></div>
+  </section>
+
+  <section class="mdl-card" id="param-box">
+    <h3>14 · Parametric box</h3>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 360 190" role="img" aria-label="A rectangular box with a lid lifted above it, with the wall thickness and inner size parameters marked">
+        <rect class="d-plastic2" x="70" y="30" width="220" height="26" rx="4"/>
+        <rect class="d-plastic" x="90" y="56" width="180" height="10"/>
+        <path class="d-dash" d="M100 74 V100 M260 74 V100"/>
+        <rect class="d-plastic" x="70" y="100" width="220" height="70" rx="4"/>
+        <rect class="d-surface" x="84" y="108" width="192" height="62"/>
+        <text class="t-sm t-c" x="180" y="48">lid</text>
+        <path class="d-thin arrow arrow-start" d="M70 183 H290"/>
+        <text class="t-sm t-c t-m" x="180" y="146">base: wall, inner size, corner radius</text>
+      </svg>
+      <figcaption><b>Figure 15.</b> The box: a base and a lid with a lip, with all dimensions as parameters.</figcaption>
+    </figure>
+    <p><strong>Purpose:</strong> A ready-made parametric project that you can adapt for electronics, tools and gifts, and a reference solution for the CAD exercise.</p>
+    <ul>
+      <li><strong>Parameters:</strong> inner width, depth and height, wall thickness, lid lip, clearance, <code>part</code> (<code>base</code>, <code>lid</code>, <code>both</code> or <code>preview</code>).</li>
+      <li><strong>Print:</strong> Export <code>base</code> and <code>lid</code> separately, each with the largest flat face on the plate. Print the lid first to check the fit.</li>
+      <li><strong>Read the result:</strong> The lid should press on with light force and not rattle; change the clearance by 0.05 mm steps.</li>
+    </ul>
+    <div class="mdl-links"><a href="models/parametric_box.scad" download>⬇ parametric_box.scad</a><a href="level-2-intermediate.html#L2-7">Exercise L2-7</a></div>
+  </section>
+
+  <h2>Suggested print order for a new printer</h2>
+  <p>You do not have to print everything. This sequence builds on itself and gives you a complete picture of a new printer or filament in about a day of printing time:</p>
+  <ol class="steps">
+    <li><strong>Calibration cube</strong> (20 min): sanity check of size and first layer.</li>
+    <li><strong>Temperature tower</strong> (about 1 h): choose the temperature.</li>
+    <li><strong>Flow cube</strong> (15 min): set the flow ratio at that temperature.</li>
+    <li><strong>Retraction test</strong> (30 min): remove stringing.</li>
+    <li><strong>Bridge test and overhang ladder</strong> (about 1 h in total): learn the limits of the cooling.</li>
+    <li><strong>Tolerance and hole gauges</strong> (30 min each): create your clearance table.</li>
+    <li><strong>Ringing tower</strong> (45 min): tune acceleration and input shaping.</li>
+  </ol>
+  <div class="callout fact"><span class="callout-title">Keep the results</span>
+    <p>Write the numbers into your journal (<a href="index.html#journal">template on the exercises overview</a>). A table with “filament, temperature, flow, retraction, clearance” saves you from repeating the tests every time.</p></div>
+
+  <h2>License and sharing</h2>
+  <p>Use these models freely as starting points for your own designs. For releasing your own work, see <a href="level-4-expert.html#L4-12">Project L4-12</a>.</p>
+
+  <h2>Next steps</h2>
+  <div class="grid cols-3">
+    <a class="card accent-blue" href="index.html"><h3>Exercise overview</h3><p>Find the right level and the print journal template.</p></a>
+    <a class="card accent-green" href="quizzes.html"><h3>Quizzes</h3><p>Test yourself on materials, slicing and design.</p></a>
+    <a class="card accent-orange" href="../tools/calculators.html"><h3>Calculators</h3><p>Flow, strain and cost helpers for the tests above.</p></a>
+  </div>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Exercises &amp; practice · 3D Printing Compendium</title>
+  <meta name="description" content="How the exercise system works: five levels from beginner to expert plus X2D challenges, a self-assessment that recommends your starting level, a print journal template, quizzes and parametric test models.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+  <style>
+    .ix-q { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 12px 18px; margin: 12px 0; }
+    .ix-q legend { font-weight: 700; padding: 0 6px; }
+    .ix-q label { display: block; padding: 6px 8px; border-radius: 8px; cursor: pointer; }
+    .ix-q label:hover { background: var(--blue-s); }
+    .ix-q input { margin-right: 8px; }
+    .ix-actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 1em 0; }
+    .ix-actions button, .ix-journal button { font: inherit; font-weight: 650; padding: 8px 16px; border-radius: 10px; border: 1px solid var(--brand); background: var(--surface); color: var(--ink); cursor: pointer; }
+    .ix-actions button:hover, .ix-journal button:hover { background: var(--blue-s); }
+    .ix-result { margin: 1em 0; padding: 16px 20px; border: 2px solid var(--brand); border-radius: var(--radius); background: var(--surface); }
+    .ix-result[hidden] { display: none; }
+    .ix-meter { height: 14px; border-radius: 7px; background: var(--line); overflow: hidden; margin: 8px 0; }
+    .ix-meter > i { display: block; height: 100%; width: 0; background: var(--brand); transition: width .4s; }
+    .ix-journal textarea, .ix-journal input[type=text], .ix-journal input[type=date], .ix-journal select { width: 100%; font: inherit; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); box-sizing: border-box; }
+    .ix-journal pre { white-space: pre-wrap; margin: 0; }
+  </style>
+</head>
+<body data-page="exercises/index.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 7 · Practice &amp; exercises</div>
+    <h1>Exercises &amp; practice</h1>
+    <p class="lead">Reading about 3D printing gets you only part of the way. Hands-on practice does the rest. This part of the compendium has 69 exercises in five tracks, ninety quiz questions, fourteen test models and a print journal template, so that every hour at the printer teaches you something specific.</p>
+    <div class="meta"><span class="badge beginner">Beginner</span><span class="badge intermediate">Intermediate</span><span class="badge advanced">Advanced</span><span class="badge expert">Expert</span><span class="badge time">69 exercises</span></div>
+  </header>
+
+  <h2>Your progress</h2>
+  <p>Tick “mark as completed” at the bottom of each exercise and these bars fill up. Progress is stored in this browser only; nothing is sent anywhere.</p>
+  <div class="grid cols-2">
+    <div class="progress-summary" data-prefix="L1-" data-total="15" data-label="Level 1 · Beginner"></div>
+    <div class="progress-summary" data-prefix="L2-" data-total="15" data-label="Level 2 · Intermediate"></div>
+    <div class="progress-summary" data-prefix="L3-" data-total="15" data-label="Level 3 · Advanced"></div>
+    <div class="progress-summary" data-prefix="L4-" data-total="12" data-label="Level 4 · Expert"></div>
+  </div>
+  <div class="progress-summary" data-prefix="X-" data-total="12" data-label="X2D challenges"></div>
+
+  <h2>The level map</h2>
+  <p>The four main levels build on each other: each one assumes the skills of the one before it. The X2D challenges are a side track for owners of a Bambu Lab X2D with AMS 2 Pro; they fit best after Level 2, but you can start them earlier if you own the machine.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 800 330" role="img" aria-label="Level map: four levels as stairs from Level 1 beginner to Level 4 expert, with the X2D challenges as a side track and quizzes and test models supporting every level">
+      <path class="d-grid" d="M20 300 H780"/>
+      <g class="t-sm t-c t-b">
+        <rect class="f-green" x="30" y="220" width="160" height="80" rx="8"/><text x="110" y="250">Level 1</text><text class="t-xs t-m" x="110" y="270">Beginner · 15 exercises</text>
+        <rect class="f-blue" x="210" y="170" width="160" height="130" rx="8"/><text x="290" y="200">Level 2</text><text class="t-xs t-m" x="290" y="220">Intermediate · 15</text><text class="t-xs t-m" x="290" y="238">calibrate, test, design</text>
+        <rect class="f-orange" x="390" y="110" width="160" height="190" rx="8"/><text x="470" y="140">Level 3</text><text class="t-xs t-m" x="470" y="160">Advanced · 15</text><text class="t-xs t-m" x="470" y="178">tune, engineer, script</text>
+        <rect class="f-red" x="570" y="50" width="160" height="250" rx="8"/><text x="650" y="80">Level 4</text><text class="t-xs t-m" x="650" y="100">Expert · 12 projects</text><text class="t-xs t-m" x="650" y="118">capstones</text>
+      </g>
+      <g class="t-xs t-c">
+        <text x="110" y="292">first print, safety, basics</text>
+        <text x="290" y="292">temperature, flow, fits</text>
+        <text x="470" y="292">pressure advance, mechanisms</text>
+        <text x="650" y="292">statistics, production</text>
+      </g>
+      <path class="d-dash arrow" d="M290 160 C 330 90, 420 40, 470 36"/>
+      <rect class="f-teal" x="400" y="14" width="190" height="40" rx="8"/><text class="t-sm t-c t-b" x="495" y="40">X2D challenges (12)</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> The four levels as stairs. The X2D challenges branch off after Level 2. Quizzes and test models support every step.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Track</th><th>For you if…</th><th>Typical total time</th><th>You will practice</th></tr></thead>
+    <tbody>
+      <tr><td><a href="level-1-beginner.html"><strong>Level 1 · Beginner</strong></a></td><td>You have a printer but few prints behind you, or you are about to start</td><td>about 15–25 h</td><td>Safety, first prints, measuring, reading slicer previews, simple models</td></tr>
+      <tr><td><a href="level-2-intermediate.html"><strong>Level 2 · Intermediate</strong></a></td><td>You print regularly with presets and want better and more predictable parts</td><td>about 30–45 h</td><td>Calibration tests, materials, supports, tolerances, first CAD designs</td></tr>
+      <tr><td><a href="level-3-advanced.html"><strong>Level 3 · Advanced</strong></a></td><td>You tune profiles yourself and design functional parts</td><td>about 50–80 h</td><td>Pressure advance, input shaping, mechanisms, scripting, G-code</td></tr>
+      <tr><td><a href="level-4-expert.html"><strong>Level 4 · Expert</strong></a></td><td>You want production-grade or research-grade results</td><td>100 h or more</td><td>Compliant mechanisms, statistics, DoE, fixtures, casting, releases</td></tr>
+      <tr><td><a href="x2d-challenges.html"><strong>X2D challenges</strong></a></td><td>You own a Bambu Lab X2D with AMS 2 Pro</td><td>about 20–40 h</td><td>Dual-nozzle workflows, AMS 2 Pro, chamber and materials</td></tr>
+    </tbody>
+  </table></div>
+  <p class="meta">Times are rough estimates that include printing time, which usually runs in the background. Your pace will differ.</p>
+
+  <h2>How an exercise is built</h2>
+  <p>Every exercise has the same structure, so you always know where to look. Read the goal and the materials first, then work through the steps. Try to meet the success criteria before you open the hint, and look at the worked solution last, to compare it with your own result and not to copy it.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 270" role="img" aria-label="Anatomy of an exercise: header with level and time, goal, materials, steps, success criteria checklist, hint and solution accordions and a mark-as-completed checkbox">
+      <rect class="d-surface" x="20" y="14" width="440" height="244" rx="10"/>
+      <rect class="f-blue" x="20" y="14" width="440" height="34" rx="10"/>
+      <text class="t-sm t-b" x="34" y="36">Exercise 3 — Calibration cube</text>
+      <rect class="f-green" x="330" y="22" width="60" height="18" rx="9"/><text class="t-xs t-c" x="360" y="35">Level 1</text>
+      <rect class="f-gray" x="396" y="22" width="56" height="18" rx="9"/><text class="t-xs t-c" x="424" y="35">⏱ 1 h</text>
+      <g class="t-sm"><text class="t-b" x="34" y="72">Goal</text><text class="t-b" x="34" y="102">You will need</text><text class="t-b" x="34" y="132">Steps</text><text class="t-b" x="34" y="176">Success criteria</text></g>
+      <g class="d-thin"><path d="M34 80 H440 M34 110 H440 M34 140 H440 M34 150 H400 M34 160 H420"/></g>
+      <g class="d-thin"><rect x="34" y="184" width="10" height="10"/><rect x="34" y="200" width="10" height="10"/></g>
+      <text class="t-xs" x="52" y="193">measured X within ±0.2 mm</text><text class="t-xs" x="52" y="209">first layer fully fused</text>
+      <rect class="f-orange" x="34" y="218" width="190" height="24" rx="6"/><text class="t-xs" x="44" y="234">▸ Hint</text>
+      <rect class="f-purple" x="236" y="218" width="210" height="24" rx="6"/><text class="t-xs" x="246" y="234">▸ Worked solution</text>
+      <g class="t-sm">
+        <path class="d-thin arrow" d="M560 30 L462 30"/><text x="570" y="34">Level badge and time estimate</text>
+        <path class="d-thin arrow" d="M560 76 L462 70"/><text x="570" y="80">Goal: what you will learn</text>
+        <path class="d-thin arrow" d="M560 120 L462 110"/><text x="570" y="124">Materials and tools</text>
+        <path class="d-thin arrow" d="M560 150 L462 140"/><text x="570" y="154">Numbered, doable steps</text>
+        <path class="d-thin arrow" d="M560 192 L462 192"/><text x="570" y="196">Checklist: tick as you go</text>
+        <path class="d-thin arrow" d="M560 230 L462 230"/><text x="570" y="234">Hint first, solution last</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 2.</b> The anatomy of an exercise. A “mark as completed” checkbox sits at the bottom of each one.</figcaption>
+  </figure>
+
+  <div class="callout tip"><span class="callout-title">A good way to work</span>
+    <p>Plan a short session: read an exercise, start a print, and use the waiting time to read the linked chapter. Most exercises need one print or two. Avoid doing three at once, because mixing results from different experiments is a common way to learn the wrong thing.</p></div>
+
+  <h2>🎯 Which level should I start with?</h2>
+  <p>Answer the ten questions honestly. Each answer is worth 0–3 points; the total suggests a starting level. It is only a recommendation: if you are unsure, start one level lower and skim the early exercises quickly. Your answers are not stored anywhere except the final level, which stays in this browser so that the page can remind you next time.</p>
+
+  <form id="ix-assess" onsubmit="return false">
+    <fieldset class="ix-q" data-q="1"><legend>1. How much printing experience do you have?</legend>
+      <label><input type="radio" name="q1" value="0"> I have not printed yet</label>
+      <label><input type="radio" name="q1" value="1"> A few prints, mostly with ready-made files</label>
+      <label><input type="radio" name="q1" value="2"> I print regularly (several times a month)</label>
+      <label><input type="radio" name="q1" value="3"> I have run printers for years and fix them myself</label></fieldset>
+    <fieldset class="ix-q" data-q="2"><legend>2. How do you use a slicer?</legend>
+      <label><input type="radio" name="q2" value="0"> I have never used one</label>
+      <label><input type="radio" name="q2" value="1"> I choose a preset and press print</label>
+      <label><input type="radio" name="q2" value="2"> I change walls, infill, supports and speed on purpose</label>
+      <label><input type="radio" name="q2" value="3"> I build my own filament and process profiles and use custom G-code</label></fieldset>
+    <fieldset class="ix-q" data-q="3"><legend>3. What is your CAD experience?</legend>
+      <label><input type="radio" name="q3" value="0"> None, I download models</label>
+      <label><input type="radio" name="q3" value="1"> Simple shapes in a browser tool such as Tinkercad</label>
+      <label><input type="radio" name="q3" value="2"> Sketches and extrusions with parametric dimensions</label>
+      <label><input type="radio" name="q3" value="3"> Assemblies, scripting (OpenSCAD, CadQuery) or surfacing</label></fieldset>
+    <fieldset class="ix-q" data-q="4"><legend>4. How do you calibrate?</legend>
+      <label><input type="radio" name="q4" value="0"> I do not know what to calibrate</label>
+      <label><input type="radio" name="q4" value="1"> I run the printer's automatic routines</label>
+      <label><input type="radio" name="q4" value="2"> I have printed temperature, flow and retraction tests by hand</label>
+      <label><input type="radio" name="q4" value="3"> I tune pressure advance, input shaping and volumetric flow per material</label></fieldset>
+    <fieldset class="ix-q" data-q="5"><legend>5. Which materials have you printed?</legend>
+      <label><input type="radio" name="q5" value="0"> None yet</label>
+      <label><input type="radio" name="q5" value="1"> PLA only</label>
+      <label><input type="radio" name="q5" value="2"> PLA and PETG, maybe TPU, ABS or ASA</label>
+      <label><input type="radio" name="q5" value="3"> Engineering materials such as nylon, PC or fiber-filled filaments, with drying</label></fieldset>
+    <fieldset class="ix-q" data-q="6"><legend>6. How do you measure parts?</legend>
+      <label><input type="radio" name="q6" value="0"> By eye</label>
+      <label><input type="radio" name="q6" value="1"> With a ruler or calipers now and then</label>
+      <label><input type="radio" name="q6" value="2"> I keep tolerance tables for my printer</label>
+      <label><input type="radio" name="q6" value="3"> I track dimensions statistically across batches</label></fieldset>
+    <fieldset class="ix-q" data-q="7"><legend>7. When a print fails, what do you do?</legend>
+      <label><input type="radio" name="q7" value="0"> I ask for help or give up</label>
+      <label><input type="radio" name="q7" value="1"> I search for the symptom and try the suggested fixes</label>
+      <label><input type="radio" name="q7" value="2"> I diagnose from the symptoms and change one thing at a time</label>
+      <label><input type="radio" name="q7" value="3"> I find root causes with planned experiments</label></fieldset>
+    <fieldset class="ix-q" data-q="8"><legend>8. How do you design for 3D printing?</legend>
+      <label><input type="radio" name="q8" value="0"> I do not design yet</label>
+      <label><input type="radio" name="q8" value="1"> I know about overhangs and supports</label>
+      <label><input type="radio" name="q8" value="2"> I design for orientation, clearances, snap-fits and inserts</label>
+      <label><input type="radio" name="q8" value="3"> I calculate strain and loads and test prototypes against numbers</label></fieldset>
+    <fieldset class="ix-q" data-q="9"><legend>9. How do you document your work?</legend>
+      <label><input type="radio" name="q9" value="0"> I do not</label>
+      <label><input type="radio" name="q9" value="1"> Loose notes or photos</label>
+      <label><input type="radio" name="q9" value="2"> A journal with settings and results</label>
+      <label><input type="radio" name="q9" value="3"> Reports with data tables, plots and reproducible files</label></fieldset>
+    <fieldset class="ix-q" data-q="10"><legend>10. What is your goal?</legend>
+      <label><input type="radio" name="q10" value="0"> To get a first good print</label>
+      <label><input type="radio" name="q10" value="1"> To make useful household or hobby parts</label>
+      <label><input type="radio" name="q10" value="2"> To make precise, functional parts reliably</label>
+      <label><input type="radio" name="q10" value="3"> To run small production or research on printed parts</label></fieldset>
+    <div class="ix-actions"><button type="button" id="ix-go">Show my recommendation</button><button type="button" id="ix-reset">Clear answers</button></div>
+  </form>
+
+  <div class="ix-result" id="ix-result" hidden>
+    <h3 id="ix-title"></h3>
+    <div class="ix-meter" aria-hidden="true"><i id="ix-meter"></i></div>
+    <p id="ix-text"></p>
+    <p><a id="ix-link" class="chip" href="level-1-beginner.html">Start here</a> <a class="chip" href="quizzes.html">Take the quizzes</a> <a class="chip" href="x2d-challenges.html">X2D challenges</a></p>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 150" role="img" aria-label="Score bands: 0 to 7 points Level 1, 8 to 15 points Level 2, 16 to 23 points Level 3, 24 to 30 points Level 4">
+      <g class="t-sm t-c t-b">
+        <rect class="f-green" x="30" y="30" width="170" height="50" rx="6"/><text x="115" y="60">0–7 → Level 1</text>
+        <rect class="f-blue" x="205" y="30" width="190" height="50" rx="6"/><text x="300" y="60">8–15 → Level 2</text>
+        <rect class="f-orange" x="400" y="30" width="190" height="50" rx="6"/><text x="495" y="60">16–23 → Level 3</text>
+        <rect class="f-red" x="595" y="30" width="155" height="50" rx="6"/><text x="672" y="60">24–30 → Level 4</text>
+      </g>
+      <path class="d-thin arrow" d="M30 100 H750"/>
+      <text class="t-xs" x="30" y="122">0</text><text class="t-xs t-r" x="750" y="122">30 points</text>
+      <text class="t-sm t-c t-m" x="390" y="144">If you answered “never” to question 1 you start at Level 1, whatever the total.</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> How the total score maps to a starting level.</figcaption>
+  </figure>
+
+  <h2 id="journal">📓 Print journal: document your prints</h2>
+  <p>Experienced makers keep a journal. It is the difference between “that print was good somehow” and “PETG at 245 °C with 0.4 mm retraction at 40 mm/s gave zero strings”. Many exercises ask you to record numbers, and a journal is where they live. It can be a notebook, a spreadsheet or a text file; only the habit matters.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 290" role="img" aria-label="A journal page layout with header fields, a settings table, a result section with photo slots and a lessons-learned box">
+      <rect class="d-surface" x="20" y="14" width="470" height="264" rx="8"/>
+      <g class="t-sm">
+        <text class="t-b" x="36" y="40">Date · Project · Exercise id</text>
+        <path class="d-thin" d="M36 48 H474"/>
+        <text class="t-b" x="36" y="70">Setup</text><text class="t-xs" x="36" y="88">Printer · nozzle · plate · material (brand, color, dry?)</text>
+        <text class="t-b" x="36" y="116">Settings</text><text class="t-xs" x="36" y="134">layer · walls · infill · temp · speed · cooling · special</text>
+        <text class="t-b" x="36" y="162">Result</text><text class="t-xs" x="36" y="180">time · mass · measured values · rating 1–5</text>
+      </g>
+      <rect class="f-gray" x="36" y="192" width="100" height="70" rx="4"/><text class="t-xs t-c" x="86" y="231">photo 1</text>
+      <rect class="f-gray" x="146" y="192" width="100" height="70" rx="4"/><text class="t-xs t-c" x="196" y="231">photo 2</text>
+      <rect class="f-yellow" x="262" y="192" width="214" height="70" rx="4"/><text class="t-xs" x="272" y="212">Lessons: what worked,</text><text class="t-xs" x="272" y="228">what failed, what to change</text><text class="t-xs" x="272" y="244">next time</text>
+      <g class="t-sm">
+        <path class="d-thin arrow" d="M580 60 L478 60"/><text x="590" y="64">Fields that identify the print</text>
+        <path class="d-thin arrow" d="M580 120 L478 125"/><text x="590" y="124">Every setting you changed</text>
+        <path class="d-thin arrow" d="M580 175 L478 175"/><text x="590" y="179">Numbers beat adjectives</text>
+        <path class="d-thin arrow" d="M580 230 L478 230"/><text x="590" y="234">Photos and a short lesson</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 4.</b> A one-page journal entry. Fill it in while the part is still on the plate.</figcaption>
+  </figure>
+
+  <h3>What to record</h3>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Field</th><th>Example</th><th>Why it matters</th></tr></thead>
+    <tbody>
+      <tr><td>Date and project</td><td>2026-03-02 · cable clip v3</td><td>Lets you find the print again and see trends</td></tr>
+      <tr><td>Printer and nozzle</td><td>X2D, left 0.4 mm</td><td>Results differ between machines and nozzles</td></tr>
+      <tr><td>Material</td><td>PETG, Brand X, dried 6 h</td><td>Brand, color and moisture change the result more than most settings</td></tr>
+      <tr><td>Key settings</td><td>0.2 mm, 3 walls, 15 % gyroid, 245 °C</td><td>You can only repeat or compare what you wrote down</td></tr>
+      <tr><td>Result</td><td>Fit OK, 3 strings, 18 g, 41 min</td><td>Numbers allow comparison between prints</td></tr>
+      <tr><td>Measurements</td><td>X 20.08, Y 20.05, Z 19.96 mm</td><td>Needed for calibration and tolerance tables</td></tr>
+      <tr><td>Lessons</td><td>Lower temp by 5 °C next time</td><td>Turns each print into a decision</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Entry generator</h3>
+  <p>Fill in the fields and copy the text into your own notes. The form saves nothing but your last entry, in this browser.</p>
+  <div class="tool ix-journal">
+    <h3>Journal entry</h3>
+    <div class="tool-body">
+      <div>
+        <div class="field"><label for="j-date">Date</label><input type="date" id="j-date"></div>
+        <div class="field"><label for="j-proj">Project or exercise id</label><input type="text" id="j-proj" placeholder="L2-1 temperature tower"></div>
+        <div class="field"><label for="j-printer">Printer, nozzle, plate</label><input type="text" id="j-printer" placeholder="X2D, 0.4 mm, textured PEI"></div>
+        <div class="field"><label for="j-mat">Material and condition</label><input type="text" id="j-mat" placeholder="PETG, dried 6 h"></div>
+        <div class="field"><label for="j-set">Key settings</label><input type="text" id="j-set" placeholder="0.2 mm, 3 walls, 15 % infill, 245 °C"></div>
+        <div class="field"><label for="j-meas">Measurements</label><input type="text" id="j-meas" placeholder="X 20.08 / Y 20.05 / Z 19.96 mm"></div>
+        <div class="field"><label for="j-rate">Rating</label><select id="j-rate"><option>5 – excellent</option><option>4 – good</option><option selected>3 – usable</option><option>2 – poor</option><option>1 – failed</option></select></div>
+        <div class="field"><label for="j-notes">Lessons and next steps</label><textarea id="j-notes" rows="3" placeholder="What to change next time"></textarea></div>
+        <button type="button" id="j-copy">Copy entry</button>
+      </div>
+      <div class="result"><pre id="j-out"></pre></div>
+    </div>
+  </div>
+
+  <h3>Photograph your prints well</h3>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 240" role="img" aria-label="Photo setup: part on a plain sheet with a ruler for scale, camera at a slight angle, soft light from a window on one side, plus three shots to take: overview, close-up of the defect, and scale or fit shot">
+      <rect class="d-surface2" x="20" y="150" width="340" height="60" rx="4"/>
+      <rect class="d-plastic" x="130" y="112" width="70" height="38" rx="3"/>
+      <rect class="f-yellow" x="230" y="138" width="110" height="10"/><path class="d-thin" d="M240 138 V144 M250 138 V144 M260 138 V144 M270 138 V144 M280 138 V144 M290 138 V144 M300 138 V144 M310 138 V144 M320 138 V144 M330 138 V144"/>
+      <text class="t-xs t-c" x="285" y="164">ruler for scale</text>
+      <rect class="d-metal" x="60" y="40" width="50" height="30" rx="4"/><circle class="d-ink" cx="85" cy="55" r="9"/><text class="t-xs t-c" x="85" y="86">camera</text>
+      <path class="d-dash arrow" d="M100 72 L150 108"/>
+      <circle class="f-yellow" cx="300" cy="50" r="22"/><text class="t-xs t-c" x="300" y="86">window light</text>
+      <path class="d-dash arrow" d="M285 68 L210 110"/>
+      <g class="t-sm"><text class="t-b" x="400" y="40">Three shots per print</text>
+        <text x="400" y="72">1 · Overview: whole part, plain background</text>
+        <text x="400" y="100">2 · Detail: the best and the worst area, close up</text>
+        <text x="400" y="128">3 · Scale: a ruler or calipers in the frame</text>
+        <text class="t-xs t-m" x="400" y="170">Soft side light shows layer lines; avoid flash.</text>
+        <text class="t-xs t-m" x="400" y="188">Name files with the exercise id, e.g. L2-1_detail.jpg.</text></g>
+    </svg>
+    <figcaption><b>Figure 5.</b> A simple photo setup: plain background, side light, a scale reference and three standard shots.</figcaption>
+  </figure>
+
+  <div class="callout trick"><span class="callout-title">Pro tip</span>
+    <p>Write the print time and the filament mass from the slicer into the journal <em>before</em> the print starts, then add the real values afterwards. After ten prints you will estimate costs and schedules much more accurately. The <a href="../tools/calculators.html">calculators</a> can help you to convert grams into cost.</p></div>
+
+  <h2>Recommended test models</h2>
+  <p>Fourteen parametric <a href="models.html">OpenSCAD test models</a> belong to the exercises. You do not need all of them at once. If you only print five, print these:</p>
+  <div class="grid cols-3">
+    <a class="card accent-blue" href="models.html#cal-cube"><h3>Calibration cube</h3><p>Size accuracy and first-layer check in 20 minutes.</p></a>
+    <a class="card accent-orange" href="models.html#temp-tower"><h3>Temperature tower</h3><p>Pick the nozzle temperature for a new spool.</p></a>
+    <a class="card accent-green" href="models.html#tolerance"><h3>Tolerance gauge</h3><p>Learn the clearance your printer needs.</p></a>
+    <a class="card accent-purple" href="models.html#bridge"><h3>Bridge test</h3><p>Find your maximum unsupported span.</p></a>
+    <a class="card accent-red" href="models.html#overhang"><h3>Overhang ladder</h3><p>Find your steepest clean overhang angle.</p></a>
+    <a class="card accent-teal" href="models.html#retraction"><h3>Retraction test</h3><p>Compare strings at different retraction values.</p></a>
+  </div>
+
+  <div class="bars"><div class="bars-title">Approximate print time of the first five test models (typical settings, rough)</div>
+    <div class="bar blue"><span>Calibration cube</span><i style="--v:22%"></i><em>~20–30 min</em></div>
+    <div class="bar green"><span>Flow cube</span><i style="--v:18%"></i><em>~15–25 min</em></div>
+    <div class="bar"><span>Bridge test</span><i style="--v:35%"></i><em>~30–40 min</em></div>
+    <div class="bar purple"><span>Temperature tower</span><i style="--v:65%"></i><em>~1–1.5 h</em></div>
+    <div class="bar red"><span>Tolerance gauge</span><i style="--v:45%"></i><em>~40–60 min</em></div>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 160" role="img" aria-label="Suggested order for testing a new filament: temperature tower, flow cube, retraction test, bridge and overhang tests, tolerance gauge, each as a numbered step">
+      <g class="t-sm t-c t-b">
+        <rect class="f-orange" x="10" y="40" width="115" height="56" rx="8"/><text x="67" y="64">1 Temperature</text><text class="t-xs t-m" x="67" y="82">tower</text>
+        <rect class="f-green" x="145" y="40" width="115" height="56" rx="8"/><text x="202" y="64">2 Flow</text><text class="t-xs t-m" x="202" y="82">cube</text>
+        <rect class="f-teal" x="280" y="40" width="115" height="56" rx="8"/><text x="337" y="64">3 Retraction</text><text class="t-xs t-m" x="337" y="82">towers</text>
+        <rect class="f-purple" x="415" y="40" width="115" height="56" rx="8"/><text x="472" y="64">4 Bridge,</text><text class="t-xs t-m" x="472" y="82">overhang</text>
+        <rect class="f-blue" x="550" y="40" width="115" height="56" rx="8"/><text x="607" y="64">5 Tolerance</text><text class="t-xs t-m" x="607" y="82">gauge</text>
+        <rect class="f-red" x="685" y="40" width="85" height="56" rx="8"/><text x="727" y="64">6 Save</text><text class="t-xs t-m" x="727" y="82">profile</text>
+      </g>
+      <path class="d-ink arrow" d="M125 68 H143 M260 68 H278 M395 68 H413 M530 68 H548 M665 68 H683"/>
+      <text class="t-sm t-c t-m" x="390" y="130">Run the tests in this order for a new filament, because each result depends on the one before.</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> A sensible order for characterizing a new filament. Save the results as a named profile.</figcaption>
+  </figure>
+
+  <h2>Quizzes and tools</h2>
+  <div class="grid cols-3">
+    <a class="card accent-green" href="quizzes.html"><h3>90 quiz questions</h3><p>Six sets: basics, materials, slicing, design, troubleshooting, X2D and AMS 2 Pro. A final scoreboard tracks your results.</p></a>
+    <a class="card accent-blue" href="../tools/calculators.html"><h3>Calculators</h3><p>Flow, cost, time and strain helpers for the exercises.</p></a>
+    <a class="card accent-purple" href="../tools/material-picker.html"><h3>Material picker</h3><p>Choose a filament for a given job.</p></a>
+    <a class="card accent-orange" href="../tools/visual-lab.html"><h3>Visual lab</h3><p>Interactive diagrams of layers, overhangs and settings.</p></a>
+    <a class="card accent-teal" href="x2d-challenges.html"><h3>X2D challenges</h3><p>Twelve tasks for the dual-nozzle printer and the AMS 2 Pro.</p></a>
+    <a class="card accent-red" href="models.html"><h3>Test models</h3><p>Download the .scad files and the notes on how to read the results.</p></a>
+  </div>
+
+  <h2>All levels at a glance</h2>
+  <div class="grid cols-2">
+    <a class="card accent-green" href="level-1-beginner.html"><h3>Level 1 · Beginner</h3><p>First print checklist, calipers, first-layer quality, printer parts, loading filament, slicer preview, layer height and infill experiments, a cable clip, brim, temperature, supports, spool labels, safety audit and a first model in Tinkercad.</p></a>
+    <a class="card accent-blue" href="level-2-intermediate.html"><h3>Level 2 · Intermediate</h3><p>Temperature tower, retraction, flow, bridging, overhangs, tolerance coupons, parametric box, drying, material comparison, supports, seams, fillets, orientation, heat-set inserts and two-color printing.</p></a>
+    <a class="card accent-orange" href="level-3-advanced.html"><h3>Level 3 · Advanced</h3><p>Pressure advance, input shaping, volumetric flow, print-in-place hinges, snap-fits, threads, custom profiles, minimal-waste multi-material, annealing, scripted CAD, gears, mechanisms, time versus strength, finishing and G-code.</p></a>
+    <a class="card accent-red" href="level-4-expert.html"><h3>Level 4 · Expert</h3><p>Compliant mechanisms, topology-driven brackets, assemblies, batch optimization, Cp/Cpk, design of experiments, reverse engineering, fixtures, material characterization, large parts, casting and open-source release.</p></a>
+  </div>
+
+  <h2>Key takeaways</h2>
+  <ul>
+    <li>Change one thing at a time and write the result down; this is the habit behind every exercise.</li>
+    <li>Start at the level that matches your skills, not your ambition; skim what you already know.</li>
+    <li>Numbers beat feelings: use calipers, a scale and a journal.</li>
+    <li>Quizzes show gaps in knowledge; exercises close them.</li>
+  </ul>
+
+<script>
+document.addEventListener("c3d:ready", function () {
+  var $ = C3D.$, $$ = C3D.$$;
+  var levels = [
+    { max: 7, name: "Level 1 · Beginner", href: "level-1-beginner.html", text: "Start with the first-print checklist and the measurement exercises. Build safe habits first, then work through the experiments in order." },
+    { max: 15, name: "Level 2 · Intermediate", href: "level-2-intermediate.html", text: "You know the basics. Level 2 turns your printer into a calibrated tool: temperature, flow, retraction, tolerances and your first designs." },
+    { max: 23, name: "Level 3 · Advanced", href: "level-3-advanced.html", text: "You tune your own profiles. Level 3 covers pressure advance, input shaping, mechanisms and scripting. Skim the Level 2 table first, to check for gaps." },
+    { max: 30, name: "Level 4 · Expert", href: "level-4-expert.html", text: "Pick capstone projects that match your goals. They are open-ended, so write a plan and acceptance criteria before you start." }
+  ];
+
+  function score() {
+    var total = 0, answered = 0, first = null;
+    for (var i = 1; i <= 10; i++) {
+      var r = $("input[name=q" + i + "]:checked");
+      if (r) { total += parseInt(r.value, 10); answered++; if (i === 1) first = parseInt(r.value, 10); }
+    }
+    return { total: total, answered: answered, first: first };
+  }
+
+  $("#ix-go").addEventListener("click", function () {
+    var s = score();
+    var box = $("#ix-result");
+    box.hidden = false;
+    if (s.answered < 10) {
+      $("#ix-title").textContent = "Please answer all ten questions";
+      $("#ix-meter").style.width = Math.round(10 * s.answered) + "%";
+      $("#ix-text").textContent = "You have answered " + s.answered + " of 10.";
+      $("#ix-link").style.display = "none";
+      return;
+    }
+    var lv = levels.filter(function (l) { return s.total <= l.max; })[0];
+    if (s.first === 0) lv = levels[0];
+    $("#ix-title").textContent = "Recommended: " + lv.name + " (" + s.total + " / 30 points)";
+    $("#ix-meter").style.width = Math.round(100 * s.total / 30) + "%";
+    $("#ix-text").textContent = lv.text;
+    var a = $("#ix-link");
+    a.style.display = ""; a.href = lv.href; a.textContent = "Open " + lv.name;
+    C3D.store.set("assess:level", lv.name);
+    box.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  });
+
+  $("#ix-reset").addEventListener("click", function () {
+    $$("#ix-assess input[type=radio]").forEach(function (r) { r.checked = false; });
+    $("#ix-result").hidden = true;
+  });
+
+  var last = C3D.store.get("assess:level");
+  if (last) {
+    var note = document.createElement("p");
+    note.className = "meta";
+    note.textContent = "Your last result in this browser: " + last + ".";
+    $("#ix-assess").parentNode.insertBefore(note, $("#ix-assess"));
+  }
+
+  var ids = ["j-date", "j-proj", "j-printer", "j-mat", "j-set", "j-meas", "j-rate", "j-notes"];
+  function build() {
+    var v = {};
+    ids.forEach(function (id) { v[id] = $("#" + id).value.trim(); });
+    var out = [
+      "Date: " + (v["j-date"] || "-"),
+      "Project: " + (v["j-proj"] || "-"),
+      "Printer: " + (v["j-printer"] || "-"),
+      "Material: " + (v["j-mat"] || "-"),
+      "Settings: " + (v["j-set"] || "-"),
+      "Measurements: " + (v["j-meas"] || "-"),
+      "Rating: " + v["j-rate"],
+      "Lessons: " + (v["j-notes"] || "-")
+    ].join("\n");
+    $("#j-out").textContent = out;
+    C3D.store.set("journal:last", JSON.stringify(v));
+  }
+  var d = $("#j-date");
+  d.value = new Date().toISOString().slice(0, 10);
+  try {
+    var saved = JSON.parse(C3D.store.get("journal:last") || "null");
+    if (saved) ids.forEach(function (id) { if (saved[id]) $("#" + id).value = saved[id]; });
+  } catch (e) { /* ignore corrupt data */ }
+  ids.forEach(function (id) { $("#" + id).addEventListener("input", build); $("#" + id).addEventListener("change", build); });
+  $("#j-copy").addEventListener("click", function () {
+    build();
+    var txt = $("#j-out").textContent, btn = $("#j-copy");
+    function done() { btn.textContent = "Copied"; setTimeout(function () { btn.textContent = "Copy entry"; }, 1500); }
+    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(txt).then(done); }
+    else {
+      var ta = document.createElement("textarea"); ta.value = txt; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); done(); } catch (e) { /* clipboard unavailable */ }
+      document.body.removeChild(ta);
+    }
+  });
+  build();
+});
+</script>
+</main>
+</body>
+</html>

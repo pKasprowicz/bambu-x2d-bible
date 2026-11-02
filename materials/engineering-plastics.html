@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Engineering plastics · 3D Printing Compendium</title>
+  <meta name="description" content="ABS, ASA, PC, PC-ABS, nylons, PET-CF, PPS-CF, PP, composites and high-temperature plastics: chamber temperature, adhesion, drying, vapor smoothing, annealing, fumes and print recipes.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="materials/engineering-plastics.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 2 · Materials</div>
+    <h1>Engineering plastics</h1>
+    <p class="lead">Parts that live in hot cars, carry real loads, resist oil and sun, or replace metal: how ABS, ASA, PC, nylon, PET-CF, PPS-CF and carbon-fiber composites behave, and how a heated chamber changes the game.</p>
+    <div class="meta"><span class="badge intermediate">Intermediate</span><span class="badge time">⏱ 40 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <ul>
+      <li>Why chamber temperature controls warping, layer bonding and cracking.</li>
+      <li>Properties, settings and pitfalls of ABS, ASA, PC, PC-ABS, PA6/PA66/PA12/PAHT, PET-CF, PPS-CF, PP and an overview of POM, PEI and PEEK.</li>
+      <li>How carbon and glass fiber change stiffness, anisotropy and nozzle wear.</li>
+      <li>Adhesion aids, drying, vapor smoothing, annealing, fume safety and ready-to-use print recipes.</li>
+    </ul>
+  </div>
+
+  <h2 id="what">🔰 What makes a plastic “engineering”</h2>
+  <p>Everyday plastics (<a href="everyday-plastics.html">PLA and PETG</a>) are easy but limited: they soften below 80 °C and fatigue quickly. <b>Engineering plastics</b> are the next tier: they stay stiff at higher temperatures, resist wear, impact, chemicals or UV, and can be used as functional parts for years. The price is difficulty. Most of them <b>shrink more</b>, <b>need heat around the part</b>, <b>absorb water</b> and <b>demand hardware</b> beyond a basic open printer: an enclosure, 260–300 °C nozzles, hardened nozzles for fiber fills, and a dryer.</p>
+  <p>If you are new to materials, read the <a href="overview.html">overview</a> first, especially the sections on <a href="overview.html#polymer-science">glass transition and crystallization</a>, because those two ideas explain almost every rule on this page.</p>
+
+  <div class="stats">
+    <div class="stat"><b>90–110 °C</b><span>bed for ABS / ASA</span></div>
+    <div class="stat"><b>260–300 °C</b><span>nozzle for PC, PA, PAHT-CF</span></div>
+    <div class="stat"><b>up to 65 °C</b><span>X2D actively heated chamber</span></div>
+    <div class="stat"><b>0.5–2 %</b><span>typical shrinkage range</span></div>
+  </div>
+
+  <h2 id="chamber">🌡️ Chamber temperature: the big idea</h2>
+  <p>Hot plastic shrinks as it cools. The faster and more unevenly it cools, the more internal stress locks in. That stress shows up as <b>warping</b> (corners lifting), <b>cracking</b> between layers, and <b>delamination</b> (layers splitting). In a cold room the part’s surface is cooled by air at 20–25 °C while the bottom is held at 100 °C by the bed: a large gradient. In a <b>warm chamber</b> the air itself is 45–65 °C, the gradient shrinks, and the part cools slowly and evenly.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 320" role="img" aria-label="Comparison of a tall part printed in a cold enclosure with large temperature gradient and warping, versus a part printed in a 65 degree actively heated chamber that stays flat with a small gradient">
+      <rect class="d-surface" x="10" y="30" width="370" height="250" rx="12"/><rect class="d-surface" x="400" y="30" width="370" height="250" rx="12"/>
+      <text class="t-lg t-c" x="195" y="24">Cold air (≈ 25 °C)</text><text class="t-lg t-c" x="585" y="24">Heated chamber (≈ 65 °C)</text>
+      <rect class="d-metal" x="60" y="240" width="270" height="16" rx="3"/><rect class="d-metal" x="450" y="240" width="270" height="16" rx="3"/>
+      <rect class="d-hot" x="100" y="70" width="190" height="24"/><rect class="d-plastic" x="100" y="94" width="190" height="40"/><rect class="d-plastic" x="100" y="134" width="190" height="40"/><rect class="d-cool" x="100" y="174" width="190" height="60"/>
+      <path class="k-red arrow" d="M60 90 H92"/><path class="k-red arrow" d="M330 90 H298"/>
+      <text class="t-xs" x="22" y="130">steep gradient:</text><text class="t-xs" x="22" y="144">fast, uneven cooling</text>
+      <path class="k-red arrow" d="M70 215 L96 232"/><path class="k-red arrow" d="M320 215 L294 232"/>
+      <text class="t-sm c-red t-c" x="195" y="272">corners lift · cracks between layers</text>
+      <rect class="d-plastic" x="490" y="70" width="190" height="24"/><rect class="d-plastic" x="490" y="94" width="190" height="40"/><rect class="d-plastic" x="490" y="134" width="190" height="40"/><rect class="d-plastic" x="490" y="174" width="190" height="60"/>
+      <path class="k-orange arrow" d="M455 90 H482"/><path class="k-orange arrow" d="M720 90 H692"/>
+      <text class="t-xs" x="412" y="130">gentle gradient:</text><text class="t-xs" x="412" y="144">slow, even cooling</text>
+      <text class="t-sm c-green t-c" x="585" y="272">flat, strong layer welds</text>
+      <path class="d-thin" d="M330 100 H365"/><text class="t-xs" x="302" y="60">hot top, cold air</text>
+      <path class="d-thin" d="M720 100 H755"/><text class="t-xs" x="692" y="60">hot top, warm air</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> The same part in two environments. Warm surrounding air does not melt the plastic (it stays below Tg) but keeps the layers from freezing before they weld to each other.</figcaption>
+  </figure>
+
+  <div class="callout x2d"><span class="callout-title">Bambu X2D: an actively heated chamber</span>
+    <p>The X2D’s chamber is <b>actively heated up to 65 °C</b> (not merely warmed by the bed), with dual-intake cooling for the opposite case when you print PLA. That makes it one of the few desktop printers able to hold PC, nylon and fiber-filled filaments at their preferred chamber temperatures. Step-by-step workflows are in <a href="../x2d/engineering-and-chamber.html">Engineering materials &amp; chamber</a>. Chambers on bed-heated-only printers typically reach 35–55 °C after a long soak; an open-frame printer cannot reach them at all.</p>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 320" role="img" aria-label="Illustrative chart of interlayer strength rising with chamber temperature for ABS, nylon-CF and PC; hotter chambers give much stronger layers">
+      <path class="d-ink" d="M80 20 V270 H730"/>
+      <path class="d-grid" d="M80 70 H730 M80 120 H730 M80 170 H730 M80 220 H730"/>
+      <text class="t-sm" x="30" y="215" transform="rotate(-90 30 215)">Relative layer strength (index) →</text>
+      <text class="t-sm t-c" x="405" y="306">Chamber air temperature →</text>
+      <text class="t-xs t-c" x="130" y="286">25 °C</text><text class="t-xs t-c" x="300" y="286">40 °C</text><text class="t-xs t-c" x="470" y="286">55 °C</text><text class="t-xs t-c" x="640" y="286">65 °C</text>
+      <path class="k-orange" d="M130 190 C260 170 400 130 640 100"/>
+      <path class="k-purple" d="M130 232 C260 215 400 160 640 80"/>
+      <path class="k-red" d="M130 245 C260 230 400 170 640 64"/>
+      <text class="t-sm c-orange" x="650" y="112">ABS</text><text class="t-sm c-purple" x="650" y="86">PA-CF / PAHT</text><text class="t-sm c-red" x="650" y="60">PC</text>
+      <path class="d-dash" d="M640 30 V270"/>
+      <text class="t-xs" x="400" y="42">Illustrative trend, not measured data.</text>
+      <text class="t-xs" x="400" y="56">The hungrier the polymer, the more it gains from heat.</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> Why “just open the door” fails for hard materials: the interlayer weld, and therefore the Z strength, improves substantially as the chamber warms.</figcaption>
+  </figure>
+
+  <h3>🔧 Chamber heat-soak, in practice</h3>
+  <ol class="steps">
+    <li><strong>Preheat the bed to its final temperature</strong>Close all doors and lids and keep the cooling fans off. The bed does most of the early heating.</li>
+    <li><strong>Soak 15–30 minutes</strong>A large printer needs this to bring chamber air and the frame up to temperature. An actively heated chamber is faster.</li>
+    <li><strong>Heat the nozzle last</strong>Raise it to its print temperature at the end of the soak so filament does not cook inside it.</li>
+    <li><strong>Print with little or no part-cooling fan</strong>0–30 % for ABS, ASA, PC, nylon. Use the fan briefly only for bridges and small layers.</li>
+    <li><strong>Cool down slowly</strong>When the print ends, leave the door shut until the chamber drops below roughly 40 °C. Pulling a hot big part out into room air can crack or warp it.</li>
+  </ol>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 320" role="img" aria-label="Timeline of bed and chamber temperatures: bed heats first, chamber air follows over 20 to 30 minutes, the print window begins when the chamber is at target, and cooling is slow after the job">
+      <path class="d-ink" d="M80 20 V270 H730"/>
+      <path class="d-grid" d="M80 70 H730 M80 130 H730 M80 190 H730 M80 250 H730"/>
+      <text class="t-sm" x="30" y="215" transform="rotate(-90 30 215)">Temperature (°C) →</text>
+      <text class="t-sm t-c" x="405" y="306">Time →</text>
+      <text class="t-xs t-r" x="74" y="74">100</text><text class="t-xs t-r" x="74" y="134">70</text><text class="t-xs t-r" x="74" y="194">40</text><text class="t-xs t-r" x="74" y="254">10</text>
+      <rect class="f-green" x="330" y="30" width="200" height="236" fill-opacity=".25"/>
+      <text class="t-sm t-b t-c" x="430" y="52">Print window</text>
+      <path class="k-red" d="M80 245 C120 140 150 70 200 66 H520 C560 70 600 120 660 200 L720 240"/>
+      <path class="k-blue" d="M80 245 C200 240 270 180 330 140 H520 C580 145 630 190 700 230 L725 240"/>
+      <text class="t-sm c-red" x="210" y="58">Bed 100 °C</text>
+      <text class="t-sm c-blue" x="540" y="130">Chamber 60 °C</text>
+      <path class="d-thin arrow" d="M180 290 H330"/><text class="t-xs t-c" x="255" y="284">soak 20–30 min</text>
+      <path class="d-thin arrow" d="M530 290 H700"/><text class="t-xs t-c" x="615" y="284">slow cool, door closed</text>
+      <circle class="s-orange" cx="330" cy="140" r="5"/><text class="t-xs" x="238" y="160">nozzle heats, job starts</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> Typical soak profile for a warm-chamber job (schematic). Starting before the chamber is warm is the cheapest way to get a warped first few millimeters.</figcaption>
+  </figure>
+
+  <h2 id="abs-asa">🔥 ABS and ASA</h2>
+  <p><b>ABS</b> (acrylonitrile butadiene styrene) is the classic engineering filament: tough, machinable, sandable, heat resistant to about 95–105 °C, and soluble in acetone, which allows vapor smoothing and gluing. It also shrinks about 0.7–1 %, warps readily, and gives off a noticeable fume. <b>ASA</b> (acrylonitrile styrene acrylate) swaps the rubbery butadiene for an acrylic rubber and so resists UV and weather for years. It is otherwise printed just like ABS, with a little less warp and a hotter nozzle. For anything that lives outdoors (car trim, garden gear, antenna housings), choose ASA.</p>
+
+  <div class="grid cols-2">
+    <div class="card accent-orange"><h3>ABS in one paragraph</h3><p>Nozzle 240–260 °C, bed 90–110 °C, fan 0–30 %, chamber 40–65 °C ideal. Strong, tough, cheap. Weak points: warping, odor (styrene), poor UV resistance (yellows and embrittles). Excellent when you need acetone smoothing or gluing.</p></div>
+    <div class="card accent-blue"><h3>ASA in one paragraph</h3><p>Nozzle 240–270 °C, bed 90–110 °C, fan 0–30 %, chamber 40–65 °C ideal. Same as ABS plus UV and weather stability and often a more even finish. Weak points: similar fumes, brittleness when very cold, dislikes wet storage.</p></div>
+  </div>
+  <p>Tips for both: use a brim of 5–10 mm, round sharp corners (r ≥ 2 mm), avoid large flat bottoms (add chamfer or “mouse ears”), keep cooling low, and avoid drafts when you open the door. For very large parts, orient so the largest flat face is not on the bed.</p>
+
+  <h3>HIPS as ABS support</h3>
+  <p><b>HIPS</b> (high-impact polystyrene) prints at ABS temperatures and dissolves in <em>d-limonene</em> (a citrus solvent). It is used as a dissolvable support for ABS and ASA on a dual-nozzle or multi-material printer (see <a href="flexibles-and-specialty.html#supports">support materials</a>).</p>
+
+  <h2 id="pc">💎 PC and PC-ABS</h2>
+  <p><b>Polycarbonate</b> (PC) is the toughest of the common filaments: a transparent-capable plastic used for helmets and bullet-resistant windows. Its Tg is about 140–150 °C, so printed PC stays stiff to 110–140 °C. PC prints at 260–310 °C with a bed of 100–120 °C, and it is <b>very sensitive to moisture and drafts</b>. It needs a warm chamber (ideally 50–65 °C or more), thorough drying, and a bed surface that grips it. Parts shrink about 0.5–0.8 %. Poor drying shows up as foam-like bubbles and fragile layers; a cold chamber causes cracks and curled corners.</p>
+  <p><b>PC-ABS</b> alloys blend the two. They print more easily (250–280 °C, 100–110 °C bed), keep about 100–115 °C heat resistance, and retain much of PC’s impact strength. They are an excellent step up from ABS.</p>
+  <div class="callout tip"><span class="callout-title">Printing PC: the three non-negotiables</span>
+    <p>(1) <b>Dry</b> it at 70–80 °C for 6–8 h and print from a dry box. (2) <b>Heat</b> the chamber and use a strong, high-temperature bed adhesive. (3) <b>Avoid fans</b>, except for tiny layers and bridges. Without all three, you will waste more PC than you print.</p>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 300" role="img" aria-label="Horizontal ladder showing approximate heat resistance of PLA, PETG, ABS, ASA, PC-ABS, PC, PA-CF, PET-CF, PPS-CF, PEI and PEEK from 55 degrees up to above 200 degrees Celsius">
+      <path class="d-ink" d="M130 250 H740"/>
+      <text class="t-xs t-c" x="130" y="268">50 °C</text><text class="t-xs t-c" x="255" y="268">100 °C</text><text class="t-xs t-c" x="380" y="268">150 °C</text><text class="t-xs t-c" x="505" y="268">200 °C</text><text class="t-xs t-c" x="630" y="268">250 °C</text>
+      <path class="d-grid" d="M130 20 V250 M255 20 V250 M380 20 V250 M505 20 V250 M630 20 V250"/>
+      <text class="t-sm t-r" x="122" y="38">PLA</text><rect class="f-green" x="130" y="26" width="12" height="16" rx="3"/>
+      <text class="t-sm t-r" x="122" y="62">PETG</text><rect class="f-teal" x="130" y="50" width="30" height="16" rx="3"/>
+      <text class="t-sm t-r" x="122" y="86">ABS / ASA</text><rect class="f-orange" x="130" y="74" width="105" height="16" rx="3"/>
+      <text class="t-sm t-r" x="122" y="110">PC-ABS</text><rect class="f-yellow" x="130" y="98" width="115" height="16" rx="3"/>
+      <text class="t-sm t-r" x="122" y="134">PC</text><rect class="f-red" x="130" y="122" width="190" height="16" rx="3"/>
+      <text class="t-sm t-r" x="122" y="158">PA6-CF</text><rect class="f-purple" x="130" y="146" width="240" height="16" rx="3"/>
+      <text class="t-sm t-r" x="122" y="182">PET-CF</text><rect class="f-blue" x="130" y="170" width="260" height="16" rx="3"/>
+      <text class="t-sm t-r" x="122" y="206">PPS-CF</text><rect class="f-red" x="130" y="194" width="440" height="16" rx="3"/>
+      <text class="t-sm t-r" x="122" y="230">PEEK / PEI</text><rect class="f-purple" x="130" y="218" width="480" height="16" rx="3"/>
+      <text class="t-xs" x="150" y="38">≈55 °C</text>
+      <text class="t-xs" x="400" y="182">typical HDT / usable ceiling (approx.)</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> Approximate usable-temperature ladder. Real values depend on grade, load and fiber content; always check the datasheet for the filament you buy.</figcaption>
+  </figure>
+
+  <h2 id="nylon">🧵 Nylon (polyamide): PA6, PA66, PA12, PAHT</h2>
+  <p>Nylons are semi-crystalline polymers famed for toughness, fatigue life, low friction and chemical resistance. They are the standard material for gears, bushings, hinges, living hinges, snap-fits and tool parts. The family:</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Type</th><th>Character</th><th>Melt (°C)</th><th>Moisture uptake</th><th>Nozzle / bed</th><th>Notes</th></tr></thead>
+    <tbody>
+    <tr><td><b>PA6</b></td><td>Strong, tough, stiff, absorbs a lot of water</td><td>≈220</td><td>High (≈ 9 % saturated)</td><td>260–290 / 80–100 °C</td><td>The most common “nylon” filament; strength and size change with humidity.</td></tr>
+    <tr><td><b>PA66</b></td><td>Stiffer and hotter than PA6, shrinks more</td><td>≈260</td><td>Medium-high</td><td>270–300 / 90–110 °C</td><td>Needs a hot chamber; rare unfilled.</td></tr>
+    <tr><td><b>PA12</b></td><td>Flexible, dimensionally stable, low moisture</td><td>≈178</td><td>Low (≈ 1.5 %)</td><td>240–270 / 80–100 °C</td><td>Easiest nylon; gentler warp; good for living hinges.</td></tr>
+    <tr><td><b>PA6/66 copolymer</b></td><td>Compromise blends</td><td>≈200–225</td><td>Medium-high</td><td>250–280 / 80–100 °C</td><td>Often sold as “Nylon”.</td></tr>
+    <tr><td><b>PAHT</b></td><td>High-temperature nylon (PA6/66-type with additives)</td><td>≈ 240–260</td><td>Medium</td><td>270–300 / 90–110 °C</td><td>Heat resistance typically ≥ 150 °C when carbon-filled.</td></tr>
+    <tr><td><b>PA-CF / PA-GF</b></td><td>Fiber reinforced (10–30 %)</td><td>as base</td><td>Lower than unfilled</td><td>270–300 / 90–110 °C</td><td>Stiff, accurate, abrasive: hardened nozzle.</td></tr>
+    </tbody></table></div>
+  <p>Practical rules: nylon is <b>the most hygroscopic</b> filament here. Fresh from a vacuum bag it prints well; after two days in a humid room it foams and bubbles. Dry before every use (see the <a href="drying-and-storage.html">drying chapter</a>) and print from a dry box or an enclosure with active drying. Nylon bonds poorly to bare bed surfaces: use a purpose-made nylon-friendly surface or a thin layer of PVA-type glue. Expect 1–2 % shrinkage for PA6/PA66 and design with chamfers and thicker walls.</p>
+  <div class="callout warn"><span class="callout-title">Nylon strength changes with humidity</span>
+    <p>A conditioned (humid) nylon part is tougher and slightly softer than a dry one. Dimensions can change by about 0.5–1 % as it absorbs water over days. For precision fits, print, let it equilibrate and then measure, or print oversize slightly. Do not seal printed gears into housings with fixed tolerances immediately after a dry print.</p>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 300" role="img" aria-label="Bar chart of approximate linear shrinkage after printing for PLA, PETG, ABS, ASA, PC, PA12, PA6, PA-CF and PPS-CF, with unfilled materials shrinking more than fiber-filled versions">
+      <path class="d-ink" d="M70 20 V250 H750"/>
+      <path class="d-grid" d="M70 70 H750 M70 120 H750 M70 170 H750 M70 220 H750"/>
+      <text class="t-xs t-r" x="64" y="254">0</text><text class="t-xs t-r" x="64" y="224">0.4</text><text class="t-xs t-r" x="64" y="174">0.8</text><text class="t-xs t-r" x="64" y="124">1.2</text><text class="t-xs t-r" x="64" y="74">1.6</text>
+      <text class="t-sm" x="14" y="200" transform="rotate(-90 14 200)">Linear shrinkage (%) →</text>
+      <rect class="f-green" x="95" y="228" width="40" height="22"/><text class="t-xs t-c" x="115" y="270">PLA</text>
+      <rect class="f-teal" x="175" y="222" width="40" height="28"/><text class="t-xs t-c" x="195" y="270">PETG</text>
+      <rect class="f-orange" x="255" y="180" width="40" height="70"/><text class="t-xs t-c" x="275" y="270">ABS</text>
+      <rect class="f-yellow" x="335" y="190" width="40" height="60"/><text class="t-xs t-c" x="355" y="270">ASA</text>
+      <rect class="f-red" x="415" y="185" width="40" height="65"/><text class="t-xs t-c" x="435" y="270">PC</text>
+      <rect class="f-purple" x="495" y="170" width="40" height="80"/><text class="t-xs t-c" x="515" y="270">PA12</text>
+      <rect class="f-purple" x="575" y="90" width="40" height="160"/><text class="t-xs t-c" x="595" y="270">PA6</text>
+      <rect class="f-blue" x="655" y="210" width="40" height="40"/><text class="t-xs t-c" x="675" y="270">PA-CF</text>
+      <rect class="f-red" x="715" y="226" width="30" height="24"/><text class="t-xs t-c" x="730" y="286">PPS-CF</text>
+      <text class="t-xs" x="120" y="40">Approximate and grade dependent; print-direction shrinkage (XY) shown.</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> Why warping rules differ by material. Semi-crystalline polymers (nylon, PP) shrink most; fillers reduce shrinkage and make parts more accurate.</figcaption>
+  </figure>
+
+  <h2 id="composites">🪢 Carbon-fiber and glass-fiber composites</h2>
+  <p>Chopped fibers (0.1–0.3 mm long, 10–30 % by weight) are mixed into a base polymer to make PLA-CF, PETG-CF, PA-CF, PAHT-CF, PET-CF, PPS-CF, ABS-CF and PA-GF. What they do:</p>
+  <ul>
+    <li><b>Stiffer:</b> modulus rises by roughly 1.5–3× depending on loading.</li>
+    <li><b>Less shrinkage:</b> far less warp, tighter tolerances, and often fewer supports.</li>
+    <li><b>Matte look:</b> hides layer lines.</li>
+    <li><b>Higher heat deflection:</b> the fibers hold the matrix up when it softens.</li>
+    <li><b>Less impact toughness:</b> usually more brittle than the base polymer.</li>
+    <li><b>Strongly anisotropic:</b> fibers align with the extrusion path, so XY is stiff, Z is no better (and can be worse).</li>
+    <li><b>Abrasive:</b> they erode brass nozzles within hours. Use hardened steel or a ruby/diamond-tip nozzle.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 280" role="img" aria-label="Diagram of chopped fibers aligned along an extruded bead, with stiffness indicated along the bead and weaker across layers">
+      <rect class="d-surface" x="20" y="20" width="360" height="220" rx="10"/><rect class="d-surface" x="400" y="20" width="360" height="220" rx="10"/>
+      <text class="t-b t-c" x="200" y="14">Fibers in a printed bead</text><text class="t-b t-c" x="580" y="14">Strength by direction (schematic)</text>
+      <rect class="d-plastic" x="50" y="60" width="300" height="34" rx="17"/><rect class="d-plastic" x="50" y="100" width="300" height="34" rx="17"/><rect class="d-plastic" x="50" y="140" width="300" height="34" rx="17"/>
+      <path class="d-ink" d="M70 72 H110 M130 78 H175 M200 70 H250 M270 80 H320"/>
+      <path class="d-ink" d="M62 112 H100 M120 118 H170 M190 110 H240 M260 120 H330"/>
+      <path class="d-ink" d="M70 152 H120 M140 158 H190 M210 150 H260 M280 160 H335"/>
+      <text class="t-xs t-c" x="200" y="200">Fibers align with nozzle motion.</text>
+      <text class="t-xs t-c" x="200" y="218">Between layers there are no fibers, only polymer.</text>
+      <path class="k-blue arrow" d="M440 200 H520"/><rect class="f-blue" x="440" y="110" width="80" height="80"/><text class="t-sm t-c" x="480" y="152">XY</text><text class="t-xs t-c" x="480" y="168">stiff</text>
+      <rect class="f-orange" x="560" y="150" width="80" height="40"/><text class="t-sm t-c" x="600" y="172">Z</text><text class="t-xs t-c" x="600" y="186">weak</text>
+      <text class="t-xs" x="420" y="225">Orient loaded directions in XY; see strength guide.</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> Short fibers boost stiffness along beads and not between layers. See <a href="../design/strength-and-orientation.html">Strength &amp; orientation</a> for design guidance.</figcaption>
+  </figure>
+
+  <div class="callout danger"><span class="callout-title">Hardened nozzles are not optional</span>
+    <p>Carbon and glass fiber wear brass in hours and even coated tips fairly quickly. Use hardened steel (HS), tungsten carbide or ruby/diamond tip nozzles that are rated for abrasive filaments, and keep a log of print hours. Dust from sanding CF/GF parts is a respiratory irritant; wear a P2/N95 mask and wet-sand. Also check the printer’s official support list; some filament-path components (like some multi-material tracks) have specific limitations. On Bambu printers see <a href="../x2d/filament-compatibility.html">Filament compatibility</a> for which spools can go through the AMS.</p>
+  </div>
+
+  <h2 id="pet">🧴 PET, PET-CF and PETG-CF</h2>
+  <p>Where PETG is the amorphous “glycol-modified” version, plain <b>PET</b> filament and <b>PET-CF</b> are closer to the polymer in water bottles but filled and optimized. PET-CF prints at 260–290 °C, with bed 70–90 °C, and warps far less than nylon. Typical heat resistance of 120–180 °C with CF is common, stiffness is high, and moisture sensitivity is moderate. PET-CF has become a favorite for functional fixtures that need to stay stiff, resist chemicals and remain dimensionally stable. It is more rigid than PA-CF but less tough. <b>PETG-CF</b> is similar to PETG: easier to print, cheaper, but limited by its ≈75–80 °C Tg.</p>
+
+  <h2 id="pps">🧪 PPS and PPS-CF</h2>
+  <p><b>Polyphenylene sulfide</b> is a semi-crystalline plastic with superb chemical resistance, flame resistance and a heat deflection temperature well above 200 °C for carbon-filled grades. Filaments like PPS-CF print at about 300–330 °C with a bed of 100–120 °C and chamber ideally above 60–80 °C. A printer that can reach 300 °C nozzle temperatures and a heated chamber is needed. Consult the manufacturer’s requirements before buying. Typical uses: under-hood parts, chemical-resistant jigs, and electrical housings.</p>
+  <div class="callout x2d"><span class="callout-title">Bambu X2D note</span>
+    <p>The X2D’s 300 °C nozzle and 65 °C heated chamber target the PA-CF / PAHT / PET-CF / PC range. Some high-temperature materials like PPS-CF need nozzle temperatures at the edge of that range; check the filament maker’s specification and the <a href="../x2d/filament-compatibility.html">compatibility list</a> before buying a roll.</p>
+  </div>
+
+  <h2 id="pp">♻️ Polypropylene (PP)</h2>
+  <p>PP has outstanding chemical resistance, a waxy surface, fatigue strength (living hinges!) and low density. It is notoriously hard to stick to the bed and warps heavily (1.5–2 % shrinkage). Print on PP tape or a PP-compatible plate, with a nozzle at 220–250 °C, bed 80–100 °C, little cooling and a brim. Because it does not bond with most glues, PP parts are usually mechanically fastened. PP-GF and PP-CF versions warp less.</p>
+
+  <h2 id="pom">⚙️ POM (acetal) and other specialties</h2>
+  <p><b>POM</b> (polyoxymethylene, Delrin®) has very low friction and excellent creep resistance, ideal for gears and sliding parts. As a filament it is rare and tricky: it warps strongly, releases formaldehyde when overheated, and sticks poorly. Handle it only in well-ventilated settings, if at all, and follow the manufacturer’s limits. <b>PBT</b>, <b>PVDF</b> and <b>PEKK</b> variants exist but are specialist.</p>
+
+  <h2 id="peek-pei">🚀 PEI and PEEK (overview)</h2>
+  <p><b>PEI</b> (ULTEM™ 1010/9085) and <b>PEEK/PEKK</b> are high-performance polymers used in aerospace and medical devices. They print at 360–420 °C with beds of 140–180 °C and chambers of 90–150 °C, which requires an industrial machine with an all-metal hot end, active chamber heating and special build plates. They are expensive (US$150–500+/kg) and are not suitable for consumer desktop printers, including the X2D. Treat them as an outsourcing option: send a design to a service bureau.</p>
+  <ul>
+    <li><b>PEI (ULTEM):</b> Tg ≈ 215 °C, flame retardant, high strength. 9085 is certified for aircraft interiors.</li>
+    <li><b>PEEK:</b> melting ≈343 °C, outstanding chemical and wear resistance, sterilizable.</li>
+    <li><b>PEKK:</b> slower to crystallize, thus easier on warping than PEEK.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 320" role="img" aria-label="Decision tree for choosing an engineering plastic: if outdoor use pick ASA, if need heat above 100 degrees pick PC or PC-ABS, if need toughness and wear pick nylon, if need stiffness and low warp pick PET-CF or PA-CF, if need chemical resistance pick PP or PPS-CF">
+      <rect class="f-blue" x="300" y="12" width="180" height="40" rx="8"/><text class="t-b t-c" x="390" y="36">Need a hard part?</text>
+      <path class="d-ink arrow" d="M340 52 L120 100"/><path class="d-ink arrow" d="M390 52 V100"/><path class="d-ink arrow" d="M440 52 L660 100"/>
+      <rect class="d-surface" x="20" y="100" width="200" height="50" rx="8"/><text class="t-sm t-c" x="120" y="122">Outdoors / sun?</text><text class="t-sm t-c" x="120" y="138">→ ASA</text>
+      <rect class="d-surface" x="290" y="100" width="200" height="50" rx="8"/><text class="t-sm t-c" x="390" y="122">Heat &gt; 100 °C?</text><text class="t-sm t-c" x="390" y="138">→ PC, PC-ABS, PA-CF</text>
+      <rect class="d-surface" x="560" y="100" width="200" height="50" rx="8"/><text class="t-sm t-c" x="660" y="122">Gears, wear, fatigue?</text><text class="t-sm t-c" x="660" y="138">→ PA12 / PA6 / PAHT</text>
+      <path class="d-ink arrow" d="M120 150 V200"/><path class="d-ink arrow" d="M390 150 V200"/><path class="d-ink arrow" d="M660 150 V200"/>
+      <rect class="d-surface" x="20" y="200" width="200" height="50" rx="8"/><text class="t-sm t-c" x="120" y="222">Need stiff + accurate?</text><text class="t-sm t-c" x="120" y="238">→ PET-CF, PA-CF</text>
+      <rect class="d-surface" x="290" y="200" width="200" height="50" rx="8"/><text class="t-sm t-c" x="390" y="222">Chemicals / fuel?</text><text class="t-sm t-c" x="390" y="238">→ PPS-CF, PP, PA12</text>
+      <rect class="d-surface" x="560" y="200" width="200" height="50" rx="8"/><text class="t-sm t-c" x="660" y="222">Cheap + easy?</text><text class="t-sm t-c" x="660" y="238">→ ABS, PETG, PC-ABS</text>
+      <text class="t-xs t-c" x="390" y="290">Then check: chamber? hardened nozzle? dryer? (see tables below)</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> A shortcut for the first pick. The <a href="../tools/material-picker.html">material picker</a> combines more criteria.</figcaption>
+  </figure>
+
+  <h2 id="adhesion">🧲 Adhesion aids per material</h2>
+  <p>Engineering plastics shrink and want to peel off. Match bed surface, temperature and adhesive:</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Material</th><th>Good bed surfaces</th><th>Aids</th><th>Notes</th></tr></thead>
+    <tbody>
+    <tr><td>ABS / ASA</td><td>Textured PEI, smooth PEI + glue stick</td><td>Brim 5–10 mm; ABS “slurry” (dissolved scraps)</td><td>Let bed cool before removal.</td></tr>
+    <tr><td>PC / PC-ABS</td><td>PEI + PVA glue, high-temp engineering plate</td><td>Brim 8–15 mm; mouse ears</td><td>Often needs 110–120 °C bed.</td></tr>
+    <tr><td>PA6 / PA12</td><td>Engineering plate, PEI with glue</td><td>Glue stick as release and bonder</td><td>Avoid bare smooth PEI; it welds.</td></tr>
+    <tr><td>PA-CF / PAHT-CF</td><td>Engineering plate, textured PEI</td><td>Thin glue layer</td><td>CF parts warp less.</td></tr>
+    <tr><td>PET-CF</td><td>Textured PEI</td><td>Glue stick is a release agent on smooth PEI</td><td>Over-adhesion on smooth PEI can tear the coating.</td></tr>
+    <tr><td>PPS-CF</td><td>High-temperature plate</td><td>Follow maker</td><td>Chamber heat matters most.</td></tr>
+    <tr><td>PP</td><td>PP packing tape / PP sheet</td><td>Wide brim</td><td>Does not stick to PEI.</td></tr>
+    </tbody></table></div>
+  <p>More on first layer physics and glue in <a href="../techniques/first-layer-and-adhesion.html">First layer &amp; adhesion</a>.</p>
+
+  <h2 id="drying">💧 Drying requirements</h2>
+  <p>Everything above except PP is at least moderately hygroscopic. Typical drying (always follow the spool label, and see the <a href="drying-and-storage.html#temperature-table">full drying table</a>):</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Material</th><th>Dry at</th><th>Time</th><th>Sensitivity</th></tr></thead>
+    <tbody>
+    <tr><td>ABS / ASA</td><td>70–80 °C</td><td>4–6 h</td><td><span class="chip yellow">Medium</span></td></tr>
+    <tr><td>PC / PC-ABS</td><td>70–80 °C</td><td>6–8 h</td><td><span class="chip red">High</span></td></tr>
+    <tr><td>PA6 / PA66 / PAHT</td><td>80–90 °C</td><td>8–12 h</td><td><span class="chip red">Very high</span></td></tr>
+    <tr><td>PA12</td><td>70–80 °C</td><td>6–8 h</td><td><span class="chip yellow">Medium-high</span></td></tr>
+    <tr><td>PET-CF</td><td>65–80 °C</td><td>6–10 h</td><td><span class="chip yellow">Medium-high</span></td></tr>
+    <tr><td>PPS-CF</td><td>80–100 °C</td><td>6–8 h</td><td><span class="chip yellow">Medium</span></td></tr>
+    <tr><td>PP</td><td>50–60 °C</td><td>3–4 h</td><td><span class="chip green">Low</span></td></tr>
+    </tbody></table></div>
+
+  <h2 id="smoothing">💨 Vapor smoothing (ABS and acetone)</h2>
+  <p>Acetone vapor dissolves the outer micrometers of ABS. Surface tension then flows the layer lines flat, leaving a glossy, injection-molded look. ASA smooths in the same way, but it needs a little longer. PC and nylon do not respond to acetone; PC reacts to dichloromethane, which is toxic and not for home use.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 280" role="img" aria-label="Cross-section showing an ABS part with visible layer lines before smoothing and a smooth glossy surface after exposure to acetone vapor in a closed container with a paper towel lining">
+      <rect class="d-surface" x="20" y="20" width="230" height="230" rx="10"/><rect class="d-surface" x="275" y="20" width="230" height="230" rx="10"/><rect class="d-surface" x="530" y="20" width="230" height="230" rx="10"/>
+      <text class="t-b t-c" x="135" y="14">1. Before</text><text class="t-b t-c" x="390" y="14">2. In vapor</text><text class="t-b t-c" x="645" y="14">3. After</text>
+      <path class="d-plastic" d="M60 60 h140 a6 6 0 0 1 0 12 h-140 a6 6 0 0 1 0 -12 M60 78 h140 a6 6 0 0 1 0 12 h-140 a6 6 0 0 1 0 -12 M60 96 h140 a6 6 0 0 1 0 12 h-140 a6 6 0 0 1 0 -12 M60 114 h140 a6 6 0 0 1 0 12 h-140 a6 6 0 0 1 0 -12"/>
+      <text class="t-xs t-c" x="135" y="170">ridged layer lines</text>
+      <rect class="d-metal" x="300" y="60" width="180" height="150" rx="8"/><rect class="d-plastic" x="350" y="130" width="80" height="60"/>
+      <path class="k-teal" d="M320 190 C310 160 330 150 320 120 M460 190 C470 160 450 150 460 120 M390 120 C380 100 400 90 390 70"/>
+      <text class="t-xs t-c" x="390" y="232">sealed jar, towel with acetone</text>
+      <path class="d-plastic" d="M570 60 h150 v66 h-150 Z"/>
+      <text class="t-xs t-c" x="645" y="170">smooth, glossy</text><text class="t-xs t-c" x="645" y="188">(5–30 min typical)</text>
+      <path class="d-ink arrow" d="M255 130 H272"/><path class="d-ink arrow" d="M510 130 H527"/>
+    </svg>
+    <figcaption><b>Figure 8.</b> Cold-vapor smoothing in a sealed container. Parts are suspended above the liquid, never in it.</figcaption>
+  </figure>
+  <div class="callout danger"><span class="callout-title">Acetone is flammable</span>
+    <p>Vapors are heavier than air and ignite from sparks or heaters. Work outdoors or in strong ventilation, with no flames, no hot plates and no electronics running. Do not heat acetone. Wear nitrile gloves and eye protection, and keep the lid closed except to insert or remove parts. Allow smoothed parts to off-gas for a day before handling. The surface stays tacky and soft while solvent remains.</p>
+  </div>
+  <p>Safer alternatives: sanding and priming, a thin epoxy coat, or heat-gun glazing of PETG/PLA. See <a href="../techniques/post-processing.html">Post-processing</a>.</p>
+
+  <h2 id="annealing">🔥 Annealing engineering plastics</h2>
+  <p><b>Annealing</b> heats a part to a temperature above its Tg but below its melting point so that molecules rearrange; for semi-crystalline polymers (nylon, PET, PPS, PP) this increases crystallinity, stiffness and heat resistance. Typical recipe: ramp slowly (≤ 30 °C/h), hold for 1–4 h at the maker’s suggested temperature, then cool slowly in the oven. Expect <b>shrinkage of 0.5–3 %</b> and sometimes warping; support parts with sand or salt and make test pieces. Amorphous materials (ABS, ASA, PC) benefit mostly from <em>stress relief</em> at 10–20 °C below Tg, which lowers warp tendencies in service. Do not use a food oven for toxic materials like PPS or POM, and never anneal inside a closed machine without temperature control.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 260" role="img" aria-label="Annealing temperature profile: slow ramp up, hold plateau, slow ramp down inside the oven, with shrinkage caution">
+      <path class="d-ink" d="M80 20 V220 H730"/><path class="d-grid" d="M80 70 H730 M80 120 H730 M80 170 H730"/>
+      <text class="t-sm" x="26" y="170" transform="rotate(-90 26 170)">Oven temp →</text><text class="t-sm t-c" x="405" y="250">Time →</text>
+      <path class="k-red" d="M90 210 L260 70 H520 L710 210"/>
+      <text class="t-sm t-c" x="170" y="130">slow ramp</text><text class="t-sm t-c" x="390" y="58">hold (1–4 h)</text><text class="t-sm t-c" x="620" y="130">slow cool</text>
+      <path class="d-dash" d="M90 90 H710"/><text class="t-xs" x="640" y="84">Tg (rough guide)</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> Schematic annealing cycle. Cooling slowly inside the oven is as important as the hold.</figcaption>
+  </figure>
+
+  <h2 id="safety">😷 Fumes and safety</h2>
+  <p>Heating plastics to 240–320 °C releases volatile compounds and ultrafine particles. ABS and ASA emit styrene and other organics; nylon emits caprolactam; PC emits traces of bisphenol-related volatiles; PEEK and PPS emit little but run hotter. None of this is a reason to fear the hobby, but it is a reason to <b>ventilate</b>:</p>
+  <ul>
+    <li>Place the printer in a ventilated room, near a window, or exhaust the enclosure outside.</li>
+    <li>Use an enclosure with an active carbon filter and a HEPA stage if it is in the living space (they reduce odor and particles but do not stop all VOCs).</li>
+    <li>Do not sleep in the same room as an ABS or nylon job.</li>
+    <li>Wear gloves for solvents and a mask for sanding fiber-filled parts.</li>
+    <li>Never overheat or leave a nozzle hot when idle. Machines with thermal runaway protection are mandatory.</li>
+  </ul>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 240" role="img" aria-label="Room layout showing a printer enclosure with carbon filter, an exhaust duct to a window, and fresh air intake">
+      <rect class="d-surface" x="20" y="20" width="740" height="200" rx="10"/>
+      <rect class="d-metal" x="300" y="70" width="170" height="120" rx="8"/><text class="t-sm t-c" x="385" y="132">Printer + enclosure</text>
+      <rect class="f-green" x="320" y="42" width="60" height="22" rx="4"/><text class="t-xs t-c" x="350" y="38">carbon + HEPA</text>
+      <path class="k-teal arrow" d="M470 120 H600"/><rect class="f-blue" x="600" y="90" width="120" height="60" rx="6"/><text class="t-sm t-c" x="660" y="124">Window / duct</text>
+      <path class="k-orange arrow" d="M60 120 H292"/><text class="t-sm" x="60" y="108">Fresh air in</text>
+      <text class="t-xs" x="40" y="205">Best: negative pressure inside the enclosure so fumes cannot leak into the room.</text>
+    </svg>
+    <figcaption><b>Figure 10.</b> A simple ventilation plan. Filters help; exhausting outdoors is better for ABS, ASA and nylon.</figcaption>
+  </figure>
+
+  <h2 id="applications">🏭 Typical applications</h2>
+  <div class="grid cols-3">
+    <div class="card accent-orange"><h3>Automotive</h3><p>ASA vents and trim, PC-ABS brackets, PA-CF intake covers and mounts, PET-CF jigs. Keep sustained engine-bay parts below 80 % of the HDT.</p></div>
+    <div class="card accent-blue"><h3>Tooling and jigs</h3><p>PA-CF and PET-CF drill guides, assembly fixtures, vacuum forming molds, and nylon gripper fingers. High stiffness, no creep.</p></div>
+    <div class="card accent-green"><h3>Outdoor</h3><p>ASA enclosures, antenna mounts, camera housings, garden gear. UV and weather resistant.</p></div>
+    <div class="card accent-purple"><h3>Gears and bearings</h3><p>PA12 and PA6 gears, bushings, wear strips, living hinges; filled with CF for stiffness.</p></div>
+    <div class="card accent-red"><h3>Chemical environments</h3><p>PP, PPS-CF and PA12 tanks, fittings and housings; check chemical compatibility charts.</p></div>
+    <div class="card accent-teal"><h3>Electronics</h3><p>PC-ABS and ABS enclosures, ESD-safe grades, flame-retardant variants (see <a href="flexibles-and-specialty.html#specialty">specialty</a>).</p></div>
+  </div>
+
+  <h2 id="recipes">📋 Print recipes (starting points)</h2>
+  <p>These are common starting ranges. <b>The manufacturer’s label always wins.</b> Bambu Studio’s built-in profiles for supported brands are a safer baseline than any table (see <a href="../x2d/settings-and-profiles.html">Settings &amp; profiles</a>).</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Material</th><th>Nozzle (°C)</th><th>Bed (°C)</th><th>Chamber</th><th>Fan</th><th>Max speed*</th><th>Nozzle type</th></tr></thead>
+    <tbody>
+    <tr><td>ABS</td><td>240–260</td><td>90–110</td><td>40–65 °C</td><td>0–30 %</td><td>≈ 200–300 mm/s</td><td>Brass / steel</td></tr>
+    <tr><td>ASA</td><td>245–270</td><td>90–110</td><td>40–65 °C</td><td>0–30 %</td><td>≈ 200–300 mm/s</td><td>Brass / steel</td></tr>
+    <tr><td>PC</td><td>260–300</td><td>100–120</td><td>55–65 °C</td><td>0–20 %</td><td>≈ 100–200 mm/s</td><td>Hardened preferred</td></tr>
+    <tr><td>PC-ABS</td><td>250–280</td><td>100–110</td><td>45–65 °C</td><td>0–30 %</td><td>≈ 150–250 mm/s</td><td>Brass / steel</td></tr>
+    <tr><td>PA6 / PA12</td><td>250–290</td><td>80–100</td><td>45–65 °C</td><td>0–20 %</td><td>≈ 100–200 mm/s</td><td>Brass / steel</td></tr>
+    <tr><td>PA-CF / PAHT-CF</td><td>270–300</td><td>90–110</td><td>55–65 °C</td><td>0–20 %</td><td>≈ 80–200 mm/s</td><td><b>Hardened</b></td></tr>
+    <tr><td>PET-CF</td><td>260–290</td><td>70–90</td><td>35–65 °C</td><td>20–50 %</td><td>≈ 100–200 mm/s</td><td><b>Hardened</b></td></tr>
+    <tr><td>PPS-CF</td><td>300–330</td><td>100–120</td><td>≥ 60 °C</td><td>0–20 %</td><td>≈ 60–120 mm/s</td><td><b>Hardened, high-temp hot end</b></td></tr>
+    <tr><td>PP</td><td>220–250</td><td>80–100</td><td>35–50 °C</td><td>0–50 %</td><td>≈ 80–150 mm/s</td><td>Brass / steel</td></tr>
+    </tbody></table></div>
+  <p><small>*Limited by volumetric flow (mm³/s) in practice. See <a href="../techniques/speed-cooling-quality.html">Speed, cooling &amp; quality</a>.</small></p>
+
+  <h2 id="troubleshooting">🔍 Troubleshooting engineering plastics</h2>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+    <tr><td>Corners lifting</td><td>Chamber too cool, fan too high, small brim</td><td>Heat-soak, fan 0 %, brim 8–10 mm, round corners.</td></tr>
+    <tr><td>Cracks between layers</td><td>Cold chamber, nozzle too cool, fan on</td><td>Increase chamber and nozzle temperatures by 5–10 °C; remove draft.</td></tr>
+    <tr><td>Bubbles, popping, rough surface</td><td>Wet filament</td><td>Dry; print from a dry box. See <a href="drying-and-storage.html#symptoms">symptoms</a>.</td></tr>
+    <tr><td>Nylon strings or oozes</td><td>Wet or too hot</td><td>Dry, drop 5 °C, tune retraction (see <a href="../techniques/troubleshooting.html">Troubleshooting</a>).</td></tr>
+    <tr><td>Nozzle clogs with CF</td><td>Heat creep, cold zone, fibers jammed</td><td>Cold-pull, check heat-break, purge higher flow.</td></tr>
+    <tr><td>Part will not release</td><td>Over-adhesion on smooth PEI</td><td>Use a glue-stick release layer; cool bed fully.</td></tr>
+    <tr><td>Part brittle</td><td>Wet, too cold nozzle, fiber loading</td><td>Dry, increase temperature, switch to a tougher base such as PA12 or PC-ABS.</td></tr>
+    </tbody></table></div>
+
+  <h2 id="takeaways">✅ Key takeaways</h2>
+  <ul>
+    <li>A <b>warm, even chamber</b> is the single biggest factor in printing ABS, ASA, PC and nylon successfully. The X2D heats its chamber actively to 65 °C.</li>
+    <li><b>ASA</b> for outdoors, <b>PC-ABS</b> for toughness with moderate difficulty, <b>PC</b> for heat and impact, <b>nylon</b> for wear and fatigue, <b>PET-CF/PA-CF</b> for stiff accurate parts.</li>
+    <li><b>Dry everything</b> except PP. Nylon and PC are the most demanding.</li>
+    <li>Fiber fills mean <b>hardened nozzles</b>, anisotropic strength, and lower shrinkage.</li>
+    <li><b>Ventilate</b>; use acetone and annealing only with proper precautions.</li>
+    <li>Practice with the <a href="../exercises/level-3-advanced.html">Level 3 exercises</a> and compare options in the <a href="../tools/material-picker.html">material picker</a>.</li>
+  </ul>
+
+</main>
+</body>
+</html>

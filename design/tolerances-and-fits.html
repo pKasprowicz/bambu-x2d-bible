@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tolerances &amp; fits · 3D Printing Compendium</title>
+  <meta name="description" content="Dimensional accuracy for FDM: shrinkage, hole undersize, clearance tables for press, snug, slip, sliding and print-in-place fits, test coupons with OpenSCAD, tolerance stacking and a recommended hole size calculator.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+  <style>
+    .tol-note { color: var(--muted); font-size: 13px; }
+    .tol-table td:first-child { white-space: nowrap; }
+  </style>
+</head>
+<body data-page="design/tolerances-and-fits.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 5 · Design for printing</div>
+    <h1>Tolerances &amp; fits</h1>
+    <p class="lead">Why a 10 mm hole prints at 9.7 mm, how much clearance every kind of fit needs, and how to calibrate your printer so the parts you design actually go together on the first try.</p>
+    <div class="meta"><span class="badge intermediate">Intermediate</span><span class="badge time">⏱ 40 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <p>Where dimensional errors come from, how to choose clearance for press, snug, slip, sliding and print-in-place fits, how to design and print a tolerance test coupon, how to set up CAD parameters so a one-number change adapts a design to a new printer or filament, and how to compute recommended hole sizes with the calculator on this page. All values assume a <b>0.4 mm nozzle</b> and <b>0.2 mm layers</b>; they are starting points that you must verify with your own printer.</p></div>
+
+  <h2 id="sources">🔰 Where dimensional errors come from</h2>
+  <p><b>Tolerance</b> is the permitted deviation from a nominal size. A machinist working with a lathe expects ±0.01 mm; a typical FDM printer delivers roughly <b>±0.1–0.3 mm</b> on small features and about ±0.5 % on larger ones. The good news is that most of the error is <em>systematic</em>, meaning it is the same every time, so you can measure it once and design around it. Truly random error is much smaller.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 270" role="img" aria-label="Pipeline of dimensional error sources from CAD to slicer to printer to material to measurement with typical magnitudes">
+      <g>
+        <rect class="f-blue" x="10" y="20" width="124" height="90" rx="10"/><text class="t-sm t-c t-b" x="72" y="46">1 · CAD model</text><text class="t-xs t-c" x="72" y="66">exact numbers</text><text class="t-xs t-c" x="72" y="82">(0 mm error)</text>
+        <rect class="f-purple" x="152" y="20" width="124" height="90" rx="10"/><text class="t-sm t-c t-b" x="214" y="46">2 · Slicer</text><text class="t-xs t-c" x="214" y="66">line width, polygon</text><text class="t-xs t-c" x="214" y="82">approximation 0.01–0.05</text>
+        <rect class="f-orange" x="294" y="20" width="124" height="90" rx="10"/><text class="t-sm t-c t-b" x="356" y="46">3 · Printer</text><text class="t-xs t-c" x="356" y="66">steps, belts, flow</text><text class="t-xs t-c" x="356" y="82">±0.05–0.15 mm</text>
+        <rect class="f-red" x="436" y="20" width="124" height="90" rx="10"/><text class="t-sm t-c t-b" x="498" y="46">4 · Material</text><text class="t-xs t-c" x="498" y="66">shrink 0.2–2 %</text><text class="t-xs t-c" x="498" y="82">moisture, temp</text>
+        <rect class="f-teal" x="578" y="20" width="132" height="90" rx="10"/><text class="t-sm t-c t-b" x="644" y="46">5 · Measuring</text><text class="t-xs t-c" x="644" y="66">caliper ±0.02,</text><text class="t-xs t-c" x="644" y="82">squish of soft plastic</text>
+        <path class="d-ink arrow" d="M134 65 H152"/><path class="d-ink arrow" d="M276 65 H294"/><path class="d-ink arrow" d="M418 65 H436"/><path class="d-ink arrow" d="M560 65 H578"/>
+      </g>
+      <rect class="d-surface" x="10" y="130" width="700" height="126" rx="10"/>
+      <text class="t t-b" x="26" y="154">Systematic (calibrate away)</text>
+      <text class="t-xs" x="26" y="174">• Extrusion squish makes outer walls 0.05–0.1 mm too big per side</text>
+      <text class="t-xs" x="26" y="190">• Holes print 0.1–0.3 mm too small (polygon + bead push-in)</text>
+      <text class="t-xs" x="26" y="206">• Shrinkage scales with size: 0.3 % of 100 mm = 0.3 mm</text>
+      <text class="t-b t" x="380" y="154">Random (design a margin for it)</text>
+      <text class="t-xs" x="380" y="174">• Temperature and humidity swings between prints</text>
+      <text class="t-xs" x="380" y="190">• Filament diameter variation ±0.02 mm</text>
+      <text class="t-xs" x="380" y="206">• Worn nozzle, loose belt, variable first-layer squish</text>
+      <text class="t-xs t-m" x="26" y="238">Strategy: measure → compute offset → put it into one CAD parameter → verify with a test coupon.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> The five places where a printed dimension can drift from the model. Calibration removes the systematic part; clearance covers the random part.</figcaption>
+  </figure>
+
+  <h2 id="shrink">🔰 Shrinkage and horizontal expansion</h2>
+  <p>Two different effects change sizes in the XY plane, and they push in opposite directions on different features:</p>
+  <ul>
+    <li><b>Thermal shrinkage</b> – plastic extruded at 200–280 °C contracts as it cools to room temperature. Every dimension scales by (1 − shrinkage). PLA shrinks only 0.2–0.5 %; nylon and ABS shrink more and also warp.</li>
+    <li><b>Horizontal expansion (squish)</b> – the bead is wider than its nominal line width and is pressed outward by the nozzle. The outer perimeter ends up slightly <em>outside</em> the CAD outline, and the inner perimeter of a hole slightly <em>inside</em> it, so outside dimensions grow and holes shrink.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 300" role="img" aria-label="Plan view of a block with a hole: printed outline slightly larger outside and hole slightly smaller than CAD; and a shrinkage diagram">
+      <rect class="d-surface" x="10" y="14" width="410" height="272" rx="10"/>
+      <text class="t t-b" x="26" y="38">Plan view: CAD (dashed) vs printed (solid)</text>
+      <rect class="d-plastic" x="60" y="60" width="190" height="190" rx="2"/>
+      <circle class="d-surface" cx="155" cy="155" r="53"/>
+      <rect class="d-dash" x="64" y="64" width="182" height="182" style="stroke:var(--blue)"/>
+      <circle class="d-dash" cx="155" cy="155" r="60" style="stroke:var(--blue)"/>
+      <path class="d-thin arrow" d="M270 100 L252 100"/>
+      <text class="t-xs" x="274" y="96">outer face: +0.05–0.1 mm</text>
+      <text class="t-xs" x="274" y="110">per side (squish)</text>
+      <path class="d-thin arrow" d="M280 175 L212 160"/>
+      <text class="t-xs" x="284" y="172">hole: −0.1 to −0.3 mm</text>
+      <text class="t-xs" x="284" y="186">diameter (inner bead + polygon)</text>
+      <text class="t-xs t-m" x="26" y="270">Blue dashed = CAD outline · solid = what the printer makes</text>
+      <rect class="d-surface" x="440" y="14" width="270" height="272" rx="10"/>
+      <text class="t t-b" x="456" y="38">Cooling shrinkage</text>
+      <rect class="f-orange" x="470" y="70" width="200" height="60" rx="3"/><text class="t-xs t-c" x="570" y="104">hot: as extruded, 100.0 mm</text>
+      <path class="d-ink arrow" d="M570 134 V160"/>
+      <rect class="f-blue" x="473" y="164" width="194" height="60" rx="3"/><text class="t-xs t-c" x="570" y="198">cooled: 99.7 mm (PLA, 0.3 %)</text>
+      <text class="t-xs" x="456" y="246">ΔL = L × s</text>
+      <text class="t-xs t-m" x="456" y="262">s = 0.2–0.5 % PLA, 0.5–1 % ABS</text>
+      <text class="t-xs t-m" x="456" y="276">nylon up to 1.5–2 %</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> Left: outside surfaces grow while holes shrink, so the same offset must be applied with opposite signs. Right: cooling shrinkage scales with the dimension, which is why large parts need a bigger correction than small ones.</figcaption>
+  </figure>
+
+  <div class="callout fact"><span class="callout-title">Why holes print small</span>
+    <p>Slicers approximate a circle with a polygon whose corners lie on the circle, so the polygon’s sides lie <em>inside</em> it. In addition, the inner perimeter bead is pressed inward by the plastic’s own flow and surface tension. Both effects reduce the hole and both scale weakly with diameter, so a 3 mm hole typically loses 0.15–0.25 mm while a 30 mm hole loses roughly 0.2–0.3 mm.</p></div>
+
+  <h2 id="clearances">🔰 Clearance tables: from press fit to loose</h2>
+  <p>A <b>fit</b> describes how two mating parts relate: a <b>shaft</b> (the male feature: pin, rod, boss) goes into a <b>hole</b> (the female feature). <b>Clearance</b> is hole minus shaft; a negative number is an <b>interference</b> (press fit). The numbers below are <b>diametral CAD clearance</b>: the hole diameter in the model minus the shaft diameter in the model, for a well-tuned 0.4 mm printer printing PLA or PETG with the axis vertical. Add more for large diameters, horizontal axes or high-shrink materials, and subtract for very well-calibrated machines.</p>
+
+  <div class="table-wrap"><table class="data tol-table">
+    <thead><tr><th>Fit class</th><th>CAD clearance (diametral)</th><th>Behavior</th><th>Typical use</th></tr></thead>
+    <tbody>
+      <tr><td><span class="chip red">Press fit</span></td><td>0.00 to +0.10 mm</td><td>Needs a hammer or vise; permanent.</td><td>Dowel pins, bushings, magnets, bearings in a tight seat.</td></tr>
+      <tr><td><span class="chip orange">Snug / transition</span></td><td>+0.10 to +0.20 mm</td><td>Hand push, holds without glue.</td><td>Lid plugs, alignment pins, inserts with glue.</td></tr>
+      <tr><td><span class="chip yellow">Slip fit</span></td><td>+0.20 to +0.30 mm</td><td>Slides by hand with slight resistance, no wobble.</td><td>Stack-up parts, slide-on caps, general assembly.</td></tr>
+      <tr><td><span class="chip green">Sliding / running</span></td><td>+0.30 to +0.40 mm</td><td>Moves freely, small play.</td><td>Hinge pins, drawers, rotating knobs.</td></tr>
+      <tr><td><span class="chip blue">Loose</span></td><td>+0.40 to +0.60 mm</td><td>Obvious play, tolerant of warping.</td><td>Large parts, hot-chamber materials, lids that must always close.</td></tr>
+      <tr><td><span class="chip purple">Print-in-place</span></td><td>0.30–0.50 mm <b>per side</b></td><td>Parts print separated and move after printing.</td><td>Chains, hinges, captive balls, gear trains.</td></tr>
+    </tbody>
+  </table></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 270" role="img" aria-label="Five concentric hole and shaft sections showing press, snug, slip, sliding and loose fits with CAD clearance values">
+      <g>
+        <circle class="d-plastic" cx="70" cy="100" r="54"/><circle class="d-surface" cx="70" cy="100" r="40"/><circle class="f-blue" cx="70" cy="100" r="40"/>
+        <text class="t-sm t-c t-b" x="70" y="26">Press</text><text class="t-xs t-c" x="70" y="186">0.0–0.1 mm</text><text class="t-xs t-c t-m" x="70" y="202">interference after print</text>
+      </g>
+      <g>
+        <circle class="d-plastic" cx="212" cy="100" r="54"/><circle class="d-surface" cx="212" cy="100" r="40"/><circle class="f-blue" cx="212" cy="100" r="37.5"/>
+        <text class="t-sm t-c t-b" x="212" y="26">Snug</text><text class="t-xs t-c" x="212" y="186">0.1–0.2 mm</text><text class="t-xs t-c t-m" x="212" y="202">hand push, no play</text>
+      </g>
+      <g>
+        <circle class="d-plastic" cx="354" cy="100" r="54"/><circle class="d-surface" cx="354" cy="100" r="40"/><circle class="f-blue" cx="354" cy="100" r="35"/>
+        <text class="t-sm t-c t-b" x="354" y="26">Slip</text><text class="t-xs t-c" x="354" y="186">0.2–0.3 mm</text><text class="t-xs t-c t-m" x="354" y="202">slides with friction</text>
+      </g>
+      <g>
+        <circle class="d-plastic" cx="496" cy="100" r="54"/><circle class="d-surface" cx="496" cy="100" r="40"/><circle class="f-blue" cx="496" cy="100" r="32.5"/>
+        <text class="t-sm t-c t-b" x="496" y="26">Sliding</text><text class="t-xs t-c" x="496" y="186">0.3–0.4 mm</text><text class="t-xs t-c t-m" x="496" y="202">moves freely</text>
+      </g>
+      <g>
+        <circle class="d-plastic" cx="638" cy="100" r="54"/><circle class="d-surface" cx="638" cy="100" r="40"/><circle class="f-blue" cx="638" cy="100" r="28"/>
+        <text class="t-sm t-c t-b" x="638" y="26">Loose</text><text class="t-xs t-c" x="638" y="186">0.4–0.6 mm</text><text class="t-xs t-c t-m" x="638" y="202">play, forgiving</text>
+      </g>
+      <rect class="f-yellow" x="10" y="220" width="700" height="38" rx="8"/>
+      <text class="t-xs" x="24" y="244">Gaps drawn about 12× larger than real for clarity. Start with “slip” (0.25 mm) when unsure and adjust after the first test print.</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> Hole-and-shaft sections for the fit classes (gaps exaggerated). The press fit is drawn with the shaft filling the hole entirely to show that, after printing, the shaft is slightly bigger than the undersized hole.</figcaption>
+  </figure>
+
+  <h3>Print-in-place clearances</h3>
+  <p>When two moving parts print <em>together</em> in one job, the gap between them must be large enough that the neighboring surfaces do not fuse, yet small enough to avoid slop. Horizontal gaps (side faces) and vertical gaps (top and bottom faces) behave differently because vertical gaps are quantized by layer height: each gap should be a multiple of the layer height, and at least two layers.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 270" role="img" aria-label="Print-in-place pin inside a sleeve showing horizontal clearance of 0.3 to 0.5 millimeters per side and vertical clearance of 0.4 millimeters">
+      <rect class="d-plastic" x="60" y="40" width="40" height="190"/>
+      <rect class="d-plastic" x="220" y="40" width="40" height="190"/>
+      <rect class="d-plastic" x="60" y="40" width="200" height="24"/>
+      <rect class="d-plastic" x="60" y="206" width="200" height="24"/>
+      <rect class="f-blue" x="123" y="76" width="74" height="104" rx="4"/>
+      <path class="d-thin arrow arrow-start" d="M100 120 H123"/><text class="t-xs" x="68" y="108">0.4</text>
+      <path class="d-thin arrow arrow-start" d="M197 120 H220"/><text class="t-xs" x="200" y="108">0.4</text>
+      <path class="d-thin arrow arrow-start" d="M160 64 V76"/><text class="t-xs" x="166" y="74">0.4</text>
+      <path class="d-thin arrow arrow-start" d="M160 180 V206"/><text class="t-xs" x="166" y="196">0.4+ (sag room)</text>
+      <text class="t-xs t-c" x="160" y="128">captive core</text>
+      <text class="t-sm t-b" x="300" y="70">Print-in-place rules (0.4 mm nozzle)</text>
+      <text class="t-xs" x="300" y="94">• Side gap: 0.3 mm minimum, 0.4–0.5 mm safe</text>
+      <text class="t-xs" x="300" y="112">• Top gap: 2–3 layers (0.4–0.6 mm)</text>
+      <text class="t-xs" x="300" y="130">• Bottom gap: 0.3–0.5 mm; the roof over it must be a</text>
+      <text class="t-xs" x="300" y="146">  bridge or a 45° chamfer</text>
+      <text class="t-xs" x="300" y="164">• Round the moving surfaces so they do not catch</text>
+      <text class="t-xs" x="300" y="182">• Print slowly with cooling; avoid gaps in hot</text>
+      <text class="t-xs" x="300" y="198">  chamber materials (they fuse)</text>
+      <text class="t-xs" x="300" y="224">• After printing, flex or twist the joint to break</text>
+      <text class="t-xs" x="300" y="240">  any thin skin between the surfaces</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> A captive core inside a print-in-place sleeve. The vertical gaps must be multiples of the layer height; the side gaps must clear the squish-out of both parts.</figcaption>
+  </figure>
+
+  <div class="callout x2d"><span class="callout-title">X2D note</span>
+    <p>A hot chamber (up to 65 °C) keeps the plastic warmer and can reduce the effective gap, so print-in-place parts in ABS, ASA or nylon need 0.1 mm more side clearance than the same design in PLA with the chamber cold. Fans on the X2D also cool bridges and overhangs better; see <a href="../x2d/engineering-and-chamber.html">Engineering materials &amp; chamber</a>.</p></div>
+
+  <h2 id="holes">🔧 Hole undersize rules, teardrops and diamonds</h2>
+  <p>Holes need two corrections: <b>size</b> (they print small) and <b>shape</b> (horizontal ones sag at the top, see <a href="principles.html#holes">Design principles</a>). First the size.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 280" role="img" aria-label="Circle approximated by polygons with 8 and 16 sides and a true circle, with the sagitta error for each">
+      <circle class="d-dash" cx="100" cy="110" r="55" style="stroke:var(--blue)"/>
+      <polygon class="d-surface" points="155,110 138.9,148.9 100,165 61.1,148.9 45,110 61.1,71.1 100,55 138.9,71.1"/>
+      <text class="t-sm t-c t-b" x="100" y="30">8 segments</text>
+      <text class="t-xs t-c" x="100" y="196">sag = 0.076 r</text><text class="t-xs t-c t-m" x="100" y="212">r = 5 mm → 0.38 mm</text>
+      <circle class="d-dash" cx="300" cy="110" r="55" style="stroke:var(--blue)"/>
+      <polygon class="d-surface" points="355,110 350.8,131 338.9,148.9 321,160.8 300,165 279,160.8 261.1,148.9 249.2,131 245,110 249.2,89 261.1,71.1 279,59.2 300,55 321,59.2 338.9,71.1 350.8,89"/>
+      <text class="t-sm t-c t-b" x="300" y="30">16 segments</text>
+      <text class="t-xs t-c" x="300" y="196">sag = 0.019 r</text><text class="t-xs t-c t-m" x="300" y="212">r = 5 mm → 0.10 mm</text>
+      <circle class="d-surface" cx="500" cy="110" r="55"/>
+      <text class="t-sm t-c t-b" x="500" y="30">64+ segments</text>
+      <text class="t-xs t-c" x="500" y="196">sag = 0.0012 r</text><text class="t-xs t-c t-m" x="500" y="212">r = 5 mm → 0.006 mm</text>
+      <rect class="f-yellow" x="580" y="60" width="130" height="100" rx="8"/>
+      <text class="t-xs t-b" x="590" y="80">Check your exports</text>
+      <text class="t-xs" x="590" y="98">Coarse STL meshes</text><text class="t-xs" x="590" y="112">lose size before the</text><text class="t-xs" x="590" y="126">printer even starts.</text><text class="t-xs" x="590" y="144">Use $fn ≥ 64 or STEP.</text>
+      <text class="t-xs t-m" x="20" y="250">sag (mm) = r × (1 − cos(180° / n)) for a polygon whose corners lie on the circle. Blue dashed = ideal circle.</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> Why mesh resolution matters for holes. A 16-sided polygon already makes a 10 mm hole 0.1 mm too small at the flats; use finely tessellated exports (or STEP files) for precision features.</figcaption>
+  </figure>
+
+  <p>The second contribution is physical: the inner perimeter of a hole is pushed inward by the bead. The practical result is the following rule table.</p>
+
+  <div class="table-wrap"><table class="data compact tol-table">
+    <thead><tr><th>Hole</th><th>Add to the CAD diameter</th><th>Comment</th></tr></thead>
+    <tbody>
+      <tr><td>Vertical, 2–10 mm</td><td>+0.15 to +0.25 mm</td><td>Most reliable; start at +0.2 mm.</td></tr>
+      <tr><td>Vertical, 10–40 mm</td><td>+0.20 to +0.30 mm</td><td>Large holes shrink more in absolute terms.</td></tr>
+      <tr><td>Horizontal, any size</td><td>+0.25 to +0.40 mm</td><td>Plus teardrop or diamond shape to avoid a sagging roof.</td></tr>
+      <tr><td>Tiny holes &lt; 2 mm</td><td>+0.20 to +0.30 mm</td><td>Often too tight; print undersize and drill.</td></tr>
+      <tr><td>Screw clearance, M3</td><td>3.4–3.5 mm (nominal 3.0)</td><td>Slip fit for the thread; more in the joint chapter.</td></tr>
+      <tr><td>Pin hole for 1.75 mm filament rod</td><td>1.9–2.0 mm</td><td>Common cheap pin for hinges and alignment.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout trick"><span class="callout-title">Pro trick: size by the part that matters</span>
+    <p>Put the clearance on the <b>hole</b>, not on the shaft. A shaft that carries a load should keep its nominal size so it stays strong, while a hole is easy to enlarge by adding 0.2–0.3 mm. For round bar stock or commercial hardware (bolts, bearings, magnets) the shaft is a fixed purchased dimension, so the only variable is the printed hole.</p></div>
+
+  <h3>Teardrop and diamond geometry</h3>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 280" role="img" aria-label="Geometry of a teardrop hole with apex at 0.707 diameters above centre, and a diamond hole, with dimensions as a function of diameter D">
+      <circle class="d-dash" cx="160" cy="150" r="50" style="stroke:var(--blue)"/>
+      <path class="d-surface" d="M124.6 114.6 A50 50 0 1 0 195.4 114.6 L160 79.3 Z"/>
+      <path class="d-thin arrow arrow-start" d="M230 150 V79.3"/>
+      <text class="t-xs" x="236" y="118">0.71 D</text>
+      <path class="d-thin arrow arrow-start" d="M110 224 H210"/>
+      <text class="t-xs t-c" x="160" y="244">D</text>
+      <text class="t-sm t-c t-b" x="160" y="30">Teardrop</text>
+      <text class="t-xs t-c t-m" x="160" y="48">apex 45° tangent lines</text>
+      <path class="d-surface" d="M440 70 L510 150 L440 230 L370 150 Z"/>
+      <circle class="d-dash" cx="440" cy="150" r="50" style="stroke:var(--blue)" />
+      <path class="d-thin arrow arrow-start" d="M440 70 V230"/>
+      <text class="t-xs" x="448" y="110">1.41 D</text>
+      <text class="t-sm t-c t-b" x="440" y="30">Diamond</text>
+      <text class="t-xs t-c t-m" x="440" y="48">inscribed circle = D</text>
+      <rect class="f-green" x="560" y="70" width="150" height="150" rx="10"/>
+      <text class="t-xs t-b" x="572" y="92">Which one?</text>
+      <text class="t-xs" x="572" y="112">Teardrop: round at the</text><text class="t-xs" x="572" y="126">bottom, pointed top.</text>
+      <text class="t-xs" x="572" y="148">Diamond: symmetric,</text><text class="t-xs" x="572" y="162">safe in any orientation.</text>
+      <text class="t-xs" x="572" y="184">Flatten a sharp apex</text><text class="t-xs" x="572" y="198">by 0.2 mm if it digs in.</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> Teardrop apex height is r·√2 = 0.707·D above the hole center (tangent lines at 45°). A diamond circumscribed around the circle has a diagonal of 1.414·D.</figcaption>
+  </figure>
+
+  <h2 id="coupons">🔧 Test coupons and the tolerance gauge</h2>
+  <p>A <b>test coupon</b> is a small, fast print that measures your actual tolerances so you never guess. A single coupon with a row of holes in 0.05 mm steps and a matching peg tells you at a glance which clearance feels “snug”, “slip” and “sliding” on <em>your</em> printer with <em>this</em> filament. Print it each time you change material, nozzle, or printer.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 250" role="img" aria-label="Tolerance gauge plate with eight holes of increasing clearance from 0.10 to 0.45 millimeters and a matching peg">
+      <rect class="d-plastic" x="20" y="30" width="590" height="110" rx="10"/>
+      <g>
+        <circle class="d-surface" cx="70" cy="85" r="24"/><circle class="d-surface" cx="140" cy="85" r="24.5"/><circle class="d-surface" cx="210" cy="85" r="25"/><circle class="d-surface" cx="280" cy="85" r="25.5"/>
+        <circle class="d-surface" cx="350" cy="85" r="26"/><circle class="d-surface" cx="420" cy="85" r="26.5"/><circle class="d-surface" cx="490" cy="85" r="27"/><circle class="d-surface" cx="560" cy="85" r="27.5"/>
+        <text class="t-xs t-c" x="70" y="132">0.10</text><text class="t-xs t-c" x="140" y="132">0.15</text><text class="t-xs t-c" x="210" y="132">0.20</text><text class="t-xs t-c" x="280" y="132">0.25</text><text class="t-xs t-c" x="350" y="132">0.30</text><text class="t-xs t-c" x="420" y="132">0.35</text><text class="t-xs t-c" x="490" y="132">0.40</text><text class="t-xs t-c" x="560" y="132">0.45</text>
+      </g>
+      <circle class="f-blue" cx="650" cy="85" r="24"/>
+      <text class="t-sm t-c t-b" x="650" y="45">Peg</text><text class="t-xs t-c" x="650" y="130">Ø 8.0 mm</text>
+      <path class="d-thin arrow" d="M626 85 H614" style="stroke-dasharray:4 4"/>
+      <text class="t-sm t-b" x="20" y="176">How to read it</text>
+      <text class="t-xs" x="20" y="196">1. Print the plate flat and the peg upright. Do not sand either part.</text>
+      <text class="t-xs" x="20" y="212">2. Test the peg in each hole. The first hole it enters with a light push is your “snug” value; the first it turns freely is “sliding”.</text>
+      <text class="t-xs" x="20" y="228">3. Write the numbers on the plate (the label on each hole is diametral clearance in mm) and keep it with the filament spool.</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> A tolerance gauge: one peg, a row of holes with growing clearance. The peg diameter is fixed; the holes grow 0.05 mm at a time. Hole radii are drawn with exaggerated differences.</figcaption>
+  </figure>
+
+  <h3>Parametric OpenSCAD tolerance gauge</h3>
+  <p>Paste this into <a href="https://openscad.org" rel="noopener">OpenSCAD</a>, set the peg size you actually need, render (F6) and export STL. Print the plate flat and the peg standing on its end. The code needs no libraries.</p>
+
+<pre><code>// tolerance_gauge.scad - peg and plate clearance test
+peg_d    = 8;      // nominal shaft diameter (mm)
+c_first  = 0.10;   // smallest diametral clearance (mm)
+c_step   = 0.05;   // clearance increment (mm)
+n_holes  = 8;      // number of holes
+plate_t  = 3;      // plate thickness (mm)
+margin   = 5;      // border around holes (mm)
+$fn      = 96;     // fine tessellation so holes stay round
+
+pitch  = peg_d + 2 * margin;
+plate_w = pitch * n_holes;
+
+module label(txt) {
+    // engraved 0.6 mm deep, readable at 3 mm height
+    translate([0, -peg_d / 2 - 1.5, plate_t - 0.6])
+        linear_extrude(1)
+            text(txt, size = 2.5, halign = "center", valign = "top");
+}
+
+module plate() {
+    difference() {
+        translate([0, -pitch / 2, 0])
+            cube([plate_w, pitch, plate_t]);
+        for (i = [0 : n_holes - 1]) {
+            c = c_first + i * c_step;
+            translate([pitch * (i + 0.5), 0, -1])
+                cylinder(d = peg_d + c, h = plate_t + 2);
+            translate([pitch * (i + 0.5), 0, 0])
+                label(str(c));
+        }
+    }
+}
+
+module peg() {
+    // 12 mm tall peg with a 0.4 mm chamfer at both ends
+    cylinder(d1 = peg_d - 0.8, d2 = peg_d, h = 0.4);
+    translate([0, 0, 0.4]) cylinder(d = peg_d, h = 11.2);
+    translate([0, 0, 11.6]) cylinder(d1 = peg_d, d2 = peg_d - 0.8, h = 0.4);
+}
+
+plate();
+translate([plate_w / 2, pitch + 6, 0]) peg();</code></pre>
+
+  <p class="tol-note">A ready-made version of this gauge and other calibration models are listed on the <a href="../exercises/models.html">Downloadable test models</a> page.</p>
+
+  <div class="callout tip"><span class="callout-title">Also test the opposite fit</span>
+    <p>To test an <em>external</em> fit such as a lid over a box, print a row of small lids with 0.1–0.5 mm of gap and a fixed box rim. To test slot tolerances, add a plate with slots instead of holes. A good coupon takes 5–10 minutes and uses less than 10 g of filament.</p></div>
+
+  <h2 id="fit-classes">🚀 Fit classes and how they compare with machined fits</h2>
+  <p>Mechanical engineers describe fits with ISO symbols such as H7/g6 (a close running fit) or H7/p6 (a light press fit). Those fits typically sit in precision grades IT6–IT7, with tolerance zones of 0.01–0.02 mm for a 10 mm diameter. FDM at its best delivers roughly the IT13–IT15 range, which is 0.2–0.5 mm for the same diameter. You cannot print a true H7/g6 fit directly, but you can reproduce the <em>behaviour</em> of each class by shifting the nominal size and then ream or drill when you need precision.</p>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Machined class</th><th>Behavior</th><th>FDM equivalent</th><th>Tip</th></tr></thead>
+    <tbody>
+      <tr><td>H7/p6 interference</td><td>Hammered together</td><td>Press fit: 0.0–0.1 mm CAD clearance</td><td>Add a lead-in chamfer 0.5 mm; cut a slit to let it flex.</td></tr>
+      <tr><td>H7/k6 transition</td><td>Mallet or hand press</td><td>Snug: 0.1–0.2 mm</td><td>Use for alignment pins that must not wobble.</td></tr>
+      <tr><td>H7/h6 location</td><td>Slide by hand, no play</td><td>Slip: 0.2–0.3 mm</td><td>Do not expect it to be precisely coaxial.</td></tr>
+      <tr><td>H7/g6 close running</td><td>Smooth rotation</td><td>Sliding: 0.3–0.4 mm</td><td>Print the bearing seat vertically.</td></tr>
+      <tr><td>H9/d9 free running</td><td>Plenty of play</td><td>Loose: 0.4–0.6 mm</td><td>For large or warping parts.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="stacking">🚀 Tolerance stacking</h2>
+  <p>When several parts are assembled in a chain, their individual errors add up. This is <b>tolerance stack-up</b>. A tolerance of ±0.1 mm on each of four stacked parts can accumulate to ±0.4 mm in the worst case, which is the difference between a perfect lid and a lid that will not close. Statistically the errors rarely all align, so the likely stack is the <b>root sum of squares</b> (RSS): √(4 × 0.1²) = ±0.2 mm.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 260" role="img" aria-label="Four stacked blocks of 20 millimeters with plus minus 0.1 each in a housing, showing worst case plus minus 0.4 and RSS plus minus 0.2">
+      <rect class="d-surface" x="20" y="30" width="60" height="180" rx="4"/>
+      <rect class="d-surface" x="500" y="30" width="60" height="180" rx="4"/>
+      <g>
+        <rect class="f-blue" x="80" y="90" width="100" height="60"/><text class="t-sm t-c" x="130" y="125">20 ±0.1</text>
+        <rect class="f-green" x="180" y="90" width="100" height="60"/><text class="t-sm t-c" x="230" y="125">20 ±0.1</text>
+        <rect class="f-orange" x="280" y="90" width="100" height="60"/><text class="t-sm t-c" x="330" y="125">20 ±0.1</text>
+        <rect class="f-purple" x="380" y="90" width="100" height="60"/><text class="t-sm t-c" x="430" y="125">20 ±0.1</text>
+      </g>
+      <path class="d-thin arrow arrow-start" d="M80 170 H480"/><text class="t-sm t-c" x="280" y="190">stack length 80.0 mm (±0.4 worst case, ±0.2 RSS)</text>
+      <path class="d-thin arrow arrow-start" d="M80 60 H500"/><text class="t-sm t-c" x="290" y="52">housing 81.0 ±0.2</text>
+      <text class="t-xs" x="580" y="70">Gap budget</text>
+      <text class="t-xs" x="580" y="90">nominal: 1.0 mm</text>
+      <text class="t-xs" x="580" y="108">worst case: 1.0 − 0.4 − 0.2</text>
+      <text class="t-xs" x="580" y="124">= 0.4 mm ✓ still fits</text>
+      <text class="t-xs" x="580" y="150">with no clearance:</text>
+      <text class="t-xs c-red t-b" x="580" y="166">−0.6 mm ✗ collision</text>
+      <text class="t-xs t-m" x="20" y="240">Always include a deliberate gap in the stack (at least the sum of the worst-case tolerances).</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> Tolerance stack-up in a chain of parts. Worst-case stacks add linearly; typical stacks add in quadrature. Design for the worst case when a failure is expensive.</figcaption>
+  </figure>
+
+  <ul>
+    <li><b>Fewer parts in the chain</b> means fewer errors: the best tolerance strategy is part consolidation.</li>
+    <li><b>Locate from one datum:</b> measure and design every feature from the same face (usually the bed face) instead of daisy-chaining.</li>
+    <li><b>Use compliance:</b> a flexible clip, spring tab or rubber foot absorbs ±0.5 mm that a rigid joint cannot.</li>
+    <li><b>Make one part adjustable:</b> slotted screw holes, a shim, or a screw end-stop absorb stack-up.</li>
+  </ul>
+
+  <h2 id="calibration">🔧 Calibration offsets</h2>
+  <p>The test coupon tells you how far your printer is from the model. Convert that into numbers you can use:</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 230" role="img" aria-label="Calibration loop: print coupon, measure, compute offset, apply in CAD or slicer, reprint to verify">
+      <rect class="f-blue" x="10" y="60" width="120" height="70" rx="10"/><text class="t-sm t-c t-b" x="70" y="90">1 Print</text><text class="t-xs t-c" x="70" y="108">coupon (20 mm</text><text class="t-xs t-c" x="70" y="120">cube + holes)</text>
+      <rect class="f-purple" x="160" y="60" width="120" height="70" rx="10"/><text class="t-sm t-c t-b" x="220" y="90">2 Measure</text><text class="t-xs t-c" x="220" y="108">3× each, mean</text><text class="t-xs t-c" x="220" y="120">at 20 °C</text>
+      <rect class="f-orange" x="310" y="60" width="120" height="70" rx="10"/><text class="t-sm t-c t-b" x="370" y="90">3 Compute</text><text class="t-xs t-c" x="370" y="108">offset = (nom −</text><text class="t-xs t-c" x="370" y="120">meas) / 2</text>
+      <rect class="f-green" x="460" y="60" width="120" height="70" rx="10"/><text class="t-sm t-c t-b" x="520" y="90">4 Apply</text><text class="t-xs t-c" x="520" y="108">CAD parameter</text><text class="t-xs t-c" x="520" y="120">or slicer XY comp.</text>
+      <rect class="f-teal" x="610" y="60" width="100" height="70" rx="10"/><text class="t-sm t-c t-b" x="660" y="90">5 Verify</text><text class="t-xs t-c" x="660" y="108">reprint, within</text><text class="t-xs t-c" x="660" y="120">±0.05 mm?</text>
+      <path class="d-ink arrow" d="M130 95 H160"/><path class="d-ink arrow" d="M280 95 H310"/><path class="d-ink arrow" d="M430 95 H460"/><path class="d-ink arrow" d="M580 95 H610"/>
+      <path class="d-mute arrow" d="M660 130 V180 H70 V132"/>
+      <text class="t-xs t-m t-c" x="360" y="200">if not, repeat (usually two rounds are enough)</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> The calibration loop. Two passes bring most printers to ±0.05 mm on the calibrated features.</figcaption>
+  </figure>
+
+  <ol class="steps">
+    <li><strong>Print a coupon</strong> with a 20 mm outside cube, a 10 mm hole (vertical) and a 10 mm hole (horizontal). Use your normal profile and material.</li>
+    <li><strong>Measure</strong> each dimension three times with calipers; let the part cool to room temperature first and average the readings.</li>
+    <li><strong>Outside offset:</strong> (20 − measured) ÷ 2 gives the per-side error. Example: measured 20.12 mm → −0.06 mm per side.</li>
+    <li><strong>Hole offset:</strong> 10 − measured hole diameter. Example: measured 9.78 mm → add +0.22 mm to the CAD hole diameter.</li>
+    <li><strong>Enter the values</strong> as parameters in your CAD file (next section) or use the slicer’s XY hole and contour compensation. Prefer one place, not both.</li>
+    <li><strong>Reprint</strong> the coupon with the corrections and confirm.</li>
+  </ol>
+
+  <h2 id="parameters">🔧 Designing tolerance parameters in CAD</h2>
+  <p>Never type 8.2 into a sketch and move on. Instead, define the tolerances once as <b>named parameters</b> at the top of the model and use them everywhere. When you change printer, nozzle or filament, you edit three numbers and every hole, lid and pin follows. Fusion, Onshape and FreeCAD call them <em>user parameters</em>, <em>variables</em> or a <em>spreadsheet</em>; OpenSCAD and CadQuery use ordinary variables. A step-by-step workflow with a complete OpenSCAD example is on the <a href="parametric-cad-workflow.html">Parametric CAD workflow</a> page.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 280" role="img" aria-label="A parameter block with tolerance variables feeding hole, lid, pin and slot features in a model">
+      <rect class="f-blue" x="10" y="20" width="240" height="240" rx="12"/>
+      <text class="t t-b" x="26" y="46">Tolerance parameters</text>
+      <text class="t-sm t-mono" x="26" y="76">tol_press   = 0.05</text>
+      <text class="t-sm t-mono" x="26" y="98">tol_snug    = 0.15</text>
+      <text class="t-sm t-mono" x="26" y="120">tol_slip    = 0.25</text>
+      <text class="t-sm t-mono" x="26" y="142">tol_slide   = 0.35</text>
+      <text class="t-sm t-mono" x="26" y="164">tol_pip     = 0.40</text>
+      <text class="t-sm t-mono" x="26" y="186">hole_extra  = 0.10</text>
+      <text class="t-sm t-mono" x="26" y="208">wall        = 1.35</text>
+      <text class="t-sm t-mono" x="26" y="230">layer       = 0.20</text>
+      <g>
+        <path class="d-ink arrow" d="M250 90 H320"/><path class="d-ink arrow" d="M250 120 H320"/><path class="d-ink arrow" d="M250 150 H320"/><path class="d-ink arrow" d="M250 180 H320"/>
+        <rect class="f-green" x="320" y="66" width="190" height="40" rx="8"/><text class="t-sm t-c" x="415" y="91">Pin hole: pin_d + tol_snug</text>
+        <rect class="f-orange" x="320" y="112" width="190" height="40" rx="8"/><text class="t-sm t-c" x="415" y="137">Lid gap: lid_id + tol_slip</text>
+        <rect class="f-purple" x="320" y="158" width="190" height="40" rx="8"/><text class="t-sm t-c" x="415" y="183">Hinge: pin_d + tol_slide</text>
+        <rect class="f-teal" x="320" y="204" width="190" height="40" rx="8"/><text class="t-sm t-c" x="415" y="229">Moving gap: tol_pip per side</text>
+      </g>
+      <rect class="d-surface" x="540" y="66" width="170" height="178" rx="10"/>
+      <text class="t-sm t-b" x="552" y="90">Why it pays off</text>
+      <text class="t-xs" x="552" y="112">• New filament:</text><text class="t-xs" x="552" y="126">  edit one line</text>
+      <text class="t-xs" x="552" y="148">• New printer:</text><text class="t-xs" x="552" y="162">  swap a profile</text>
+      <text class="t-xs" x="552" y="184">• Share the design:</text><text class="t-xs" x="552" y="198">  others tune it too</text>
+      <text class="t-xs" x="552" y="220">• No hidden magic</text><text class="t-xs" x="552" y="234">  numbers in sketches</text>
+    </svg>
+    <figcaption><b>Figure 10.</b> One parameter block, many features. The names say which kind of fit the feature wants; the numbers belong to your printer and filament.</figcaption>
+  </figure>
+
+  <div class="callout tip"><span class="callout-title">Design intent</span>
+    <p>Name parameters by <em>what the fit does</em> (<code>tol_snug</code>), not by value (<code>tol_015</code>). The value will change when the printer changes; the intent will not.</p></div>
+
+  <h2 id="shrinkage">🔧 Per-material shrinkage</h2>
+  <p>Shrinkage matters when one of the mating parts is <em>not printed</em> (a steel pin, a bearing, a magnet) because then only the printed hole shrinks. It also decides how much a large part needs to be scaled. The table shows typical linear shrinkage after cooling; treat the ranges as indicative and measure your own with a 100 mm bar.</p>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Material</th><th>Linear shrinkage (typical)</th><th>Warp risk</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>PLA</td><td>0.2–0.5 %</td><td><span class="chip green">Low</span></td><td>The most dimensionally stable; good for tight fits.</td></tr>
+      <tr><td>PETG</td><td>0.2–0.6 %</td><td><span class="chip green">Low</span></td><td>Squishes more; holes often smaller than PLA.</td></tr>
+      <tr><td>ABS</td><td>0.5–1.0 %</td><td><span class="chip red">High</span></td><td>Needs a warm enclosure; large flat parts warp.</td></tr>
+      <tr><td>ASA</td><td>0.4–0.9 %</td><td><span class="chip yellow">Medium–high</span></td><td>Similar to ABS, slightly better.</td></tr>
+      <tr><td>PC</td><td>0.5–0.8 %</td><td><span class="chip red">High</span></td><td>Needs high bed and chamber temperature.</td></tr>
+      <tr><td>Nylon (PA6, PA12)</td><td>1.0–2.0 %</td><td><span class="chip red">High</span></td><td>Also absorbs moisture and swells 1–3 % in size when conditioned.</td></tr>
+      <tr><td>TPU</td><td>0.4–1.2 %</td><td><span class="chip green">Low</span></td><td>Soft: calipers squash it, so measure lightly.</td></tr>
+      <tr><td>CF/GF-filled grades</td><td>0.1–0.5 %</td><td><span class="chip green">Low–medium</span></td><td>Fillers reduce shrinkage and warping to roughly 1/3–1/2 of the unfilled polymer.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="bars"><div class="bars-title">Typical linear shrinkage, midpoints (% of dimension, indicative)</div>
+    <div class="bar green"><span>PLA</span><i style="--v:17%"></i><em>0.35 %</em></div>
+    <div class="bar blue"><span>PETG</span><i style="--v:20%"></i><em>0.4 %</em></div>
+    <div class="bar teal"><span>CF-filled</span><i style="--v:15%"></i><em>0.3 %</em></div>
+    <div class="bar yellow"><span>PC</span><i style="--v:33%"></i><em>0.65 %</em></div>
+    <div class="bar orange"><span>ASA</span><i style="--v:33%"></i><em>0.65 %</em></div>
+    <div class="bar red"><span>ABS</span><i style="--v:38%"></i><em>0.75 %</em></div>
+    <div class="bar purple"><span>Nylon</span><i style="--v:75%"></i><em>1.5 %</em></div></div>
+
+  <div class="callout x2d"><span class="callout-title">X2D note</span>
+    <p>A heated chamber (up to 65 °C) lets you print ABS, ASA, PC and nylon with less warping, and reduces the temperature step each layer experiences on cooling, but it does not remove shrinkage. For official guidance on materials and chamber temperatures, read <a href="../x2d/engineering-and-chamber.html">Engineering materials &amp; chamber</a> and the Bambu Lab wiki.</p></div>
+
+  <h2 id="slicer">🔧 Compensating in the slicer</h2>
+  <p>Slicers can apply the correction for you. The two settings to know live under <em>Quality → Precision</em> in Bambu Studio and OrcaSlicer:</p>
+  <ul>
+    <li><b>X-Y contour compensation</b> – grows (positive) or shrinks (negative) every outer contour. A typical value is −0.03 to −0.10 mm if outer dimensions print oversize.</li>
+    <li><b>X-Y hole compensation</b> – grows (positive) or shrinks (negative) every hole. A typical value is +0.05 to +0.15 mm, because holes print small.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 250" role="img" aria-label="Slicer XY compensation: contour compensation shrinks the outline, hole compensation grows the hole">
+      <rect class="d-plastic" x="40" y="40" width="180" height="170" rx="2"/>
+      <circle class="d-surface" cx="130" cy="125" r="40"/>
+      <rect class="d-dash" x="40" y="40" width="180" height="170" style="stroke:var(--blue)"/>
+      <path class="d-ink arrow" d="M20 60 H42"/><path class="d-ink arrow" d="M240 190 H218"/>
+      <text class="t-xs c-blue t-b" x="240" y="60">contour −0.05 mm</text>
+      <path class="d-ink arrow" d="M130 125 L108 103"/><path class="d-ink arrow" d="M130 125 L152 147"/>
+      <text class="t-xs c-green t-b" x="136" y="86">hole +0.10 mm</text>
+      <rect class="f-yellow" x="320" y="30" width="390" height="200" rx="10"/>
+      <text class="t t-b" x="336" y="56">Slicer or CAD? Pick one</text>
+      <text class="t-xs" x="336" y="80">Slicer compensation:</text>
+      <text class="t-xs" x="352" y="96">+ works for every downloaded model</text>
+      <text class="t-xs" x="352" y="112">− applies to all holes the same, tiny or huge</text>
+      <text class="t-xs" x="336" y="136">CAD parameters:</text>
+      <text class="t-xs" x="352" y="152">+ distinct clearance per fit type</text>
+      <text class="t-xs" x="352" y="168">− only for models you design yourself</text>
+      <text class="t-xs t-b" x="336" y="194">Never apply both: you would count the correction twice.</text>
+      <text class="t-xs t-m" x="336" y="212">Start slicer comp. at 0 and design clearances in CAD.</text>
+    </svg>
+    <figcaption><b>Figure 11.</b> Slicer XY compensation grows holes and shrinks contours by a fixed amount. Use it for downloaded models, or for your whole printer profile, but not on top of CAD clearances.</figcaption>
+  </figure>
+
+  <div class="callout info"><span class="callout-title">Auto hole compensation on the X2D</span>
+    <p>The X2D offers automatic hole and contour compensation, but only with designated Bambu filaments and only for vertical circular holes. Check the printer and slicer notes in <a href="../x2d/settings-and-profiles.html">Bambu Studio settings &amp; profiles</a> before relying on it, and keep your measured offsets as a fallback.</p></div>
+
+  <h2 id="machining">🔧 Post-print machining: drilling and reaming</h2>
+  <p>When a hole must be accurate (a bearing seat, a precision pin), print it <b>undersize</b> and finish it with a drill or reamer. A drill bit cuts a round, straight hole regardless of print errors. Reaming then brings it to size with a smooth surface.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 240" role="img" aria-label="Three stages of a hole: printed 0.4 mm undersize, drilled with a bit, reamed to final size">
+      <g>
+        <rect class="d-plastic" x="30" y="50" width="180" height="100"/>
+        <rect class="d-surface" x="95" y="50" width="50" height="100"/>
+        <text class="t-sm t-c t-b" x="120" y="30">1 · Print undersize</text>
+        <text class="t-xs t-c" x="120" y="176">hole 7.6 mm for an 8 mm bore</text>
+      </g>
+      <g>
+        <rect class="d-plastic" x="270" y="50" width="180" height="100"/>
+        <rect class="d-surface" x="333" y="50" width="54" height="100"/>
+        <path class="d-metal" d="M352 20 H368 V120 L360 140 L352 120 Z"/>
+        <text class="t-sm t-c t-b" x="360" y="12">2 · Drill</text>
+        <text class="t-xs t-c" x="360" y="176">sharp bit, 200–500 rpm,</text><text class="t-xs t-c" x="360" y="190">peck to clear plastic</text>
+      </g>
+      <g>
+        <rect class="d-plastic" x="510" y="50" width="180" height="100"/>
+        <rect class="d-surface" x="570" y="50" width="60" height="100"/>
+        <text class="t-sm t-c t-b" x="600" y="30">3 · Ream</text>
+        <text class="t-xs t-c" x="600" y="176">hand reamer → 8.0 mm,</text><text class="t-xs t-c" x="600" y="190">straight and smooth</text>
+      </g>
+      <text class="t-xs t-m" x="30" y="226">Work slowly: friction melts PLA at about 60 °C. Back out often, never force, and clamp the part.</text>
+    </svg>
+    <figcaption><b>Figure 12.</b> Print undersize, drill, ream. The hole diameters are for a 0.4 mm nozzle; leave at least 0.3 mm of stock for the final cutting tool.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Target</th><th>Print hole</th><th>Finish with</th></tr></thead>
+    <tbody>
+      <tr><td>3.0 mm dowel (press)</td><td>2.6–2.7 mm</td><td>3.0 mm drill, hand ream</td></tr>
+      <tr><td>M3 clearance</td><td>3.2–3.4 mm</td><td>3.4 mm drill if tight</td></tr>
+      <tr><td>M3 tapped thread</td><td>2.7–2.8 mm</td><td>M3 hand tap (2.5 mm tap-drill size, printed a little oversize)</td></tr>
+      <tr><td>608 bearing seat (22 mm)</td><td>21.6 mm</td><td>Reamer or boring, stop at 22.05 mm for a light press</td></tr>
+      <tr><td>8 mm smooth rod</td><td>7.6 mm</td><td>8.1 mm drill for slip, 8.0 for snug</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="threads">🚀 Thread tolerance</h2>
+  <p>Printed threads work if you respect the nozzle. A 0.4 mm nozzle cannot resolve fine metric pitches: use <b>pitch ≥ 1.5 mm</b>, preferably 2–4 mm, and a trapezoidal or square profile with a flank angle around 30°–45°. Between a bolt and nut leave a <b>radial clearance of 0.2–0.35 mm</b> (0.4–0.7 mm on the diameter).</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 240" role="img" aria-label="Cross-section of a printed bolt thread and nut thread with clearance between flanks and crests">
+      <g transform="translate(20,20)">
+        <path class="d-plastic" d="M12 150 H30 L45 100 H65 L80 150 H100 L115 100 H135 L150 150 H170 L185 100 H205 L220 150 H240 V190 H12 Z"/>
+        <path class="d-surface2" d="M12 136 H28 L42 86 H68 L82 136 H98 L112 86 H138 L152 136 H168 L182 86 H208 L222 136 H238 V40 H12 Z"/>
+        <path class="d-thin arrow arrow-start" d="M55 86 V100"/><text class="t-xs" x="60" y="96">0.25</text>
+        <text class="t-sm t-b" x="12" y="30">Nut (internal thread)</text>
+        <text class="t-sm t-b" x="12" y="214">Bolt (external thread)</text>
+      </g>
+      <rect class="f-blue" x="300" y="30" width="410" height="190" rx="10"/>
+      <text class="t t-b" x="316" y="56">Rules for printed threads</text>
+      <text class="t-xs" x="316" y="80">• Pitch 2–4 mm (M12 and larger), 3–6 full turns</text>
+      <text class="t-xs" x="316" y="98">• Radial clearance 0.2–0.35 mm per side</text>
+      <text class="t-xs" x="316" y="116">• Flat crests and roots; avoid sharp 60° ISO tips</text>
+      <text class="t-xs" x="316" y="134">• Print with the axis vertical (layers cut across the</text>
+      <text class="t-xs" x="316" y="148">  thread, so each tooth is one set of layers)</text>
+      <text class="t-xs" x="316" y="166">• Add a lead-in chamfer 0.5–1 mm</text>
+      <text class="t-xs" x="316" y="184">• Small screws (M2–M6): use real hardware and tap</text>
+      <text class="t-xs" x="316" y="198">  or use heat-set inserts (see joints page)</text>
+    </svg>
+    <figcaption><b>Figure 13.</b> A printed thread pair in section: the same profile, shifted by a half pitch, with a uniform clearance of about 0.25 mm. Dimension shown at exaggerated scale.</figcaption>
+  </figure>
+
+  <h2 id="dowels">🔧 Assembly with dowels</h2>
+  <p>Dowels (short cylindrical pins) align two parts accurately regardless of how rough the printed surfaces are. They are the most reliable way to join split models, lids and large assemblies. The trick is to use a <b>snug fit in one part and a slip fit in the other</b>: the snug side holds the pin permanently, the slip side lets the second part come off.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 720 250" role="img" aria-label="Two plates joined by a dowel: snug hole in the lower plate and slip hole in the upper plate">
+      <rect class="d-plastic" x="40" y="130" width="260" height="60"/>
+      <rect class="d-plastic" x="40" y="60" width="260" height="60"/>
+      <rect class="d-surface" x="163" y="60" width="24" height="60"/>
+      <rect class="d-surface" x="164" y="130" width="22" height="52"/>
+      <rect class="d-metal" x="165" y="68" width="20" height="114"/>
+      <text class="t-sm t-b" x="40" y="40">Slip hole (+0.25)</text><text class="t-sm t-b" x="40" y="216">Snug hole (+0.10)</text>
+      <path class="d-thin arrow" d="M200 94 H340"/><text class="t-xs" x="346" y="98">upper part lifts off the dowel</text>
+      <path class="d-thin arrow" d="M200 160 H340"/><text class="t-xs" x="346" y="164">dowel stays pressed in the lower part</text>
+      <text class="t-xs" x="346" y="200">Printed alternative: 1.75 mm filament offcuts in</text><text class="t-xs" x="346" y="214">1.9–2.0 mm holes (cheap, glueable, shear-strong enough</text><text class="t-xs" x="346" y="228">for alignment)</text>
+    </svg>
+    <figcaption><b>Figure 14.</b> Snug on one side, slip on the other. Use at least two dowels (not collinear with each other and the load) to lock out rotation, and chamfer the hole entries by 0.5 mm.</figcaption>
+  </figure>
+
+  <h2 id="calculator">🧮 Recommended hole diameter calculator</h2>
+  <p>Enter the shaft you need to fit and your conditions. The tool applies the clearance classes above plus corrections for orientation, nozzle size and material shrinkage and returns the diameter to type into CAD. It is a starting point; always confirm with the test coupon.</p>
+
+  <div class="tool"><h3>Hole &amp; clearance calculator</h3>
+    <div class="tool-body">
+      <div>
+        <div class="field"><label for="tc-d">Nominal shaft diameter <output id="tc-d-out"></output></label><input type="range" id="tc-d" min="1" max="60" step="0.5" value="8"></div>
+        <div class="field"><label for="tc-fit">Fit class</label><select id="tc-fit">
+          <option value="0.05">Press (0.05)</option><option value="0.15">Snug (0.15)</option><option value="0.25" selected>Slip (0.25)</option><option value="0.35">Sliding (0.35)</option><option value="0.50">Loose (0.50)</option></select></div>
+        <div class="field"><label for="tc-mat">Material</label><select id="tc-mat">
+          <option value="0.35" selected>PLA (0.35 %)</option><option value="0.40">PETG (0.40 %)</option><option value="0.75">ABS (0.75 %)</option><option value="0.65">ASA (0.65 %)</option><option value="0.65">PC (0.65 %)</option><option value="1.50">Nylon (1.5 %)</option><option value="0.80">TPU (0.8 %)</option><option value="0.30">CF-filled (0.3 %)</option></select></div>
+        <div class="field"><label for="tc-ori">Hole axis</label><select id="tc-ori"><option value="0" selected>Vertical (Z)</option><option value="0.10">Horizontal (X/Y)</option></select></div>
+        <div class="field"><label for="tc-noz">Nozzle</label><select id="tc-noz"><option value="-0.05">0.2 mm</option><option value="0" selected>0.4 mm</option><option value="0.05">0.6 mm</option><option value="0.10">0.8 mm</option></select></div>
+        <div class="field"><label for="tc-mate">Mating shaft is</label><select id="tc-mate"><option value="1" selected>Purchased (metal pin, bearing, magnet)</option><option value="0">Printed in the same material</option></select></div>
+        <div class="field"><label for="tc-off">Measured correction from your coupon <output id="tc-off-out"></output></label><input type="range" id="tc-off" min="-0.3" max="0.3" step="0.01" value="0"><small>Positive grows the hole. Leave at 0 until you have measured.</small></div>
+      </div>
+      <div class="result">
+        <div class="big" id="tc-hole">8.25 mm</div>
+        <div>recommended CAD hole diameter</div>
+        <dl>
+          <dt>Shaft diameter (CAD)</dt><dd id="tc-shaft">8.00 mm</dd>
+          <dt>Total added to CAD hole</dt><dd id="tc-add">+0.25 mm</dd>
+          <dt>Shrink correction</dt><dd id="tc-shr">+0.00 mm</dd>
+          <dt>Target printed hole</dt><dd id="tc-print">≈ 8.25 mm</dd>
+          <dt>Intended clearance</dt><dd id="tc-real">≈ +0.25 mm</dd>
+          <dt>Uncertainty</dt><dd id="tc-unc">± 0.10 mm</dd>
+        </dl>
+        <p class="tol-note" id="tc-msg"></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  document.addEventListener("c3d:ready", function () {
+    var ids = ["tc-d", "tc-fit", "tc-mat", "tc-ori", "tc-noz", "tc-mate", "tc-off"];
+    var el = {};
+    ids.forEach(function (i) { el[i] = document.getElementById(i); });
+    function f2(v) { return (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(2) + " mm"; }
+    function calc() {
+      var d = parseFloat(el["tc-d"].value);
+      var fit = parseFloat(el["tc-fit"].value);
+      var shr = parseFloat(el["tc-mat"].value) / 100;
+      var ori = parseFloat(el["tc-ori"].value);
+      var noz = parseFloat(el["tc-noz"].value);
+      var purchased = el["tc-mate"].value === "1";
+      var off = parseFloat(el["tc-off"].value);
+      var shrinkAdj = purchased ? (shr - 0.0035) * d : 0;
+      var add = fit + ori + noz + off + shrinkAdj;
+      var hole = d + add;
+      var printed = d + fit;
+      var real = fit;
+      document.getElementById("tc-d-out").textContent = d.toFixed(1) + " mm";
+      document.getElementById("tc-off-out").textContent = f2(off);
+      document.getElementById("tc-hole").textContent = hole.toFixed(2) + " mm";
+      document.getElementById("tc-shaft").textContent = d.toFixed(2) + " mm";
+      document.getElementById("tc-add").textContent = f2(add);
+      document.getElementById("tc-shr").textContent = f2(shrinkAdj);
+      document.getElementById("tc-print").textContent = "≈ " + printed.toFixed(2) + " mm";
+      document.getElementById("tc-real").textContent = "≈ " + f2(real);
+      document.getElementById("tc-unc").textContent = "± " + (0.08 + d * 0.002).toFixed(2) + " mm";
+      var msg = real < 0.1 ? "Press fit: expect a light interference. Add a 0.5 mm lead-in chamfer and consider a slit." :
+                real < 0.2 ? "Snug: light hand pressure or a few taps." :
+                real < 0.3 ? "Slip: slides with slight friction." :
+                real < 0.4 ? "Sliding: moves freely with small play." : "Loose: visible play, tolerant of warping.";
+      document.getElementById("tc-msg").textContent = msg;
+    }
+    ids.forEach(function (i) { el[i].addEventListener("input", calc); el[i].addEventListener("change", calc); });
+    calc();
+  });
+  </script>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul>
+    <li>Most error is systematic: measure with a coupon, then correct in CAD or in the slicer, not both.</li>
+    <li>Start with these CAD clearances (diametral): press 0.0–0.1, snug 0.1–0.2, slip 0.2–0.3, sliding 0.3–0.4, loose 0.4–0.6, print-in-place 0.3–0.5 per side.</li>
+    <li>Holes print 0.1–0.3 mm small: put the clearance on the hole, keep shafts nominal, and use teardrop shapes for horizontal holes.</li>
+    <li>Shrinkage: PLA/PETG about 0.3–0.5 %, ABS/ASA 0.5–1 %, nylon 1–2 %, filled grades much lower.</li>
+    <li>Stack-ups add: keep chains short, locate from one datum and design a gap larger than the sum of tolerances.</li>
+    <li>For real precision, print undersize and drill or ream.</li>
+  </ul>
+  <p>Next: <a href="joints-and-fasteners.html">Joints &amp; fasteners</a> uses these clearances for snap-fits, inserts and threads. Practice with <a href="../exercises/level-2-intermediate.html">Level 2 exercises</a>.</p>
+
+
+
+</main>
+</body>
+</html>

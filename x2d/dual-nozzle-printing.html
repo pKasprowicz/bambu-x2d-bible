@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dual-Nozzle Printing on the X2D — 3D Printing Compendium</title>
+<meta name="description" content="How dual-nozzle printing works in practice on the Bambu Lab X2D: nozzle assignment, switching, print-area geometry, aux-nozzle limits, multi-material strategies and failure modes.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<style>.k-ink{stroke:var(--ink);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}</style>
+<script src="../assets/js/nav.js" defer></script>
+<script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="x2d/dual-nozzle-printing.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 6 · Bambu X2D + AMS 2 Pro</div>
+    <h1>Dual-Nozzle Printing in Practice</h1>
+    <p class="lead">Two hotends, one toolhead, and a slicer that decides who prints what. This page explains how filaments are assigned to the left and right nozzle, what happens during a switch, where each nozzle can reach, why the right nozzle is slower, and how to build smart multi-material jobs.</p>
+    <div class="meta"><span class="badge x2d">Bambu X2D</span><span class="badge intermediate">Intermediate</span><span class="badge time">⏱ 22 min read</span></div>
+  </header>
+
+  <div class="callout x2d"><span class="callout-title">What you need to know first</span>
+    <p>The numbers on this page (200 mm/s and about 1000 mm/s² for the right nozzle, the 235.5 × 256 × 256 mm right-only area, the 256 × 256 × 260 mm main area) come from Bambu’s documentation. Anything about how much time or material you save <b>depends on the model</b>, so this page explains the mechanism and avoids promising a figure. Check the <a href="https://wiki.bambulab.com">Bambu wiki</a> for current limits after firmware updates.</p>
+  </div>
+
+  <h2 id="concept">🔰 The idea in one minute</h2>
+  <p>A normal single-nozzle printer that prints several colors must <b>purge</b>: after every filament change it pushes plastic through the nozzle until the old color is gone. That wasted plastic and time grows with the number of changes. The X2D has two hotends. The left one is the <b>main</b> nozzle (with the direct-drive servo extruder) and the right one is the <b>auxiliary</b> nozzle (fed by a separate extruder at the back of the printer). Only one nozzle is lowered to the plate at a time; a lever-driven <b>flow blocker</b> (the gear-and-trigger mechanism described in the <a href="hardware-tour.html">hardware tour</a>) moves the idle one out of the way. If a model needs two colors, each color can live in its own nozzle, so the printer swaps nozzles instead of flushing plastic.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 330" role="img" aria-label="Comparison of single-nozzle color change with purge versus dual-nozzle nozzle swap, shown as two timelines">
+      <text class="t-lg" x="20" y="28">Same two-color job, two strategies (conceptual)</text>
+      <text class="t-sm t-b" x="20" y="70">Single nozzle</text>
+      <rect class="f-blue" x="20" y="82" width="120" height="30" rx="4"/><text class="t-xs t-c" x="80" y="102">print A</text>
+      <rect class="f-orange" x="140" y="82" width="70" height="30" rx="4"/><text class="t-xs t-c" x="175" y="102">purge</text>
+      <rect class="f-green" x="210" y="82" width="120" height="30" rx="4"/><text class="t-xs t-c" x="270" y="102">print B</text>
+      <rect class="f-orange" x="330" y="82" width="70" height="30" rx="4"/><text class="t-xs t-c" x="365" y="102">purge</text>
+      <rect class="f-blue" x="400" y="82" width="120" height="30" rx="4"/><text class="t-xs t-c" x="460" y="102">print A</text>
+      <rect class="f-orange" x="520" y="82" width="70" height="30" rx="4"/><text class="t-xs t-c" x="555" y="102">purge</text>
+      <rect class="f-green" x="590" y="82" width="120" height="30" rx="4"/><text class="t-xs t-c" x="650" y="102">print B</text>
+      <text class="t-sm t-b" x="20" y="170">Dual nozzle</text>
+      <rect class="f-blue" x="20" y="182" width="120" height="30" rx="4"/><text class="t-xs t-c" x="80" y="202">print A (left)</text>
+      <rect class="f-gray" x="140" y="182" width="24" height="30" rx="4"/>
+      <rect class="f-green" x="164" y="182" width="120" height="30" rx="4"/><text class="t-xs t-c" x="224" y="202">print B (right)</text>
+      <rect class="f-gray" x="284" y="182" width="24" height="30" rx="4"/>
+      <rect class="f-blue" x="308" y="182" width="120" height="30" rx="4"/><text class="t-xs t-c" x="368" y="202">print A</text>
+      <rect class="f-gray" x="428" y="182" width="24" height="30" rx="4"/>
+      <rect class="f-green" x="452" y="182" width="120" height="30" rx="4"/><text class="t-xs t-c" x="512" y="202">print B</text>
+      <path class="k-green arrow" d="M650 130 V170"/>
+      <text class="t-xs c-green t-b" x="600" y="160">finishes earlier</text>
+      <rect class="f-gray" x="20" y="250" width="24" height="14" rx="3"/><text class="t-xs" x="52" y="262">= nozzle swap (short)</text>
+      <rect class="f-orange" x="240" y="250" width="24" height="14" rx="3"/><text class="t-xs" x="272" y="262">= purge / flush (waste plastic)</text>
+      <text class="t-xs t-m" x="20" y="300">Block lengths are illustrative. Real savings depend on how often colors alternate and on prime-tower settings.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> The core idea. Each nozzle keeps “its” filament loaded, so a color change becomes a nozzle swap rather than a flush. Not to scale.</figcaption>
+  </figure>
+
+  <div class="callout fact"><span class="callout-title">The prime tower does not go away</span>
+    <p>Bambu notes that two-color printing still needs a prime tower. The tower is used to stabilize the nozzle after a swap (a little ooze and pressure change when the idle nozzle comes into play). What changes is that far less flushing is required between colors. Bambu also states that, compared with earlier machines that top out at 16 colors, the X2D can handle up to 25 colors in one job when all AMS units sit on one nozzle and one external spool sits on the other.</p>
+  </div>
+
+  <h2 id="roles">🔰 Who is who: left, right, main, aux</h2>
+  <div class="grid cols-2">
+    <div class="card accent-blue"><span class="ico">⬅️</span><h3>Left = main nozzle</h3><p>Direct-drive servo extruder in the toolhead. Auto flow-dynamics calibration. Full build area (256 × 256 × 260 mm). Handles the widest range of filaments, including TPU. This is the default for single-material prints.</p></div>
+    <div class="card accent-orange"><span class="ico">➡️</span><h3>Right = auxiliary nozzle</h3><p>Fed by a stepper extruder on the rear panel through a PTFE tube. Slower limits (200 mm/s, about 1000 mm/s²), longer retraction, manual flow-dynamics calibration. Reaches 235.5 × 256 × 256 mm. No TPU.</p></div>
+  </div>
+  <p>The two hotends are physically identical (300 °C maximum, same quick-release design) and can be swapped; what differs is the extruder that feeds them and the path the filament takes. The difference matters because it decides the speed and the filament list for each side.</p>
+
+  <h2 id="geometry">🔰 Print-area geometry: who can reach where</h2>
+  <p>Because the two nozzles sit side by side, each one cannot reach the entire plate edge. Bambu documents three regions, which every dual-nozzle project must respect:</p>
+  <ul>
+    <li><b>Left (main) only:</b> 256 × 256 × 260 mm — the whole plate, and the full height.</li>
+    <li><b>Right (aux) only:</b> 235.5 × 256 × 256 mm — 20.5 mm less across X and 4 mm less in height (the flow blocker moves under the main hotend and the auxiliary hotend lowers).</li>
+    <li><b>Common area for both:</b> 235.5 × 256 × 256 mm — anything the two nozzles must print together has to fit here.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 400" role="img" aria-label="Top view of the build plate showing the full left-nozzle area of 256 by 256 millimeters and the narrower area reachable by both nozzles of 235.5 by 256 millimeters with the left strip reachable only by the main nozzle">
+      <text class="t-lg" x="20" y="28">Top view of the plate (to scale in X; Y not to scale)</text>
+      <rect class="f-blue" x="60" y="60" width="440" height="300" rx="4" opacity=".35"/>
+      <rect class="f-orange" x="97" y="60" width="403" height="300" rx="2" opacity=".45"/>
+      <rect class="d-ink" x="60" y="60" width="440" height="300" rx="4" fill="none"/>
+      <path class="d-dash d-mute" d="M97 50 V370"/>
+      <text class="t-sm t-b" x="60" y="52">256 mm — main nozzle</text>
+      <path class="d-thin arrow arrow-start" d="M60 380 H500"/><text class="t-xs t-c" x="280" y="396">256 mm (X)</text>
+      <text class="t-xs t-c c-blue t-b" x="78" y="200" transform="rotate(-90 78 200)">main only</text>
+      <text class="t-sm t-b t-c" x="298" y="200">Common area</text>
+      <text class="t-xs t-c" x="298" y="222">235.5 × 256 mm</text>
+      <text class="t-xs t-c" x="298" y="240">both nozzles reach it</text>
+      <rect class="f-yellow" x="540" y="70" width="250" height="150" rx="8"/>
+      <text class="t-sm t-b" x="556" y="96">Rules of thumb</text>
+      <text class="t-xs" x="556" y="120">• Two-material models stay</text><text class="t-xs" x="556" y="136">  inside the common area.</text>
+      <text class="t-xs" x="556" y="158">• Single-material model:</text><text class="t-xs" x="556" y="174">  main nozzle, full plate.</text>
+      <text class="t-xs" x="556" y="196">• Aux-only model: smaller area.</text>
+      <rect class="f-teal" x="540" y="240" width="250" height="110" rx="8"/>
+      <text class="t-sm t-b" x="556" y="266">Height</text>
+      <text class="t-xs" x="556" y="288">Main: up to 260 mm</text><text class="t-xs" x="556" y="306">Aux / common: up to 256 mm</text>
+      <text class="t-xs" x="556" y="328">(4 mm less: aux hotend lowers)</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> Schematic top view. Which side of the plate is the narrow strip is shown here for illustration; Bambu Studio shows the exact permitted area as a colored boundary on the plate, so trust the slicer when placing parts.</figcaption>
+  </figure>
+
+  <div class="callout warn"><span class="callout-title">Why a model can be “out of bounds”</span>
+    <p>A tall two-color part that fits the 260 mm main limit may still exceed the 256 mm limit of the common area. If Studio flags the model, either lower it, rotate it, reduce its footprint or print it single-material on the left nozzle.</p>
+  </div>
+
+  <h2 id="assignment">🔧 How filaments get assigned to nozzles</h2>
+  <p>In Bambu Studio each plate filament is linked to a physical slot (an AMS slot or the external spool). The slot lives on one nozzle’s feed path: AMS units connected to the buffer’s upper inlet feed the left nozzle and units connected to the lower inlet feed the right nozzle. Assignment therefore has two layers: the <b>hardware layer</b> (which AMS feeds which nozzle, set in AMS Setup) and the <b>slicer layer</b> (which object, color or support uses which filament).</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 340" role="img" aria-label="Diagram showing AMS units connected to the buffer, upper inlet to left nozzle and lower inlet to right nozzle, and an external spool on the right">
+      <text class="t-lg" x="20" y="28">Where each filament physically goes</text>
+      <rect class="f-teal" x="30" y="70" width="180" height="70" rx="8"/><text class="t-sm t-b t-c" x="120" y="100">AMS 2 Pro #1</text><text class="t-xs t-c" x="120" y="120">slots 1–4</text>
+      <rect class="f-teal" x="30" y="190" width="180" height="70" rx="8"/><text class="t-sm t-b t-c" x="120" y="220">AMS 2 Pro #2 (or AMS HT)</text><text class="t-xs t-c" x="120" y="240">slots 5–8</text>
+      <rect class="f-purple" x="320" y="110" width="120" height="110" rx="8"/><text class="t-sm t-b t-c" x="380" y="140">Buffer</text>
+      <text class="t-xs t-c" x="380" y="170">upper inlet</text><text class="t-xs t-c" x="380" y="196">lower inlet</text>
+      <path class="k-blue arrow" d="M210 105 H260 V165 H320"/>
+      <path class="k-orange arrow" d="M210 225 H260 V191 H320"/>
+      <rect class="f-blue" x="560" y="70" width="210" height="60" rx="8"/><text class="t-sm t-b t-c" x="665" y="96">Left (main) nozzle</text><text class="t-xs t-c" x="665" y="114">fed from upper inlet</text>
+      <rect class="f-orange" x="560" y="190" width="210" height="60" rx="8"/><text class="t-sm t-b t-c" x="665" y="216">Right (aux) nozzle</text><text class="t-xs t-c" x="665" y="234">fed from lower inlet</text>
+      <path class="k-blue arrow" d="M440 165 H500 V100 H560"/>
+      <path class="k-orange arrow" d="M440 191 H500 V220 H560"/>
+      <rect class="f-gray" x="560" y="280" width="210" height="40" rx="8"/><text class="t-xs t-c" x="665" y="305">External spool (top holder) — one nozzle</text>
+      <text class="t-xs t-m" x="30" y="320">Single-AMS setups usually feed one nozzle; see the AMS 2 Pro page for combining units and the track switch.</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> Physical routing. The buffer’s upper inlet leads to the left (main) nozzle and the lower inlet to the right (auxiliary) nozzle. The track-switch accessory changes the routing logic and is covered below.</figcaption>
+  </figure>
+
+  <h3>Automatic vs manual assignment in Bambu Studio</h3>
+  <p>Studio offers filament grouping options. The names below are those documented by Bambu for the X2D; exact wording may change with Studio versions.</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Mode</th><th>What it optimizes</th><th>Use it when</th></tr></thead>
+    <tbody>
+      <tr><td><b>Filament-Saving</b></td><td>Least flushed plastic</td><td>Many colors, material cost matters</td></tr>
+      <tr><td><b>Convenience</b></td><td>Fewest manual swaps and spool changes</td><td>You want the least hands-on effort</td></tr>
+      <tr><td><b>Custom</b></td><td>Your own manual choice</td><td>You know exactly which nozzle each filament belongs to</td></tr>
+    </tbody></table></div>
+  <p>With the optional Filament Track Switch (sold separately) Studio can map filaments dynamically if you enable <b>Fila Saving</b> and <b>Enable Smart Filament Assign</b>. The track switch needs firmware 01.01.00.00 or later and Studio 2.5.3 or later (Bambu Handy 3.18.0 or later for the app side). It imposes tube-length limits (AMS to switch at most 700 mm, switch to buffer at most 115 mm) and does not allow an external spool.</p>
+
+  <div class="callout x2d"><span class="callout-title">Manual beats automatic when…</span>
+    <p>…you need a specific material on a specific side. Typical case: a flexible filament must be on the left (main) nozzle, a support interface material may be placed on the right nozzle, and a filament that Bambu marks “not recommended” on the aux nozzle must stay left. In such cases set the grouping to Custom and verify the result in the preview.</p>
+  </div>
+
+  <h2 id="switching">🔧 The nozzle switching sequence</h2>
+  <p>A swap is mechanical and uses no extra motor. A lever on the underside of the toolhead meets a push block on the printer’s lining as the toolhead moves; the gear and connecting rod then swing the flow blocker so that one hotend is lowered and the other raised. Bambu rates the mechanism for more than one million cycles in its brief. The printer also has two filament cutters (left and right), a purge wiper and a nozzle wiper that are used around swaps and filament changes.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 300" role="img" aria-label="Five-step sequence for switching nozzles: finish the section, retract and wipe, move to the trigger, swap, resume with prime tower">
+      <text class="t-lg" x="20" y="28">What happens during a nozzle swap (simplified)</text>
+      <g>
+        <rect class="f-blue" x="20" y="60" width="140" height="140" rx="10"/><circle class="s-blue" cx="45" cy="82" r="12"/><text class="t-xs t-w t-c t-b" x="45" y="86">1</text><text class="t-sm t-b" x="64" y="88">Finish</text><text class="t-xs" x="32" y="120">Active nozzle ends</text><text class="t-xs" x="32" y="136">its section of the</text><text class="t-xs" x="32" y="152">layer.</text>
+        <rect class="f-yellow" x="175" y="60" width="140" height="140" rx="10"/><circle class="s-yellow" cx="200" cy="82" r="12"/><text class="t-xs t-b t-c" x="200" y="86">2</text><text class="t-sm t-b" x="219" y="88">Retract</text><text class="t-xs" x="187" y="120">Retraction, wipe</text><text class="t-xs" x="187" y="136">to limit ooze on</text><text class="t-xs" x="187" y="152">the idle nozzle.</text>
+        <rect class="f-orange" x="330" y="60" width="140" height="140" rx="10"/><circle class="s-orange" cx="355" cy="82" r="12"/><text class="t-xs t-w t-c t-b" x="355" y="86">3</text><text class="t-sm t-b" x="374" y="88">Trigger</text><text class="t-xs" x="342" y="120">Toolhead lever</text><text class="t-xs" x="342" y="136">meets the push</text><text class="t-xs" x="342" y="152">block.</text>
+        <rect class="f-purple" x="485" y="60" width="140" height="140" rx="10"/><circle class="s-purple" cx="510" cy="82" r="12"/><text class="t-xs t-w t-c t-b" x="510" y="86">4</text><text class="t-sm t-b" x="529" y="88">Swap</text><text class="t-xs" x="497" y="120">Flow blocker swings;</text><text class="t-xs" x="497" y="136">other hotend is</text><text class="t-xs" x="497" y="152">lowered.</text>
+        <rect class="f-green" x="640" y="60" width="160" height="140" rx="10"/><circle class="s-green" cx="665" cy="82" r="12"/><text class="t-xs t-w t-c t-b" x="665" y="86">5</text><text class="t-sm t-b" x="684" y="88">Prime + go</text><text class="t-xs" x="652" y="120">Small prime on the</text><text class="t-xs" x="652" y="136">tower, then print</text><text class="t-xs" x="652" y="152">with the new color.</text>
+      </g>
+      <path class="k-ink arrow" d="M160 130 H175"/><path class="k-ink arrow" d="M315 130 H330"/><path class="k-ink arrow" d="M470 130 H485"/><path class="k-ink arrow" d="M625 130 H640"/>
+      <text class="t-xs t-m" x="20" y="240">The exact order and positions of wipes and primes are decided by the firmware and the slicer and may change between versions.</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> A swap in five stages. This is a conceptual description; Bambu does not publish the full G-code sequence in the pages used for this compendium.</figcaption>
+  </figure>
+
+  <p>You can also trigger the switch manually from the screen (Nozzle &amp; Extruder page), which is useful for loading filament to the second nozzle or for maintenance. After you reinstall or swap a hotend, run nozzle-offset calibration again.</p>
+
+  <h2 id="limits">🔧 Right-nozzle limits you must design around</h2>
+  <p>The auxiliary extruder is a stepper-driven unit located at the back of the printer, and its filament travels through a long PTFE tube. Bambu documents these consequences:</p>
+  <ul>
+    <li><b>Speed and acceleration:</b> limited to about 200 mm/s and about 1000 mm/s², versus up to 1000 mm/s and 20,000 mm/s² for the printer’s motion system overall.</li>
+    <li><b>Retraction:</b> much longer than on the main nozzle, with a larger pressure-advance (K) value.</li>
+    <li><b>Detail:</b> weaker fine detail and sharper corners; Bambu suggests using it for supports and lower-demand features.</li>
+    <li><b>Flow dynamics:</b> automatic for the main nozzle, manual for the auxiliary one in Studio.</li>
+    <li><b>Filaments:</b> no TPU. Some materials are listed as not recommended; see the <a href="filament-compatibility.html">compatibility page</a>.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 300" role="img" aria-label="Bar comparison of main nozzle motion limits versus the aux nozzle limits for speed 1000 vs 200 mm per second and acceleration 20000 vs 1000 mm per second squared, drawn to proportional lengths">
+      <text class="t-lg" x="20" y="28">Motion limits: main vs aux (proportional bars)</text>
+      <text class="t-sm t-b" x="20" y="70">Speed limit (mm/s)</text>
+      <rect class="f-blue" x="20" y="80" width="700" height="26" rx="4"/><text class="t-xs t-w t-b" x="30" y="98">Printer motion limit: 1000</text>
+      <rect class="f-orange" x="20" y="114" width="140" height="26" rx="4"/><text class="t-xs t-b" x="170" y="132">Aux nozzle: 200</text>
+      <text class="t-sm t-b" x="20" y="190">Acceleration (mm/s²)</text>
+      <rect class="f-blue" x="20" y="200" width="700" height="26" rx="4"/><text class="t-xs t-w t-b" x="30" y="218">Printer limit: 20,000</text>
+      <rect class="f-orange" x="20" y="234" width="35" height="26" rx="4"/><text class="t-xs t-b" x="65" y="252">Aux nozzle: about 1000</text>
+      <text class="t-xs t-m" x="20" y="285">These are travel/print ceilings, not typical print speeds. Real print speed is also limited by material flow and quality settings.</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> The aux nozzle’s ceilings are a fraction of the main system’s. Design the plate so that long, fast, detailed work stays on the main nozzle.</figcaption>
+  </figure>
+
+  <h2 id="flow-dynamics">🔧 Flow dynamics and pressure advance per nozzle</h2>
+  <p>Flow dynamics (the X2D’s name for pressure-advance style calibration) compensates for the elasticity of molten plastic in the nozzle so corners and line ends stay crisp. On the main nozzle the printer calibrates it automatically. On the auxiliary nozzle you run the calibration manually from Bambu Studio, per filament, because the long PTFE path and different extruder behave differently. Bambu says the auxiliary nozzle has a larger K value and much longer retraction. Practical consequences:</p>
+  <ul>
+    <li>If a filament looks fine on the left but blobby or stringy on the right, calibrate it for the right nozzle before changing anything else.</li>
+    <li>Keep separate filament presets for “left” and “right” use of the same spool so that the calibrated values do not get mixed up.</li>
+    <li>When you swap the two hotends physically (for example to diagnose a clog), the calibrations belong to the <i>extruder path</i>, not to the hotend body. Recalibrate nozzle offset after any reinstall.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 300" role="img" aria-label="Flow chart for deciding whether to run manual flow dynamics calibration for the auxiliary nozzle">
+      <text class="t-lg" x="20" y="28">Do I need to calibrate the right nozzle for this filament?</text>
+      <rect class="f-blue" x="20" y="60" width="170" height="50" rx="8"/><text class="t-sm t-c t-b" x="105" y="90">Filament on right nozzle?</text>
+      <path class="k-ink arrow" d="M190 85 H240"/>
+      <rect class="f-yellow" x="240" y="60" width="190" height="50" rx="8"/><text class="t-sm t-c t-b" x="335" y="90">Calibrated before?</text>
+      <path class="k-green arrow" d="M335 110 V160"/><text class="t-xs c-green t-b" x="344" y="140">yes</text>
+      <rect class="f-green" x="240" y="160" width="190" height="50" rx="8"/><text class="t-sm t-c" x="335" y="190">Use the saved K value</text>
+      <path class="k-red arrow" d="M430 85 H500"/><text class="t-xs c-red t-b" x="450" y="78">no</text>
+      <rect class="f-orange" x="500" y="60" width="280" height="50" rx="8"/><text class="t-sm t-c t-b" x="640" y="90">Run manual flow dynamics</text>
+      <path class="k-ink arrow" d="M640 110 V160"/>
+      <rect class="f-purple" x="500" y="160" width="280" height="60" rx="8"/><text class="t-sm t-c" x="640" y="186">Save to a preset named for</text><text class="t-sm t-c" x="640" y="204">the right nozzle</text>
+      <text class="t-xs t-m" x="20" y="270">Main-nozzle prints: automatic; nothing to do.</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> A simple decision for the manual aux-nozzle calibration step.</figcaption>
+  </figure>
+
+  <h2 id="strategies">🔧 Multi-material strategies that use the second nozzle well</h2>
+
+  <h3>1 · Rigid body + flexible parts (TPU on the left)</h3>
+  <p>TPU is only supported on the main (left) nozzle and, in Bambu’s guidance, is best fed from the external spool or the TPU Feed Assist Module rather than the AMS. The rigid material (PLA, PETG, ABS and similar) can then occupy the right nozzle for the structural part. Keep the model inside the common area and place it mid-front on the plate, as Bambu suggests for TPU. Do not heat the chamber for TPU. See <a href="tpu-and-flexibles.html">TPU &amp; flexibles on the X2D</a>.</p>
+
+  <h3>2 · Support interface in a different material</h3>
+  <p>A dissolvable or easy-release support material on the right nozzle, with the structural filament on the left, gives clean surfaces under overhangs. Interface layers are slow and low-flow, so the aux nozzle’s speed ceiling matters less. Check the compatibility matrix: the support filaments that Bambu lists as available for the aux nozzle include supports for ABS, PLA/PETG, PLA and PVA, while the support for PA/PET is highly not recommended there.</p>
+
+  <h3>3 · Model + support split between nozzles</h3>
+  <p>The classic use: the model in a “good” filament on the main nozzle and the bulk of support in a cheap or special material on the aux nozzle. The long supports do not need fine detail, which suits the slower nozzle. In the slicer, give supports their own filament (support base and support interface may be different).</p>
+
+  <h3>4 · Two colors with minimal flush</h3>
+  <p>Put color A on the left and color B on the right. Neither nozzle needs to flush for the other. The prime tower remains but can be small. Prefer designs where the colors do not alternate every layer; a swap still costs time.</p>
+
+  <h3>5 · Many colors: groups of two</h3>
+  <p>For more than two colors, groups of colors are assigned to a nozzle, and the swaps inside a group still involve normal filament changes through the AMS (with flushing). The optimizer tries to keep colors that alternate often on different nozzles. “Filament-Saving” grouping gives the least purge.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 360" role="img" aria-label="Four strategy cards: rigid plus TPU, support interface, model plus support, two colors minimal flush, each with left and right nozzle assignments">
+      <text class="t-lg" x="20" y="28">Strategy cheat sheet: who prints what</text>
+      <g>
+        <rect class="d-surface" x="20" y="50" width="190" height="290" rx="10"/><text class="t-sm t-b t-c" x="115" y="76">Rigid + TPU</text>
+        <rect class="f-blue" x="36" y="96" width="158" height="46" rx="6"/><text class="t-xs t-c t-b" x="115" y="116">LEFT</text><text class="t-xs t-c" x="115" y="132">TPU (external spool)</text>
+        <rect class="f-orange" x="36" y="154" width="158" height="46" rx="6"/><text class="t-xs t-c t-b" x="115" y="174">RIGHT</text><text class="t-xs t-c" x="115" y="190">PLA / PETG / ABS</text>
+        <text class="t-xs t-c" x="115" y="228">Rule: TPU never on aux.</text><text class="t-xs t-c" x="115" y="246">No chamber heating.</text>
+        <rect class="d-surface" x="225" y="50" width="190" height="290" rx="10"/><text class="t-sm t-b t-c" x="320" y="76">Support interface</text>
+        <rect class="f-blue" x="241" y="96" width="158" height="46" rx="6"/><text class="t-xs t-c t-b" x="320" y="116">LEFT</text><text class="t-xs t-c" x="320" y="132">Model filament</text>
+        <rect class="f-orange" x="241" y="154" width="158" height="46" rx="6"/><text class="t-xs t-c t-b" x="320" y="174">RIGHT</text><text class="t-xs t-c" x="320" y="190">Support (matched)</text>
+        <text class="t-xs t-c" x="320" y="228">Rule: match support to</text><text class="t-xs t-c" x="320" y="246">the model material.</text>
+        <rect class="d-surface" x="430" y="50" width="190" height="290" rx="10"/><text class="t-sm t-b t-c" x="525" y="76">Model + bulk support</text>
+        <rect class="f-blue" x="446" y="96" width="158" height="46" rx="6"/><text class="t-xs t-c t-b" x="525" y="116">LEFT</text><text class="t-xs t-c" x="525" y="132">Detail-critical model</text>
+        <rect class="f-orange" x="446" y="154" width="158" height="46" rx="6"/><text class="t-xs t-c t-b" x="525" y="174">RIGHT</text><text class="t-xs t-c" x="525" y="190">Support, low speed</text>
+        <text class="t-xs t-c" x="525" y="228">Rule: fine detail stays</text><text class="t-xs t-c" x="525" y="246">on the main nozzle.</text>
+        <rect class="d-surface" x="635" y="50" width="165" height="290" rx="10"/><text class="t-sm t-b t-c" x="717" y="76">Two colors</text>
+        <rect class="f-blue" x="651" y="96" width="133" height="46" rx="6"/><text class="t-xs t-c t-b" x="717" y="116">LEFT</text><text class="t-xs t-c" x="717" y="132">Color A</text>
+        <rect class="f-orange" x="651" y="154" width="133" height="46" rx="6"/><text class="t-xs t-c t-b" x="717" y="174">RIGHT</text><text class="t-xs t-c" x="717" y="190">Color B</text>
+        <text class="t-xs t-c" x="717" y="228">Rule: same material</text><text class="t-xs t-c" x="717" y="246">family on both.</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 7.</b> Strategies at a glance. The assignment on the right-hand nozzle must always be a filament that is permitted there.</figcaption>
+  </figure>
+
+  <div class="callout trick"><span class="callout-title">Spread the abrasive and the delicate</span>
+    <p>If one filament is abrasive (for example a carbon-fiber blend), prefer to place it on the nozzle you swap most easily and keep a spare hardened-steel hotend. Because the hotends are identical and quick-release, you can later move the worn one to the other side or replace it. See the <a href="hardware-tour.html">hardware tour</a> for the swap procedure.</p>
+  </div>
+
+  <h2 id="rules">🔧 Left/right assignment rules (a checklist)</h2>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 400" role="img" aria-label="Decision flowchart for choosing the left or right nozzle for a filament: TPU goes left, high detail goes left, not recommended on aux goes left, supports and bulk go right">
+      <text class="t-lg" x="20" y="28">Left or right? A quick decision path</text>
+      <rect class="f-gray" x="300" y="46" width="220" height="40" rx="8"/><text class="t-sm t-b t-c" x="410" y="71">A filament to place</text>
+      <path class="k-ink arrow" d="M410 86 V110"/>
+      <rect class="f-yellow" x="260" y="110" width="300" height="44" rx="8"/><text class="t-sm t-c" x="410" y="137">Is it TPU or any flexible?</text>
+      <path class="k-ink arrow" d="M260 132 H150"/><text class="t-xs c-red t-b" x="196" y="124">yes</text>
+      <rect class="f-blue" x="20" y="108" width="130" height="48" rx="8"/><text class="t-sm t-b t-c" x="85" y="130">LEFT</text><text class="t-xs t-c" x="85" y="146">main only</text>
+      <path class="k-ink arrow" d="M410 154 V184"/><text class="t-xs t-b" x="420" y="174">no</text>
+      <rect class="f-yellow" x="260" y="184" width="300" height="44" rx="8"/><text class="t-sm t-c" x="410" y="211">Marked “not recommended” on aux?</text>
+      <path class="k-ink arrow" d="M260 206 H150"/><text class="t-xs c-red t-b" x="196" y="198">yes</text>
+      <rect class="f-blue" x="20" y="182" width="130" height="48" rx="8"/><text class="t-sm t-b t-c" x="85" y="204">LEFT</text><text class="t-xs t-c" x="85" y="220">wiki says so</text>
+      <path class="k-ink arrow" d="M410 228 V258"/><text class="t-xs t-b" x="420" y="248">no</text>
+      <rect class="f-yellow" x="260" y="258" width="300" height="44" rx="8"/><text class="t-sm t-c" x="410" y="285">Detail-critical or fast outer walls?</text>
+      <path class="k-ink arrow" d="M260 280 H150"/><text class="t-xs c-red t-b" x="196" y="272">yes</text>
+      <rect class="f-blue" x="20" y="256" width="130" height="48" rx="8"/><text class="t-sm t-b t-c" x="85" y="278">LEFT</text><text class="t-xs t-c" x="85" y="294">precision</text>
+      <path class="k-ink arrow" d="M410 302 V332"/><text class="t-xs t-b" x="420" y="322">no</text>
+      <rect class="f-orange" x="290" y="332" width="240" height="48" rx="8"/><text class="t-sm t-b t-c" x="410" y="353">RIGHT is a good home</text><text class="t-xs t-c" x="410" y="370">supports, bulk, second color</text>
+      <rect class="f-purple" x="600" y="110" width="200" height="130" rx="8"/><text class="t-sm t-b" x="614" y="134">Also remember</text>
+      <text class="t-xs" x="614" y="158">• Same nozzle diameter</text><text class="t-xs" x="614" y="176">• Stay in the common area</text><text class="t-xs" x="614" y="194">• Calibrate flow on aux</text><text class="t-xs" x="614" y="212">• AMS side must match</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> A conservative decision path. When in doubt, default to the left nozzle.</figcaption>
+  </figure>
+
+  <h2 id="settings">🔧 Slicer settings that matter</h2>
+  <p>The exact menu names in Bambu Studio change between versions, so treat the list below as a map of <i>what to look for</i>. Verify against the current Studio and wiki. For a broader tour see <a href="../software/slicer-settings.html">slicer settings</a> and <a href="settings-and-profiles.html">settings and profiles</a>.</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Setting area</th><th>What to do</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><b>Printer + nozzles</b></td><td>Choose the X2D with the same diameter on both sides</td><td>Dual-nozzle printing requires matching diameters</td></tr>
+      <tr><td><b>Filament grouping</b></td><td>Filament-Saving, Convenience or Custom</td><td>Controls which filament lives on which nozzle</td></tr>
+      <tr><td><b>Prime / wipe tower</b></td><td>Keep enabled for multi-material; keep it small and placed inside the common area</td><td>Stabilizes the nozzle after a swap</td></tr>
+      <tr><td><b>Flow dynamics</b></td><td>Auto on main; calibrated value for aux; Auto/Off for TPU</td><td>Right nozzle needs its own K value</td></tr>
+      <tr><td><b>Supports</b></td><td>Pick separate base and interface filaments if useful</td><td>Move bulk to the second nozzle</td></tr>
+      <tr><td><b>Speed</b></td><td>Slow features that land on the aux nozzle; do not exceed 200 mm/s</td><td>Aux limit is about 200 mm/s</td></tr>
+      <tr><td><b>Plate position</b></td><td>Keep dual-nozzle models in the common area</td><td>Narrower aux reach</td></tr>
+      <tr><td><b>Chamber</b></td><td>Cooling mode for PLA/TPU; heating mode only for ABS/ASA/PC/PA families</td><td>Don’t heat-soak flexible or low-temperature filaments</td></tr>
+    </tbody></table></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 320" role="img" aria-label="Diagram of a plate with parts, a prime tower inside the common area, and a purge chute, showing how waste is collected">
+      <text class="t-lg" x="20" y="28">Plate layout with a prime tower (top view, schematic)</text>
+      <rect class="d-surface" x="40" y="50" width="440" height="240" rx="6"/>
+      <rect class="f-yellow" x="360" y="70" width="60" height="60" rx="4"/><text class="t-xs t-c t-b" x="390" y="104">tower</text>
+      <rect class="f-blue" x="80" y="100" width="100" height="100" rx="8"/><text class="t-xs t-c" x="130" y="154">part 1</text>
+      <rect class="f-green" x="200" y="140" width="120" height="100" rx="8"/><text class="t-xs t-c" x="260" y="194">part 2</text>
+      <rect class="f-gray" x="40" y="294" width="440" height="18" rx="4"/><text class="t-xs t-c" x="260" y="307">purge chute / wiper area (rear/side — see the hardware tour)</text>
+      <rect class="f-teal" x="520" y="60" width="270" height="230" rx="10"/>
+      <text class="t-sm t-b" x="536" y="88">Layout tips</text>
+      <text class="t-xs" x="536" y="114">• Parts that need both nozzles</text><text class="t-xs" x="536" y="130">  sit in the common area.</text>
+      <text class="t-xs" x="536" y="154">• Place the tower close to the</text><text class="t-xs" x="536" y="170">  parts to shorten travel.</text>
+      <text class="t-xs" x="536" y="194">• Leave room for brim and</text><text class="t-xs" x="536" y="210">  skirt; Studio will warn.</text>
+      <text class="t-xs" x="536" y="234">• Don’t block the purge path;</text><text class="t-xs" x="536" y="250">  the chute pile-up is detected.</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> A sensible plate. The tower stays inside the area that both nozzles can reach, close to the parts.</figcaption>
+  </figure>
+
+  <h2 id="ideas">🚀 Ideas for using two nozzles smartly</h2>
+  <ul>
+    <li><b>Hardware tolerance split.</b> Keep a 0.4 mm nozzle on both sides for general use. Dual-nozzle jobs need the same diameter, so plan a swap of <i>both</i> when you move to 0.6 mm.</li>
+    <li><b>“Sacrificial” right nozzle.</b> Run abrasive support or test materials on the nozzle whose wear you accept; you have a spare hotend anyway.</li>
+    <li><b>Color-per-nozzle for production.</b> Printing a series of two-color parts means the same two filaments stay loaded for the whole run: nothing to change between plates.</li>
+    <li><b>Multi-plate jobs.</b> The AMS 2 Pro’s drying can keep reserve spools dry while a job runs (print-while-drying; extra AMS units need the switching adapter).</li>
+    <li><b>Up to 25 colors.</b> Place all AMS units on one nozzle and an external spool on the other (Bambu’s description of the maximum).</li>
+  </ul>
+  <div class="callout info"><span class="callout-title">“Parallel” printing?</span>
+    <p>The X2D has one toolhead and one nozzle lowered at a time, so the two nozzles do not print simultaneously. Any idea of printing two copies at once does not apply to this machine; the gain comes from fewer purges, not from twice the deposition.</p>
+  </div>
+
+  <h2 id="failures">🚀 Failure modes and tips</h2>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 340" role="img" aria-label="Table-like illustration of dual-nozzle failure modes with symptom and first fix">
+      <text class="t-lg" x="20" y="28">Dual-nozzle failure modes: symptom → first thing to try</text>
+      <g>
+        <rect class="f-red" x="20" y="46" width="780" height="34" rx="6"/><text class="t-sm t-b" x="34" y="68">Blobs or strings on one nozzle’s color</text><text class="t-xs" x="400" y="68">Calibrate flow dynamics for that nozzle; check retraction; dry the spool</text>
+        <rect class="f-orange" x="20" y="86" width="780" height="34" rx="6"/><text class="t-sm t-b" x="34" y="108">Gap or color bleed at the color boundary</text><text class="t-xs" x="400" y="108">Check nozzle offset calibration; enlarge tower/flush a little</text>
+        <rect class="f-yellow" x="20" y="126" width="780" height="34" rx="6"/><text class="t-sm t-b" x="34" y="148">Surface defects after a swap</text><text class="t-xs" x="400" y="148">Increase prime tower size or wipe settings; keep the idle nozzle clean</text>
+        <rect class="f-green" x="20" y="166" width="780" height="34" rx="6"/><text class="t-sm t-b" x="34" y="188">Right-nozzle underextrusion</text><text class="t-xs" x="400" y="188">Reduce speed; check PTFE path; verify filament is allowed on aux</text>
+        <rect class="f-teal" x="20" y="206" width="780" height="34" rx="6"/><text class="t-sm t-b" x="34" y="228">Clog on one side only</text><text class="t-xs" x="400" y="228">Swap hotends left/right to learn if the hotend or the path is at fault</text>
+        <rect class="f-blue" x="20" y="246" width="780" height="34" rx="6"/><text class="t-sm t-b" x="34" y="268">Model flagged out of bounds</text><text class="t-xs" x="400" y="268">Move into common area, lower height, or print single-material left</text>
+        <rect class="f-purple" x="20" y="286" width="780" height="34" rx="6"/><text class="t-sm t-b" x="34" y="308">Purge-chute pile-up warning</text><text class="t-xs" x="400" y="308">Clear the chute; check cutter and purge settings</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 10.</b> A first-aid table. These fixes are general practice; for model-specific problems see <a href="maintenance-and-troubleshooting.html">maintenance and troubleshooting</a>.</figcaption>
+  </figure>
+
+  <div class="callout warn"><span class="callout-title">Don’t mix up “aux” and “weak”</span>
+    <p>The right nozzle is a full hotend that can print most materials. It is the extruder path that gives it lower speed limits. Use it for what it does well rather than avoiding it. And remember: some filaments are marked highly not recommended there (for example PETG-CF, ASA-CF and PA6-CF); do not override that unless you accept the risk.</p>
+  </div>
+
+  <h3>Tips</h3>
+  <ul>
+    <li>Start with a small two-color test plate before a long job; check the boundary between colors.</li>
+    <li>Use the preview’s color/tool view to confirm each feature’s nozzle before printing.</li>
+    <li>Write on each spool which nozzle side it lives on.</li>
+    <li>Run nozzle-offset calibration after any hotend removal.</li>
+    <li>Read the HMS page when the screen warns of a swap or filament issue.</li>
+    <li>See also <a href="../techniques/multi-color-and-multi-material.html">multi-color and multi-material</a> for general technique.</li>
+  </ul>
+
+  <h2 id="worked">🚀 Worked examples</h2>
+  <p>The following three examples show how the rules combine. They are illustrative; the filament names are generic, and the final word always belongs to the wiki entry for the exact product.</p>
+  <ol class="steps">
+    <li><strong>A two-color logo in PLA.</strong> Both colors are basic-type PLA, so either nozzle is allowed. Put color A on the left and B on the right, enable the prime tower, keep the part inside the common area (235.5 × 256 mm) and choose Filament-Saving grouping. The gain is that neither nozzle flushes for the other.</li>
+    <li><strong>A functional bracket with soluble-style support.</strong> The structural filament goes left (full area, precise motion). The support goes right, at modest speed. Check that the support type is rated for the model material; verify in the preview that interface layers use the support filament.</li>
+    <li><strong>A flexible seal on a rigid housing.</strong> TPU is limited to the left nozzle and an external or feed-assisted path, so the housing goes right in a permitted rigid material. Print the model mid-front, keep the chamber cool and expect a slower job; the speed limit on the right nozzle is not the bottleneck here, because the TPU on the left is slower still.</li>
+  </ol>
+
+  <h2 id="takeaways">✅ Key takeaways</h2>
+  <ul>
+    <li>Two hotends mean color changes can become nozzle swaps instead of flushes; savings depend on the model.</li>
+    <li>Left = main (full plate, auto flow dynamics, TPU allowed); right = aux (200 mm/s, about 1000 mm/s², manual flow dynamics, no TPU).</li>
+    <li>Both-nozzle work must fit the 235.5 × 256 × 256 mm common area; main-only work can use 256 × 256 × 260 mm.</li>
+    <li>The prime tower stays; the same nozzle diameter is required on both sides.</li>
+    <li>Use Filament-Saving, Convenience or Custom grouping; use Custom when a material must be on a specific side.</li>
+    <li>Fine detail on the left, supports and bulk on the right, and always verify in the preview.</li>
+    <li>Check the <a href="filament-compatibility.html">compatibility page</a> and the Bambu wiki before assigning an unusual filament to the aux nozzle.</li>
+  </ul>
+
+</main>
+</body>
+</html>

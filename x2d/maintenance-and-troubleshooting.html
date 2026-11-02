@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>X2D maintenance &amp; troubleshooting · 3D Printing Compendium</title>
+  <meta name="description" content="Maintenance schedule and troubleshooting for the Bambu Lab X2D with AMS 2 Pro: nozzles, gear-and-trigger switching, auxiliary extruder, PTFE tubes, filters, cameras, lubrication, belts, plates, AMS care, HMS errors, clogs, recoveries, support, relocation and storage.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="x2d/maintenance-and-troubleshooting.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 6 · Bambu X2D + AMS 2 Pro</div>
+    <h1>X2D maintenance &amp; troubleshooting</h1>
+    <p class="lead">A dual-nozzle printer with a heated chamber and a remote extruder has more parts to care for than a simple single-nozzle machine. This page gives a practical maintenance schedule, explains the X2D's error classes and the HMS system, and walks through step-by-step recoveries with flowcharts.</p>
+    <div class="meta"><span class="badge intermediate">Intermediate</span><span class="badge x2d">X2D + AMS 2 Pro</span><span class="badge time">⏱ 35 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <p>What to inspect and when, how to lubricate rods and lead screws and recalibrate afterward, how to deal with nozzle blobs and clogs, how the auxiliary extruder's PTFE and locking nut work, how to read AMS LED states, what HMS is, what to do about each class of error, how to prepare logs for support, and how to move or store the printer.</p></div>
+
+  <div class="callout x2d"><span class="callout-title">Generic theory lives elsewhere</span>
+    <p>This page is X2D-specific. For general principles of print failures read <a href="../techniques/troubleshooting.html">Troubleshooting</a>, and for general upkeep of any printer see <a href="../techniques/maintenance.html">Maintenance</a>. Intervals and procedures here follow Bambu's published X2D maintenance documentation; always power off and unplug before touching mechanics.</p></div>
+
+  <h2 id="principles">1. Principles</h2>
+  <ul>
+    <li><b>Power off and unplug</b> before maintenance on motion, extruders and electronics. Let the hotend and heatbed cool unless a procedure explicitly says to heat them.</li>
+    <li><b>Keep a log.</b> A simple note of date, what was done and the printer's behavior afterward turns vague symptoms into patterns (see exercise <a href="../exercises/x2d-challenges.html#X-12">X-12</a>).</li>
+    <li><b>Recalibrate after mechanical work.</b> After lubrication, moving the printer or heatbed work, run the full calibration set: motor noise cancellation, vibration compensation and auto bed leveling.</li>
+    <li><b>Prevent first, repair second.</b> Most failures trace back to dirt, moisture or worn consumables.</li>
+  </ul>
+  <div class="callout tip"><span class="callout-title">Tool kit</span>
+    <p>Bambu's documentation lists lube oil and grease, non-woven cloth, isopropyl alcohol (IPA), a brush, tweezers and the supplied tools (Allen keys H1.5 and H2.0, an 8 mm wrench, an unclogging pin, scraper blade, spare hotend and sock, two PTFE tubes and desiccant). Add heat-resistant gloves for hotend work.</p></div>
+
+  <h2 id="schedule">2. The maintenance schedule</h2>
+  <p>Intervals depend on how much you print. Bambu's lubrication guidance is based on hours per day:</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Usage</th><th>XY rods</th><th>Z lead screws</th></tr></thead>
+    <tbody>
+      <tr><td>5 h per day or more</td><td>Monthly</td><td>Every 3 months</td></tr>
+      <tr><td>1–5 h per day</td><td>Every 2 months</td><td>Every 4 months</td></tr>
+      <tr><td>About 1 h per day</td><td>Every 3 months</td><td>Every 5 months</td></tr>
+    </tbody></table></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 330" role="img" aria-label="Maintenance calendar showing per-spool, monthly, quarterly and six-monthly tasks">
+      <rect class="d-surface" x="20" y="14" width="720" height="302" rx="10"/>
+      <g>
+        <rect class="f-green" x="36" y="30" width="165" height="270" rx="8"/>
+        <text class="t-sm t-b t-c" x="118" y="54">Every spool / print</text>
+        <text class="t-xs" x="46" y="80">• Plate wash if needed</text><text class="t-xs" x="46" y="98">• Check nozzle &amp; sock</text><text class="t-xs" x="46" y="116">• Check purge wiper</text><text class="t-xs" x="46" y="134">• Spool in AMS: dry?</text><text class="t-xs" x="46" y="152">• Pneumatic couplers</text><text class="t-xs" x="46" y="170">  at spool change</text>
+        <rect class="f-blue" x="215" y="30" width="165" height="270" rx="8"/>
+        <text class="t-sm t-b t-c" x="297" y="54">Monthly</text>
+        <text class="t-xs" x="225" y="80">• XY rods, 5 h/day use</text><text class="t-xs" x="225" y="98">• Clean chamber floor</text><text class="t-xs" x="225" y="116">• Clean cooling fans</text><text class="t-xs" x="225" y="134">• Quick clean extruders</text><text class="t-xs" x="225" y="152">• AMS desiccant check</text>
+        <rect class="f-orange" x="394" y="30" width="165" height="270" rx="8"/>
+        <text class="t-sm t-b t-c" x="476" y="54">2–5 months</text>
+        <text class="t-xs" x="404" y="80">• XY rods (1–3 mo)</text><text class="t-xs" x="404" y="98">• Z screws (3–5 mo)</text><text class="t-xs" x="404" y="116">• Full calibration</text><text class="t-xs" x="404" y="134">• Carbon filter check</text><text class="t-xs" x="404" y="152">• Belt tension check</text><text class="t-xs" x="404" y="170">• Firmware release notes</text>
+        <rect class="f-purple" x="573" y="30" width="150" height="270" rx="8"/>
+        <text class="t-sm t-b t-c" x="648" y="54">About 6 months</text>
+        <text class="t-xs" x="583" y="80">• Live-view lens</text><text class="t-xs" x="583" y="98">  (more if printing ABS)</text><text class="t-xs" x="583" y="116">• PTFE tube inspection</text><text class="t-xs" x="583" y="134">• Aux extruder deep clean</text><text class="t-xs" x="583" y="152">• Cutter blade check</text><text class="t-xs" x="583" y="170">  (per spool counts)</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 1.</b> A practical calendar built from Bambu's intervals plus common-sense checks. Lubrication intervals depend on daily print hours (table above).</figcaption>
+  </figure>
+
+  <h3>The component table</h3>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Component</th><th>Check / task</th><th>Interval or trigger</th></tr></thead>
+    <tbody>
+      <tr><td>Hotends and nozzles</td><td>Inspect for blobs, wear, clogs; clean sock; cold pull if needed</td><td>Every few spools; whenever quality or flow changes</td></tr>
+      <tr><td>Gear-and-trigger nozzle switch, flow blocker</td><td>Watch a switch on the camera; check nothing blocks the lever</td><td>When you hear or see odd switching; after any crash</td></tr>
+      <tr><td>Main extruder (left)</td><td>Blow out from the inlet, deep clean per guide, grease the gear areas</td><td>Periodic; sooner after fiber-filled filament or grinding</td></tr>
+      <tr><td>Aux extruder (right)</td><td>Remove PTFE with the 8 mm wrench, unlatch cable, lift off, blow clean, a little grease on the black gear</td><td>Periodic; after feed errors</td></tr>
+      <tr><td>PTFE tubes</td><td>Check the aux locking nut and tube end; inspect AMS tubes</td><td>Replace on stringing, poor retraction or feeding errors</td></tr>
+      <tr><td>Filters (G3, H12 HEPA, carbon)</td><td>Inspect; replace carbon when heavily contaminated; rinse cover only if you can fully dry it</td><td>Depends on ABS/ASA/PC/PA use</td></tr>
+      <tr><td>Live-view camera</td><td>Wipe the lens</td><td>About every 6 months; more often with ABS</td></tr>
+      <tr><td>Rods and lead screws</td><td>Wipe with IPA, add oil or grease, move the toolhead 3 to 5 times</td><td>Per usage table above</td></tr>
+      <tr><td>Belt tensioner</td><td>Semi-automatic; check if parts are elliptical, steps are lost, or a "resonance frequency too low" message appears</td><td>On symptoms</td></tr>
+      <tr><td>Build plate</td><td>Wash with warm water and dish soap; do not touch the surface</td><td>When adhesion drops</td></tr>
+      <tr><td>Purge silicone wiper</td><td>Inspect; replace if damaged (a consumable)</td><td>On damage</td></tr>
+      <tr><td>Filament cutter blade</td><td>Check blade; frequent AMS unload failures usually mean a dull blade</td><td>Every 8–12 spools (regular), every 6–10 spools (CF/GF/PPA)</td></tr>
+      <tr><td>AMS 2 Pro desiccant</td><td>Replace when it turns from yellow to purple</td><td>About 4–6 weeks of continuous use</td></tr>
+      <tr><td>AMS 2 Pro mechanics</td><td>Pneumatic couplers, ceramic funnels, support shaft, hub magnets</td><td>At each spool change / periodically</td></tr>
+      <tr><td>Firmware</td><td>Read release notes; update between jobs</td><td>Major releases about every 3 months</td></tr>
+    </tbody></table></div>
+
+  <h2 id="mechanics">3. Mechanics: rods, screws and belts</h2>
+  <h3>Lubrication (rods and lead screws)</h3>
+  <ol class="steps">
+    <li><strong>Power off and unplug.</strong>Move the toolhead by hand to expose the rods.</li>
+    <li><strong>Wipe the rods with IPA</strong>and a non-woven cloth to remove old oil and dust.</li>
+    <li><strong>Apply oil.</strong>Add 1 to 2 drops per 5 cm on the X and Y rods. Lead screws take grease, not oil.</li>
+    <li><strong>Spread it.</strong>Move the toolhead slowly 3 to 5 times across the full travel.</li>
+    <li><strong>Recalibrate.</strong>Run motor noise cancellation, vibration compensation and auto bed leveling.</li>
+  </ol>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 300" role="img" aria-label="Schematic of a linear rod with a carriage, showing where to wipe with IPA and add 1 to 2 drops of oil per 5 cm">
+      <rect class="f-gray" x="60" y="130" width="640" height="14" rx="7"/>
+      <rect class="f-blue" x="320" y="104" width="120" height="66" rx="8"/><text class="t-sm t-c t-b" x="380" y="142">carriage</text>
+      <g class="d-thin"><path d="M60 190 V214"/><path d="M188 190 V214"/><path d="M316 190 V214"/></g>
+      <path class="d-ink arrow arrow-start" d="M62 202 H186"/><text class="t-xs t-c" x="124" y="228">5 cm</text>
+      <circle class="f-yellow" cx="100" cy="124" r="7"/><circle class="f-yellow" cx="150" cy="124" r="7"/>
+      <text class="t-xs t-c" x="125" y="100">1–2 drops</text>
+      <circle class="f-orange" cx="600" cy="137" r="12"/><text class="t-xs t-c" x="600" y="170">move slowly</text><text class="t-xs t-c" x="600" y="184">3–5 times</text>
+      <path class="d-ink arrow arrow-start" d="M460 137 H588"/>
+      <text class="t-xs t-m" x="60" y="270">Wipe with IPA first, oil the X/Y rods, grease the lead screws. Diagram is schematic.</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> Rod lubrication rhythm: wipe, apply, spread. Oil for rods, grease for lead screws.</figcaption>
+  </figure>
+
+  <h3>Belt tension</h3>
+  <p>The X2D has a semi-automatic belt tensioner. Bambu names three symptoms of low tension: <b>circular holes printed out of round</b> (elliptical), <b>lost steps</b> (layer shifts) and a <b>"resonance frequency too low"</b> message during vibration compensation. If you see them, follow the on-screen or wiki tensioning procedure and re-run vibration compensation.</p>
+
+  <h3>Chamber and fans</h3>
+  <p>Wipe the chamber floor and walls, and clean the cooling fans on both sides, using a brush and compressed air. Debris on fans reduces airflow, which reduces chamber control and filtration. Do this more often after ABS, ASA or nylon prints.</p>
+
+  <h2 id="nozzles">4. Nozzles, the gear-and-trigger switch and the flow blocker</h2>
+  <p>The X2D switches nozzles with a <b>Gear-and-Trigger</b> mechanism: a lever and push block moved by the toolhead's own travel, so there is no separate motor to fail. A <b>flow blocker</b> shuts the idle nozzle, preventing oozing; when you print on the auxiliary nozzle the toolhead moves the flow blocker under the main hotend, and the aux hotend lowers, which costs about 4 mm of build height. Filament cutters sit on both sides, triggered by a stopper that pushes the lever mid-chamber.</p>
+  <ul>
+    <li><b>Keep the lever path clear.</b> Stringy residue or a loose cable can stop a switch.</li>
+    <li><b>Nozzle offset calibration</b> uses an eddy-current sensor and a coil behind the plate; the optional <b>High-Precision Nozzle Offset Calibration</b> uses the toolhead camera with a dark and a light filament (not available while a Filament Track Switch is fitted).</li>
+    <li><b>After reinstalling a hotend, recalibrate the nozzle offset.</b> The hotends are interchangeable left to right; swapping them is also a clean diagnostic trick.</li>
+    <li>The <b>hotend sock</b> has three yellow markers used by AI detection; keep it clean. The toolhead front cover is magnetic and cover-presence is detected since firmware 01.01.00.00.</li>
+  </ul>
+
+  <h3>Cleaning a blob on the hotend</h3>
+  <ol class="steps">
+    <li><strong>Put on heat-resistant gloves.</strong>The nozzle will be hot.</li>
+    <li><strong>Lower the bed (do not use Home)</strong>and enable <i>Heating Base Maintenance Mode</i> from the toolbox.</li>
+    <li><strong>Heat the nozzle slightly above the printing temperature</strong> of the last material (the guide gives PLA at about 250 °C as an example) and pull the blob away with tweezers.</li>
+    <li><strong>For deeper cleaning</strong> lower the temperature in steps (to about 200 °C, then 150 °C) as the guide describes, and clean the sock.</li>
+    <li><strong>Recalibrate the nozzle offset</strong> if you reinstalled the hotend.</li>
+  </ol>
+
+  <h3>Aux extruder PTFE and locking nut</h3>
+  <p>The right extruder feeds filament through a white 525 mm PTFE tube secured at the toolhead with a locking nut. When you tighten the nut a washer makes a "click" to confirm. If, with the nut tight, the tube can still move up and down, the tube end is worn and should be replaced; typical symptoms are stringing and poor retraction. Use the 8 mm wrench on the nut. The gray 555 mm PTFE connects the chamber inlet to the main hotend.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 300" role="img" aria-label="Schematic of the aux extruder PTFE connection: rear-panel extruder, PTFE tube, locking nut with washer, and the worn-tube test">
+      <rect class="f-gray" x="30" y="60" width="140" height="150" rx="8"/><text class="t-sm t-c t-b" x="100" y="120">Rear panel</text><text class="t-xs t-c" x="100" y="138">aux extruder</text>
+      <rect class="f-blue" x="130" y="100" width="60" height="30" rx="4"/><text class="t-xs t-c" x="160" y="120">gear</text>
+      <path class="s-gray" fill="none" stroke-width="8" stroke-linecap="round" d="M172 150 C 260 150 300 70 400 70 H520"/>
+      <text class="t-xs t-m" x="250" y="60">white PTFE, about 525 mm</text>
+      <rect class="f-orange" x="520" y="52" width="40" height="36" rx="4"/><text class="t-xs t-c" x="540" y="74">nut</text>
+      <rect class="f-yellow" x="560" y="56" width="10" height="28" rx="2"/><text class="t-xs" x="574" y="100">washer: click when tight</text>
+      <rect class="f-teal" x="570" y="110" width="140" height="90" rx="8"/><text class="t-sm t-c t-b" x="640" y="150">Toolhead</text><text class="t-xs t-c" x="640" y="168">right inlet</text>
+      <path class="d-ink arrow" d="M540 92 V120"/>
+      <rect class="f-yellow" x="240" y="200" width="460" height="76" rx="8"/>
+      <text class="t-sm t-b" x="254" y="224">Wear test</text><text class="t-xs" x="254" y="244">Tighten the nut. Can the tube still move up and down?</text><text class="t-xs t-b" x="254" y="262">Yes → tube end is worn: replace it. Typical sign: stringing, poor retraction.</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> The aux PTFE connection and the worn-tube test described in Bambu's guide. Layout simplified.</figcaption>
+  </figure>
+
+  <h2 id="consumables">5. Filters, cameras, plates and wipers</h2>
+  <ul>
+    <li><b>Carbon filter:</b> replace when heavily contaminated. The cover can be rinsed but must be completely dry before reinstalling. The G3 and H12 HEPA elements follow the same logic: look at them, do not guess.</li>
+    <li><b>Live-view camera lens:</b> clean about every 6 months, more often if you print ABS. The printer also runs a camera dirt and obstruction check at the start of every print.</li>
+    <li><b>Textured PEI plate:</b> both sides are usable; do not touch the print surface; wash with warm water and dish soap. Do not use glue with PLA on textured PEI.</li>
+    <li><b>Purge wiper:</b> a rough wipe plus a fine wipe on the plate; the silicone wiper is a consumable, replace when damaged.</li>
+    <li><b>Cutter blade:</b> check every 8–12 spools (regular filament) or every 6–10 spools (CF/GF/PPA). If the AMS often fails to unload, suspect a dull blade first.</li>
+  </ul>
+
+  <h2 id="ams-care">6. AMS 2 Pro care</h2>
+  <ul>
+    <li><b>Desiccant:</b> yellow is fresh, purple is saturated. Replace after about 4–6 weeks of continuous use or as soon as it is purple.</li>
+    <li><b>Spools:</b> width 50–68 mm, diameter 197–202 mm. Plastic spools are preferred; cardboard spools need adapter rings.</li>
+    <li><b>PTFE tubes:</b> inspect; replace on feeding errors or after heavy use of abrasive filament. Third-party CF/GF filament may wear tubes faster than the tuned official ones.</li>
+    <li><b>Pneumatic couplers, ceramic funnels, support shaft, hub:</b> check at spool changes and on feeding problems; the hub has magnets and Hall sensors that dust can disturb.</li>
+    <li><b>Power for drying:</b> a printer-powered AMS dries with reduced power during printing; the official 24 V / 4 A adapter restores full power. Drying needs the 6-pin connection (no offline drying).</li>
+    <li><b>Do not dry mixed temperature classes</b> in one AMS together.</li>
+  </ul>
+
+  <h2 id="errors">7. Error classes and the HMS concept</h2>
+  <h3>What is HMS?</h3>
+  <p><b>HMS</b> stands for Health Management System. It is Bambu's way of turning sensor readings and printer events into a <b>coded message</b>: the printer notices something (a sensor trips, a motor misses steps, a filament runs out, the camera sees spaghetti), assigns the event a code and a severity, shows it on the screen under the HMS tab, pushes it to Bambu Handy and Studio, and links it to a wiki article that explains the cause and the steps to fix it.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 320" role="img" aria-label="HMS concept: sensor or event leads to a code, shown on screen, Handy and Studio, then linked to a wiki article and Assistant that suggests actions">
+      <rect class="f-orange" x="20" y="120" width="150" height="80" rx="10"/><text class="t-sm t-c t-b" x="95" y="150">Sensor / event</text><text class="t-xs t-c" x="95" y="168">AMS, nozzle, AI</text><text class="t-xs t-c" x="95" y="184">camera, motors</text>
+      <path class="d-ink arrow" d="M172 160 H220"/>
+      <rect class="f-blue" x="222" y="120" width="130" height="80" rx="10"/><text class="t-sm t-c t-b" x="287" y="150">HMS code</text><text class="t-xs t-c" x="287" y="168">+ severity</text><text class="t-xs t-c" x="287" y="184">+ message</text>
+      <path class="d-ink arrow" d="M354 160 C 400 160 400 70 440 70"/><path class="d-ink arrow" d="M354 160 H440"/><path class="d-ink arrow" d="M354 160 C 400 160 400 250 440 250"/>
+      <rect class="f-green" x="442" y="40" width="150" height="60" rx="8"/><text class="t-sm t-c" x="517" y="76">Printer screen</text>
+      <rect class="f-green" x="442" y="130" width="150" height="60" rx="8"/><text class="t-sm t-c" x="517" y="166">Handy push</text>
+      <rect class="f-green" x="442" y="220" width="150" height="60" rx="8"/><text class="t-sm t-c" x="517" y="256">Studio device tab</text>
+      <path class="d-ink arrow" d="M594 70 C 630 70 630 150 650 160"/><path class="d-ink arrow" d="M594 160 H650"/><path class="d-ink arrow" d="M594 250 C 630 250 630 170 650 160"/>
+      <rect class="f-purple" x="652" y="110" width="90" height="100" rx="10"/><text class="t-sm t-c t-b" x="697" y="148">Wiki /</text><text class="t-sm t-c t-b" x="697" y="166">Assistant</text><text class="t-xs t-c" x="697" y="186">fix steps</text>
+      <text class="t-xs t-m" x="20" y="306">Look codes up in the printer's Assistant or Bambu's wiki rather than relying on memory; codes change with firmware.</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> From event to action: an HMS code is a lookup key into Bambu's explanations, not a diagnosis in itself.</figcaption>
+  </figure>
+
+  <div class="callout x2d"><span class="callout-title">Using HMS well</span>
+    <p>Read the message text first; the code is mainly there so you and support can refer to the same thing. Note the code and the time, and when contacting support include them. This page deliberately does not list individual code numbers: look them up in the Assistant on the printer or in Bambu's wiki, where they match your firmware.</p></div>
+
+  <h3>Error classes on the X2D</h3>
+  <div class="grid cols-2">
+    <div class="card accent-purple"><h4>AMS errors</h4><p>Feed failures, filament broken in path, tangles, drying faults. Usually mechanical (tube, coupler, spool) or moisture-related.</p></div>
+    <div class="card accent-orange"><h4>Nozzle switching</h4><p>The toolhead cannot change between nozzles, or an abnormal toolhead change is detected (a detection added in firmware 01.01.01.00). Mechanical: lever, flow blocker, obstacles.</p></div>
+    <div class="card accent-red"><h4>Clogs and flow</h4><p>Hotend clog, extruder clog, partial clogs that cause under-extrusion; blobs on the nozzle.</p></div>
+    <div class="card accent-blue"><h4>AI detection</h4><p>Spaghetti, purge-chute pile-up, nozzle clumping, foreign objects, part displacement, plate-type mismatch. Each has a sensitivity setting.</p></div>
+    <div class="card accent-teal"><h4>Motion and calibration</h4><p>Step loss, resonance warnings, belt tension, leveling failures.</p></div>
+    <div class="card accent-yellow"><h4>Environment and power</h4><p>Open-door detection, idle-heating protection (5 minutes), chamber over-temperature, power loss during drying.</p></div>
+  </div>
+
+  <h3>AMS LED states</h3>
+  <p>Each AMS 2 Pro slot has an LED. The patterns documented by Bambu are a fast first diagnostic:</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 340" role="img" aria-label="Table-like cards of AMS LED patterns: double flash all slots, breathing red, solid red, single flash red, double flash red, all breathing red for drying fault">
+      <g>
+        <rect class="d-surface" x="20" y="14" width="230" height="150" rx="10"/><text class="t-sm t-b" x="34" y="38">All four slots: double flash red</text>
+        <text class="t-xs" x="34" y="64">AMS not detected.</text><text class="t-xs t-b" x="34" y="90">Check:</text><text class="t-xs" x="34" y="108">6-pin cable, buffer port,</text><text class="t-xs" x="34" y="124">AMS setup, firmware.</text>
+        <rect class="d-surface" x="265" y="14" width="230" height="150" rx="10"/><text class="t-sm t-b" x="279" y="38">One slot: breathing red</text>
+        <text class="t-xs" x="279" y="64">No filament seen at the feeder</text><text class="t-xs" x="279" y="80">after print start.</text><text class="t-xs t-b" x="279" y="106">Check:</text><text class="t-xs" x="279" y="124">empty spool, snapped</text><text class="t-xs" x="279" y="140">filament, spool tangle.</text>
+        <rect class="d-surface" x="510" y="14" width="230" height="150" rx="10"/><text class="t-sm t-b" x="524" y="38">Solid red</text>
+        <text class="t-xs" x="524" y="64">Feeder empty, hub has filament.</text><text class="t-xs t-b" x="524" y="90">Likely:</text><text class="t-xs" x="524" y="108">a broken piece of filament</text><text class="t-xs" x="524" y="124">inside the hub.</text>
+        <rect class="d-surface" x="20" y="176" width="230" height="150" rx="10"/><text class="t-sm t-b" x="34" y="200">Single flash red</text>
+        <text class="t-xs" x="34" y="226">Feeder sees filament, hub does not.</text><text class="t-xs t-b" x="34" y="252">Likely:</text><text class="t-xs" x="34" y="270">feed failure or a clogged</text><text class="t-xs" x="34" y="286">tube between feeder and hub.</text>
+        <rect class="d-surface" x="265" y="176" width="230" height="150" rx="10"/><text class="t-sm t-b" x="279" y="200">Double flash red</text>
+        <text class="t-xs" x="279" y="226">Both feeder and hub detect it.</text><text class="t-xs t-b" x="279" y="252">Likely:</text><text class="t-xs" x="279" y="270">a feed or unload failure; free</text><text class="t-xs" x="279" y="286">the filament and retry.</text>
+        <rect class="d-surface" x="510" y="176" width="230" height="150" rx="10"/><text class="t-sm t-b" x="524" y="200">All four breathing red</text>
+        <text class="t-xs" x="524" y="226">A drying fault.</text><text class="t-xs t-b" x="524" y="252">Likely:</text><text class="t-xs" x="524" y="270">a disconnected NTC sensor</text><text class="t-xs" x="524" y="286">or high duct temperature.</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 5.</b> The documented red-LED patterns. Normal white states are flashing in turn at startup, solid, and breathing while drying.</figcaption>
+  </figure>
+
+  <h2 id="recoveries">8. Step-by-step recoveries</h2>
+  <h3>"Filament broken in path" (AMS)</h3>
+  <p>Brittle, moist filament is a common cause. Disconnect the white PTFE tubes, remove the broken piece (the hub and the tube ends are where it usually hides), reconnect, <i>Re-read</i> the slot, and dry the spool before retrying.</p>
+
+  <h3>Clog diagnosis: hotend or extruder?</h3>
+  <p>Bambu's guide uses an <b>unload test</b>. If the filament can be retracted, the clog is most likely at the hotend; verify by extruding with the hotend removed. If it cannot retract, suspect the extruder; swap the other side's hotend in to compare. Both can be clogged, but that is rare.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 400" role="img" aria-label="Flowchart for clog diagnosis: run an unload test, branch into hotend clog or extruder clog, verify, fix">
+      <rect class="f-blue" x="280" y="14" width="200" height="46" rx="10"/><text class="t-sm t-c t-b" x="380" y="42">Under-extrusion or no flow</text>
+      <path class="d-ink arrow" d="M380 62 V86"/>
+      <rect class="f-yellow" x="280" y="88" width="200" height="46" rx="10"/><text class="t-sm t-c t-b" x="380" y="116">Run an unload test</text>
+      <path class="d-ink arrow" d="M330 136 C 280 160 200 170 190 190"/><path class="d-ink arrow" d="M430 136 C 480 160 560 170 570 190"/>
+      <text class="t-xs" x="200" y="164">filament retracts</text><text class="t-xs" x="500" y="164">cannot retract</text>
+      <rect class="f-orange" x="80" y="190" width="220" height="56" rx="10"/><text class="t-sm t-c t-b" x="190" y="214">Likely hotend clog</text><text class="t-xs t-c" x="190" y="232">verify: extrude with hotend removed</text>
+      <rect class="f-purple" x="460" y="190" width="220" height="56" rx="10"/><text class="t-sm t-c t-b" x="570" y="214">Likely extruder clog</text><text class="t-xs t-c" x="570" y="232">swap the other side's hotend to compare</text>
+      <path class="d-ink arrow" d="M190 248 V276"/><path class="d-ink arrow" d="M570 248 V276"/>
+      <rect class="f-green" x="80" y="278" width="220" height="70" rx="10"/><text class="t-xs t-c" x="190" y="300">Cold pull with PLA or PETG,</text><text class="t-xs t-c" x="190" y="316">2–3 times, never with</text><text class="t-xs t-c" x="190" y="332">fiber-reinforced filament</text>
+      <rect class="f-green" x="460" y="278" width="220" height="70" rx="10"/><text class="t-xs t-c" x="570" y="300">Blow out and deep clean the</text><text class="t-xs t-c" x="570" y="316">extruder; check gears and</text><text class="t-xs t-c" x="570" y="332">grease the gear areas</text>
+      <text class="t-xs t-m" x="40" y="382">If both sides seem blocked (rare) treat each in turn; recalibrate nozzle offset after reinstalling a hotend.</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> A clog-diagnosis flowchart following Bambu's unload-test logic.</figcaption>
+  </figure>
+
+  <h3>AMS feed or unload failure flowchart</h3>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 360" role="img" aria-label="Flowchart for AMS feed errors: read LED, check slot, free filament, dry spool, replace tube, check cutter, contact support">
+      <rect class="f-red" x="260" y="12" width="240" height="44" rx="10"/><text class="t-sm t-c t-b" x="380" y="40">AMS feed or unload error</text>
+      <path class="d-ink arrow" d="M380 58 V80"/>
+      <rect class="f-yellow" x="260" y="82" width="240" height="44" rx="10"/><text class="t-sm t-c" x="380" y="110">Read the slot LED (Figure 5)</text>
+      <path class="d-ink arrow" d="M380 128 V150"/>
+      <rect class="f-blue" x="260" y="152" width="240" height="44" rx="10"/><text class="t-sm t-c" x="380" y="180">Free filament, check hub</text>
+      <path class="d-ink arrow" d="M380 198 V220"/>
+      <rect class="f-blue" x="260" y="222" width="240" height="44" rx="10"/><text class="t-sm t-c" x="380" y="250">Dry spool; re-read slot</text>
+      <path class="d-ink arrow" d="M380 268 V290"/>
+      <rect class="f-green" x="260" y="292" width="240" height="44" rx="10"/><text class="t-sm t-c" x="380" y="320">Retry. Works?</text>
+      <path class="d-ink arrow" d="M500 314 H560"/><text class="t-xs" x="520" y="306">no</text>
+      <rect class="f-orange" x="562" y="260" width="180" height="94" rx="10"/><text class="t-xs t-c" x="652" y="284">Replace the PTFE tube,</text><text class="t-xs t-c" x="652" y="300">check the cutter blade,</text><text class="t-xs t-c" x="652" y="316">couplers and funnels;</text><text class="t-xs t-c" x="652" y="332">then contact support</text>
+      <path class="d-ink arrow" d="M260 314 H180"/><text class="t-xs" x="206" y="306">yes</text>
+      <rect class="f-green" x="30" y="296" width="150" height="40" rx="10"/><text class="t-sm t-c t-b" x="105" y="321">Resume print</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> A compact AMS recovery path. Always free the filament mechanically before pressing retry.</figcaption>
+  </figure>
+
+  <h3>Filament tangle and extruder resistance</h3>
+  <p>The main (left) extruder is a servo extruder that senses resistance, which is how the X2D detects tangles. If a spool tangles: stop, free the loose turns, make sure the filament leaves the spool toward the AMS in the right direction and check there is nothing catching on the spool edge. Reset the spool in the AMS and re-read it. The aux path has two sensors (aux extruder and toolhead right) that help locate where in the PTFE path a jam sits.</p>
+
+  <h3>Nozzle switching problems</h3>
+  <ol class="steps">
+    <li><strong>Stop and look.</strong>Use the camera or open the door when safe to see whether the toolhead is physically stuck.</li>
+    <li><strong>Check the lever path and flow blocker</strong>for filament strings, a blob or a foreign object.</li>
+    <li><strong>Clean the nozzle sock and wiper area.</strong></li>
+    <li><strong>Re-run nozzle offset calibration</strong>if cleaning does not help; use high-precision only with the track switch removed.</li>
+    <li><strong>Update firmware</strong>if you are behind: 01.01.01.00 added abnormal-toolhead-change detection and aux loading fixes.</li>
+  </ol>
+
+  <h3>First layer too thin or uneven</h3>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 320" role="img" aria-label="Flowchart for first layer problems: clean plate, run bed leveling, first layer calibration, partial low area, heat bed to 55 degrees, check screws, manual leveling">
+      <rect class="f-blue" x="20" y="20" width="160" height="50" rx="10"/><text class="t-sm t-c" x="100" y="50">Wash plate</text>
+      <path class="d-ink arrow" d="M182 45 H210"/>
+      <rect class="f-blue" x="212" y="20" width="170" height="50" rx="10"/><text class="t-sm t-c" x="297" y="50">Auto bed leveling</text>
+      <path class="d-ink arrow" d="M384 45 H412"/>
+      <rect class="f-blue" x="414" y="20" width="170" height="50" rx="10"/><text class="t-sm t-c" x="499" y="50">First-layer calibration</text>
+      <path class="d-ink arrow" d="M586 45 H614"/>
+      <rect class="f-yellow" x="616" y="20" width="124" height="50" rx="10"/><text class="t-sm t-c" x="678" y="50">Fixed?</text>
+      <path class="d-ink arrow" d="M678 72 V110"/><text class="t-xs" x="690" y="100">no, a region</text>
+      <rect class="f-orange" x="540" y="112" width="200" height="56" rx="10"/><text class="t-xs t-c" x="640" y="134">Heat bed to 55 °C,</text><text class="t-xs t-c" x="640" y="150">hold 5 min, re-check</text>
+      <path class="d-ink arrow" d="M538 140 H470"/>
+      <rect class="f-orange" x="270" y="112" width="200" height="56" rx="10"/><text class="t-xs t-c" x="370" y="134">Check the 4 bed screws</text><text class="t-xs t-c" x="370" y="150">and plate seating</text>
+      <path class="d-ink arrow" d="M268 140 H200"/>
+      <rect class="f-red" x="20" y="112" width="180" height="56" rx="10"/><text class="t-xs t-c" x="110" y="134">Manual leveling via</text><text class="t-xs t-c" x="110" y="150">G-code with A4 paper</text>
+      <rect class="f-green" x="20" y="214" width="340" height="82" rx="10"/><text class="t-sm t-b" x="34" y="238">Hints</text><text class="t-xs" x="34" y="258">Fixed-position patterns usually mean oil on the plate.</text><text class="t-xs" x="34" y="276">Also check nozzle clips and the wiper blade.</text>
+      <rect class="f-purple" x="390" y="214" width="350" height="82" rx="10"/><text class="t-sm t-b" x="404" y="238">For ABS/ASA/PC/PA</text><text class="t-xs" x="404" y="258">Run high-temperature bed leveling.</text><text class="t-xs" x="404" y="276">First-layer calibration steps of 0.02 mm up to 0.05 mm.</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> The first-layer escalation path from Bambu's guide, ending in manual leveling only as a last resort.</figcaption>
+  </figure>
+
+  <div class="callout warn"><span class="callout-title">Fiber-filled filament and nozzle blobs</span>
+    <p>Never cold pull with fiber-reinforced filament, and never use a metal tool on a hot nozzle sock near wiring. When in doubt, cool down, take a photo and ask support.</p></div>
+
+  <h2 id="support">9. When to contact support, and logs</h2>
+  <p>Contact Bambu support when: a part is physically broken, a safety feature trips repeatedly, an error returns after the documented fix, or a calibration cannot finish. Do <b>not</b> wait if you smell burning or see damage to a heater, wire or connector; power off and unplug first.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 260" role="img" aria-label="Escalation ladder from self-help to wiki to community to support with the information to prepare">
+      <rect class="f-green" x="20" y="130" width="150" height="80" rx="10"/><text class="t-sm t-c t-b" x="95" y="164">1 Screen /</text><text class="t-sm t-c t-b" x="95" y="182">Assistant</text>
+      <path class="d-ink arrow" d="M172 170 H200"/>
+      <rect class="f-blue" x="202" y="100" width="150" height="80" rx="10"/><text class="t-sm t-c t-b" x="277" y="134">2 Wiki article</text><text class="t-xs t-c" x="277" y="152">for the code</text>
+      <path class="d-ink arrow" d="M354 140 H380"/>
+      <rect class="f-yellow" x="382" y="70" width="150" height="80" rx="10"/><text class="t-sm t-c t-b" x="457" y="104">3 Community</text><text class="t-xs t-c" x="457" y="122">forums, groups</text>
+      <path class="d-ink arrow" d="M534 110 H560"/>
+      <rect class="f-red" x="562" y="40" width="178" height="80" rx="10"/><text class="t-sm t-c t-b" x="651" y="74">4 Support ticket</text><text class="t-xs t-c" x="651" y="92">with logs + photos</text>
+      <text class="t-xs t-m" x="20" y="246">Prepare: serial number, firmware version, AMS firmware, the code, photos or short video, what you already tried.</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> Escalate step by step and bring evidence. Support can do far more with logs and photos than with a description.</figcaption>
+  </figure>
+  <ul>
+    <li><b>Export logs</b> from the printer's settings to external storage. This requires a USB drive; without one you cannot export logs.</li>
+    <li><b>Record the code and time</b> from the HMS tab, plus the plate, material and slicer version.</li>
+    <li><b>Take photos</b> of the problem area before cleaning it.</li>
+  </ul>
+
+  <h2 id="relocation">10. Shipping, relocation and long-term storage</h2>
+  <div class="grid cols-2">
+    <div class="card accent-blue"><h4>Moving the printer</h4><p>The X2D weighs 16.25 kg and measures 392 × 406 × 478 mm. Plan the destination: Bambu recommends a space of about 500 × 700 × 600 mm for operation, ambient temperature of 10–30 °C and humidity below 85 %. After any move, re-run auto bed leveling (and the full calibration set after a long trip).</p></div>
+    <div class="card accent-orange"><h4>Shipping</h4><p>Remove spools and unload the AMS; keep the original packaging and protective parts if possible; secure the toolhead as in the unboxing instructions. Photograph the printer before shipping. These are typical practices, not a Bambu-published list.</p></div>
+    <div class="card accent-purple"><h4>Long-term storage</h4><p>Unload filament, empty the AMS and store spools sealed with desiccant. Keep the printer clean and dry, covered from dust. After storage re-run leveling and check the desiccant and filters.</p></div>
+    <div class="card accent-green"><h4>Heatbed work</h4><p>If anything touched the heatbed, re-run leveling. If you ever see odd bed height maps, use the first-layer troubleshooting flow above.</p></div>
+  </div>
+
+  <h2 id="spares">11. Spare parts worth keeping</h2>
+  <ul class="tags">
+    <li class="tag">Spare hotend and sock</li><li class="tag">2 PTFE tubes (aux and AMS)</li><li class="tag">Filament cutter blades</li><li class="tag">Silicone wiper</li><li class="tag">Carbon filter</li><li class="tag">AMS desiccant</li><li class="tag">Lube oil and grease</li><li class="tag">Allen keys H1.5 / H2.0</li><li class="tag">8 mm wrench</li><li class="tag">Unclogging pin</li><li class="tag">Spare textured PEI plate</li><li class="tag">USB drive for logs</li>
+  </ul>
+  <p>Most of these come in the box (spare hotend and sock, two PTFE tubes, cutters, scraper blade, wrenches and desiccant). Reorder before you need them, not after.</p>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul class="checklist">
+    <li>Lubricate on a schedule tied to daily print hours, and recalibrate after.</li>
+    <li>Know the aux PTFE nut test and the unload test for clogs.</li>
+    <li>HMS codes are lookup keys: read the message, look up the code, note it for support.</li>
+    <li>AMS red LED patterns point to feeder, hub or tube problems; dry spools and free filament mechanically.</li>
+    <li>Export logs (needs USB), photograph problems, and escalate step by step.</li>
+    <li>Recalibrate after moving the printer, long storage or any heatbed or hotend work.</li>
+  </ul>
+  <div class="callout goal"><span class="callout-title">Practice</span>
+    <p>Start a maintenance log in <a href="../exercises/x2d-challenges.html#X-12">X-12</a>. For the AMS side, see <a href="ams-2-pro.html">the AMS 2 Pro page</a>. For general print-failure thinking read <a href="../techniques/troubleshooting.html">Troubleshooting</a> and <a href="../techniques/maintenance.html">Maintenance</a>.</p></div>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Material picker · 3D Printing Compendium</title>
+  <meta name="description" content="An interactive filament recommender: describe what the part must do and what your printer can handle, get ranked materials with warnings, a radar chart, a comparison table and a sortable material database.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+  <style>
+    .mp-layout { display: grid; grid-template-columns: minmax(280px, 380px) minmax(0, 1fr); gap: 20px; align-items: start; margin: 1.2em 0; }
+    @media (max-width: 960px) { .mp-layout { grid-template-columns: minmax(0, 1fr); } }
+    .mp-panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 14px 16px; min-width: 0; }
+    .mp-panel h3 { margin: 0 0 .5em; font-size: 1.05rem; border: 0; padding: 0; }
+    .mp-panel fieldset { border: 0; margin: 0 0 .9em; padding: 0; min-width: 0; }
+    .mp-panel legend { font-weight: 700; font-size: 13.5px; padding: 0; margin-bottom: 5px; }
+    .mp-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .mp-chips button, .mp-scen button { font: inherit; font-size: 13px; cursor: pointer; border-radius: 999px; padding: 4px 11px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); }
+    .mp-chips button:hover, .mp-scen button:hover { border-color: var(--brand); }
+    .mp-chips button[aria-checked="true"] { background: var(--brand); border-color: var(--brand); color: #fff; font-weight: 700; }
+    .mp-slider { margin: 0 0 .7em; }
+    .mp-slider label { display: flex; justify-content: space-between; gap: 8px; font-size: 13.5px; font-weight: 650; }
+    .mp-slider output { font-family: var(--mono); font-size: 12.5px; color: var(--brand); white-space: nowrap; }
+    .mp-slider input[type=range] { width: 100%; accent-color: var(--brand); }
+    .mp-slider small { color: var(--muted); font-size: 12px; display: block; }
+    .mp-scen { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: .6em; }
+    .mp-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+    .mp-card { border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); padding: 10px 12px; min-width: 0; }
+    .mp-card.top { border-color: var(--brand); box-shadow: 0 0 0 1px var(--brand) inset; }
+    .mp-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+    .mp-rank { font-family: var(--mono); font-weight: 800; color: var(--muted); min-width: 2.2em; }
+    .mp-name { font-weight: 800; font-size: 1.05rem; flex: 1 1 140px; }
+    .mp-fit { font-family: var(--mono); font-weight: 800; font-size: 1.1rem; }
+    .mp-bar { height: 12px; border-radius: 8px; background: var(--surface); border: 1px solid var(--line); overflow: hidden; margin: 6px 0; }
+    .mp-bar i { display: block; height: 100%; border-radius: 8px; }
+    .mp-tags { display: flex; flex-wrap: wrap; gap: 5px; margin: 4px 0; }
+    .mp-card details { margin-top: 4px; font-size: 14px; }
+    .mp-card summary { cursor: pointer; font-weight: 650; color: var(--brand); }
+    .mp-card ul { margin: .3em 0 .3em 1.1em; padding: 0; }
+    .mp-cmp { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; cursor: pointer; }
+    .mp-note { font-size: 13px; color: var(--muted); }
+    .mp-url { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: .7em; }
+    .mp-url input { flex: 1 1 260px; min-width: 0; font: 12.5px var(--mono); padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); }
+    .mp-th { font: inherit; font-weight: 700; background: none; border: 0; color: inherit; cursor: pointer; padding: 0; text-align: left; white-space: nowrap; }
+    .mp-th::after { content: " ↕"; color: var(--muted); font-weight: 400; }
+    th[aria-sort="ascending"] .mp-th::after { content: " ▲"; color: var(--brand); }
+    th[aria-sort="descending"] .mp-th::after { content: " ▼"; color: var(--brand); }
+    .mp-db td, .mp-db th { white-space: nowrap; }
+    .mp-cmpt td, .mp-cmpt th { vertical-align: top; }
+    .mp-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; margin: 4px 0 0; }
+    .mp-legend i { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
+    .mp-dot { cursor: pointer; }
+    .mp-empty { color: var(--muted); padding: 10px; }
+  </style>
+</head>
+<body data-page="tools/material-picker.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 8 · Interactive tools</div>
+    <h1>Material picker</h1>
+    <p class="lead">Tell the picker what the part has to survive and what your printer can actually handle. It scores 25 filaments against your requirements, ranks them, warns you about dryers, hardened nozzles and heated chambers, and draws the comparison for you.</p>
+    <div class="meta"><span class="badge beginner">All levels</span><span class="badge x2d">X2D + AMS 2 Pro mode</span><span class="badge time">⏱ 10 min to explore</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">How to use it</span>
+    <p>Pick a printer, set the capabilities you really have, then move the sliders to the level each property must reach (0 = do not care). The ranking updates immediately and the page address changes so you can copy it and share your exact setup. Nothing is sent anywhere.</p></div>
+
+  <div class="callout warn"><span class="callout-title">Typical, approximate values</span>
+    <p>Every number in this tool is a <em>typical, approximate</em> value for a printed part, rounded to a 0–10 scale or a round temperature. Brands differ widely, printed parts are weaker than datasheets, and the scores are a guide for shortlisting, not an engineering certificate. Always check the manufacturer's datasheet for the exact product.</p></div>
+
+  <h2>The picker</h2>
+  <p>The left panel holds your requirements; the right panel shows the ranking. Use <b>Compare</b> on up to three results to see them side by side, with a radar chart that also draws what you asked for as a dashed outline.</p>
+
+  <div class="mp-layout">
+    <section class="mp-panel" aria-labelledby="mp-req-h">
+      <h3 id="mp-req-h">Your requirements</h3>
+      <div class="mp-scen" id="mp-scen" role="group" aria-label="Example scenarios"></div>
+      <fieldset><legend id="lg-printer">Printer type</legend><div class="mp-chips" id="mp-printer" role="radiogroup" aria-labelledby="lg-printer"></div>
+        <p class="mp-note" id="mp-printer-note"></p></fieldset>
+      <fieldset><legend id="lg-enc">Enclosure / chamber</legend><div class="mp-chips" id="mp-enc" role="radiogroup" aria-labelledby="lg-enc"></div></fieldset>
+      <fieldset><legend id="lg-hn">Hardened nozzle</legend><div class="mp-chips" id="mp-hn" role="radiogroup" aria-labelledby="lg-hn"></div></fieldset>
+      <fieldset><legend id="lg-dr">Filament dryer</legend><div class="mp-chips" id="mp-dr" role="radiogroup" aria-labelledby="lg-dr"></div></fieldset>
+      <fieldset><legend id="lg-bd">Budget tier (maximum)</legend><div class="mp-chips" id="mp-bd" role="radiogroup" aria-labelledby="lg-bd"></div></fieldset>
+      <div id="mp-sliders"></div>
+      <div class="btn-row"><button type="button" class="btn ghost" id="mp-reset">Reset everything</button></div>
+    </section>
+
+    <section class="mp-panel" aria-labelledby="mp-res-h" aria-live="polite">
+      <h3 id="mp-res-h">Ranked results</h3>
+      <p class="mp-note" id="mp-summary"></p>
+      <ol class="mp-list" id="mp-results"></ol>
+      <div class="btn-row"><button type="button" class="btn ghost" id="mp-more">Show all 25</button></div>
+      <div class="mp-url"><label for="mp-url">Shareable link</label><input type="text" id="mp-url" readonly><button type="button" class="btn" id="mp-copy">Copy link</button></div>
+    </section>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" id="mp-scatter" viewBox="0 0 760 420" role="img" aria-label="Scatter chart of heat resistance against strength for all materials; the best matches for the current requirements are highlighted"></svg>
+    <figcaption><b>Figure 1.</b> The landscape of materials: heat resistance (horizontal) against strength (vertical). Dot size grows with stiffness. Large rings mark your current top three. The upper right corner is crowded with expensive, fussy composites; the lower left with easy, cheap plastics. That is the central trade-off of this whole page.</figcaption>
+  </figure>
+
+  <h2>Compare up to three</h2>
+  <p>Tick <b>Compare</b> on any result. The radar chart and the table below show the selected materials; the dashed outline is your own requirement profile. A material whose outline fully contains the dashed shape meets every requirement.</p>
+  <div class="grid cols-2">
+    <figure class="fig" style="margin:0">
+      <svg class="diagram" id="mp-radar" viewBox="0 0 420 380" role="img" aria-label="Radar chart of selected materials over eight properties, with the user's requirements as a dashed outline"></svg>
+      <figcaption><b>Figure 2.</b> Radar chart over eight properties. Heat is shown as °C ÷ 25, so 250 °C reaches the rim. Dashed: what you asked for.</figcaption>
+    </figure>
+    <div id="mp-compare" class="table-wrap" style="margin:0"><p class="mp-empty">Select materials with the Compare tick to see them here.</p></div>
+  </div>
+  <div class="mp-legend" id="mp-radar-legend"></div>
+
+  <h2>How the scoring works</h2>
+  <p>Understanding the method protects you from over-trusting a single number. The scoring has three stages and each is deliberately simple so you can check it by hand.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 240" role="img" aria-label="Three-stage pipeline: requirement fit per property, penalties for missing equipment, final ranking and warnings">
+      <rect class="f-blue" x="10" y="20" width="230" height="200" rx="12"/>
+      <text class="t t-c t-b" x="125" y="46">1 · Fit per property</text>
+      <text class="t-sm t-c" x="125" y="72">need n (0–10), material value v</text>
+      <text class="t-sm t-c t-b" x="125" y="100">sat = 1 if v ≥ n</text>
+      <text class="t-sm t-c t-b" x="125" y="120">else (v / n)^1.5</text>
+      <text class="t-xs t-c" x="125" y="150">weight w = 1 + n / 5</text>
+      <text class="t-xs t-c" x="125" y="170">heat: (HDT / T)^3 below target</text>
+      <text class="t-xs t-c" x="125" y="200">strict on shortfalls, silent on extras</text>
+      <rect class="f-orange" x="270" y="20" width="230" height="200" rx="12"/>
+      <text class="t t-c t-b" x="385" y="46">2 · Penalties</text>
+      <text class="t-sm t-c" x="385" y="72">your printer versus the material</text>
+      <text class="t-sm t-c" x="385" y="100">needs enclosure, none: −30</text>
+      <text class="t-sm t-c" x="385" y="120">needs hardened nozzle: −35</text>
+      <text class="t-sm t-c" x="385" y="140">essential drying, no dryer: −18</text>
+      <text class="t-sm t-c" x="385" y="160">over budget: −7 per tier</text>
+      <text class="t-xs t-c" x="385" y="200">X2D: unavailable on main nozzle: −70</text>
+      <rect class="f-green" x="530" y="20" width="240" height="200" rx="12"/>
+      <text class="t t-c t-b" x="650" y="46">3 · Rank and explain</text>
+      <text class="t-sm t-c" x="650" y="72">score = fit × 0.96 + bonus − penalties</text>
+      <text class="t-sm t-c" x="650" y="100">bonus: up to 4 points for headroom</text>
+      <text class="t-sm t-c" x="650" y="130">sorted high to low</text>
+      <text class="t-sm t-c" x="650" y="150">every penalty becomes a visible chip</text>
+      <text class="t-xs t-c" x="650" y="200">warnings are never hidden in the score</text>
+      <path class="d-ink arrow" d="M240 120 H270"/><path class="d-ink arrow" d="M500 120 H530"/>
+    </svg>
+    <figcaption><b>Figure 3.</b> The scoring pipeline. Stage 1 measures how well the plastic itself matches the job; stage 2 charges for what your printer cannot provide; stage 3 ranks and shows the reasons.</figcaption>
+  </figure>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 260" role="img" aria-label="Curve showing satisfaction against material value for need levels 4, 7 and 10; satisfaction rises as a power curve and flattens at one when the value meets the need">
+      <path class="d-grid" d="M70 30 V210 H740"/>
+      <text class="t-xs t-c" x="30" y="125" transform="rotate(-90 30 125)">satisfaction</text>
+      <text class="t-xs t-c" x="405" y="244">material value v (0–10)</text>
+      <path class="k-blue" style="stroke-width:3" d="M70 210 C 130 205 160 170 188 30 H740"/>
+      <path class="k-orange" style="stroke-width:3" d="M70 210 C 190 205 260 160 328 30 H740"/>
+      <path class="k-red" style="stroke-width:3" d="M70 210 C 250 205 410 150 470 30 H740"/>
+      <text class="t-sm c-blue t-b" x="196" y="52">need 4</text><text class="t-sm c-orange t-b" x="336" y="52">need 7</text><text class="t-sm c-red t-b" x="478" y="52">need 10</text>
+      <text class="t-xs" x="70" y="226">0</text><text class="t-xs" x="730" y="226">10</text>
+      <text class="t-xs" x="52" y="34">1</text><text class="t-xs" x="52" y="212">0</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> Satisfaction curves (schematic). Falling short is punished by a power of 1.5, so a material at half of what you need earns only about 35 % of that criterion; once the need is met the curve is flat, because more strength than needed does not make the part better, only more expensive.</figcaption>
+  </figure>
+
+  <h2>Reading the properties</h2>
+  <p>Each slider is a <em>requirement level</em>. Here is what the scale means so that you can set it with confidence.</p>
+  <div class="grid cols-2">
+    <div class="card accent-blue"><h4>Strength (0–10)</h4><p>Resistance to breaking or yielding under load, in the printed orientation. 3 means hobby trinkets, 6 a bracket that carries a few kilograms, 9 a part that replaces aluminum. Layer adhesion limits real values, so a carbon-fiber filament scores high in-plane but is not magic across layers.</p></div>
+    <div class="card accent-purple"><h4>Stiffness (0–10)</h4><p>How little the part bends. High stiffness helps rails, frames and drones; low stiffness helps snap fits and shock absorption. Fillers such as carbon fiber raise stiffness far more than strength. Strong is not the same as stiff.</p></div>
+    <div class="card accent-red"><h4>Heat resistance (°C)</h4><p>The temperature at which a loaded part begins to soften (a heat-deflection style figure, not the melting point). A car dashboard in the sun reaches 70–85 °C, a motor mount 100 °C. Heat resistance is treated as a hard target: materials below it are punished steeply.</p></div>
+    <div class="card accent-teal"><h4>Flexibility (0–10)</h4><p>Elastic stretch and bend. 0 is glass-like, 5 is a living hinge in nylon or PP, 10 is a rubber-like TPU 85A. A high flexibility need naturally conflicts with a high stiffness need; the picker lets you ask for both and shows you the damage.</p></div>
+    <div class="card accent-yellow"><h4>Outdoor / UV (0–10)</h4><p>Resistance to sunlight, weather and moisture over months. ASA is the benchmark; PLA gets brittle and warps in a hot car; PETG tolerates rain and light better than PLA but still yellows.</p></div>
+    <div class="card accent-green"><h4>Chemical resistance (0–10)</h4><p>Resistance to oils, fuels, cleaners and solvents. Polyolefins such as PP and polyamides score high; PLA and ABS fail against many solvents (acetone dissolves ABS, which is why it is used for smoothing).</p></div>
+    <div class="card accent-pink"><h4>Food-adjacent (0–10)</h4><p>Suitability for items near food, such as a cookie cutter. This is a very cautious score: no filament is food safe by default, because layer lines trap bacteria, nozzles can contain lead in older brass, and dyes or additives are rarely declared. Use food-contact claims from the manufacturer only, for dry or short contact.</p></div>
+    <div class="card accent-orange"><h4>Surface finish and ease (0–10)</h4><p>Finish is how good the part looks straight from the printer (gloss, layer-line visibility, sandability). Ease is how forgiving the material is on warping, stringing, adhesion and settings. They pull in different directions: silk PLA looks superb but demands care; the easiest plastics rarely win beauty contests.</p></div>
+  </div>
+
+  <h2>Equipment warnings explained</h2>
+  <ul>
+    <li><b>Dryer.</b> Hygroscopic plastics (nylons, PC, PVA, TPU, PETG-CF) absorb water within hours. Wet filament makes bubbles, strings and brittle parts. Materials marked <span class="chip red">essential</span> are not worth printing without a dryer. See <a href="../materials/drying-and-storage.html">Drying and storage</a> for temperatures and times.</li>
+    <li><b>Hardened nozzle.</b> Carbon-fiber and glass-fiber fills abrade brass in a few hundred grams. The X2D ships with a hardened-steel 0.4 mm hotend, so the picker treats the option as available when you choose the X2D; read the <a href="../materials/overview.html">materials overview</a> for the general rule.</li>
+    <li><b>Enclosure or heated chamber.</b> ABS, ASA, PC and nylons shrink as they cool; a closed, warm space prevents warping and layer splits. The X2D chamber heats to 65 °C, which helps the entire engineering family. See <a href="../materials/engineering-plastics.html">Engineering plastics</a>.</li>
+    <li><b>Dryer temperature limit.</b> The AMS 2 Pro dries up to 65 °C. Nylons, PC and fiber-filled polyamides want 80 °C or more, so they appear with a yellow "needs a hotter dryer" chip.</li>
+  </ul>
+
+  <h2>Bambu X2D + AMS 2 Pro mode</h2>
+  <p>When you choose the X2D preset the picker also reads the <a href="../x2d/filament-compatibility.html">filament compatibility tables</a> that are embedded in the database: each material carries a rating for the <b>main (left) nozzle</b>, the <b>auxiliary (right) nozzle</b> and the <b>AMS 2 Pro</b>. Only the main nozzle rating affects the score, because you can always send a job to the main nozzle; the other ratings appear as notes.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 800 300" role="img" aria-label="Map of the X2D filament paths: AMS 2 Pro feeds both nozzles; TPU uses an external spool to the main nozzle; abrasive filaments need hardened steel which is installed; the auxiliary nozzle has a conservative material list">
+      <rect class="f-teal" x="20" y="20" width="200" height="120" rx="12"/><text class="t t-c t-b" x="120" y="46">AMS 2 Pro</text>
+      <text class="t-xs t-c" x="120" y="68">4 slots · RFID · 65 °C dryers</text><text class="t-xs t-c" x="120" y="88">OK: PLA, PETG, ABS/ASA</text><text class="t-xs t-c" x="120" y="106">Caution: brittle fibers</text><text class="t-xs t-c" x="120" y="124">Avoid: TPU, absorbent PVA</text>
+      <rect class="f-blue" x="300" y="20" width="220" height="120" rx="12"/><text class="t t-c t-b" x="410" y="46">Main nozzle (left)</text>
+      <text class="t-xs t-c" x="410" y="68">direct-drive servo extruder</text><text class="t-xs t-c" x="410" y="88">hardened steel · up to 300 °C</text><text class="t-xs t-c" x="410" y="106">broadest list: PLA … PPA-CF</text><text class="t-xs t-c" x="410" y="124">PPS-CF is unavailable</text>
+      <rect class="f-orange" x="580" y="20" width="200" height="120" rx="12"/><text class="t t-c t-b" x="680" y="46">Aux nozzle (right)</text>
+      <text class="t-xs t-c" x="680" y="68">stepper aux extruder</text><text class="t-xs t-c" x="680" y="88">≤ 200 mm/s · ≈ 1,000 mm/s²</text><text class="t-xs t-c" x="680" y="106">no TPU · PETG not advised</text><text class="t-xs t-c" x="680" y="124">PLA, PC, PVA, supports OK</text>
+      <rect class="f-yellow" x="20" y="180" width="380" height="100" rx="12"/><text class="t t-c t-b" x="210" y="206">External spool (top holder)</text>
+      <text class="t-xs t-c" x="210" y="228">TPU and other AMS-unfriendly filaments</text><text class="t-xs t-c" x="210" y="246">go to the main nozzle only</text>
+      <rect class="f-green" x="430" y="180" width="350" height="100" rx="12"/><text class="t t-c t-b" x="605" y="206">Chamber up to 65 °C</text>
+      <text class="t-xs t-c" x="605" y="228">helps ABS, ASA, PC and nylons</text><text class="t-xs t-c" x="605" y="246">dry polyamides outside the AMS</text>
+      <path class="d-ink arrow" d="M220 80 H300"/><path class="d-ink arrow" d="M520 80 H580" style="stroke-dasharray:5 4"/><path class="d-ink arrow" d="M210 180 V160 H410 V140"/>
+    </svg>
+    <figcaption><b>Figure 5.</b> Filament paths on the X2D. Solid arrows are the normal paths; the dashed arrow reminds you that the aux nozzle only takes a restricted material list.</figcaption>
+  </figure>
+
+  <h2>Material database</h2>
+  <p>This is the full table behind the picker. Click a column heading to sort; use the filter to narrow by name. Values are <em>typical, approximate</em>: scores run from 0 (poor) to 10 (excellent), heat in °C, cost from 1 (budget) to 4 (specialty), enclosure 0 none / 1 recommended / 2 required.</p>
+  <div class="mp-url"><label for="mp-filter">Filter by name</label><input type="text" id="mp-filter" autocomplete="off" placeholder="e.g. nylon, CF, TPU"></div>
+  <div class="table-wrap"><table class="data compact mp-db" id="mp-db"><caption class="mp-note">Typical, approximate properties for printed parts. Click a heading to sort.</caption><thead></thead><tbody></tbody></table></div>
+
+  <figure class="fig">
+    <svg class="diagram" id="mp-ladder" viewBox="0 0 780 250" role="img" aria-label="Bar chart of ease of printing for the materials sorted from easiest to hardest, colored by material family"></svg>
+    <figcaption><b>Figure 6.</b> The ease ladder: every material sorted by how forgiving it is. Start at the left of the ladder and climb only as far as your requirements force you.</figcaption>
+  </figure>
+
+  <h2>Methodology and limits</h2>
+  <ol>
+    <li><b>Sources of the numbers.</b> Values summarize widely published datasheet ranges and community experience, rounded to a 0–10 scale. They describe a competently printed part in its strongest orientation. Where sources disagree, the cautious value is used.</li>
+    <li><b>Printed versus molded.</b> Printed parts lose 20–60 % of datasheet strength across layers. The scale therefore ranks materials against each other more reliably than it predicts absolute loads. See <a href="../design/strength-and-orientation.html">Strength and orientation</a> for the design side.</li>
+    <li><b>Heat resistance.</b> Values are practical service temperatures near the heat-deflection point under light load, not melting points. A part that holds a spring load for months should stay at least 10–15 °C below the number.</li>
+    <li><b>Penalties are conservative.</b> A penalty is a warning with a price, not a ban. If you have a clever workaround (a cardboard tent over an open-frame printer for ABS), you can ignore the corresponding chip, but you should know that you are doing so.</li>
+    <li><b>What is not modeled.</b> Fatigue, creep under constant load, wear and friction, radiation, electrical properties, certification (flame retardancy, food contact) and print settings are outside the model. Chemical resistance is a single score per material and cannot replace a compatibility chart for the exact chemical.</li>
+    <li><b>Brands vary.</b> A PLA+ from one maker can behave like PETG from another. Treat the picker as the start of a conversation with a datasheet.</li>
+  </ol>
+
+  <div class="callout tip"><span class="callout-title">A good workflow</span>
+    <p>Shortlist with the picker, read the matching material guide, print a small test (one calibration tower and one stress coupon), and only then commit to a long job. <a href="../materials/overview.html">Materials overview</a>, <a href="../materials/everyday-plastics.html">Everyday plastics</a>, <a href="../materials/engineering-plastics.html">Engineering plastics</a> and <a href="../materials/flexibles-and-specialty.html">Flexibles and specialty</a> carry the detail. For numbers while designing, jump to the <a href="calculators.html">calculators</a>; for intuition about how heat and layers behave, open the <a href="visual-lab.html">visual lab</a>.</p></div>
+
+  <h2>Key takeaways</h2>
+  <ul>
+    <li>Choose by <b>requirements first</b>, brand second. Most parts need only PLA or PETG.</li>
+    <li>Strength, stiffness and heat resistance rarely come cheap: each step up costs ease, equipment or money.</li>
+    <li>Warnings (dryer, hardened nozzle, chamber) matter more than a few score points: a perfect material that you cannot print is a bad choice.</li>
+    <li>On the X2D the main nozzle is the most capable; check TPU, PVA and fiber-filled filaments for the AMS path.</li>
+    <li>All numbers here are typical and approximate; trust the manufacturer's datasheet and your own test prints.</li>
+  </ul>
+
+  <script>
+document.addEventListener("c3d:ready", function () {
+  "use strict";
+  var $ = C3D.$, store = C3D.store;
+
+  /* Typical, approximate values. Scores 0-10; heat = practical service temperature in °C; cost 1 budget .. 4 specialty;
+     enc 0/1/2 = none/recommended/required; ch 2 = heated chamber needed; hard 1 = abrasive; dry 0/1/2 = none/recommended/essential;
+     x = [main nozzle, aux nozzle, AMS 2 Pro] ratings from the X2D compatibility tables: ok, warn, avoid, no, chk (not listed). */
+  var G = { all: "../materials/", gx: "../x2d/filament-compatibility.html" };
+  var MATS = [
+    { id: "pla", n: "PLA", fam: "everyday", str: 6, stf: 7, flx: 1, uv: 3, chm: 3, food: 4, fin: 8, ease: 10, heat: 55, cost: 1, enc: 0, ch: 0, hard: 0, dry: 1, dryT: 50, noz: 210, bed: 55, link: "everyday-plastics.html#pla", ln: "PLA guide",
+      x: ["ok", "ok", "ok"], pros: ["Easiest material to print", "Sharp detail, many colors, low cost"], cons: ["Softens around 55 °C (hot cars)", "Brittle; poor UV and weather resistance"] },
+    { id: "plat", n: "PLA Tough/PLA+", fam: "everyday", str: 7, stf: 6, flx: 2, uv: 3, chm: 3, food: 3, fin: 7, ease: 9, heat: 58, cost: 1, enc: 0, ch: 0, hard: 0, dry: 1, dryT: 50, noz: 215, bed: 60, link: "everyday-plastics.html#pla-variants", ln: "PLA family",
+      x: ["ok", "ok", "ok"], pros: ["Less brittle than plain PLA", "Still very easy to print"], cons: ["Heat limit hardly better than PLA", "Formulation differs from brand to brand"] },
+    { id: "silk", n: "Silk PLA", fam: "everyday", str: 4, stf: 6, flx: 1, uv: 3, chm: 3, food: 2, fin: 10, ease: 8, heat: 55, cost: 2, enc: 0, ch: 0, hard: 0, dry: 1, dryT: 50, noz: 220, bed: 55, link: "everyday-plastics.html#pla-variants", ln: "PLA family",
+      x: ["ok", "avoid", "ok"], pros: ["Glossy, metallic look straight off the bed", "Hides layer lines"], cons: ["Weaker layer bonds than plain PLA", "Slower speeds, strings easily; not for the aux nozzle"] },
+    { id: "placf", n: "PLA-CF", fam: "comp", str: 7, stf: 9, flx: 0, uv: 4, chm: 3, food: 0, fin: 7, ease: 6, heat: 58, cost: 3, enc: 0, ch: 0, hard: 1, dry: 1, dryT: 55, noz: 220, bed: 55, link: "engineering-plastics.html#composites", ln: "Composites",
+      x: ["ok", "ok", "warn"], pros: ["Very stiff and dimensionally stable", "Matte finish, little warping"], cons: ["Abrasive: needs a hardened nozzle", "Brittle; heat limit stays PLA-low"] },
+    { id: "petg", n: "PETG", fam: "everyday", str: 7, stf: 5, flx: 3, uv: 5, chm: 7, food: 5, fin: 6, ease: 8, heat: 70, cost: 1, enc: 0, ch: 0, hard: 0, dry: 1, dryT: 65, noz: 245, bed: 75, link: "everyday-plastics.html#petg", ln: "PETG guide",
+      x: ["ok", "warn", "ok"], pros: ["Tough, water and chemical resistant", "Good layer adhesion, easy to print"], cons: ["Strings and sticks too well to the bed", "Scratches easily; limited heat resistance"] },
+    { id: "pctg", n: "PCTG", fam: "everyday", str: 8, stf: 5, flx: 4, uv: 5, chm: 7, food: 5, fin: 7, ease: 7, heat: 75, cost: 2, enc: 0, ch: 0, hard: 0, dry: 1, dryT: 65, noz: 255, bed: 75, link: "everyday-plastics.html#pctg", ln: "PCTG",
+      x: ["chk", "warn", "ok"], pros: ["Tougher than PETG, great impact resistance", "Clear grades available"], cons: ["Dries slowly; strings like PETG", "Not listed in Bambu's X2D tables"] },
+    { id: "petgcf", n: "PETG-CF", fam: "comp", str: 8, stf: 8, flx: 1, uv: 5, chm: 7, food: 0, fin: 6, ease: 6, heat: 78, cost: 3, enc: 0, ch: 0, hard: 1, dry: 1, dryT: 65, noz: 270, bed: 75, link: "engineering-plastics.html#pet", ln: "PET and PETG-CF",
+      x: ["ok", "avoid", "warn"], pros: ["Stiff and strong with PETG's chemical resistance", "Less stringing than plain PETG"], cons: ["Abrasive: hardened nozzle", "Aux nozzle: highly not recommended"] },
+    { id: "abs", n: "ABS", fam: "eng", str: 6, stf: 5, flx: 2, uv: 3, chm: 6, food: 1, fin: 5, ease: 4, heat: 95, cost: 1, enc: 2, ch: 1, hard: 0, dry: 1, dryT: 80, noz: 250, bed: 100, link: "engineering-plastics.html#abs-asa", ln: "ABS and ASA",
+      x: ["ok", "warn", "ok"], pros: ["Good heat resistance and toughness", "Smoothable with acetone vapor, cheap"], cons: ["Warps; needs an enclosure", "Fumes: ventilate; poor UV resistance"] },
+    { id: "asa", n: "ASA", fam: "eng", str: 6, stf: 5, flx: 2, uv: 10, chm: 6, food: 1, fin: 7, ease: 5, heat: 95, cost: 2, enc: 2, ch: 1, hard: 0, dry: 1, dryT: 80, noz: 255, bed: 100, link: "engineering-plastics.html#abs-asa", ln: "ABS and ASA",
+      x: ["ok", "warn", "ok"], pros: ["The outdoor standard: UV and weather proof", "Good heat resistance, nice matte finish"], cons: ["Needs an enclosure; warps like ABS", "Fumes: ventilate"] },
+    { id: "pc", n: "PC", fam: "eng", str: 9, stf: 6, flx: 3, uv: 4, chm: 5, food: 2, fin: 6, ease: 3, heat: 115, cost: 3, enc: 2, ch: 1, hard: 0, dry: 2, dryT: 80, noz: 270, bed: 100, link: "engineering-plastics.html#pc", ln: "PC",
+      x: ["ok", "ok", "warn"], pros: ["Very tough and heat resistant", "Transparent grades available"], cons: ["Absorbs water quickly: dry hot", "Warps heavily without a warm chamber"] },
+    { id: "pa6", n: "PA6 (nylon)", fam: "eng", str: 8, stf: 5, flx: 5, uv: 3, chm: 8, food: 2, fin: 4, ease: 3, heat: 80, cost: 3, enc: 2, ch: 1, hard: 0, dry: 2, dryT: 80, noz: 270, bed: 90, link: "engineering-plastics.html#nylon", ln: "Nylon",
+      x: ["chk", "chk", "warn"], pros: ["Tough, wear resistant, slides well", "Excellent chemical resistance"], cons: ["Very hygroscopic: always dry", "Shrinks and warps; moisture changes dimensions"] },
+    { id: "pa12", n: "PA12/PA11", fam: "eng", str: 7, stf: 4, flx: 6, uv: 4, chm: 9, food: 3, fin: 5, ease: 4, heat: 80, cost: 3, enc: 1, ch: 1, hard: 0, dry: 2, dryT: 70, noz: 255, bed: 80, link: "engineering-plastics.html#nylon", ln: "Nylon",
+      x: ["chk", "chk", "warn"], pros: ["Less water-hungry and less warp-prone than PA6", "Flexible, fatigue resistant"], cons: ["Needs drying", "Poor bed adhesion without the right surface"] },
+    { id: "pahtcf", n: "PAHT-CF", fam: "comp", str: 9, stf: 10, flx: 0, uv: 5, chm: 8, food: 0, fin: 6, ease: 3, heat: 150, cost: 4, enc: 2, ch: 2, hard: 1, dry: 2, dryT: 80, noz: 290, bed: 100, link: "engineering-plastics.html#composites", ln: "Composites",
+      x: ["ok", "ok", "warn"], pros: ["Top-tier strength, stiffness and heat", "Replaces aluminum in many fixtures"], cons: ["Hardened nozzle, hot dryer and heated chamber", "Expensive and fussy"] },
+    { id: "pa6gf", n: "PA6-GF", fam: "comp", str: 9, stf: 9, flx: 0, uv: 5, chm: 8, food: 0, fin: 5, ease: 3, heat: 150, cost: 4, enc: 2, ch: 2, hard: 1, dry: 2, dryT: 80, noz: 280, bed: 100, link: "engineering-plastics.html#composites", ln: "Composites",
+      x: ["ok", "ok", "warn"], pros: ["Stiff, tough and heat resistant", "Cheaper than most CF nylons"], cons: ["Abrasive glass fiber", "Rough surface, must be dried"] },
+    { id: "petcf", n: "PET-CF", fam: "comp", str: 9, stf: 9, flx: 0, uv: 5, chm: 8, food: 0, fin: 6, ease: 4, heat: 150, cost: 3, enc: 1, ch: 1, hard: 1, dry: 2, dryT: 80, noz: 280, bed: 80, link: "engineering-plastics.html#pet", ln: "PET and PETG-CF",
+      x: ["ok", "warn", "warn"], pros: ["High strength and stiffness; low moisture creep", "Prints with less warping than nylon CF"], cons: ["Abrasive; must be dried hot", "Needs a hot nozzle"] },
+    { id: "ppacf", n: "PPA-CF", fam: "comp", str: 10, stf: 10, flx: 0, uv: 6, chm: 9, food: 0, fin: 6, ease: 2, heat: 180, cost: 4, enc: 2, ch: 2, hard: 1, dry: 2, dryT: 90, noz: 300, bed: 100, link: "engineering-plastics.html#composites", ln: "Composites",
+      x: ["ok", "no", "warn"], pros: ["Extreme stiffness, heat and chemical resistance", "Low moisture uptake compared with PA6"], cons: ["Needs 300 °C nozzle and heated chamber", "Aux nozzle: unavailable"] },
+    { id: "tpu95", n: "TPU 95A", fam: "flex", str: 6, stf: 1, flx: 8, uv: 5, chm: 6, food: 2, fin: 5, ease: 5, heat: 70, cost: 2, enc: 0, ch: 0, hard: 0, dry: 1, dryT: 55, noz: 225, bed: 45, link: "flexibles-and-specialty.html#flex", ln: "Flexibles",
+      x: ["ok", "no", "avoid"], pros: ["Rubber-like, abrasion and impact resistant", "Prints without much warping"], cons: ["Slow; use the external spool on the X2D (main nozzle only)", "Strings; hard to retract"] },
+    { id: "tpu85", n: "TPU 85A", fam: "flex", str: 4, stf: 0, flx: 10, uv: 5, chm: 6, food: 2, fin: 5, ease: 3, heat: 60, cost: 2, enc: 0, ch: 0, hard: 0, dry: 1, dryT: 55, noz: 225, bed: 45, link: "flexibles-and-specialty.html#flex", ln: "Flexibles",
+      x: ["warn", "no", "avoid"], xn: "TPU 85A is unavailable at 0.4 mm on the main nozzle (0.6 and 0.8 mm only)", pros: ["Very soft: seals, gaskets, grips", "Great vibration damping"], cons: ["Very slow and fussy to print", "Needs the external spool; no aux nozzle"] },
+    { id: "pva", n: "PVA", fam: "spec", str: 2, stf: 3, flx: 2, uv: 1, chm: 1, food: 0, fin: 3, ease: 5, heat: 50, cost: 3, enc: 0, ch: 0, hard: 0, dry: 2, dryT: 45, noz: 200, bed: 55, link: "flexibles-and-specialty.html#supports", ln: "Support materials",
+      x: ["ok", "ok", "avoid"], pros: ["Water-soluble support for complex overhangs", "Prints at low temperatures"], cons: ["A support material: not for finished parts", "Absorbs moisture fast; keep it out of the AMS"] },
+    { id: "hips", n: "HIPS", fam: "spec", str: 4, stf: 4, flx: 2, uv: 2, chm: 4, food: 1, fin: 5, ease: 5, heat: 85, cost: 2, enc: 2, ch: 0, hard: 0, dry: 1, dryT: 60, noz: 240, bed: 100, link: "flexibles-and-specialty.html#supports", ln: "Support materials",
+      x: ["chk", "chk", "chk"], pros: ["Dissolving support for ABS (limonene)", "Light and easy to sand"], cons: ["Mainly a support material", "Needs an enclosure like ABS"] },
+    { id: "pp", n: "PP", fam: "spec", str: 4, stf: 2, flx: 6, uv: 3, chm: 10, food: 6, fin: 3, ease: 2, heat: 100, cost: 3, enc: 1, ch: 0, hard: 0, dry: 1, dryT: 55, noz: 230, bed: 80, link: "engineering-plastics.html#pp", ln: "Polypropylene",
+      x: ["chk", "chk", "chk"], pros: ["Outstanding chemical resistance, living hinges", "Light, fatigue resistant"], cons: ["Sticks to nothing: needs a PP-compatible plate", "Warps; hard to bond"] },
+    { id: "ppscf", n: "PPS-CF", fam: "comp", str: 10, stf: 10, flx: 0, uv: 6, chm: 10, food: 0, fin: 5, ease: 1, heat: 240, cost: 4, enc: 2, ch: 2, hard: 1, dry: 2, dryT: 120, noz: 310, bed: 100, link: "engineering-plastics.html#pps", ln: "PPS and PPS-CF",
+      x: ["no", "no", "no"], pros: ["Extreme heat and chemical resistance", "Very stiff"], cons: ["Needs 310 °C and a hot dryer", "Unavailable on the X2D"] },
+    { id: "asacf", n: "ASA-CF", fam: "comp", str: 8, stf: 8, flx: 0, uv: 9, chm: 6, food: 0, fin: 6, ease: 4, heat: 100, cost: 3, enc: 2, ch: 1, hard: 1, dry: 1, dryT: 80, noz: 270, bed: 100, link: "engineering-plastics.html#composites", ln: "Composites",
+      x: ["chk", "avoid", "warn"], pros: ["Stiff and weather resistant", "Matte, low-warp surface"], cons: ["Hardened nozzle, enclosure", "Aux nozzle and track switch: highly not recommended"] },
+    { id: "pccf", n: "PC-CF", fam: "comp", str: 10, stf: 9, flx: 0, uv: 4, chm: 5, food: 0, fin: 6, ease: 2, heat: 130, cost: 4, enc: 2, ch: 2, hard: 1, dry: 2, dryT: 80, noz: 290, bed: 100, link: "engineering-plastics.html#composites", ln: "Composites",
+      x: ["chk", "chk", "warn"], pros: ["High strength, stiffness and heat resistance", "Better dimensional stability than plain PC"], cons: ["Hardened nozzle, hot dryer, heated chamber", "Hard to print well"] },
+    { id: "pei", n: "PEI (Ultem-type)", fam: "spec", str: 10, stf: 8, flx: 1, uv: 7, chm: 9, food: 1, fin: 5, ease: 1, heat: 170, cost: 4, enc: 2, ch: 2, hard: 0, dry: 2, dryT: 150, noz: 370, bed: 160, link: "engineering-plastics.html#peek-pei", ln: "PEI and PEEK",
+      x: ["no", "no", "no"], pros: ["Aerospace-grade heat and flame resistance", "Excellent strength retention"], cons: ["Needs a 370 °C nozzle and 120 °C chamber: industrial printers only", "Not possible on the X2D"] }
+  ];
+  var FAMC = { everyday: ["Everyday", "--blue"], eng: ["Engineering", "--red"], comp: ["Composites", "--purple"], flex: ["Flexible", "--green"], spec: ["Specialty / support", "--gray"] };
+  var XL = { ok: "OK", warn: "caution", avoid: "not recommended", no: "unavailable", chk: "not in Bambu's table" };
+  var COSTL = ["", "Budget", "Standard", "Premium", "Specialty"];
+  var ENCL = ["no", "recommended", "required"], DRYL = ["no", "recommended", "essential"];
+
+  /* ---------- state ---------- */
+  var PRESETS = { x2d: [2, 1, 1], open: [0, 0, 0], encl: [1, 0, 0], hot: [2, 1, 2] };
+  var DEF = { p: "x2d", enc: 2, hn: 1, dr: 1, bd: 3, s: 5, t: 3, hc: 40, f: 0, u: 0, c: 0, fd: 0, fi: 0, e: 5, cmp: [] };
+  var SLIDERS = [
+    { k: "s", p: "str", l: "Strength", min: 0, max: 10, h: "Resist breaking under load" },
+    { k: "t", p: "stf", l: "Stiffness", min: 0, max: 10, h: "Resist bending" },
+    { k: "hc", p: "heat", l: "Heat resistance", min: 40, max: 200, step: 5, u: " °C", h: "40 = no requirement" },
+    { k: "f", p: "flx", l: "Flexibility", min: 0, max: 10, h: "Rubbery bend (opposite of stiffness)" },
+    { k: "u", p: "uv", l: "Outdoor / UV", min: 0, max: 10, h: "Sun and weather for months" },
+    { k: "c", p: "chm", l: "Chemical resistance", min: 0, max: 10, h: "Oils, fuels, cleaners" },
+    { k: "fd", p: "food", l: "Food-adjacent", min: 0, max: 10, h: "Cautious: see the note in the text" },
+    { k: "fi", p: "fin", l: "Surface finish", min: 0, max: 10, h: "Looks straight from the printer" },
+    { k: "e", p: "ease", l: "Ease of printing (at least)", min: 0, max: 10, h: "How forgiving the material is" }
+  ];
+  var SCEN = [
+    { l: "Display model", v: { fi: 9, e: 7 } },
+    { l: "Outdoor bracket", v: { s: 6, t: 5, u: 8, hc: 70, e: 4 } },
+    { l: "Hot car interior", v: { s: 6, t: 5, hc: 100, u: 6, e: 3 } },
+    { l: "Gasket or phone case", v: { f: 8, s: 4, e: 4 } },
+    { l: "Functional gear", v: { s: 8, t: 6, c: 5, hc: 80, e: 3 } },
+    { l: "Chemical container", v: { c: 9, hc: 70, s: 4, e: 4 } },
+    { l: "Light robot frame", v: { s: 8, t: 9, hc: 100, e: 2 } }
+  ];
+  var S = clone(DEF), showAll = false, sortK = "name", sortDir = 1;
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
+  function byId(id) { for (var i = 0; i < MATS.length; i++) if (MATS[i].id === id) return MATS[i]; return null; }
+
+  function toHash() {
+    var q = [];
+    ["p", "enc", "hn", "dr", "bd", "s", "t", "hc", "f", "u", "c", "fd", "fi", "e"].forEach(function (k) { q.push(k + "=" + encodeURIComponent(S[k])); });
+    if (S.cmp.length) q.push("cmp=" + S.cmp.join(","));
+    return q.join("&");
+  }
+  function fromHash(str) {
+    var o = clone(DEF), got = false;
+    String(str || "").replace(/^#/, "").split("&").forEach(function (kv) {
+      var i = kv.indexOf("="); if (i < 1) return;
+      var k = kv.slice(0, i), v = decodeURIComponent(kv.slice(i + 1));
+      if (k === "p") { if (["x2d", "open", "encl", "hot", "custom"].indexOf(v) >= 0) { o.p = v; got = true; } }
+      else if (k === "cmp") { o.cmp = v.split(",").filter(function (id) { return byId(id); }).slice(0, 3); got = true; }
+      else if (k in DEF) {
+        var n = parseInt(v, 10); if (!isFinite(n)) return;
+        var lim = { enc: [0, 2], hn: [0, 1], dr: [0, 2], bd: [1, 4], hc: [40, 200] }[k] || [0, 10];
+        o[k] = clamp(n, lim[0], lim[1]); got = true;
+      }
+    });
+    return got ? o : null;
+  }
+
+  /* ---------- scoring ---------- */
+  function evaluate(m) {
+    var sw = 0, ss = 0, sb = 0, pen = [], notes = [], short = [], i;
+    SLIDERS.forEach(function (d) {
+      var n = S[d.k], v = m[d.p], sat, w, bn;
+      if (d.k === "hc") {
+        if (n <= 45) return;
+        sat = v >= n ? 1 : Math.pow(v / n, 3); w = 1 + (n - 40) / 60; bn = Math.min(1, v / 250);
+        if (v < n) short.push("Heat " + v + " °C < " + n + " °C");
+      } else {
+        if (n <= 0) return;
+        sat = v >= n ? 1 : Math.pow(v / n, 1.5); w = 1 + n / 5; bn = v / 10;
+        if (v < n) short.push(d.l.replace(" (at least)", "") + " " + v + " < " + n);
+      }
+      sw += w; ss += w * sat; sb += w * bn;
+    });
+    var base, bonus = 0;
+    if (sw === 0) base = 100 * (0.5 * m.ease / 10 + 0.5 * (m.str + m.stf + m.fin) / 30);
+    else { base = 100 * ss / sw * 0.96; bonus = 4 * sb / sw; }
+    function P(pts, text, kind) { pen.push({ pts: pts, text: text, kind: kind || "warn" }); }
+    if (m.enc === 2 && S.enc === 0) P(30, "Needs an enclosure (warps in open air)", "bad");
+    else if (m.enc === 1 && S.enc === 0) P(8, "Enclosure recommended");
+    if (m.ch === 2 && S.enc < 2) P(10, "Best with a heated chamber (≥ 50 °C)");
+    if (m.hard && !S.hn) P(35, "Needs a hardened nozzle (abrasive)", "bad");
+    if (m.dry === 2 && S.dr === 0) P(18, "Essential: needs a filament dryer", "bad");
+    else if (m.dry === 1 && S.dr === 0) P(5, "Dryer recommended");
+    if (m.dry >= 1 && S.dr === 1 && m.dryT > 65) P(m.dry === 2 ? 8 : 3, "Needs ~" + m.dryT + " °C: hotter dryer than 65 °C");
+    if (m.cost > S.bd) P(7 * (m.cost - S.bd), "Above your budget tier (" + COSTL[m.cost] + ")");
+    if (S.p === "x2d") {
+      if (m.x[0] === "no") P(70, "Unavailable on the X2D main nozzle", "bad");
+      else if (m.x[0] === "chk") notes.push(["info", "Not in Bambu's X2D table: check the wiki"]);
+      else if (m.x[0] === "warn") notes.push(["warn", m.xn || "Main nozzle: caution"]);
+      if (m.x[1] !== "ok") notes.push(["info", "Aux nozzle: " + XL[m.x[1]]]);
+      if (m.x[2] !== "ok") notes.push(["info", "AMS 2 Pro: " + XL[m.x[2]]]);
+      if (m.id === "tpu95" || m.id === "tpu85") notes.push(["info", "Feed from the external spool to the main nozzle"]);
+    }
+    var tot = 0; pen.forEach(function (p) { tot += p.pts; });
+    return { m: m, score: clamp(base + bonus - tot, 0, 100), pen: pen, notes: notes, short: short };
+  }
+  function rank() { return MATS.map(evaluate).sort(function (a, b) { return b.score - a.score || a.m.cost - b.m.cost; }); }
+
+  /* ---------- controls ---------- */
+  function chips(hostId, opts, key, onPick) {
+    var host = $("#" + hostId);
+    host.innerHTML = opts.map(function (o) { return '<button type="button" role="radio" data-v="' + o[0] + '" aria-checked="false">' + esc(o[1]) + "</button>"; }).join("");
+    host.addEventListener("click", function (ev) {
+      var b = ev.target.closest("button[data-v]"); if (!b) return;
+      var v = b.getAttribute("data-v"); onPick(isFinite(+v) && key !== "p" ? +v : v);
+    });
+  }
+  function syncChips(hostId, val) {
+    var bs = document.querySelectorAll("#" + hostId + " button");
+    for (var i = 0; i < bs.length; i++) bs[i].setAttribute("aria-checked", bs[i].getAttribute("data-v") === String(val) ? "true" : "false");
+  }
+  function setCap(k, v) { S[k] = v; if (S.p !== "x2d" && S.p !== "custom") S.p = "custom"; else if (S.p === "x2d") { /* keep X2D notes */ } update(); }
+  chips("mp-printer", [["x2d", "Bambu X2D + AMS 2 Pro"], ["open", "Open frame"], ["encl", "Enclosed"], ["hot", "Heated chamber"], ["custom", "Other / custom"]], "p", function (v) {
+    S.p = v; if (PRESETS[v]) { S.enc = PRESETS[v][0]; S.hn = PRESETS[v][1]; S.dr = PRESETS[v][2]; } update();
+  });
+  chips("mp-enc", [[0, "Open frame"], [1, "Enclosed (passive)"], [2, "Heated chamber"]], "enc", function (v) { setCap("enc", v); });
+  chips("mp-hn", [[0, "No (brass)"], [1, "Yes"]], "hn", function (v) { setCap("hn", v); });
+  chips("mp-dr", [[0, "None"], [1, "Up to 65 °C (AMS 2 Pro)"], [2, "80 °C or more"]], "dr", function (v) { setCap("dr", v); });
+  chips("mp-bd", [[1, "Budget"], [2, "Standard"], [3, "Premium"], [4, "Specialty"]], "bd", function (v) { S.bd = v; update(); });
+  var PNOTE = {
+    x2d: "Preset: heated chamber (65 °C), hardened-steel nozzle and AMS 2 Pro dryers (65 °C max). Main nozzle, aux nozzle and AMS notes are shown. If you own a hotter external dryer, change the dryer chip.",
+    open: "Preset: open frame, brass nozzle, no dryer.", encl: "Preset: enclosed, no active chamber heating, brass nozzle, no dryer.",
+    hot: "Preset: actively heated chamber, hardened nozzle, hot dryer.", custom: "Set the three capability chips yourself."
+  };
+  $("#mp-sliders").innerHTML = SLIDERS.map(function (d) {
+    return '<div class="mp-slider"><label for="mp-s-' + d.k + '">' + d.l + ' <output id="mp-o-' + d.k + '"></output></label><input type="range" id="mp-s-' + d.k + '" min="' + d.min + '" max="' + d.max + '" step="' + (d.step || 1) + '"><small>' + d.h + "</small></div>";
+  }).join("");
+  $("#mp-sliders").addEventListener("input", function (ev) {
+    var k = ev.target.id.slice(5); if (!(k in S)) return; S[k] = +ev.target.value; update(true);
+  });
+  $("#mp-scen").innerHTML = '<span class="mp-note">Try:</span>' + SCEN.map(function (s, i) { return '<button type="button" data-i="' + i + '">' + s.l + "</button>"; }).join("");
+  $("#mp-scen").addEventListener("click", function (ev) {
+    var b = ev.target.closest("button[data-i]"); if (!b) return;
+    SLIDERS.forEach(function (d) { S[d.k] = d.k === "hc" ? 40 : 0; });
+    var v = SCEN[+b.getAttribute("data-i")].v; for (var k in v) S[k] = v[k]; update();
+  });
+  $("#mp-reset").addEventListener("click", function () { S = clone(DEF); showAll = false; update(); });
+  $("#mp-more").addEventListener("click", function () { showAll = !showAll; update(); });
+  $("#mp-copy").addEventListener("click", function () {
+    var inp = $("#mp-url"), btn = $("#mp-copy");
+    function done(ok) { btn.textContent = ok ? "Copied" : "Press Ctrl+C"; setTimeout(function () { btn.textContent = "Copy link"; }, 1600); }
+    inp.select();
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(inp.value).then(function () { done(true); }, function () { done(false); });
+    else { var ok = false; try { ok = document.execCommand("copy"); } catch (e) { ok = false; } done(ok); }
+  });
+
+  /* ---------- results ---------- */
+  function scoreColor(s) { return s >= 75 ? "var(--green)" : s >= 50 ? "var(--yellow)" : "var(--red)"; }
+  function chip(kind, text) { return '<span class="chip ' + ({ bad: "red", warn: "yellow", info: "blue", ok: "green" }[kind] || "") + '">' + esc(text) + "</span>"; }
+  function renderResults(R) {
+    var list = showAll ? R : R.slice(0, 8), html = "";
+    list.forEach(function (r, i) {
+      var m = r.m, pct = Math.round(r.score), checked = S.cmp.indexOf(m.id) >= 0, dis = !checked && S.cmp.length >= 3;
+      var tags = r.pen.map(function (p) { return chip(p.kind, p.text); }).concat(r.notes.map(function (n) { return chip(n[0], n[1]); }));
+      if (!tags.length) tags.push(chip("ok", "No equipment warnings"));
+      html += '<li class="mp-card' + (i === 0 ? " top" : "") + '"><div class="mp-head"><span class="mp-rank">#' + (i + 1) + '</span><span class="mp-name">' + esc(m.n) + '</span><span class="mp-fit" style="color:' + scoreColor(r.score) + '">' + pct + ' %</span>' +
+        '<label class="mp-cmp"><input type="checkbox" data-cmp="' + m.id + '"' + (checked ? " checked" : "") + (dis ? " disabled" : "") + '> Compare</label></div>' +
+        '<div class="mp-bar" role="img" aria-label="Fit ' + pct + ' percent"><i style="width:' + pct + '%;background:' + scoreColor(r.score) + '"></i></div>' +
+        '<div class="mp-tags">' + tags.join("") + (r.short.length ? chip("warn", "Below target: " + r.short.join(", ")) : "") + "</div>" +
+        '<p class="mp-note">~' + m.heat + " °C heat · nozzle " + m.noz + " °C · bed " + m.bed + " °C · cost " + COSTL[m.cost] + " · " + FAMC[m.fam][0] + "</p>" +
+        "<details><summary>Pros, cons and guide</summary><div class=\"grid cols-2\" style=\"margin:.4em 0\"><div><b>Pros</b><ul>" + m.pros.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul></div><div><b>Cons</b><ul>" +
+        m.cons.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + '</ul></div></div><p>Read: <a href="' + G.all + m.link + '">' + esc(m.ln) + "</a>" + (S.p === "x2d" ? ' · <a href="' + G.gx + '">X2D filament compatibility</a>' : "") + "</p></details></li>";
+    });
+    $("#mp-results").innerHTML = html;
+    $("#mp-more").textContent = showAll ? "Show top 8 only" : "Show all " + MATS.length;
+    var top = R[0], need = SLIDERS.filter(function (d) { return d.k === "hc" ? S.hc > 45 : S[d.k] > 0; }).length;
+    $("#mp-summary").textContent = need === 0 ? "No requirements set: ranking by general ease and all-round performance. Move a slider to describe your part."
+      : "Best match for " + need + " requirement" + (need > 1 ? "s" : "") + ": " + top.m.n + " (" + Math.round(top.score) + " %). Penalties come from your printer capabilities.";
+  }
+  $("#mp-results").addEventListener("change", function (ev) {
+    var id = ev.target.getAttribute("data-cmp"); if (!id) return;
+    var i = S.cmp.indexOf(id);
+    if (ev.target.checked && i < 0 && S.cmp.length < 3) S.cmp.push(id); else if (!ev.target.checked && i >= 0) S.cmp.splice(i, 1);
+    update(true);
+  });
+
+  /* ---------- radar and compare ---------- */
+  var AX = [["Strength", "str", 1], ["Stiffness", "stf", 1], ["Heat", "heat", 1 / 25], ["Flexibility", "flx", 1], ["UV", "uv", 1], ["Chemical", "chm", 1], ["Finish", "fin", 1], ["Ease", "ease", 1]];
+  var RC = ["--blue", "--orange", "--green"];
+  function pt(i, r) { var a = -Math.PI / 2 + 2 * Math.PI * i / AX.length; return [210 + r * Math.cos(a), 190 + r * Math.sin(a)]; }
+  function poly(vals) { return vals.map(function (v, i) { var p = pt(i, 130 * clamp(v, 0, 10) / 10); return p[0].toFixed(1) + "," + p[1].toFixed(1); }).join(" "); }
+  function renderRadar() {
+    var g = "", i, k;
+    for (k = 1; k <= 5; k++) g += '<polygon class="d-grid" fill="none" points="' + AX.map(function (a, j) { var p = pt(j, 26 * k); return p[0].toFixed(1) + "," + p[1].toFixed(1); }).join(" ") + '"/>';
+    AX.forEach(function (a, j) {
+      var e = pt(j, 130), l = pt(j, 150);
+      g += '<path class="d-grid" d="M210 190 L' + e[0].toFixed(1) + " " + e[1].toFixed(1) + '"/><text class="t-sm t-b" text-anchor="' + (l[0] < 190 ? "end" : l[0] > 230 ? "start" : "middle") + '" x="' + l[0].toFixed(1) + '" y="' + (l[1] + 4).toFixed(1) + '">' + a[0] + "</text>";
+    });
+    var any = SLIDERS.some(function (d) { return d.k === "hc" ? S.hc > 45 : S[d.k] > 0; });
+    if (any) {
+      var nv = [S.s, S.t, S.hc > 45 ? S.hc / 25 : 0, S.f, S.u, S.c, S.fi, S.e];
+      g += '<polygon points="' + poly(nv) + '" fill="none" stroke="var(--ink)" stroke-width="2" stroke-dasharray="6 4"/>';
+    }
+    var lg = '';
+    S.cmp.forEach(function (id, n) {
+      var m = byId(id), vals = AX.map(function (a) { return m[a[1]] * a[2]; });
+      g += '<polygon points="' + poly(vals) + '" style="fill:var(' + RC[n] + ');fill-opacity:.18;stroke:var(' + RC[n] + ');stroke-width:2.5"/>';
+      vals.forEach(function (v, j) { var p = pt(j, 130 * clamp(v, 0, 10) / 10); g += '<circle r="3.5" cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" style="fill:var(' + RC[n] + ')"/>'; });
+      lg += '<span><i style="background:var(' + RC[n] + ')"></i>' + esc(m.n) + "</span>";
+    });
+    if (any) lg += '<span><i style="border:2px dashed var(--ink);background:none"></i>Your requirements</span>';
+    if (!S.cmp.length) g += '<text class="t-sm t-c" x="210" y="190">Tick Compare on a result</text>';
+    $("#mp-radar").innerHTML = g; $("#mp-radar-legend").innerHTML = lg;
+  }
+  function renderCompare() {
+    var host = $("#mp-compare");
+    if (!S.cmp.length) { host.innerHTML = '<p class="mp-empty">Select materials with the Compare tick to see them here.</p>'; return; }
+    var ms = S.cmp.map(byId), rows = [
+      ["Strength", function (m) { return m.str + " / 10"; }], ["Stiffness", function (m) { return m.stf + " / 10"; }], ["Heat resistance", function (m) { return "~" + m.heat + " °C"; }],
+      ["Flexibility", function (m) { return m.flx + " / 10"; }], ["Outdoor / UV", function (m) { return m.uv + " / 10"; }], ["Chemical", function (m) { return m.chm + " / 10"; }],
+      ["Surface finish", function (m) { return m.fin + " / 10"; }], ["Ease of printing", function (m) { return m.ease + " / 10"; }], ["Nozzle / bed", function (m) { return m.noz + " / " + m.bed + " °C"; }],
+      ["Cost tier", function (m) { return COSTL[m.cost]; }], ["Enclosure", function (m) { return ENCL[m.enc]; }], ["Hardened nozzle", function (m) { return m.hard ? "required" : "no"; }],
+      ["Drying", function (m) { return DRYL[m.dry] + (m.dry ? " (~" + m.dryT + " °C)" : ""); }], ["X2D main / aux / AMS", function (m) { return m.x.map(function (x) { return XL[x]; }).join(" / "); }],
+      ["Fit score", function (m) { return Math.round(evaluate(m).score) + " %"; }]
+    ];
+    host.innerHTML = '<table class="data compact mp-cmpt"><thead><tr><th scope="col">Property</th>' + ms.map(function (m, i) { return '<th scope="col" style="border-top:3px solid var(' + RC[i] + ')">' + esc(m.n) + "</th>"; }).join("") + "</tr></thead><tbody>" +
+      rows.map(function (r) { return '<tr><th scope="row">' + r[0] + "</th>" + ms.map(function (m) { return "<td>" + esc(r[1](m)) + "</td>"; }).join("") + "</tr>"; }).join("") + "</tbody></table>";
+  }
+
+  /* ---------- scatter and ladder figures ---------- */
+  function renderScatter(R) {
+    var g = "", t, X = function (v) { return 70 + (v - 40) / 220 * 660; }, Y = function (v) { return 370 - v / 10 * 340; };
+    for (t = 40; t <= 260; t += 20) g += '<path class="d-grid" d="M' + X(t) + " 30 V370\"/><text class=\"t-xs t-c\" x=\"" + X(t) + '" y="388">' + t + "</text>";
+    for (t = 0; t <= 10; t += 2) g += '<path class="d-grid" d="M70 ' + Y(t) + " H730\"/><text class=\"t-xs t-r\" x=\"62\" y=\"" + (Y(t) + 3) + '">' + t + "</text>";
+    g += '<text class="t-sm t-c t-b" x="400" y="410">Heat resistance, typical °C</text><text class="t-sm t-c t-b" x="20" y="200" transform="rotate(-90 20 200)">Strength (0–10)</text>';
+    MATS.forEach(function (m) {
+      g += '<circle class="mp-dot" cx="' + X(m.heat) + '" cy="' + Y(m.str) + '" r="' + (4 + m.stf * 0.75) + '" style="fill:var(' + FAMC[m.fam][1] + ');fill-opacity:.55;stroke:var(' + FAMC[m.fam][1] + ')"><title>' + esc(m.n) + ": " + m.heat + " °C, strength " + m.str + ", stiffness " + m.stf + "</title></circle>";
+    });
+    R.slice(0, 3).forEach(function (r, i) {
+      var m = r.m; g += '<circle cx="' + X(m.heat) + '" cy="' + Y(m.str) + '" r="' + (11 + m.stf * 0.75) + '" fill="none" stroke="var(--brand)" stroke-width="2.5"/><text class="t-xs t-b" x="' + (X(m.heat) + 14 + m.stf * 0.75) + '" y="' + (Y(m.str) - 6) + '">#' + (i + 1) + " " + esc(m.n) + "</text>";
+    });
+    var lx = 80; Object.keys(FAMC).forEach(function (k) { g += '<circle cx="' + lx + '" cy="14" r="5" style="fill:var(' + FAMC[k][1] + ')"/><text class="t-xs" x="' + (lx + 9) + '" y="18">' + FAMC[k][0] + "</text>"; lx += 40 + FAMC[k][0].length * 6.5; });
+    $("#mp-scatter").innerHTML = g;
+  }
+  (function ladder() {
+    var s = MATS.slice().sort(function (a, b) { return b.ease - a.ease || a.n.localeCompare(b.n); }), g = "", bw = 24;
+    s.forEach(function (m, i) {
+      var x = 50 + i * 29, h = m.ease * 13;
+      g += '<rect x="' + x + '" y="' + (150 - h) + '" width="' + bw + '" height="' + h + '" rx="3" style="fill:var(' + FAMC[m.fam][1] + ');fill-opacity:.75"/><text class="t-xs t-c t-b" x="' + (x + bw / 2) + '" y="' + (146 - h) + '">' + m.ease + '</text>' +
+        '<text class="t-xs" x="' + (x + 8) + '" y="162" transform="rotate(55 ' + (x + 8) + ' 162)">' + esc(m.n) + "</text>";
+    });
+    g += '<path class="d-ink" d="M44 20 V150 H780"/><text class="t-xs" x="8" y="14">ease</text>';
+    $("#mp-ladder").innerHTML = g;
+  })();
+
+  /* ---------- database table ---------- */
+  var COLS = [
+    ["name", "Material", function (m) { return m.n; }], ["str", "Strength", function (m) { return m.str; }], ["stf", "Stiffness", function (m) { return m.stf; }], ["heat", "Heat °C", function (m) { return m.heat; }],
+    ["flx", "Flex", function (m) { return m.flx; }], ["uv", "UV", function (m) { return m.uv; }], ["chm", "Chem", function (m) { return m.chm; }], ["food", "Food-adj.", function (m) { return m.food; }],
+    ["fin", "Finish", function (m) { return m.fin; }], ["ease", "Ease", function (m) { return m.ease; }], ["cost", "Cost", function (m) { return m.cost; }], ["enc", "Encl.", function (m) { return m.enc; }],
+    ["hard", "Hardened", function (m) { return m.hard; }], ["dry", "Dry", function (m) { return m.dry; }], ["noz", "Nozzle °C", function (m) { return m.noz; }], ["bed", "Bed °C", function (m) { return m.bed; }]
+  ];
+  function renderDb() {
+    var q = $("#mp-filter").value.toLowerCase().trim(), col = COLS.filter(function (c) { return c[0] === sortK; })[0] || COLS[0];
+    var rows = MATS.filter(function (m) { return !q || m.n.toLowerCase().indexOf(q) >= 0 || FAMC[m.fam][0].toLowerCase().indexOf(q) >= 0; });
+    rows.sort(function (a, b) { var x = col[2](a), y = col[2](b); return (typeof x === "string" ? x.localeCompare(y) : x - y) * sortDir || a.n.localeCompare(b.n); });
+    $("#mp-db thead").innerHTML = "<tr>" + COLS.map(function (c) {
+      return '<th scope="col" aria-sort="' + (c[0] === sortK ? (sortDir > 0 ? "ascending" : "descending") : "none") + '"><button type="button" class="mp-th" data-k="' + c[0] + '">' + c[1] + "</button></th>";
+    }).join("") + "</tr>";
+    $("#mp-db tbody").innerHTML = rows.map(function (m) {
+      return "<tr>" + COLS.map(function (c, i) { var v = c[2](m); return i === 0 ? "<th scope=\"row\">" + esc(v) + "</th>" : "<td>" + (c[0] === "hard" ? (v ? "yes" : "–") : v) + "</td>"; }).join("") + "</tr>";
+    }).join("") || '<tr><td colspan="' + COLS.length + '">No material matches the filter.</td></tr>';
+  }
+  $("#mp-db").addEventListener("click", function (ev) {
+    var b = ev.target.closest("button[data-k]"); if (!b) return;
+    var k = b.getAttribute("data-k"); if (k === sortK) sortDir = -sortDir; else { sortK = k; sortDir = k === "name" || k === "cost" || k === "noz" || k === "bed" ? 1 : -1; }
+    renderDb();
+  });
+  $("#mp-filter").addEventListener("input", renderDb);
+
+  /* ---------- update ---------- */
+  function update(light) {
+    syncChips("mp-printer", S.p); syncChips("mp-enc", S.enc); syncChips("mp-hn", S.hn); syncChips("mp-dr", S.dr); syncChips("mp-bd", S.bd);
+    $("#mp-printer-note").textContent = PNOTE[S.p];
+    SLIDERS.forEach(function (d) {
+      var inp = $("#mp-s-" + d.k), o = $("#mp-o-" + d.k); inp.value = S[d.k];
+      o.textContent = d.k === "hc" ? (S.hc <= 45 ? "off" : S.hc + " °C") : (S[d.k] === 0 ? "off" : S[d.k] + " / 10");
+    });
+    var R = rank(); renderResults(R); renderScatter(R); renderRadar(); renderCompare();
+    var h = toHash();
+    try { history.replaceState(null, "", "#" + h); } catch (e) { /* file:// restrictions */ }
+    $("#mp-url").value = location.href.split("#")[0] + "#" + h;
+    store.set("mp:state", h);
+  }
+  window.addEventListener("hashchange", function () { var o = fromHash(location.hash); if (o) { S = o; update(); } });
+  var init = fromHash(location.hash) || fromHash(store.get("mp:state"));
+  if (init) S = init;
+  renderDb(); update();
+});
+  </script>
+</main>
+</body>
+</html>

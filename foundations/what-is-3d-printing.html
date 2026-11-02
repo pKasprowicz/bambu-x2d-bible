@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>What is 3D printing? · 3D Printing Compendium</title>
+  <meta name="description" content="Additive manufacturing explained: additive vs subtractive vs formative, the seven ASTM process categories, the full idea-to-part workflow, history, axes, key vocabulary, myths and realistic expectations.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="foundations/what-is-3d-printing.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 1 · Foundations</div>
+    <h1>What is 3D printing?</h1>
+    <p class="lead">3D printing builds objects by adding material one thin layer at a time, straight from a digital file. This page gives you the complete mental map: how it differs from other ways of making things, the processes, the workflow, the history, the vocabulary and what to realistically expect.</p>
+    <div class="meta"><span class="badge beginner">Beginner</span><span class="badge time">⏱ 30 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <ul>
+      <li>How additive, subtractive and formative manufacturing differ, and why each exists.</li>
+      <li>The seven official process families and where desktop printers fit.</li>
+      <li>The five-stage workflow every print follows, from idea to finished part.</li>
+      <li>Why printed parts have layer lines, how X/Y/Z coordinates work, and the words you will hear every day.</li>
+      <li>What 3D printing is great at, what it is bad at, and a fair picture of time, money and learning curve.</li>
+    </ul>
+  </div>
+
+  <h2 id="big-idea">🔰 The big idea: three ways to make a thing</h2>
+  <p>Every manufactured object, from a spoon to a jet engine bracket, was made by one of three broad strategies. Understanding them makes it obvious why 3D printing is exciting, and also why it has not replaced everything else.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 250" role="img" aria-label="Three panels comparing subtractive manufacturing (cutting material away from a block), formative manufacturing (pressing material into a mold) and additive manufacturing (building up layers).">
+      <rect class="d-surface" x="10" y="10" width="240" height="230" rx="12"/>
+      <rect class="d-surface" x="260" y="10" width="240" height="230" rx="12"/>
+      <rect class="d-surface" x="510" y="10" width="240" height="230" rx="12"/>
+
+      <text class="t t-c t-b" x="130" y="36">Subtractive</text>
+      <text class="t-sm t-c t-m" x="130" y="54" style="text-anchor:middle">start big, remove material</text>
+      <rect class="d-surface2" x="40" y="80" width="180" height="84"/>
+      <rect class="d-dash" x="75" y="98" width="110" height="48" rx="8"/>
+      <path class="d-metal2" d="M125 60 L135 60 L130 82 Z"/>
+      <path class="d-metal" d="M200 178 l8 -6 l6 8 z M214 188 l9 -4 l3 9 z M186 190 l7 -3 l4 8 z"/>
+      <text class="t-xs t-c" x="130" y="192" style="text-anchor:middle">chips = waste</text>
+      <text class="t-sm t-c" x="130" y="214" style="text-anchor:middle">CNC milling, turning, laser</text>
+      <text class="t-sm t-c t-m" x="130" y="230" style="text-anchor:middle">cutting, sawing</text>
+
+      <text class="t t-c t-b" x="380" y="36">Formative</text>
+      <text class="t-sm t-c t-m" x="380" y="54" style="text-anchor:middle">shape material in a mold</text>
+      <rect class="d-surface2" x="300" y="76" width="160" height="40"/>
+      <rect class="d-surface2" x="300" y="146" width="160" height="40"/>
+      <rect class="d-plastic" x="345" y="116" width="70" height="30" rx="8"/>
+      <path class="d-ink arrow" d="M268 131 H340"/>
+      <text class="t-xs" x="266" y="122">melt in</text>
+      <text class="t-sm t-c" x="380" y="214" style="text-anchor:middle">Injection molding, casting,</text>
+      <text class="t-sm t-c t-m" x="380" y="230" style="text-anchor:middle">forging, thermoforming</text>
+
+      <text class="t t-c t-b" x="630" y="36">Additive</text>
+      <text class="t-sm t-c t-m" x="630" y="54" style="text-anchor:middle">start empty, add layers</text>
+      <path class="d-metal2" d="M615 66 H645 V84 L636 96 H624 L615 84 Z"/>
+      <rect class="d-plastic" x="590" y="154" width="80" height="9"/>
+      <rect class="d-plastic" x="590" y="145" width="80" height="9"/>
+      <rect class="d-plastic" x="598" y="136" width="64" height="9"/>
+      <rect class="d-plastic" x="606" y="127" width="48" height="9"/>
+      <rect class="d-plastic" x="614" y="118" width="32" height="9"/>
+      <rect class="d-metal" x="560" y="163" width="140" height="10"/>
+      <path class="d-ink arrow" d="M720 150 V108"/>
+      <text class="t-xs" x="676" y="190">grows upward</text>
+      <text class="t-sm t-c" x="630" y="214" style="text-anchor:middle">FDM, resin, powder,</text>
+      <text class="t-sm t-c t-m" x="630" y="230" style="text-anchor:middle">metal printing</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> Subtractive methods carve a part out of a solid block, formative methods squeeze or pour material into a mold, and additive methods build the part from nothing, so material is placed only where it is needed.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th>Question</th><th>Subtractive</th><th>Formative</th><th>Additive (3D printing)</th></tr></thead>
+    <tbody>
+      <tr><td>Material waste</td><td><span class="chip red">High</span> chips and offcuts</td><td><span class="chip yellow">Low–medium</span> sprues, flash</td><td><span class="chip green">Low</span> mostly supports and purge</td></tr>
+      <tr><td>Up-front tooling</td><td><span class="chip yellow">Fixtures, cutters</span></td><td><span class="chip red">Molds: very costly</span></td><td><span class="chip green">None</span></td></tr>
+      <tr><td>Cost of the 1st part</td><td>Medium</td><td>Very high</td><td>Low</td></tr>
+      <tr><td>Cost of the 10,000th part</td><td>Medium</td><td>Very low</td><td>About the same as the first</td></tr>
+      <tr><td>Geometric freedom</td><td>Limited by tool access</td><td>Limited by mold release</td><td>Internal channels, lattices, organic shapes</td></tr>
+      <tr><td>Surface finish</td><td>Excellent</td><td>Excellent</td><td>Visible layers unless finished</td></tr>
+      <tr><td>Part strength</td><td>Isotropic, from solid stock</td><td>Isotropic</td><td>Direction-dependent (weaker between layers)</td></tr>
+      <tr><td>Best for</td><td>Precise metal parts, flat sheets</td><td>Mass production</td><td>One-offs, prototypes, custom and complex parts</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout fact"><span class="callout-title">Why "additive" is a big deal</span>
+    <p>With subtractive and formative methods, complexity costs money: more axes, more cutters, more mold slides. In additive manufacturing the cost is driven mainly by <em>volume and print time</em>, not by shape. A hollow, curved, internally ribbed part can cost less than a solid block. That is the one idea to remember.</p>
+  </div>
+
+  <h3>Four practical strengths</h3>
+  <div class="grid cols-4">
+    <div class="card accent-blue"><span class="ico">🧩</span><h3>Complexity is free</h3><p>Hollow shapes, channels, lattices and organic curves cost no more than simple boxes.</p></div>
+    <div class="card accent-green"><span class="ico">⚡</span><h3>No tooling</h3><p>From file to part with no mold, jig or cutter set. Ideal for one-offs and small runs.</p></div>
+    <div class="card accent-orange"><span class="ico">🔁</span><h3>Fast iteration</h3><p>Change a number in the model and have a new version the same day, often the same afternoon.</p></div>
+    <div class="card accent-purple"><span class="ico">🎯</span><h3>Customization</h3><p>Every part can be different: a hand brace for one person, a bracket for one weird machine.</p></div>
+  </div>
+
+  <h2 id="astm">🔰 The seven process families</h2>
+  <p>"3D printing" is a nickname. The formal term is <strong>additive manufacturing (AM)</strong>, and the international standard ISO/ASTM 52900 sorts all additive methods into <strong>seven categories</strong> based on how layers are created and bonded. Nearly everything you will do at home or in a classroom is the first category (material extrusion), with resin vat printing a distant second. The others live in industry and service bureaus, but you should know they exist because they appear in the news, in job listings and in the parts you buy.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 340" role="img" aria-label="Seven boxes naming the ISO/ASTM additive manufacturing categories with their typical technologies.">
+      <rect class="f-orange" x="10" y="10" width="170" height="150" rx="10"/>
+      <text class="t-sm t-b" x="22" y="34">1 · Material</text><text class="t-sm t-b" x="22" y="50">extrusion</text>
+      <text class="t-xs" x="22" y="76">Melted plastic pushed</text><text class="t-xs" x="22" y="90">through a nozzle</text>
+      <text class="t-xs c-orange t-b" x="22" y="140">FDM · FFF · pellet</text>
+
+      <rect class="f-purple" x="200" y="10" width="170" height="150" rx="10"/>
+      <text class="t-sm t-b" x="212" y="34">2 · Vat photo-</text><text class="t-sm t-b" x="212" y="50">polymerization</text>
+      <text class="t-xs" x="212" y="76">Light cures liquid resin</text><text class="t-xs" x="212" y="90">in a vat, layer by layer</text>
+      <text class="t-xs c-purple t-b" x="212" y="140">SLA · MSLA · DLP</text>
+
+      <rect class="f-blue" x="390" y="10" width="170" height="150" rx="10"/>
+      <text class="t-sm t-b" x="402" y="34">3 · Powder bed</text><text class="t-sm t-b" x="402" y="50">fusion</text>
+      <text class="t-xs" x="402" y="76">Heat or a laser fuses</text><text class="t-xs" x="402" y="90">thin layers of powder</text>
+      <text class="t-xs c-blue t-b" x="402" y="140">SLS · MJF · LPBF</text>
+
+      <rect class="f-teal" x="580" y="10" width="170" height="150" rx="10"/>
+      <text class="t-sm t-b" x="592" y="34">4 · Material</text><text class="t-sm t-b" x="592" y="50">jetting</text>
+      <text class="t-xs" x="592" y="76">Droplets of resin are</text><text class="t-xs" x="592" y="90">jetted, then UV-cured</text>
+      <text class="t-xs c-teal t-b" x="592" y="140">PolyJet · MJP</text>
+
+      <rect class="f-pink" x="105" y="180" width="170" height="150" rx="10"/>
+      <text class="t-sm t-b" x="117" y="204">5 · Binder</text><text class="t-sm t-b" x="117" y="220">jetting</text>
+      <text class="t-xs" x="117" y="246">Glue printed into a</text><text class="t-xs" x="117" y="260">powder bed, then cured</text><text class="t-xs" x="117" y="274">or sintered</text>
+      <text class="t-xs c-pink t-b" x="117" y="318">Metal · sand · color</text>
+
+      <rect class="f-red" x="295" y="180" width="170" height="150" rx="10"/>
+      <text class="t-sm t-b" x="307" y="204">6 · Directed energy</text><text class="t-sm t-b" x="307" y="220">deposition</text>
+      <text class="t-xs" x="307" y="246">Wire or powder melted</text><text class="t-xs" x="307" y="260">as it is deposited</text>
+      <text class="t-xs c-red t-b" x="307" y="318">DED · WAAM</text>
+
+      <rect class="f-green" x="485" y="180" width="170" height="150" rx="10"/>
+      <text class="t-sm t-b" x="497" y="204">7 · Sheet</text><text class="t-sm t-b" x="497" y="220">lamination</text>
+      <text class="t-xs" x="497" y="246">Sheets bonded and</text><text class="t-xs" x="497" y="260">cut to shape</text>
+      <text class="t-xs c-green t-b" x="497" y="318">LOM · UAM</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> The seven ISO/ASTM 52900 categories. Home and classroom printers are almost always category 1 (orange) or category 2 (purple).</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th>Family</th><th>Typical materials</th><th>Who uses it</th><th>Where it is covered here</th></tr></thead>
+    <tbody>
+      <tr><td>Material extrusion</td><td>PLA, PETG, ABS, ASA, nylon, TPU, composites</td><td>Hobbyists, schools, engineers, small factories</td><td>The core of this compendium</td></tr>
+      <tr><td>Vat photopolymerization</td><td>Photopolymer resins</td><td>Miniatures, jewelry, dental, detailed prototypes</td><td><a href="printing-processes.html">Printing processes</a></td></tr>
+      <tr><td>Powder bed fusion</td><td>Nylon powders, metals</td><td>Service bureaus, aerospace, production of small parts</td><td><a href="printing-processes.html">Printing processes</a></td></tr>
+      <tr><td>Material jetting</td><td>Multi-color photopolymers</td><td>Product design, medical models</td><td><a href="printing-processes.html">Printing processes</a></td></tr>
+      <tr><td>Binder jetting</td><td>Metal, sand, ceramic, full-color powder</td><td>Foundries, architecture models</td><td><a href="printing-processes.html">Printing processes</a></td></tr>
+      <tr><td>Directed energy deposition</td><td>Metal wire or powder</td><td>Large metal repair and structures</td><td><a href="printing-processes.html">Printing processes</a></td></tr>
+      <tr><td>Sheet lamination</td><td>Paper, plastic or metal foil</td><td>Niche: models, ultrasonic metal parts</td><td>Mentioned for completeness</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="workflow">🔰 The complete workflow: idea → part</h2>
+  <p>No matter which printer you own, every successful print follows the same five stages. When something goes wrong later in this course, the first question is always "<em>which stage did the problem enter?</em>" Knowing the pipeline makes troubleshooting far easier.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 900 340" role="img" aria-label="Flow chart of the five stages from idea to finished part: idea, model, slice, print and post-process, with a feedback loop returning to the model.">
+      <rect class="f-yellow" x="10" y="20" width="150" height="190" rx="12"/>
+      <text class="t t-b" x="24" y="46">1 · Idea</text>
+      <text class="t-sm" x="24" y="76">A need, a problem</text><text class="t-sm" x="24" y="96">or a creative spark</text>
+      <text class="t-sm" x="24" y="124">Sketch and measure</text><text class="t-sm" x="24" y="152">Set requirements:</text><text class="t-sm" x="24" y="172">size, load, heat</text>
+
+      <rect class="f-blue" x="188" y="20" width="150" height="190" rx="12"/>
+      <text class="t t-b" x="202" y="46">2 · Model</text>
+      <text class="t-sm" x="202" y="76">Design in CAD,</text><text class="t-sm" x="202" y="96">download a file, or</text><text class="t-sm" x="202" y="116">scan an object</text>
+      <text class="t-sm" x="202" y="152">Output: a 3D shape</text><text class="t-sm" x="202" y="172">(STL, 3MF, STEP)</text>
+
+      <rect class="f-purple" x="366" y="20" width="150" height="190" rx="12"/>
+      <text class="t t-b" x="380" y="46">3 · Slice</text>
+      <text class="t-sm" x="380" y="76">Place and orient</text><text class="t-sm" x="380" y="96">Pick material, layer</text><text class="t-sm" x="380" y="116">height, infill</text>
+      <text class="t-sm" x="380" y="144">Add supports, brim</text><text class="t-sm" x="380" y="172">Output: G-code</text>
+
+      <rect class="f-orange" x="544" y="20" width="150" height="190" rx="12"/>
+      <text class="t t-b" x="558" y="46">4 · Print</text>
+      <text class="t-sm" x="558" y="76">Heat nozzle + bed</text><text class="t-sm" x="558" y="96">Level / probe bed</text><text class="t-sm" x="558" y="116">Lay down layers</text>
+      <text class="t-sm" x="558" y="144">Watch the 1st layer</text><text class="t-sm" x="558" y="172">Hours, not minutes</text>
+
+      <rect class="f-green" x="722" y="20" width="168" height="190" rx="12"/>
+      <text class="t t-b" x="736" y="46">5 · Post-process</text>
+      <text class="t-sm" x="736" y="76">Remove from plate</text><text class="t-sm" x="736" y="96">Take off supports</text><text class="t-sm" x="736" y="116">Sand, paint, glue</text>
+      <text class="t-sm" x="736" y="144">Measure and test</text><text class="t-sm" x="736" y="172">Store leftovers</text>
+
+      <path class="d-ink arrow" d="M162 115 H186"/><path class="d-ink arrow" d="M340 115 H364"/>
+      <path class="d-ink arrow" d="M518 115 H542"/><path class="d-ink arrow" d="M696 115 H720"/>
+
+      <rect class="d-surface" x="30" y="226" width="110" height="26" rx="13"/><text class="t-xs t-c" x="85" y="243" style="text-anchor:middle">sketch · notes</text>
+      <rect class="d-surface" x="208" y="226" width="110" height="26" rx="13"/><text class="t-xs t-c" x="263" y="243" style="text-anchor:middle">.stl · .3mf · .step</text>
+      <rect class="d-surface" x="386" y="226" width="110" height="26" rx="13"/><text class="t-xs t-c" x="441" y="243" style="text-anchor:middle">.gcode · .3mf</text>
+      <rect class="d-surface" x="564" y="226" width="110" height="26" rx="13"/><text class="t-xs t-c" x="619" y="243" style="text-anchor:middle">raw printed part</text>
+      <rect class="d-surface" x="756" y="226" width="110" height="26" rx="13"/><text class="t-xs t-c" x="811" y="243" style="text-anchor:middle">finished part</text>
+
+      <path class="d-dash arrow" d="M806 270 V310 H263 V262"/>
+      <text class="t-sm t-c" x="535" y="304" style="text-anchor:middle">Inspect · learn · adjust the design or settings · reprint</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> The five-stage pipeline. Each stage hands a specific file or object to the next, and the dashed loop is where most of the learning happens.</figcaption>
+  </figure>
+
+  <h3>Stage 1 · Idea and requirements</h3>
+  <p>Every good part starts with a question: <em>what must it do?</em> A phone stand only needs to hold weight and look decent. A bracket near a hot motor must survive temperature. A hinge must flex thousands of times. Writing down three things (size, load, environment) before you open any software prevents most disappointment and tells you which material to choose later. See the <a href="../materials/overview.html">materials overview</a> when you reach that question.</p>
+
+  <h3>Stage 2 · The 3D model</h3>
+  <p>A printer cannot print a picture; it needs a <strong>solid, watertight 3D shape</strong>. You get one in three ways:</p>
+  <ul>
+    <li><strong>Download</strong> from a repository such as MakerWorld, Printables or Thingiverse. The fastest way to start, and the way almost everyone begins.</li>
+    <li><strong>Design</strong> in CAD (computer-aided design) software. Beginners use browser tools like Tinkercad; engineers use parametric tools like Fusion, Onshape or FreeCAD. See <a href="../software/cad-modeling.html">CAD &amp; modeling software</a>.</li>
+    <li><strong>Scan</strong> a real object with photogrammetry or a 3D scanner, then clean the mesh. See <a href="../software/files-and-meshes.html">file formats &amp; mesh repair</a>.</li>
+  </ul>
+  <p>The model is exported as a mesh file (usually <strong>STL</strong> or <strong>3MF</strong>). A mesh is simply a skin of thousands of tiny triangles describing the outside of the object. If the skin has holes the slicer cannot tell inside from outside, which is the origin of many "weird first print" stories.</p>
+
+  <h3>Stage 3 · Slicing</h3>
+  <p>The <strong>slicer</strong> is software that cuts the model into horizontal layers (hence the name) and calculates the exact path the nozzle or light source must follow for each one. You choose the material profile, layer height, wall count, infill, supports and speed. The result is a file of machine instructions called <strong>G-code</strong> (a 3MF project that bundles settings plus G-code is common on modern printers). Slicers are covered in <a href="../software/slicers.html">Slicers compared</a>, and every important setting is explained in <a href="../software/slicer-settings.html">Slicer settings explained</a>.</p>
+
+  <h3>Stage 4 · Printing</h3>
+  <p>The printer heats up, measures or probes the bed, draws a purge line and then follows the G-code: move, extrude, move, extrude, thousands of times per layer, hundreds of layers per part. Your job is to <strong>watch the first layer</strong> (it decides whether the next ten hours succeed) and then let the machine work. On a printer with a camera and AI detection you can monitor remotely; on an older machine, stay nearby and check periodically. See <a href="first-print.html">Your first print</a> for the walkthrough.</p>
+
+  <h3>Stage 5 · Post-processing</h3>
+  <p>Out of the printer, a part may still need support removal, trimming, sanding, painting, gluing, heat-set inserts or annealing. Post-processing is where hobby prints become products. Even a part you will never finish needs one routine step: <strong>measure it</strong> and write down what you learned, because that data drives the next iteration. See <a href="../techniques/post-processing.html">Post-processing</a>.</p>
+
+  <div class="callout tip"><span class="callout-title">Debug by stage</span>
+    <p>Part looks wrong? Ask: <em>Is the model wrong (stage 2)? Did the slicer decide something strange (stage 3)? Did the machine fail to execute correctly (stage 4)?</em> A quick look at the slicer preview often reveals the problem before you waste any filament.</p>
+  </div>
+
+  <h2 id="layers">🔰 Layer by layer: what a printed surface really is</h2>
+  <p>The slicer cuts the model into slices, and the printer reproduces them as thin flat sheets of material stacked on top of each other. The thickness of each sheet is the <strong>layer height</strong>, typically 0.08–0.32 mm for plastic filament printers (a human hair is about 0.07 mm). Two consequences follow, and they shape almost every design and finishing decision you will ever make.</p>
+
+  <h3>Consequence 1: the staircase effect</h3>
+  <p>A vertical wall comes out smooth, a flat top comes out smooth, but a <em>sloped</em> surface becomes a staircase, because each layer is a flat step. The shallower the slope and the thicker the layers, the bigger the steps. Halving the layer height halves the step height but roughly doubles the print time, which is the classic quality-versus-speed trade-off.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 290" role="img" aria-label="Two sloped surfaces: one printed with thick layers showing large steps and one printed with thin layers showing small steps, each with the ideal smooth slope as a dashed line.">
+      <path class="d-plastic" d="M40 220 H240 V196 H210 V172 H180 V148 H150 V124 H120 V100 H40 Z"/>
+      <path class="d-thin" d="M40 196 H240 M40 172 H210 M40 148 H180 M40 124 H150"/>
+      <path class="d-dash" d="M240 220 L90 100"/>
+      <text class="t t-c t-b" x="140" y="258" style="text-anchor:middle">Thick layers: 0.28 mm</text>
+      <text class="t-sm t-c t-m" x="140" y="276" style="text-anchor:middle">fast, but visible steps</text>
+      <path class="d-ink arrow-start arrow" d="M258 196 V220"/>
+      <text class="t-xs" x="266" y="212">one layer</text>
+
+      <path class="d-plastic" d="M420 220 H620 V208 H605 V196 H590 V184 H575 V172 H560 V160 H545 V148 H530 V136 H515 V124 H500 V112 H485 V100 H420 Z"/>
+      <path class="d-thin" d="M420 208 H620 M420 196 H605 M420 184 H590 M420 172 H575 M420 160 H560 M420 148 H545 M420 136 H530 M420 124 H515 M420 112 H500"/>
+      <path class="d-dash" d="M620 220 L470 100"/>
+      <text class="t t-c t-b" x="520" y="258" style="text-anchor:middle">Thin layers: 0.12 mm</text>
+      <text class="t-sm t-c t-m" x="520" y="276" style="text-anchor:middle">smoother, roughly 2x the time</text>
+      <text class="t-xs" x="40" y="60">Dashed line = the smooth</text><text class="t-xs" x="40" y="74">slope in the 3D model.</text>
+      <text class="t-xs" x="420" y="60">Same shape, steps are</text><text class="t-xs" x="420" y="74">half as tall.</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> The staircase effect. The dashed line is the surface you designed; the colored shape is what the printer can build. Variable layer height (see <a href="../techniques/advanced-techniques.html">Advanced techniques</a>) lets a slicer use thin layers only on sloped regions.</figcaption>
+  </figure>
+
+  <h3>Consequence 2: parts are weaker between layers</h3>
+  <p>Within one layer the plastic forms continuous lines (beads) that are strongly fused. Between layers the bond relies on the new hot bead re-melting the surface of the one below. That joint is good but never as good as continuous material. A printed part therefore behaves differently depending on the direction of the load. This property is called <strong>anisotropy</strong>, and it is why <em>print orientation</em> matters so much. Details are in <a href="../design/strength-and-orientation.html">Strength &amp; orientation</a>.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 280" role="img" aria-label="Left: side view of five stacked plastic beads with a dashed crack plane between layers and an arrow pulling upward. Right: top view of one layer showing outer wall, inner wall and grid infill.">
+      <rect class="d-surface" x="10" y="10" width="360" height="262" rx="12"/>
+      <text class="t t-b" x="26" y="34">Side view: stacked beads</text>
+      <rect class="d-metal" x="20" y="236" width="180" height="10"/>
+      <rect class="d-plastic" x="40" y="206" width="140" height="30" rx="15"/>
+      <rect class="d-plastic" x="40" y="180" width="140" height="30" rx="15"/>
+      <rect class="d-plastic" x="40" y="154" width="140" height="30" rx="15"/>
+      <rect class="d-plastic" x="40" y="128" width="140" height="30" rx="15"/>
+      <rect class="d-plastic" x="40" y="102" width="140" height="30" rx="15"/>
+      <path class="k-red" d="M34 168 H186" style="stroke-dasharray:6 4"/>
+      <path class="d-ink arrow" d="M110 98 V62"/>
+      <text class="t-xs" x="120" y="74">pull in Z</text>
+      <text class="t-xs" x="205" y="116">Layer line: a groove</text><text class="t-xs" x="205" y="129">between beads</text>
+      <text class="t-xs c-red t-b" x="205" y="164">Typical crack plane:</text><text class="t-xs" x="205" y="177">bond depends on heat</text><text class="t-xs" x="205" y="190">and cooling</text>
+      <text class="t-xs" x="205" y="224">First layer: squashed flat</text><text class="t-xs" x="205" y="237">onto the build plate</text>
+
+      <rect class="d-surface" x="390" y="10" width="360" height="262" rx="12"/>
+      <text class="t t-b" x="406" y="34">Top view: one layer</text>
+      <rect class="k-orange" x="420" y="52" width="300" height="170" rx="10"/>
+      <rect class="k-orange" x="433" y="65" width="274" height="144" rx="6" style="stroke-width:1.5"/>
+      <path class="d-mute" d="M460 78 V196 M492 78 V196 M524 78 V196 M556 78 V196 M588 78 V196 M620 78 V196 M652 78 V196 M684 78 V196 M446 92 H694 M446 118 H694 M446 144 H694 M446 170 H694 M446 196 H694"/>
+      <path class="k-orange" d="M410 244 H436"/><text class="t-xs" x="442" y="248">Perimeters (walls)</text>
+      <path class="d-mute" d="M560 244 H586"/><text class="t-xs" x="592" y="248">Infill (here a grid)</text>
+      <text class="t-xs t-m" x="420" y="264">Walls give strength and a clean surface; infill supports the top.</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> Left: layers are fused beads, and the joint between them is the weak direction. Right: a single layer is made of perimeters (walls) around a sparse infill pattern.</figcaption>
+  </figure>
+
+  <div class="callout fact"><span class="callout-title">Why layer adhesion depends on temperature</span>
+    <p>Each new bead is laid at roughly 190–300 °C (depending on the polymer) onto plastic that has already cooled. Bonding happens when the molecule chains at the two surfaces diffuse into one another before the joint drops below the polymer's glass-transition temperature. Hotter nozzle, slower cooling and a warm enclosure all give chains more time, so strength between layers goes up. That is why engineering materials are printed in heated chambers.</p>
+  </div>
+
+  <h2 id="axes">🔰 X, Y, Z: the coordinate system</h2>
+  <p>Every printer works in a Cartesian coordinate system. <strong>X</strong> is left-right, <strong>Y</strong> is front-back and <strong>Z</strong> is up-down, measured from a defined origin near the front-left corner of the build plate. G-code is simply a long list of coordinates: "go to X100, Y60, extrude a little, go to X110, Y60…". Which physical part moves along which axis differs between machine designs (some move the bed in Y, others move the toolhead; see <a href="printer-anatomy.html">Anatomy of an FDM printer</a>), but the slicer and G-code always use the same convention.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 300" role="img" aria-label="Isometric view of a build plate with X, Y and Z axes and a small cube, plus a top view of the plate with origin at the front-left corner and a nozzle position marked.">
+      <path class="d-surface2" d="M130 250 L390 250 L490 190 L230 190 Z"/>
+      <path class="d-plastic" d="M250 185 H300 V235 H250 Z"/>
+      <path class="d-plastic" d="M250 185 L280 167 L330 167 L300 185 Z" style="fill-opacity:.7"/>
+      <path class="d-plastic" d="M300 185 L330 167 V217 L300 235 Z" style="fill-opacity:.55"/>
+      <path class="d-ink arrow" d="M130 250 L430 250"/>
+      <path class="d-ink arrow" d="M130 250 L270 168"/>
+      <path class="d-ink arrow" d="M130 250 V70"/>
+      <circle class="s-red" cx="130" cy="250" r="5"/>
+      <text class="t t-b c-blue" x="438" y="255">X</text>
+      <text class="t t-b c-green" x="278" y="166">Y</text>
+      <text class="t t-b c-red" x="120" y="62">Z</text>
+      <text class="t-xs" x="40" y="272">origin (0, 0, 0)</text>
+      <text class="t-xs" x="140" y="110">Z grows as the nozzle</text><text class="t-xs" x="140" y="124">rises away from the plate</text>
+      <text class="t-xs" x="300" y="116">The part grows upward</text><text class="t-xs" x="300" y="130">from the plate surface</text>
+      <path class="d-mute" d="M335 134 L318 166"/>
+
+      <rect class="d-surface" x="520" y="10" width="230" height="280" rx="12"/>
+      <text class="t t-b" x="536" y="34">Top view of the plate</text>
+      <rect class="d-surface2" x="560" y="56" width="160" height="160"/>
+      <path class="d-plastic" d="M582 190 H700 M700 190 V176 H582 V162 H700 V148 H582" style="fill:none;stroke-width:3"/>
+      <circle class="s-red" cx="622" cy="182" r="5"/>
+      <text class="t-xs" x="630" y="198">nozzle</text>
+      <path class="d-ink arrow" d="M560 232 H730"/><text class="t-sm t-b" x="722" y="250">X</text>
+      <path class="d-ink arrow" d="M546 216 V46"/><text class="t-sm t-b" x="530" y="50">Y</text>
+      <text class="t-xs" x="534" y="232">0,0</text>
+      <text class="t-sm t-mono" x="540" y="272">G1 X100 Y60 Z0.2</text>
+      <text class="t-xs t-m" x="540" y="286">move to that point, extruding</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> Left: the three axes and the origin. Right: seen from above, the origin is the front-left corner and G-code positions are measured from it (the red dot is X100, Y60 on a 256 mm plate).</figcaption>
+  </figure>
+
+  <div class="callout info"><span class="callout-title">Why does Z only go up in tiny steps?</span>
+    <p>For each layer the printer raises the nozzle (or lowers the plate) by exactly one layer height. The XY movement draws the shape; the Z movement just moves to the next sheet. This is why 3D printers are sometimes called "2.5D" machines. Special techniques such as non-planar slicing and robotic-arm printing break this rule, but they are for advanced users.</p>
+  </div>
+
+  <h2 id="vocabulary">🔰 Visual glossary: the words you will hear every day</h2>
+  <p>Learn these terms now and the rest of the compendium (and every forum thread) becomes readable. The full A–Z list is in the <a href="../reference/glossary.html">Glossary</a>.</p>
+
+  <div class="grid cols-3">
+    <div class="card accent-blue"><span class="ico">🟫</span><h3>Build plate</h3><p>The surface the first layer sticks to. Also called bed, build surface or print sheet. Often flexible spring steel with a PEI coating, sometimes glass.</p></div>
+    <div class="card accent-orange"><span class="ico">🔥</span><h3>Nozzle</h3><p>The small hole (commonly 0.4 mm) where melted plastic leaves the printer. Its diameter sets the line width and detail limit.</p></div>
+    <div class="card accent-orange"><span class="ico">🧵</span><h3>Filament</h3><p>The plastic "ink": a thin strand, usually 1.75 mm diameter, wound on a spool. PLA, PETG, ABS and TPU are common types.</p></div>
+    <div class="card accent-red"><span class="ico">⚙️</span><h3>Extruder</h3><p>The gear mechanism that grips filament and pushes it toward the hotend, and pulls it back when needed (retraction).</p></div>
+    <div class="card accent-red"><span class="ico">♨️</span><h3>Hotend</h3><p>The heated assembly that melts the filament: a heater, a temperature sensor and the nozzle on its tip.</p></div>
+    <div class="card accent-purple"><span class="ico">🔪</span><h3>Slicer</h3><p>Software that turns a 3D model into layer-by-layer instructions. Bambu Studio, OrcaSlicer, PrusaSlicer and Cura are popular.</p></div>
+    <div class="card accent-purple"><span class="ico">📜</span><h3>G-code</h3><p>The plain-text command language the printer reads: move here, heat to that, extrude this much.</p></div>
+    <div class="card accent-teal"><span class="ico">📏</span><h3>Layer height</h3><p>Thickness of each printed layer. Smaller means finer surface detail and longer prints; 0.2 mm is the standard compromise.</p></div>
+    <div class="card accent-teal"><span class="ico">🕸️</span><h3>Infill</h3><p>The internal pattern that fills a part's interior. Expressed as a percentage: 10–20 % is typical, 100 % is solid.</p></div>
+    <div class="card accent-green"><span class="ico">🧱</span><h3>Perimeters / walls</h3><p>The outlines printed around each layer. The number of walls matters more for strength than infill does.</p></div>
+    <div class="card accent-pink"><span class="ico">🏗️</span><h3>Supports</h3><p>Temporary scaffolding printed under overhangs and removed afterwards. Costs time, material and surface quality.</p></div>
+    <div class="card accent-yellow"><span class="ico">🥽</span><h3>Brim / skirt / raft</h3><p>Brim is a flat collar that widens the first layer to resist warping; a skirt is a test outline; a raft is a sacrificial base.</p></div>
+    <div class="card accent-blue"><span class="ico">↩️</span><h3>Retraction</h3><p>Pulling filament back slightly before a travel move so the nozzle does not ooze. Wrong settings cause stringing.</p></div>
+    <div class="card accent-gray"><span class="ico">🕷️</span><h3>Stringing</h3><p>Thin wisps of plastic between separate parts of a print, caused by oozing (wet filament, high temperature, weak retraction).</p></div>
+    <div class="card accent-gray"><span class="ico">🌀</span><h3>Warping</h3><p>Corners lifting off the plate as plastic shrinks while cooling. Worst with ABS and other high-shrink materials.</p></div>
+  </div>
+
+  <h2 id="history">🔰 A short history</h2>
+  <p>3D printing is older than most people think. For decades it was a costly industrial prototyping tool; then a few patent expirations and one open-source project turned it into a consumer technology. Learning the timeline explains why today's machines look the way they do.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 960 300" role="img" aria-label="Timeline from 1984 to the 2020s with eight milestones: stereolithography, SLS, FDM, RepRap, patent expiry and MakerBot, Prusa i3 and Form 1, Bambu Lab X1, and the multi-color dual-nozzle era.">
+      <path class="d-ink arrow" d="M20 150 H946"/>
+      <circle class="s-orange" cx="100" cy="150" r="7"/><circle class="s-orange" cx="208" cy="150" r="7"/><circle class="s-orange" cx="316" cy="150" r="7"/><circle class="s-orange" cx="424" cy="150" r="7"/>
+      <circle class="s-orange" cx="532" cy="150" r="7"/><circle class="s-orange" cx="640" cy="150" r="7"/><circle class="s-orange" cx="748" cy="150" r="7"/><circle class="s-orange" cx="856" cy="150" r="7"/>
+
+      <path class="d-mute" d="M100 104 V143"/><rect class="f-purple" x="2" y="40" width="196" height="64" rx="10"/>
+      <text class="t t-b" x="14" y="60">1984</text><text class="t-sm" x="14" y="78">Chuck Hull files the first</text><text class="t-sm" x="14" y="93">stereolithography patent</text>
+
+      <path class="d-mute" d="M208 196 V157"/><rect class="f-blue" x="110" y="196" width="196" height="64" rx="10"/>
+      <text class="t t-b" x="122" y="216">1986</text><text class="t-sm" x="122" y="234">3D Systems founded; Deckard</text><text class="t-sm" x="122" y="249">files the SLS patent</text>
+
+      <path class="d-mute" d="M316 104 V143"/><rect class="f-orange" x="218" y="40" width="196" height="64" rx="10"/>
+      <text class="t t-b" x="230" y="60">1989</text><text class="t-sm" x="230" y="78">Scott Crump patents FDM;</text><text class="t-sm" x="230" y="93">Stratasys is founded</text>
+
+      <path class="d-mute" d="M424 196 V157"/><rect class="f-green" x="326" y="196" width="196" height="64" rx="10"/>
+      <text class="t t-b" x="338" y="216">2005</text><text class="t-sm" x="338" y="234">RepRap: open-source,</text><text class="t-sm" x="338" y="249">self-copying 3D printer</text>
+
+      <path class="d-mute" d="M532 104 V143"/><rect class="f-orange" x="434" y="40" width="196" height="64" rx="10"/>
+      <text class="t t-b" x="446" y="60">2009</text><text class="t-sm" x="446" y="78">Key FDM patents expire;</text><text class="t-sm" x="446" y="93">MakerBot launches kits</text>
+
+      <path class="d-mute" d="M640 196 V157"/><rect class="f-teal" x="542" y="196" width="196" height="64" rx="10"/>
+      <text class="t t-b" x="554" y="216">2012</text><text class="t-sm" x="554" y="234">Prusa i3 design; Form 1</text><text class="t-sm" x="554" y="249">brings desktop resin</text>
+
+      <path class="d-mute" d="M748 104 V143"/><rect class="f-red" x="650" y="40" width="196" height="64" rx="10"/>
+      <text class="t t-b" x="662" y="60">2022</text><text class="t-sm" x="662" y="78">Bambu Lab X1: enclosed,</text><text class="t-sm" x="662" y="93">fast CoreXY + AMS color</text>
+
+      <path class="d-mute" d="M856 196 V157"/><rect class="f-pink" x="758" y="196" width="196" height="64" rx="10"/>
+      <text class="t t-b" x="770" y="216">2023 to today</text><text class="t-sm" x="770" y="234">Fast multi-color goes</text><text class="t-sm" x="770" y="249">mainstream; dual nozzles</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> Eight milestones (not to scale in time). The gap between 1989 and 2005 is where the technology lived almost entirely inside industry.</figcaption>
+  </figure>
+
+  <ul class="timeline">
+    <li><b>1984 · Stereolithography.</b> Chuck Hull patents a process that cures liquid resin with UV light layer by layer. He later co-founds 3D Systems, which sells the first commercial machines in the late 1980s. The ".STL" file format still carries the name.</li>
+    <li><b>1986–1989 · Powder fusion.</b> Carl Deckard at the University of Texas develops selective laser sintering (SLS): a laser fuses powder into a solid. Industrial parts without molds become possible.</li>
+    <li><b>1989 · FDM.</b> Scott Crump patents fused deposition modeling, the "melt and extrude a bead" technique, and founds Stratasys. The generic term FFF (fused filament fabrication) appears later because "FDM" is a trademark.</li>
+    <li><b>2005 · RepRap.</b> Adrian Bowyer's open-source project aims for a printer that can print most of its own parts. Its designs spread worldwide and create the hobbyist community.</li>
+    <li><b>2009 · Patent expiry.</b> Core FDM patents expire. Kits and cheap clones appear, MakerBot starts selling, crowdfunding makes small companies viable.</li>
+    <li><b>2010s · Maturing.</b> Josef Prusa's i3 design becomes the most-copied open printer; affordable resin printers appear; heated beds, auto bed leveling, Marlin and later Klipper firmware spread; cheap Cartesian printers reach very low price points.</li>
+    <li><b>2022 onward · The fast, enclosed era.</b> Bambu Lab releases an enclosed CoreXY machine with high acceleration, automatic calibration, cameras and a multi-spool system. The industry response is quick: competitors adopt similar architectures, and the expectation shifts from "tinkering project" to "appliance".</li>
+    <li><b>Mid 2020s · Multi-color and dual nozzle.</b> Multi-material systems become mainstream and machines with two independent nozzles appear. The <a href="../x2d/overview.html">Bambu X2D</a> is an example of this generation.</li>
+  </ul>
+
+  <h2 id="capabilities">🔰 What you can and cannot make</h2>
+  <p>A useful rule: <strong>3D printing is superb at geometry and poor at volume, finish and certainty</strong>. If you need a strange shape once, it is perfect. If you need a million identical shapes or a mirror-smooth surface straight from the machine, it is not.</p>
+
+  <div class="pros-cons">
+    <div class="pros"><h4>Great at</h4><ul>
+      <li>Custom brackets, mounts, clips, adapters and enclosures</li>
+      <li>Prototypes and form-fit checks in hours</li>
+      <li>Jigs, fixtures and tools for workshops</li>
+      <li>Replacement parts for discontinued items</li>
+      <li>Models, miniatures, props, cosplay armor</li>
+      <li>Education: seeing geometry and physics in your hands</li>
+      <li>Organic, hollow or internally channeled shapes</li>
+    </ul></div>
+    <div class="cons"><h4>Poor at</h4><ul>
+      <li>Thousands of identical parts at low cost per piece</li>
+      <li>Glass-smooth surfaces or tight tolerances without finishing</li>
+      <li>Parts that must be food-safe, sterile or certified</li>
+      <li>High-temperature or high-impact loads with ordinary materials</li>
+      <li>Large solid objects (slow and expensive in plastic)</li>
+      <li>Transparent, optical-quality parts</li>
+      <li>Anything needing identical strength in all directions</li>
+    </ul></div>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 330" role="img" aria-label="Illustrative chart of cost per part versus quantity: 3D printing stays roughly flat, CNC machining slowly declines, injection molding starts very high and falls steeply, crossing 3D printing at a few hundred to a few thousand parts.">
+      <path class="d-grid" d="M70 30 V260 H720"/>
+      <path class="d-grid" d="M232 30 V260 M395 30 V260 M557 30 V260 M720 30 V260 M70 88 H720 M70 145 H720 M70 203 H720"/>
+      <path class="d-ink arrow" d="M70 260 V20"/><path class="d-ink arrow" d="M70 260 H735"/>
+      <text class="t-xs t-c" x="70" y="278" style="text-anchor:middle">1</text><text class="t-xs t-c" x="232" y="278" style="text-anchor:middle">10</text><text class="t-xs t-c" x="395" y="278" style="text-anchor:middle">100</text><text class="t-xs t-c" x="557" y="278" style="text-anchor:middle">1,000</text><text class="t-xs t-c" x="720" y="278" style="text-anchor:middle">10,000</text>
+      <text class="t-sm t-c" x="395" y="304" style="text-anchor:middle">Number of identical parts (log scale)</text>
+      <text class="t-sm" x="12" y="16">Cost per part (log scale, illustrative)</text>
+      <path class="k-orange" d="M70 150 L232 150 L395 148 L557 146 L720 145"/>
+      <path class="k-blue" d="M70 95 L720 175"/>
+      <path class="k-red" d="M70 30 L720 255"/>
+      <circle class="s-yellow" cx="411" cy="148" r="6"/>
+      <text class="t-sm t-b c-orange" x="580" y="136">3D printing</text>
+      <text class="t-sm t-b c-blue" x="580" y="196">CNC machining</text>
+      <text class="t-sm t-b c-red" x="560" y="240">Injection molding</text>
+      <text class="t-xs" x="300" y="122">break-even with molding:</text><text class="t-xs" x="300" y="135">often 100s to a few 1,000s</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> Why 3D printing wins for small quantities. Molds are expensive but make each additional part almost free; printing has almost no start-up cost but the cost per part barely falls. The curves are schematic; the crossover depends on the part size and material.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th>You need…</th><th>Desktop 3D printing?</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>A one-off custom bracket</td><td><span class="chip green">Excellent</span></td><td>Print in PETG or ABS/ASA if it sees heat or sun.</td></tr>
+      <tr><td>A watertight, food-contact container</td><td><span class="chip yellow">Caution</span></td><td>Layer gaps harbor bacteria and many filaments are not food-rated. Prefer a commercial item.</td></tr>
+      <tr><td>A safety-critical load-bearing part</td><td><span class="chip red">Not recommended</span></td><td>Only with proper engineering, testing and appropriate materials.</td></tr>
+      <tr><td>A cosplay helmet or prop</td><td><span class="chip green">Excellent</span></td><td>Print in pieces, then sand, fill and paint.</td></tr>
+      <tr><td>5,000 identical bottle caps</td><td><span class="chip red">Wrong tool</span></td><td>Injection molding is far cheaper. Print the prototype only.</td></tr>
+      <tr><td>A gear that must last years</td><td><span class="chip yellow">Possible</span></td><td>Nylon or a CF-nylon composite; or print the master and cast it.</td></tr>
+      <tr><td>A transparent lens</td><td><span class="chip red">Not with FDM</span></td><td>Resin printing and polishing can work for light pipes, not for precision optics.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="decision">🔰 Is 3D printing the right tool for this job?</h2>
+  <p>Experienced makers do not print everything; they print what suits the process. Use this quick decision guide whenever a project comes up.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 450" role="img" aria-label="Decision flow chart: many identical units leads to molding or casting; flat sheet-like shapes lead to laser or CNC cutting; extreme loads, high heat, food contact or certification lead to a specialist route; otherwise print it.">
+      <rect class="f-gray" x="20" y="8" width="340" height="40" rx="20"/>
+      <text class="t t-c t-b" x="190" y="33" style="text-anchor:middle">I need a physical part</text>
+      <path class="d-ink arrow" d="M190 48 V70"/>
+
+      <rect class="f-blue" x="20" y="70" width="340" height="62" rx="10"/>
+      <text class="t-sm t-c t-b" x="190" y="96" style="text-anchor:middle">Do I need hundreds or thousands</text><text class="t-sm t-c t-b" x="190" y="114" style="text-anchor:middle">of identical copies?</text>
+      <path class="d-ink arrow" d="M360 101 H410"/><text class="t-sm t-b c-red" x="372" y="94">Yes</text>
+      <rect class="f-red" x="410" y="70" width="340" height="62" rx="10"/>
+      <text class="t-sm" x="424" y="96">Injection molding, casting or stamping.</text><text class="t-sm" x="424" y="114">Print the prototype or the mold master.</text>
+      <path class="d-ink arrow" d="M190 132 V170"/><text class="t-sm t-b c-green" x="198" y="156">No</text>
+
+      <rect class="f-blue" x="20" y="170" width="340" height="62" rx="10"/>
+      <text class="t-sm t-c t-b" x="190" y="196" style="text-anchor:middle">Is it a flat, sheet-like or simple</text><text class="t-sm t-c t-b" x="190" y="214" style="text-anchor:middle">prismatic shape (plate, panel)?</text>
+      <path class="d-ink arrow" d="M360 201 H410"/><text class="t-sm t-b c-red" x="372" y="194">Yes</text>
+      <rect class="f-yellow" x="410" y="170" width="340" height="62" rx="10"/>
+      <text class="t-sm" x="424" y="196">Laser cutting, a saw or a CNC router is</text><text class="t-sm" x="424" y="214">usually faster, cheaper and stronger.</text>
+      <path class="d-ink arrow" d="M190 232 V270"/><text class="t-sm t-b c-green" x="198" y="256">No</text>
+
+      <rect class="f-blue" x="20" y="270" width="340" height="62" rx="10"/>
+      <text class="t-sm t-c t-b" x="190" y="288" style="text-anchor:middle">Must it survive extreme loads, heat</text><text class="t-sm t-c t-b" x="190" y="306" style="text-anchor:middle">above 150 °C, food contact, or need</text><text class="t-sm t-c t-b" x="190" y="324" style="text-anchor:middle">formal certification?</text>
+      <path class="d-ink arrow" d="M360 301 H410"/><text class="t-sm t-b c-red" x="372" y="294">Yes</text>
+      <rect class="f-purple" x="410" y="270" width="340" height="62" rx="10"/>
+      <text class="t-sm" x="424" y="296">Specialist route: metal printing service,</text><text class="t-sm" x="424" y="314">certified supplier or a different process.</text>
+      <path class="d-ink arrow" d="M190 332 V372"/><text class="t-sm t-b c-green" x="198" y="358">No</text>
+
+      <rect class="f-green" x="20" y="372" width="340" height="62" rx="12"/>
+      <text class="t t-c t-b" x="190" y="398" style="text-anchor:middle">3D print it</text><text class="t-sm t-c" x="190" y="418" style="text-anchor:middle">Start with PLA or PETG on an FDM printer</text>
+      <text class="t-sm t-m" x="410" y="404">Tip: even when the answer is "no", a printed</text><text class="t-sm t-m" x="410" y="422">prototype is usually the cheapest way to check fit.</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> A three-question filter. Most everyday jobs (fixtures, brackets, enclosures, replacement parts, models) end at the green box.</figcaption>
+  </figure>
+
+  <h2 id="myths">🔰 Common myths, corrected</h2>
+  <details class="accordion"><summary>"It is just for plastic toys and trinkets."</summary><p>Toys are a fun beginning, but printed parts are used in jigs and fixtures, drones, robot frames, prosthetic-socket prototypes, dental models, motorsport ducting and production tooling. Engineering filaments (nylon, polycarbonate, carbon-fiber composites) and metal processes extend the range a long way.</p></details>
+  <details class="accordion"><summary>"You press a button and a perfect object appears."</summary><p>Modern printers are close to this for simple models, and calibration is largely automatic. But files, orientation, materials, humidity and surface choices still matter. The first weeks are about building the judgment that predicts failures before they happen.</p></details>
+  <details class="accordion"><summary>"3D printed parts are weak."</summary><p>Weak <em>in some directions</em> and when poorly designed. A well-oriented part with enough walls in PETG, nylon or a composite filament is strong enough for many functional jobs. Designing with the layer direction in mind is the key skill (see <a href="../design/strength-and-orientation.html">Strength &amp; orientation</a>).</p></details>
+  <details class="accordion"><summary>"Filament is the only running cost."</summary><p>Filament is the biggest consumable, but nozzles, build plates, lubricants, drying equipment, tools, electricity and your time all count. For most hobbyists these are modest; see the <a href="buying-guide.html">buying guide</a> for a first-year budget.</p></details>
+  <details class="accordion"><summary>"Any STL I find online will print."</summary><p>Files may have thin walls, holes, unrealistic overhangs or be designed for another printer's tolerances. Look at the slicer preview, read the comments and check if the author has printed it.</p></details>
+  <details class="accordion"><summary>"Resin printing is the premium version of filament printing."</summary><p>Resin gives finer detail on small parts, but it involves liquid chemicals, washing, curing and gloves, and the parts are usually more brittle. It is a different tool, not a better one. See <a href="printing-processes.html">Printing processes compared</a>.</p></details>
+  <details class="accordion"><summary>"3D printers will replace factories."</summary><p>Additive manufacturing complements conventional processes. It excels at low volume and complexity; injection molding and machining remain much better for mass production.</p></details>
+  <details class="accordion"><summary>"I need to be a programmer or engineer."</summary><p>No. Downloading and slicing existing models needs only patience. CAD skills grow gradually, and browser tools like Tinkercad are designed for complete beginners.</p></details>
+
+  <h2 id="expectations">🔰 Realistic expectations: time, cost and learning curve</h2>
+  <div class="stats">
+    <div class="stat"><b>0.2 mm</b><span>typical layer height</span></div>
+    <div class="stat"><b>0.4 mm</b><span>standard nozzle diameter</span></div>
+    <div class="stat"><b>~US$15–30</b><span>per kg of everyday PLA, roughly</span></div>
+    <div class="stat"><b>1–10 h</b><span>typical print time</span></div>
+  </div>
+
+  <div class="bars"><div class="bars-title">Typical print time (very rough, bar lengths not to scale)</div>
+    <div class="bar green"><span>20 mm test cube</span><i style="--v:5%"></i><em>15–40 min</em></div>
+    <div class="bar green"><span>Small boat (benchy)</span><i style="--v:14%"></i><em>0.5–2 h</em></div>
+    <div class="bar blue"><span>Phone stand</span><i style="--v:24%"></i><em>1–3 h</em></div>
+    <div class="bar yellow"><span>Electronics case</span><i style="--v:42%"></i><em>3–8 h</em></div>
+    <div class="bar red"><span>Wearable helmet shell</span><i style="--v:100%"></i><em>days</em></div>
+  </div>
+
+  <div class="bars"><div class="bars-title">How confidence grows (illustrative, depends on practice)</div>
+    <div class="bar teal"><span>Week 1</span><i style="--v:25%"></i><em>complete prints from downloads</em></div>
+    <div class="bar teal"><span>Month 1</span><i style="--v:45%"></i><em>tune settings, fix common defects</em></div>
+    <div class="bar teal"><span>Month 3</span><i style="--v:65%"></i><em>design simple parts in CAD</em></div>
+    <div class="bar teal"><span>Year 1</span><i style="--v:85%"></i><em>functional, tolerance-aware designs</em></div>
+  </div>
+
+  <div class="callout warn"><span class="callout-title">Expect failures, and plan for them</span>
+    <p>Even experienced makers lose prints to a dislodged part, a tangled spool or a clogged nozzle. A realistic planning figure for a beginner is that about one in five early prints needs a retry. The cost is small if you treat each failure as a lesson and keep a short log: what changed, what happened, what you will try next.</p>
+  </div>
+
+  <h3>Four rules for a good first month</h3>
+  <ol class="steps">
+    <li><strong>Print designs other people have proven.</strong>Download well-reviewed models from a repository; save your own designs for later.</li>
+    <li><strong>Change one thing at a time.</strong>When tuning, adjust one setting and compare to the previous result. Two simultaneous changes teach you nothing.</li>
+    <li><strong>Use PLA first.</strong>It is forgiving, low-odor and inexpensive. Move to other materials only when you have a reason.</li>
+    <li><strong>Keep every failed print for a week.</strong>A tray of failures is the best textbook you will ever own: you can compare and recognize patterns (see the <a href="../techniques/troubleshooting.html">troubleshooting gallery</a>).</li>
+  </ol>
+
+  <h2 id="get-started">🔰 What you need to get started</h2>
+  <p>You do not need much, but a few items save a great deal of frustration. Tick them off as you collect them (your ticks are remembered in this browser).</p>
+  <ul class="checklist">
+    <li><strong>A printer</strong> that suits your goals and space. See <a href="buying-guide.html">Choosing a printer</a>.</li>
+    <li><strong>One or two spools of PLA</strong> from a reputable brand, in colors you like (1 kg, 1.75 mm).</li>
+    <li><strong>A slicer</strong> on a computer or phone. Most printer makers supply one that is preconfigured.</li>
+    <li><strong>A stable, level table</strong> with a nearby power outlet and room around the printer. See <a href="safety-and-workspace.html">Safety &amp; workspace</a>.</li>
+    <li><strong>Basic tools:</strong> flush cutters, a scraper or spatula, tweezers, a small brush, digital calipers.</li>
+    <li><strong>Dry storage:</strong> a sealable box with desiccant for filament you are not using. See <a href="../materials/drying-and-storage.html">Drying &amp; storage</a>.</li>
+    <li><strong>Ventilation and a smoke detector</strong> in the room where the printer will run.</li>
+    <li><strong>A first goal:</strong> a specific small model you want to print, such as a calibration cube or something practical.</li>
+    <li><strong>Patience and a notebook</strong> for logging results.</li>
+  </ul>
+
+  <div class="callout x2d"><span class="callout-title">If you are heading for a Bambu X2D</span>
+    <p>The concepts on this page apply unchanged. When you are ready for the machine-specific path, start with the <a href="../x2d/overview.html">X2D overview</a> and then <a href="../x2d/setup-and-first-print.html">Set-up &amp; first print</a>.</p>
+  </div>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul>
+    <li>Additive manufacturing adds material where needed; subtractive removes it; formative shapes it in a mold. Printing wins when volume is low and complexity is high.</li>
+    <li>The official taxonomy has seven families; desktop printing is mostly <em>material extrusion</em> (FDM/FFF) and <em>vat photopolymerization</em> (resin).</li>
+    <li>Every print passes through five stages: idea, model, slice, print, post-process. Debug by identifying the stage.</li>
+    <li>Layers cause the staircase effect and a weaker direction between layers; orient and design accordingly.</li>
+    <li>G-code is just coordinates in X (left-right), Y (front-back) and Z (up).</li>
+    <li>Be realistic: print times are hours, failures happen, and skills grow in weeks and months, not minutes.</li>
+  </ul>
+  <p><strong>Next:</strong> compare all the processes in <a href="printing-processes.html">Printing processes compared</a>, then look inside an FDM machine in <a href="printer-anatomy.html">Anatomy of an FDM printer</a>. To practice, try the <a href="../exercises/level-1-beginner.html">Level 1 exercises</a>.</p>
+
+</main>
+</body>
+</html>

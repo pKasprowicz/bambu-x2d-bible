@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bambu Studio settings &amp; profiles for the X2D · 3D Printing Compendium</title>
+  <meta name="description" content="How Bambu Studio drives the Bambu Lab X2D with AMS 2 Pro: presets, nozzle assignment, flush volumes, prime tower, calibrations, chamber and drying controls, per-object settings, sharing projects and recommended starting profiles.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+  <style>
+    .sp-legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; color: var(--muted); margin: .4em 0 1em; }
+    .sp-legend b { color: var(--ink); }
+  </style>
+</head>
+<body data-page="x2d/settings-and-profiles.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 6 · Bambu X2D + AMS 2 Pro</div>
+    <h1>Bambu Studio settings &amp; profiles for the X2D</h1>
+    <p class="lead">The X2D is two printers in one toolhead, and Bambu Studio is where you tell them what to do. This page walks through presets, nozzle assignment, flush volumes, calibrations, chamber and drying controls, per-object tricks and sharing, then ends with starting profiles for every major material.</p>
+    <div class="meta"><span class="badge intermediate">Intermediate</span><span class="badge x2d">X2D + AMS 2 Pro</span><span class="badge time">⏱ 30 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <p>How the three preset layers fit together, how filaments get grouped onto the left (main) and right (auxiliary) nozzle, what the flush-volume matrix really controls, which calibrations matter and when, where the chamber and AMS drying controls live, how to share a project, and which numbers to start from for PLA, PETG, ABS/ASA, PC, nylon, carbon-fiber blends and TPU.</p></div>
+
+  <div class="callout x2d"><span class="callout-title">Read this first: screenshots vs. mock-ups</span>
+    <p>Every interface drawing on this page is a <b>simplified mock-up</b> drawn for teaching, not a screenshot. Bambu Studio changes its layout between releases (this page assumes the 2.5.x generation, which the X2D features such as the Filament Track Switch require: Studio 2.5.3.60 or later). Labels you see on screen may be worded slightly differently; the ideas stay the same.</p></div>
+
+  <h2 id="big-picture">1. The big picture: three layers of presets</h2>
+  <p>Every slice in Bambu Studio is the product of three independent <b>presets</b> (named bundles of settings) plus whatever you override on the plate:</p>
+  <ul>
+    <li><b>Printer preset</b>: the machine itself. For the X2D this includes the build volume (256 × 256 × 260 mm), the two nozzle diameters, retraction defaults for each extruder, the start and end G-code and the printable area rules for the auxiliary nozzle.</li>
+    <li><b>Filament preset</b>: everything that belongs to a material: nozzle temperature range, heatbed temperature per plate, flow ratio, flow-dynamics (pressure-advance style) K value, cooling curve, volumetric speed limit, chamber temperature request and the drying recommendation.</li>
+    <li><b>Process preset</b>: how the part is built: layer height, walls, infill, supports, speeds, accelerations, seam, prime tower and so on.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 330" role="img" aria-label="Three preset layers (printer, filament, process) merge into a sliced plate, with per-object overrides applied last">
+      <rect class="f-red" x="20" y="30" width="200" height="86" rx="12"/>
+      <text class="t t-c t-b" x="120" y="60">Printer preset</text>
+      <text class="t-sm t-c" x="120" y="80">X2D · nozzles L + R</text>
+      <text class="t-sm t-c" x="120" y="98">volume, G-code, retraction</text>
+      <rect class="f-orange" x="20" y="130" width="200" height="86" rx="12"/>
+      <text class="t t-c t-b" x="120" y="160">Filament preset(s)</text>
+      <text class="t-sm t-c" x="120" y="180">one per AMS slot / spool</text>
+      <text class="t-sm t-c" x="120" y="198">temps, flow, K, cooling</text>
+      <rect class="f-blue" x="20" y="230" width="200" height="86" rx="12"/>
+      <text class="t t-c t-b" x="120" y="260">Process preset</text>
+      <text class="t-sm t-c" x="120" y="280">layers, walls, infill, speed</text>
+      <text class="t-sm t-c" x="120" y="298">supports, prime tower</text>
+      <path class="d-ink arrow" d="M222 73 C 290 73 290 160 330 160"/>
+      <path class="d-ink arrow" d="M222 173 H330"/>
+      <path class="d-ink arrow" d="M222 273 C 290 273 290 186 330 186"/>
+      <rect class="d-surface2" x="332" y="120" width="150" height="100" rx="12"/>
+      <text class="t t-c t-b" x="407" y="158">Slicer</text>
+      <text class="t-sm t-c" x="407" y="178">merges + groups</text>
+      <text class="t-sm t-c" x="407" y="196">filaments to nozzles</text>
+      <rect class="f-purple" x="332" y="238" width="150" height="62" rx="10"/>
+      <text class="t-sm t-c t-b" x="407" y="262">Per-object overrides</text>
+      <text class="t-xs t-c" x="407" y="280">modifiers, support filament</text>
+      <path class="d-ink arrow" d="M407 238 V222"/>
+      <path class="d-ink arrow" d="M484 170 H540"/>
+      <rect class="f-green" x="542" y="100" width="198" height="140" rx="12"/>
+      <text class="t t-c t-b" x="641" y="132">Sliced plate</text>
+      <text class="t-sm t-c" x="641" y="156">.gcode.3mf</text>
+      <text class="t-sm t-c" x="641" y="176">toolpaths per nozzle</text>
+      <text class="t-sm t-c" x="641" y="196">prime tower + flush</text>
+      <text class="t-sm t-c" x="641" y="216">time + filament estimate</text>
+      <text class="t-xs t-m" x="20" y="322">Overrides always win over presets; presets can be saved as your own "user" presets.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> Printer, filament and process presets are combined by the slicer. Per-object settings are applied last and override the plate-wide values.</figcaption>
+  </figure>
+
+  <h3>🔰 System presets, user presets and the "modified" dot</h3>
+  <p>Bambu Studio ships <b>system presets</b> that are read-only. The moment you change a value, a small marker appears next to the preset name; you can then <b>Save as</b> a <b>user preset</b>, which inherits from the system preset (inheritance means that when Bambu updates a system value you did not touch, your preset picks up the change). A few habits keep libraries healthy:</p>
+  <ul>
+    <li>Name user presets by purpose, not by date: <i>"PETG bracket 0.6 strong"</i> beats <i>"test 7"</i>.</li>
+    <li>Change one thing at a time when tuning, so you can tell what helped.</li>
+    <li>Use the compare function (the small compare icon next to the preset drop-down) to see exactly which values differ from the system preset before sharing a profile.</li>
+    <li>Cloud sync of user presets is a convenience, not a backup. Export important presets from the File menu.</li>
+  </ul>
+
+  <h3>🔧 What is special about X2D presets</h3>
+  <p>Because there are two extruders, many values exist twice. You will see paired entries for the <b>left (main)</b> and <b>right (auxiliary)</b> extruder in the printer preset (retraction length, retraction speed, nozzle diameter) and in filament presets (flow-dynamics K, temperature). Three consequences:</p>
+  <ol class="steps">
+    <li><strong>The auxiliary extruder has its own retraction.</strong>It pushes filament through a PTFE tube from the printer's rear panel, so it needs a much longer retraction than the direct-drive main extruder to take up slack in the tube. Keep the system value unless you have a reason to change it.</li>
+    <li><strong>The K value differs per nozzle.</strong>Bambu documents that the auxiliary extruder's flow-dynamics K is much larger than the main extruder's, because the long feed path adds elastic hysteresis, friction and pressure lag.</li>
+    <li><strong>Limits are enforced for the auxiliary side.</strong>Maximum speed 200 mm/s and acceleration about 1000 mm/s² when printing with the auxiliary nozzle. Do not raise them in a custom profile.</li>
+  </ol>
+
+  <div class="callout warn"><span class="callout-title">Both nozzles must be the same size</span>
+    <p>Dual-nozzle printing currently requires nozzles of the same diameter (Bambu's FAQ says mixed diameters may be announced in a future firmware release). The two hotends are identical in structure and can be swapped left to right. The pre-installed nozzle is hardened steel (0.4 mm). High-flow hotends and a 0.2 mm + 0.6 mm multi-size kit are optional extras; check the filament-compatibility table on the <a href="filament-compatibility.html">filament compatibility</a> page before choosing a size.</p></div>
+
+  <h2 id="connecting">2. Connecting: cloud, LAN-only, PIN binding and Handy</h2>
+  <p>Before you can slice for a machine you must <b>bind</b> it to Studio. The X2D has dual-band Wi-Fi (2.4 and 5 GHz) and <b>no wired network port</b>, so all connections are wireless. There are three ways to talk to the printer:</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 330" role="img" aria-label="Three connection paths: cloud via the internet, LAN-only on the local network, and a USB drive or internal storage">
+      <rect class="f-blue" x="20" y="120" width="150" height="80" rx="12"/>
+      <text class="t t-c t-b" x="95" y="150">Bambu Studio</text>
+      <text class="t-sm t-c" x="95" y="170">on your PC</text>
+      <text class="t-xs t-c" x="95" y="188">slices + sends</text>
+      <rect class="f-orange" x="305" y="20" width="150" height="70" rx="12"/>
+      <text class="t t-c t-b" x="380" y="50">Bambu Cloud</text>
+      <text class="t-sm t-c" x="380" y="70">remote, any network</text>
+      <rect class="f-purple" x="305" y="240" width="150" height="70" rx="12"/>
+      <text class="t t-c t-b" x="380" y="270">Local network</text>
+      <text class="t-sm t-c" x="380" y="290">LAN-only mode</text>
+      <rect class="f-red" x="590" y="110" width="150" height="100" rx="12"/>
+      <text class="t t-c t-b" x="665" y="146">X2D</text>
+      <text class="t-sm t-c" x="665" y="166">internal storage</text>
+      <text class="t-sm t-c" x="665" y="184">+ optional USB</text>
+      <path class="d-ink arrow" d="M172 140 C 240 140 240 60 303 60"/>
+      <path class="d-ink arrow" d="M457 60 C 530 60 530 140 588 140"/>
+      <path class="d-ink arrow" d="M172 180 C 240 180 240 270 303 270"/>
+      <path class="d-ink arrow" d="M457 270 C 530 270 530 180 588 180"/>
+      <rect class="f-green" x="20" y="250" width="150" height="60" rx="10"/>
+      <text class="t-sm t-c t-b" x="95" y="275">Bambu Handy</text>
+      <text class="t-xs t-c" x="95" y="293">phone: monitor, start</text>
+      <path class="d-dash arrow" d="M172 280 H303"/>
+      <text class="t-xs t-m" x="235" y="272">(via cloud)</text>
+      <text class="t-xs t-m" x="22" y="108">PIN binding: bind across networks (Studio 2.5.3.60+)</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> Cloud mode works from anywhere; LAN-only keeps everything on your local network; the phone app talks through the cloud account.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Mode</th><th>What it gives you</th><th>Trade-offs</th></tr></thead>
+    <tbody>
+      <tr><td><b>Cloud (default)</b></td><td>Send jobs and watch the cameras from anywhere; Handy push notifications; remote start of AMS drying; MakerWorld "Print" buttons.</td><td>Needs an account and internet; files pass through Bambu's servers.</td></tr>
+      <tr><td><b>LAN-only</b></td><td>Printer reachable only inside your local network; live view and data sharing between devices on the same LAN.</td><td>No remote access from outside; Bambu documents a "send to built-in storage in LAN-only mode" option so you do not need a USB drive.</td></tr>
+      <tr><td><b>Offline / USB</b></td><td>Pre-sliced files from the printer's internal storage or a USB stick start from the touchscreen.</td><td>Hotend and filament assignment is baked into the file; you cannot change nozzles on the screen.</td></tr>
+    </tbody></table></div>
+
+  <div class="callout x2d"><span class="callout-title">Firmware features that changed the workflow</span>
+    <p>Firmware 01.01.00.00 (April 2026) added PIN-code binding (bind without being on the same local network), "send current plate to built-in storage and print" (no USB drive needed), the same for LAN-only mode, remote AMS drying, local timelapse storage, a Filament Switching Adapter (track switch) and High-Flow Hotend support. All of those need Studio 2.5.3.60 or later and Handy 3.18.0 or later.</p></div>
+
+  <h3>🔰 Quick-start: first slice</h3>
+  <ol class="steps">
+    <li><strong>Bind the printer</strong>Use the Device tab, add the X2D by PIN or on the same network. Studio then offers the printer preset automatically.</li>
+    <li><strong>Sync the AMS</strong>On the Prepare page click the small <i>sync</i> icon next to the filament list. Studio reads the AMS slots (type, color, remaining estimate) and shows them as your filament slots.</li>
+    <li><strong>Pick the plate type</strong>It must match the real build plate; the printer verifies this with its camera and pauses if it disagrees.</li>
+    <li><strong>Slice, review grouping, send.</strong>Check the filament-to-nozzle assignment (next section) before pressing Print.</li>
+  </ol>
+
+  <h2 id="nozzle-assignment">3. Nozzle assignment and filament grouping</h2>
+  <p>This is the single most X2D-specific concept in the slicer. Each filament used in a project is assigned to the <b>left (main) nozzle</b>, the <b>right (auxiliary) nozzle</b>, or, with a Filament Track Switch installed, to both dynamically. The assignment decides how many <i>filament changes</i> must happen inside one nozzle (slow, purge-heavy) versus <i>nozzle switches</i> (fast, little purge).</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 400" role="img" aria-label="Mock-up of the Bambu Studio prepare page showing a filament list with left and right nozzle badges and a grouping mode panel">
+      <rect class="d-surface" x="20" y="16" width="720" height="368" rx="10"/>
+      <rect class="f-gray" x="20" y="16" width="720" height="34" rx="10"/>
+      <text class="t-sm t-b" x="36" y="38">Prepare · Plate 1 · X2D 0.4 nozzle · Textured PEI</text>
+      <rect class="d-surface2" x="36" y="64" width="300" height="304" rx="8"/>
+      <text class="t t-b" x="50" y="88">Filaments</text>
+      <rect class="s-blue" x="50" y="100" width="18" height="18" rx="4"/>
+      <text class="t-sm" x="76" y="114">1  PLA Basic · blue</text>
+      <rect class="f-red" x="236" y="100" width="40" height="18" rx="9"/><text class="t-xs t-c t-b" x="256" y="113">L</text>
+      <text class="t-xs t-m" x="284" y="113">A1</text>
+      <rect class="s-yellow" x="50" y="130" width="18" height="18" rx="4"/>
+      <text class="t-sm" x="76" y="144">2  PLA Basic · yellow</text>
+      <rect class="f-red" x="236" y="130" width="40" height="18" rx="9"/><text class="t-xs t-c t-b" x="256" y="143">L</text>
+      <text class="t-xs t-m" x="284" y="143">A2</text>
+      <rect class="s-gray" x="50" y="160" width="18" height="18" rx="4"/>
+      <text class="t-sm" x="76" y="174">3  Support for PLA</text>
+      <rect class="f-teal" x="236" y="160" width="40" height="18" rx="9"/><text class="t-xs t-c t-b" x="256" y="173">R</text>
+      <text class="t-xs t-m" x="284" y="173">ext.</text>
+      <rect class="s-purple" x="50" y="190" width="18" height="18" rx="4"/>
+      <text class="t-sm" x="76" y="204">4  PETG · purple</text>
+      <rect class="f-orange" x="226" y="190" width="60" height="18" rx="9"/><text class="t-xs t-c t-b" x="256" y="203">L R</text>
+      <text class="t-xs t-m" x="296" y="203">dyn.</text>
+      <path class="d-grid" d="M50 226 H320"/>
+      <text class="t-xs t-m" x="50" y="244">L = left / main nozzle (direct drive)</text>
+      <text class="t-xs t-m" x="50" y="260">R = right / auxiliary nozzle (remote extruder)</text>
+      <text class="t-xs t-m" x="50" y="276">L R = dynamic mapping (Filament Track Switch)</text>
+      <rect class="f-purple" x="50" y="296" width="270" height="56" rx="8"/>
+      <text class="t-sm t-b" x="62" y="318">Mock-up: not a real screenshot</text>
+      <text class="t-xs" x="62" y="336">Badges and positions vary by Studio version.</text>
+      <rect class="d-surface2" x="356" y="64" width="368" height="304" rx="8"/>
+      <text class="t t-b" x="372" y="88">Filament grouping</text>
+      <circle class="f-green" cx="380" cy="118" r="8"/><circle class="s-green" cx="380" cy="118" r="4"/>
+      <text class="t-sm t-b" x="398" y="122">Filament-saving</text>
+      <text class="t-xs t-m" x="398" y="138">minimize flush waste; may ask you to move spools</text>
+      <circle class="f-gray" cx="380" cy="168" r="8"/>
+      <text class="t-sm t-b" x="398" y="172">Convenience</text>
+      <text class="t-xs t-m" x="398" y="188">keep each AMS on its own nozzle; no manual moves</text>
+      <circle class="f-gray" cx="380" cy="218" r="8"/>
+      <text class="t-sm t-b" x="398" y="222">Custom</text>
+      <text class="t-xs t-m" x="398" y="238">you drag each filament to L or R yourself</text>
+      <rect class="f-gray" x="372" y="258" width="16" height="16" rx="3"/>
+      <text class="t-sm" x="398" y="271">Enable smart filament assign (track switch only)</text>
+      <rect class="f-blue" x="372" y="296" width="130" height="34" rx="8"/><text class="t-sm t-c t-b" x="437" y="318">Regroup</text>
+      <rect class="f-green" x="620" y="324" width="88" height="34" rx="8"/><text class="t-sm t-c t-b" x="664" y="346">OK</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> Mock-up of the filament list and the grouping dialog. L/R badges show which nozzle a filament is assigned to; the three modes trade purge waste against convenience.</figcaption>
+  </figure>
+
+  <h3>🔧 How the AMS binds to nozzles</h3>
+  <p>On the X2D, an AMS is wired to the <b>filament buffer</b>, which has two filament channels. The upper channel leads to the left (main) hotend, the lower channel to the right (auxiliary) hotend through the auxiliary extruder. Bambu's first-print guide recommends connecting the AMS 2 Pro to the <b>upper</b> inlet so it feeds the left hotend, which has the widest filament compatibility. After first connection you run <i>AMS Setup</i> on the screen (Filament page): <b>Auto</b> mode feeds a filament and uses Hall sensors to learn which side the AMS is on; <b>Manual</b> mode lets you assign it when the AMS is empty. Once an AMS has fed filament to the extruder its icon turns gray and the pairing is locked.</p>
+  <p>Without a track switch the AMS-to-nozzle relationship is therefore <b>fixed</b>. With a single AMS on the main nozzle, the auxiliary nozzle can only use a spool fed through its own path. The Filament Track Switch (sold separately) breaks that binding: it has two inlets and two outlets and lets any AMS reach either nozzle. Two restrictions come with it: external spools are not supported while it is installed, and high-precision nozzle offset calibration currently cannot run with it fitted (remove it first).</p>
+
+  <h3>The three grouping modes</h3>
+  <ul>
+    <li><b>Filament-saving</b>: Studio searches for the grouping that minimizes flush waste and time. It may ask you to physically move spools to a different AMS or slot. Best for long, many-color jobs when you can rearrange before starting.</li>
+    <li><b>Convenience</b>: respects the current AMS-to-nozzle wiring so nobody has to touch spools. Slightly more purge waste. Best for unattended prints.</li>
+    <li><b>Custom</b>: you decide, drag by drag. Use this for support-material workflows where the grouping logic is obvious to you but not to the algorithm.</li>
+  </ul>
+  <div class="callout tip"><span class="callout-title">Dynamic mapping (with a track switch)</span>
+    <p>If a model uses different color pairs in different height ranges, static grouping can force two colors into the same nozzle in some range, so the other nozzle idles. Dynamic mapping lets a filament "borrow" the other nozzle for only the layers that need it. Studio then suggests which spools to put in which AMS. Bambu notes that actual print time approaches the slicer estimate when your placement follows the recommendation, because most color changes then happen <i>across</i> the two track-switch inlets, which is the fast path. It pays off for gradient or segmented-color models and long multi-color jobs; for simple two- or three-color models the normal dual-nozzle mode is enough.</p></div>
+
+  <h3>Aux-nozzle rules you must respect in the slicer</h3>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Topic</th><th>Main (left)</th><th>Auxiliary (right)</th></tr></thead>
+    <tbody>
+      <tr><td>Extruder type</td><td>Direct drive in the toolhead, servo motor</td><td>Stepper extruder on rear panel, feeds via PTFE tube</td></tr>
+      <tr><td>Print area (single nozzle)</td><td>256 × 256 × 260 mm</td><td>235.5 × 256 × 256 mm</td></tr>
+      <tr><td>Both nozzles on one plate</td><td colspan="2">Common area 235.5 × 256 × 256 mm</td></tr>
+      <tr><td>Max speed / acceleration</td><td>Normal profile limits</td><td>200 mm/s, about 1000 mm/s²</td></tr>
+      <tr><td>Flow dynamics calibration</td><td>Automatic supported</td><td>Manual in Studio</td></tr>
+      <tr><td>TPU</td><td>Yes (see <a href="tpu-and-flexibles.html">TPU page</a>)</td><td>Not supported</td></tr>
+      <tr><td>Best use</td><td>Visible surfaces, detail, difficult materials</td><td>Supports, interfaces, second material, non-critical color</td></tr>
+    </tbody></table></div>
+
+  <h2 id="flush">4. Flush volumes and the prime tower</h2>
+  <h3>🔰 Why purge at all?</h3>
+  <p>When a nozzle changes from one filament to another, the old color is still inside the melt zone. The printer pushes new filament through until the old one is gone; this purged plastic is called <b>flush</b> (or purge) and ends up in the waste chute or inside the prime tower. The amount depends on how dark and how different the colors are: going dark to light needs far more flushing than light to dark.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 360" role="img" aria-label="Mock-up of the flush volume matrix: rows are the filament being unloaded, columns the one being loaded, with a multiplier box">
+      <rect class="d-surface" x="20" y="14" width="720" height="332" rx="10"/>
+      <rect class="f-gray" x="20" y="14" width="720" height="34" rx="10"/>
+      <text class="t-sm t-b" x="36" y="36">Flushing volumes · mock-up (values are illustrative, not recommendations)</text>
+      <text class="t-sm t-c t-b" x="260" y="76">Load (to) →</text>
+      <text class="t-sm t-b" x="40" y="130">Unload</text>
+      <text class="t-sm t-b" x="40" y="146">(from) ↓</text>
+      <rect class="s-yellow" x="150" y="86" width="22" height="22" rx="4"/>
+      <rect class="s-blue" x="250" y="86" width="22" height="22" rx="4"/>
+      <rect class="s-black" x="350" y="86" width="22" height="22" rx="4"/>
+      <rect class="s-white d-thin" x="450" y="86" width="22" height="22" rx="4"/>
+      <rect class="s-yellow" x="104" y="118" width="22" height="22" rx="4"/>
+      <rect class="s-blue" x="104" y="168" width="22" height="22" rx="4"/>
+      <rect class="s-black" x="104" y="218" width="22" height="22" rx="4"/>
+      <rect class="s-white d-thin" x="104" y="268" width="22" height="22" rx="4"/>
+      <g class="t-sm t-c">
+        <rect class="f-gray" x="140" y="114" width="44" height="30" rx="4"/><text x="162" y="134">0</text>
+        <rect class="f-green" x="240" y="114" width="44" height="30" rx="4"/><text x="262" y="134">120</text>
+        <rect class="f-green" x="340" y="114" width="44" height="30" rx="4"/><text x="362" y="134">140</text>
+        <rect class="f-yellow" x="440" y="114" width="44" height="30" rx="4"/><text x="462" y="134">20</text>
+        <rect class="f-red" x="140" y="164" width="44" height="30" rx="4"/><text x="162" y="184">300</text>
+        <rect class="f-gray" x="240" y="164" width="44" height="30" rx="4"/><text x="262" y="184">0</text>
+        <rect class="f-green" x="340" y="164" width="44" height="30" rx="4"/><text x="362" y="184">140</text>
+        <rect class="f-yellow" x="440" y="164" width="44" height="30" rx="4"/><text x="462" y="184">40</text>
+        <rect class="f-red" x="140" y="214" width="44" height="30" rx="4"/><text x="162" y="234">400</text>
+        <rect class="f-red" x="240" y="214" width="44" height="30" rx="4"/><text x="262" y="234">320</text>
+        <rect class="f-gray" x="340" y="214" width="44" height="30" rx="4"/><text x="362" y="234">0</text>
+        <rect class="f-yellow" x="440" y="214" width="44" height="30" rx="4"/><text x="462" y="234">60</text>
+        <rect class="f-red" x="140" y="264" width="44" height="30" rx="4"/><text x="162" y="284">480</text>
+        <rect class="f-red" x="240" y="264" width="44" height="30" rx="4"/><text x="262" y="284">420</text>
+        <rect class="f-red" x="340" y="264" width="44" height="30" rx="4"/><text x="362" y="284">380</text>
+        <rect class="f-gray" x="440" y="264" width="44" height="30" rx="4"/><text x="462" y="284">0</text>
+      </g>
+      <rect class="f-blue" x="540" y="76" width="180" height="104" rx="8"/>
+      <text class="t-sm t-b" x="552" y="98">Flush volume multiplier</text>
+      <rect class="d-surface2" x="552" y="108" width="100" height="26" rx="6"/><text class="t-sm t-c" x="602" y="126">1.00</text>
+      <text class="t-xs" x="552" y="152">Scales the whole matrix.</text>
+      <text class="t-xs" x="552" y="166">Lower = less waste, more risk.</text>
+      <rect class="f-green" x="540" y="196" width="180" height="98" rx="8"/>
+      <text class="t-sm t-b" x="552" y="218">Reading the matrix</text>
+      <text class="t-xs" x="552" y="236">Dark → light: big numbers.</text>
+      <text class="t-xs" x="552" y="252">Light → dark: small numbers.</text>
+      <text class="t-xs" x="552" y="268">Diagonal: same filament = 0.</text>
+      <text class="t-xs t-m" x="150" y="322">Colors show the swatches of the loaded filaments; red cells = large flush, green = moderate, yellow = small.</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> Illustrative flush-volume matrix: each cell is the amount purged when going from the row color to the column color. Numbers are examples only.</figcaption>
+  </figure>
+
+  <p>Studio fills the matrix automatically from the colors of the loaded filaments (it computes how different two colors look), and you can edit any cell. A <b>multiplier</b> scales the whole table. The X2D changes the economics in two ways:</p>
+  <ul>
+    <li><b>Nozzle switches replace much purging.</b> Switching from the left to the right nozzle swaps which hot melt is in front, so there is no color change inside either nozzle. Bambu cites faster color changes and less waste for multi-color and support-heavy models.</li>
+    <li><b>Flush is per nozzle.</b> The matrix applies to changes <i>inside the same nozzle</i>. A good grouping puts colors that change often on <i>different</i> nozzles.</li>
+  </ul>
+  <div class="callout warn"><span class="callout-title">Do not slash flush volumes blindly</span>
+    <p>Reducing the multiplier saves plastic but can leave a ghost of the previous color. Reduce it in small steps (for example 10 percent at a time) with a test print that goes from dark to light, and keep a note of the value that still looks clean. Exercise <a href="../exercises/x2d-challenges.html#X-3">X-3</a> turns this into a structured experiment.</p></div>
+
+  <h3>Prime tower on a dual-nozzle printer</h3>
+  <p>People often ask why the X2D needs a prime tower at all if it has two nozzles. Bambu's FAQ gives the reason: during travel or a nozzle switch a small amount of filament may remain in the nozzle, and the prime tower cleans that residue and <b>stabilizes pressure inside the nozzle</b> so the next surface does not show a defect. Keep it on for multi-material jobs, and consider these tweaks:</p>
+  <ul>
+    <li>Place the tower where the toolhead will not have to travel over tall parts. Closer to the objects means shorter, faster visits.</li>
+    <li>Use fewer, thicker tower layers for a faster tower, but keep it wide enough to be stable (a wobbling tower is a common cause of a failed multi-color print).</li>
+    <li>For the same filament across many objects, print one plate at a time rather than piling distinct colors onto one plate.</li>
+    <li>Supports printed on the other nozzle in a <i>different</i> material often need no flushing against the model at all: the transition happens through a nozzle switch.</li>
+  </ul>
+
+  <h2 id="calibrations">5. Calibrations: what runs, when, and why</h2>
+  <p>The X2D automates a lot, but "automatic" does not mean "never think about it". These are the calibrations in the printer's Calibration menu and the send dialog, and what each one protects you from.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 340" role="img" aria-label="Timeline of calibrations: motor noise cancellation and vibration compensation after maintenance, bed leveling before each print, flow dynamics per filament, nozzle offset after hotend changes">
+      <path class="d-ink arrow" d="M30 170 H735"/>
+      <g>
+        <circle class="f-purple" cx="90" cy="170" r="12"/>
+        <text class="t-sm t-c t-b" x="90" y="130">After lubrication,</text>
+        <text class="t-sm t-c t-b" x="90" y="146">moving, repairs</text>
+        <rect class="f-purple" x="25" y="200" width="130" height="86" rx="8"/>
+        <text class="t-xs t-c" x="90" y="220">Motor noise cancel.</text>
+        <text class="t-xs t-c" x="90" y="238">Vibration compens.</text>
+        <text class="t-xs t-c" x="90" y="256">Auto bed leveling</text>
+        <text class="t-xs t-c t-m" x="90" y="274">(full calibration)</text>
+      </g>
+      <g>
+        <circle class="f-blue" cx="260" cy="170" r="12"/>
+        <text class="t-sm t-c t-b" x="260" y="130">Before prints</text>
+        <rect class="f-blue" x="195" y="200" width="130" height="86" rx="8"/>
+        <text class="t-xs t-c" x="260" y="220">Auto bed leveling</text>
+        <text class="t-xs t-c" x="260" y="238">(toggle in send dialog)</text>
+        <text class="t-xs t-c" x="260" y="256">High-temp leveling</text>
+        <text class="t-xs t-c" x="260" y="274">for ABS/ASA/PC/PA</text>
+      </g>
+      <g>
+        <circle class="f-orange" cx="430" cy="170" r="12"/>
+        <text class="t-sm t-c t-b" x="430" y="130">Per filament</text>
+        <rect class="f-orange" x="365" y="200" width="130" height="86" rx="8"/>
+        <text class="t-xs t-c" x="430" y="220">Flow dynamics (K)</text>
+        <text class="t-xs t-c" x="430" y="238">main: automatic</text>
+        <text class="t-xs t-c" x="430" y="256">aux: manual</text>
+        <text class="t-xs t-c" x="430" y="274">in Studio</text>
+      </g>
+      <g>
+        <circle class="f-red" cx="600" cy="170" r="12"/>
+        <text class="t-sm t-c t-b" x="600" y="130">After hotend work</text>
+        <rect class="f-red" x="535" y="200" width="130" height="86" rx="8"/>
+        <text class="t-xs t-c" x="600" y="220">Nozzle offset</text>
+        <text class="t-xs t-c" x="600" y="238">High-precision offset</text>
+        <text class="t-xs t-c" x="600" y="256">(toolhead camera)</text>
+        <text class="t-xs t-c" x="600" y="274">not with track switch</text>
+      </g>
+      <text class="t-xs t-m" x="30" y="322">Also available: first-layer calibration, motion accuracy calibration (optional vision encoder), live-view camera calibration.</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> Which calibration answers which event. Treat the diagram as a decision aid: the trigger on top, the calibrations below.</figcaption>
+  </figure>
+
+  <h3>Auto bed leveling and high-temperature leveling</h3>
+  <p>Auto bed leveling (ABL) probes the plate and builds a height map that the firmware uses to compensate small tilt or bow. You can switch it on or off per print in the send dialog and in the on-screen advanced options. For <b>ABS, ASA, PC and PA</b> Bambu recommends running <b>high-temperature bed leveling</b> first, because the heatbed and the frame expand when hot and a cold map is then slightly wrong. Run it again after moving the printer, after long storage, or after any work on the heatbed.</p>
+  <p>If the first layer is still too thin in one area, the support documentation's escalation path is: run first-layer calibration, then heat the bed to about 55 °C for 5 minutes and re-check, check the four bed screws, and only then consider manual leveling through G-code with an A4 sheet of paper. Patterns that appear in a fixed spot usually point to oil on the plate rather than a leveling problem.</p>
+
+  <h3>Vibration compensation and motor noise cancellation</h3>
+  <p>Vibration compensation measures the resonance of the toolhead and plans input shaping against it so fast moves do not leave ringing (ghost ripples behind corners). Motor noise cancellation tunes the stepper drive to reduce motor sound. Both are quick and belong in the "full calibration" set that you run after lubricating the rods or screws. Because the speed modes scale both print speed and acceleration (Silent 50 %, Standard 100 %, Sport 124 %, Ludicrous 166 %), a clean vibration calibration is what keeps Sport and Ludicrous presentable.</p>
+
+  <h3>Flow dynamics calibration (auto and manual)</h3>
+  <p>Flow dynamics calibration finds the <b>K value</b> that tells the firmware how to anticipate pressure in the nozzle: it sharpens corners and avoids bulges at starts and ends of lines. In the filament preset you will see the choice <b>Auto</b> or <b>Off</b>:</p>
+  <ul>
+    <li><b>Auto</b>: the printer runs the calibration for the main extruder before the print and caches the result per filament. This is the right default for the left nozzle.</li>
+    <li><b>Off</b>: uses the stored K from the preset. Bambu advises this for TPU, along with leaving the volumetric speed alone.</li>
+    <li><b>Auxiliary extruder</b>: not automatic; calibrate manually from Studio's calibration page. Plan to do this once per filament type you intend to run on the right nozzle, and save the result in a user filament preset.</li>
+  </ul>
+  <div class="callout x2d"><span class="callout-title">Why the aux K is so different</span>
+    <p>The auxiliary extruder sits on the rear panel and pushes filament through a 525 mm PTFE tube. The tube stretches, rubs and stores pressure, so a successful correction needs a much larger K and a much longer retraction. This is exactly why Bambu markets the right nozzle for supports and lower-priority surfaces.</p></div>
+
+  <h2 id="chamber-drying">6. Chamber temperature, airflow and AMS drying</h2>
+  <p>Three controls influence the heat around your part: the <b>heatbed</b>, the <b>chamber</b> setpoint (active heating up to 65 °C using a PTC heater and a circulation fan) and the <b>air-condition mode</b> (Strong Cooling or Heating). In the filament preset there is a field for chamber temperature; on the printer's screen the Controls tab exposes the same setting live.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 360" role="img" aria-label="Mock-up of the printer control screen showing chamber temperature, bed temperature, air condition mode, speed mode and an AMS drying panel">
+      <rect class="d-surface" x="20" y="14" width="720" height="332" rx="12"/>
+      <rect class="f-gray" x="20" y="14" width="720" height="32" rx="12"/>
+      <text class="t-sm t-b" x="36" y="35">Printer touchscreen · Controls · mock-up (not a screenshot)</text>
+      <rect class="d-surface2" x="36" y="62" width="206" height="124" rx="8"/>
+      <text class="t-sm t-b" x="48" y="84">Temperatures</text>
+      <text class="t-xs" x="48" y="106">Nozzle L / R</text><text class="t-xs t-r" x="230" y="106">0 / 0 °C</text>
+      <text class="t-xs" x="48" y="126">Bed</text><text class="t-xs t-r" x="230" y="126">0 / 0 °C</text>
+      <text class="t-xs" x="48" y="146">Chamber</text><text class="t-xs t-r" x="230" y="146">0 / 0 °C</text>
+      <text class="t-xs t-m" x="48" y="172">Chamber setpoint up to 65 °C</text>
+      <rect class="d-surface2" x="254" y="62" width="226" height="124" rx="8"/>
+      <text class="t-sm t-b" x="266" y="84">Air condition</text>
+      <rect class="f-blue" x="266" y="96" width="90" height="34" rx="8"/><text class="t-sm t-c" x="311" y="118">Cooling</text>
+      <rect class="f-orange" x="368" y="96" width="100" height="34" rx="8"/><text class="t-sm t-c" x="418" y="118">Heating</text>
+      <text class="t-xs t-m" x="266" y="152">Cooling: PLA / TPU</text>
+      <text class="t-xs t-m" x="266" y="170">Heating: ABS / ASA / PC / PA</text>
+      <rect class="d-surface2" x="492" y="62" width="232" height="124" rx="8"/>
+      <text class="t-sm t-b" x="504" y="84">Speed mode</text>
+      <rect class="f-gray" x="504" y="96" width="50" height="28" rx="6"/><text class="t-xs t-c" x="529" y="115">50%</text>
+      <rect class="f-green" x="560" y="96" width="50" height="28" rx="6"/><text class="t-xs t-c" x="585" y="115">100%</text>
+      <rect class="f-gray" x="616" y="96" width="50" height="28" rx="6"/><text class="t-xs t-c" x="641" y="115">124%</text>
+      <rect class="f-gray" x="672" y="96" width="44" height="28" rx="6"/><text class="t-xs t-c" x="694" y="115">166%</text>
+      <text class="t-xs t-m" x="504" y="148">Silent · Standard · Sport · Ludicrous</text>
+      <rect class="d-surface2" x="36" y="200" width="444" height="132" rx="8"/>
+      <text class="t-sm t-b" x="48" y="222">AMS 2 Pro · drying</text>
+      <rect class="f-purple" x="48" y="234" width="60" height="22" rx="6"/><text class="t-xs t-c" x="78" y="249">Slot 1</text>
+      <rect class="f-purple" x="114" y="234" width="60" height="22" rx="6"/><text class="t-xs t-c" x="144" y="249">Slot 2</text>
+      <rect class="f-gray" x="180" y="234" width="60" height="22" rx="6"/><text class="t-xs t-c" x="210" y="249">Slot 3</text>
+      <rect class="f-gray" x="246" y="234" width="60" height="22" rx="6"/><text class="t-xs t-c" x="276" y="249">Slot 4</text>
+      <text class="t-xs" x="48" y="278">Temperature [ 55 °C ]   Time [ 8 h ]   Mode [ rotating ]</text>
+      <rect class="f-green" x="48" y="288" width="90" height="30" rx="8"/><text class="t-sm t-c t-b" x="93" y="308">Start</text>
+      <text class="t-xs t-m" x="156" y="308">Values shown are placeholders in a mock-up.</text>
+      <rect class="d-surface2" x="492" y="200" width="232" height="132" rx="8"/>
+      <text class="t-sm t-b" x="504" y="222">Toolbox</text>
+      <text class="t-xs" x="504" y="244">• Dry filament</text>
+      <text class="t-xs" x="504" y="262">• Linear rod cleaning</text>
+      <text class="t-xs" x="504" y="280">• Lead screw lubrication</text>
+      <text class="t-xs" x="504" y="298">• Nozzle cold-pull maintenance</text>
+      <text class="t-xs" x="504" y="316">• Heating base maintenance mode</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> Mock-up of the control screen: temperatures, air-condition mode, speed mode, AMS drying and the toolbox. Names follow Bambu's documentation; the layout is simplified.</figcaption>
+  </figure>
+
+  <h3>How the chamber behaves</h3>
+  <ul>
+    <li>The heater runs at full power with the circulation fan at maximum until the setpoint is reached; then the fan drops to about 40 % and heater power is reduced to hold temperature.</li>
+    <li>After homing, the toolhead raises to a Z position of about 160 mm (below the vent) so the heated air is not pushed straight out.</li>
+    <li><b>Heatbed pre-heat strategy.</b> If the bed temperature is 90 °C or below, the printer pre-heats about 5 minutes; if it is 90 °C or above, about 30 minutes, because active chamber control is not yet triggered at the first layer and the bed slowly lifts the chamber above 50 °C. Do not skip that soak for ABS/ASA/PC/PA.</li>
+    <li>In <b>Heating</b> mode the right-hand fan becomes a filtration fan that recirculates air through the filter; in <b>Strong Cooling</b> mode it draws fresh outside air and the exhaust fan runs, which suits PLA and TPU.</li>
+  </ul>
+  <p>The full material strategy lives on the <a href="engineering-and-chamber.html">Engineering and chamber</a> page. In Studio the typical rule is: put the chamber temperature in the filament preset, not in the process, so the value follows the material.</p>
+
+  <h3>AMS drying controls</h3>
+  <p>The AMS 2 Pro has two heating modules (maximum 65 °C, reached only when the ambient temperature is about 25 °C or higher), active vents, a sealed lid and a humidity/temperature sensor between slots 2 and 3. Drying can start from the printer, from Studio's AMS panel, or remotely from Handy. Choose between two modes:</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Mode</th><th>How it works</th><th>Use it for</th></tr></thead>
+    <tbody>
+      <tr><td><b>Rotating</b></td><td>Filament is pulled back onto the spool and the spool turns about 30° every 5 minutes for even drying.</td><td>Most spools; the safer, more uniform mode.</td></tr>
+      <tr><td><b>Static</b></td><td>Filament stays in the feeder; no rotation.</td><td>Not for low-softening materials such as PLA, PVA or TPU (risk of deformation).</td></tr>
+    </tbody></table></div>
+  <div class="callout warn"><span class="callout-title">Drying rules from the documentation</span>
+    <p>Do not dry high-temperature and low-temperature filaments in the same AMS at the same time (the cooler spool deforms). Drying needs the 6-pin connection to the printer; there is no offline mode. Print-while-drying exists since firmware 01.01.00.00, but drying power is reduced while the printer is printing and feeding unless the AMS has an additional power supply (an official 24 V / 4 A adapter is recommended). Replace the desiccant when it turns from yellow to purple, or after about 4 to 6 weeks of continuous use.</p></div>
+
+  <h3>Filament sync and AMS options</h3>
+  <p>Click the sync button next to the filament list to import the AMS slot contents. Studio reads the RFID tag of Bambu spools (type, color, remaining estimate); third-party spools appear as generic entries that you set by hand. On the printer, <b>AMS options</b> cover <i>Read on insertion</i>, <i>Read on startup</i>, <i>Auto-refill</i> (switches to another spool when one runs out; works only with identical brand, type and color on the same side, left-left or right-right) and <i>Arrange AMS order</i>. If you re-assign a slot, use <i>Re-read</i> so the remaining estimate resets.</p>
+  <div class="callout tip"><span class="callout-title">Third-party spools</span>
+    <p>For non-RFID filament set material, color and a user filament preset by hand, then save it. A named preset per brand and material (for example "Brand-X PETG 0.4") is what makes a reproducible workflow possible. Third-party carbon- or glass-fiber filament can wear PTFE tubes faster than the tuned official ones; see the <a href="maintenance-and-troubleshooting.html">maintenance page</a>.</p></div>
+
+  <h2 id="plates">7. Plate type, adhesion and the send dialog</h2>
+  <p>The plate type chosen in Studio selects the bed temperature curve and first-layer behavior, and the printer cross-checks it. The X2D supports 256 × 256 mm plates; the first-generation plate size is not supported. If the plate cannot be identified the screen offers <i>Ignore</i>. Common choices:</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Plate</th><th>Typical use</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><b>Textured PEI</b> (supplied)</td><td>PLA, PETG, ABS, ASA, PC and more; both sides usable</td><td>No glue for PLA; do not touch with fingers; wash with warm water and dish soap. Glue on textured PEI causes excess adhesion with TPU.</td></tr>
+      <tr><td><b>Smooth PEI / high-temp plate</b></td><td>Smooth bottom surface, high-temperature materials</td><td>Glue stick recommended for TPU as release agent and adhesion aid.</td></tr>
+      <tr><td><b>Engineering plate</b></td><td>PA and CF blends, TPU</td><td>Used with glue where recommended in the research for TPU.</td></tr>
+      <tr><td><b>Cool plate</b></td><td>PLA only (heatbed typically 35–45 °C)</td><td>Not for TPU; not for high-temperature materials.</td></tr>
+    </tbody></table></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 320" role="img" aria-label="Mock-up of the send to printer dialog with plate type, auto bed leveling and nozzle-filament mapping">
+      <rect class="d-surface" x="130" y="12" width="500" height="296" rx="12"/>
+      <rect class="f-gray" x="130" y="12" width="500" height="32" rx="12"/>
+      <text class="t-sm t-b" x="148" y="33">Send to printer · mock-up</text>
+      <text class="t-sm t-b" x="148" y="68">Printer</text>
+      <rect class="d-surface2" x="148" y="76" width="464" height="28" rx="6"/><text class="t-sm" x="160" y="95">X2D · online</text>
+      <text class="t-sm t-b" x="148" y="128">Filament mapping</text>
+      <rect class="f-red" x="148" y="136" width="30" height="22" rx="6"/><text class="t-xs t-c" x="163" y="151">L</text>
+      <text class="t-xs" x="188" y="151">F1 PLA blue  →  AMS A1</text>
+      <rect class="f-red" x="148" y="164" width="30" height="22" rx="6"/><text class="t-xs t-c" x="163" y="179">L</text>
+      <text class="t-xs" x="188" y="179">F2 PLA white →  AMS A2</text>
+      <rect class="f-teal" x="148" y="192" width="30" height="22" rx="6"/><text class="t-xs t-c" x="163" y="207">R</text>
+      <text class="t-xs" x="188" y="207">F3 Support  →  AMS B1</text>
+      <text class="t-sm t-b" x="400" y="128">Options</text>
+      <rect class="f-green" x="400" y="138" width="16" height="16" rx="3"/><text class="t-xs" x="424" y="151">Auto bed leveling</text>
+      <rect class="f-green" x="400" y="162" width="16" height="16" rx="3"/><text class="t-xs" x="424" y="175">Timelapse</text>
+      <rect class="f-gray" x="400" y="186" width="16" height="16" rx="3"/><text class="t-xs" x="424" y="199">Flow dynamics calibration</text>
+      <rect class="f-gray" x="400" y="210" width="16" height="16" rx="3"/><text class="t-xs" x="424" y="223">Send to built-in storage</text>
+      <rect class="f-blue" x="148" y="256" width="120" height="34" rx="8"/><text class="t-sm t-c t-b" x="208" y="278">Send</text>
+      <text class="t-xs t-m" x="284" y="278">Check every filament–nozzle pair before pressing Send.</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> Mock-up of the send dialog. Verify the nozzle for every filament, and decide on leveling, timelapse and flow-dynamics toggles.</figcaption>
+  </figure>
+
+  <h2 id="timelapse">8. Timelapse, AI detection and monitoring</h2>
+  <p>The X2D has a 1080p live-view camera and a 1600 × 1200 toolhead camera. Timelapse can be recorded in two ways: stored to a USB drive, or, since firmware 01.01.00.00, <b>stored locally inside the printer</b>. Without a USB drive there is no video recording and no log export on older workflows, so keep a drive formatted FAT32 or exFAT (USB-A 2.0; 32 to 64 GB recommended) plugged in if you rely on them.</p>
+  <ul>
+    <li><b>Traditional timelapse</b> pauses the toolhead at the same position each layer; it gives a smooth film but adds time. <b>Smooth</b> style recording typically moves less; treat "adds time" as an expectation to check on your slice preview.</li>
+    <li><b>Print options</b> on the screen include spaghetti detection, purge-chute pile-up detection and nozzle-clumping detection, each with sensitivity High / Medium / Low (Low is meant for overnight runs where false stops are costly). Spaghetti detection needs the chamber light on, and dark filaments reduce reliability.</li>
+    <li>Other checks: plate type and alignment detection, foreign-object detection, printed-part displacement detection, auto-recovery from step loss, motion accuracy enhancement and "purify air at print end" (needs the external exhaust fan).</li>
+  </ul>
+
+  <h2 id="per-object">9. Per-object settings, modifiers and supports</h2>
+  <p>Right-click an object and choose <i>Add settings</i> to override process values for just that object, or add a <b>modifier</b> (a box, cylinder or sphere that carries its own settings for the region it covers). Combined with the second nozzle this unlocks workflows that no single-nozzle printer offers.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 340" role="img" aria-label="Mock-up of per-object settings: an object list with overrides and a modifier box over a bracket cross-section, with the support interface assigned to the right nozzle">
+      <rect class="d-surface" x="20" y="14" width="720" height="312" rx="10"/>
+      <rect class="d-surface2" x="36" y="30" width="250" height="280" rx="8"/>
+      <text class="t-sm t-b" x="48" y="52">Objects</text>
+      <text class="t-sm" x="48" y="78">▾ bracket.stl</text>
+      <text class="t-xs t-m" x="66" y="98">walls: 4 (override)</text>
+      <text class="t-xs t-m" x="66" y="116">infill: 40 % gyroid</text>
+      <text class="t-sm" x="48" y="142">  ▸ modifier: cylinder</text>
+      <text class="t-xs t-m" x="66" y="160">walls: 6 around holes</text>
+      <text class="t-sm" x="48" y="188">▾ gasket.stl</text>
+      <text class="t-xs t-m" x="66" y="208">filament: TPU, left nozzle</text>
+      <text class="t-xs t-m" x="66" y="226">speed: slow, TPU limits</text>
+      <rect class="f-purple" x="48" y="248" width="226" height="46" rx="6"/>
+      <text class="t-xs" x="58" y="266">Overrides apply on top of the</text>
+      <text class="t-xs" x="58" y="282">process preset for that part only.</text>
+      <rect class="d-surface2" x="306" y="30" width="418" height="280" rx="8"/>
+      <text class="t-sm t-b" x="322" y="52">Cross-section (schematic)</text>
+      <rect class="f-blue" x="360" y="190" width="250" height="40" rx="4"/>
+      <rect class="f-blue" x="360" y="110" width="40" height="80" rx="4"/>
+      <circle class="d-surface" cx="480" cy="210" r="11"/>
+      <circle class="d-surface" cx="560" cy="210" r="11"/>
+      <rect class="s-orange d-dash" x="440" y="170" width="160" height="80" rx="6"/>
+      <text class="t-xs t-c" x="520" y="268">modifier: more walls</text>
+      <rect class="f-teal" x="400" y="150" width="110" height="38" rx="2"/>
+      <text class="t-xs t-c" x="455" y="173">support (R)</text>
+      <path class="d-ink arrow" d="M455 285 V232"/>
+      <text class="t-xs t-m" x="470" y="296">interface layers: different filament via nozzle switch</text>
+      <text class="t-xs t-m" x="322" y="100">main body: left nozzle</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> Schematic of object-level overrides: more walls around bolt holes through a modifier, and support material assigned to the right nozzle.</figcaption>
+  </figure>
+
+  <div class="callout trick"><span class="callout-title">Per-object tricks worth knowing</span>
+    <p>(1) Give functional parts more walls than decorative ones on the same plate. (2) Assign the support and support-interface filament to the right nozzle; because that is a nozzle switch rather than a filament swap, little purging is needed. (3) For a mixed TPU and rigid assembly, assign TPU to the left nozzle only, at TPU speeds. (4) Use "avoid crossing walls" for objects that sit next to each other so the nozzle does not drag a blob across a finished surface. See <a href="recipes.html">the recipes</a> for complete examples.</p></div>
+
+  <h2 id="quality">10. Quality and speed profiles</h2>
+  <p>System process presets are named for layer height and goal (for example "0.20 mm Standard", "0.12 mm Fine", "0.28 mm Extra Draft"). Treat the names as <b>starting points</b>. Four independent levers control speed and quality:</p>
+  <ol class="steps">
+    <li><strong>Layer height.</strong>Thinner layers look better and print slower. Taller layers on a larger nozzle (a 0.6 mm or 0.8 mm hotend) are the biggest time saver for functional parts.</li>
+    <li><strong>Print speeds and accelerations in the process.</strong>Outer wall slower than inner wall and infill gives better surfaces.</li>
+    <li><strong>Volumetric speed limit in the filament preset.</strong>This caps mm³/s and therefore the real ceiling for each material. Bambu advises against raising it for TPU. Standard hotends have a lower ceiling than the optional high-flow hotends, which Bambu claims can cut print time by up to 30 %.</li>
+    <li><strong>Printer speed mode.</strong>Silent 50 %, Standard 100 %, Sport 124 %, Ludicrous 166 % of both speed and acceleration. Higher modes are only as good as the filament's volumetric limit and the cooling.</li>
+  </ol>
+
+  <div class="bars">
+    <div class="bars-title">Printer speed modes (relative to Standard)</div>
+    <div class="bar blue"><span>Silent</span><i style="--v:30%"></i><em>50 %</em></div>
+    <div class="bar green"><span>Standard</span><i style="--v:60%"></i><em>100 %</em></div>
+    <div class="bar orange"><span>Sport</span><i style="--v:74%"></i><em>124 %</em></div>
+    <div class="bar red"><span>Ludicrous</span><i style="--v:100%"></i><em>166 %</em></div>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 300" role="img" aria-label="Quality versus time trade-off: three layer heights and which nozzle sizes suit them">
+      <path class="d-ink arrow" d="M70 250 V30"/>
+      <path class="d-ink arrow" d="M70 250 H730"/>
+      <text class="t-sm t-b" x="40" y="22">Surface quality</text>
+      <text class="t-sm t-b" x="600" y="276">Print time (lower speed / thinner layers →)</text>
+      <path class="d-mute d-dash" d="M110 60 C 250 70 420 130 690 230"/>
+      <circle class="f-green" cx="130" cy="62" r="12"/><text class="t-xs t-c t-b" x="130" y="66">F</text>
+      <circle class="f-blue" cx="330" cy="100" r="12"/><text class="t-xs t-c t-b" x="330" y="104">S</text>
+      <circle class="f-orange" cx="520" cy="170" r="12"/><text class="t-xs t-c t-b" x="520" y="174">D</text>
+      <text class="t-xs" x="150" y="50">F = fine 0.08–0.12 mm</text>
+      <text class="t-xs" x="352" y="90">S = standard 0.16–0.20 mm</text>
+      <text class="t-xs" x="542" y="160">D = draft / strong, 0.24–0.4 mm</text>
+      <text class="t-xs t-m" x="100" y="290">Typical ranges for illustration only. Larger layers need larger nozzles (0.6 / 0.8 mm).</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> The classic trade-off. The dashed curve is conceptual; the exact layer heights available depend on the nozzle size you fit.</figcaption>
+  </figure>
+
+  <h2 id="sharing">11. Sharing projects: .3mf and .gcode.3mf</h2>
+  <p>Bambu Studio saves two flavors of project file, and knowing the difference prevents many "it printed differently on your machine" mysteries:</p>
+  <ul>
+    <li><b>.3mf (project)</b>: models, plate layout, all presets and per-object settings. Anyone with Bambu Studio can open it, change anything and re-slice. Share this for collaboration or MakerWorld uploads.</li>
+    <li><b>.gcode.3mf (sliced plate)</b>: the same container plus the toolpaths for a particular printer, nozzle assignment and filament set. It can be printed directly from internal storage, USB or the cloud, with no slicing step. The X2D's built-in and USB models are <b>pre-sliced for the main hotend</b>: choosing a hotend or per-nozzle filaments is only possible by slicing in Bambu Studio.</li>
+  </ul>
+  <div class="callout x2d"><span class="callout-title">Checklist before sharing a sliced file</span>
+    <p>Name the filament types and nozzle size in the file name (<i>bracket_PETG_0.4_X2D.gcode.3mf</i>), say which AMS slots the recipient must fill, and mention the plate type. A sliced file for a 0.4 mm nozzle will not be accepted on a printer with a different nozzle size and the plate-type check will pause a mismatch, so include those facts as plain text.</p></div>
+
+  <h2 id="firmware">12. Firmware, Studio and Handy updates</h2>
+  <p>Bambu ships major X2D firmware roughly every three months with smaller fixes in between. The first public releases already show how much the workflow evolves:</p>
+  <ul class="timeline">
+    <li><b>01.01.00.00 (April 2026)</b>: Filament Track Switch support, print-while-drying, remote drying, high-flow hotend support, local timelapse, AI popups with snapshots, low-power heatbed, under-bed foreign-object check, first-layer quality calibration, print-loosening detection, PIN binding and heating-base maintenance mode. Requires Studio 2.5.3.60+ and Handy 3.18.0+.</li>
+    <li><b>01.01.01.00 (May 2026)</b>: Z-motor noise reduction, abnormal toolhead-change detection, auxiliary loading fixes, AMS 2 Pro drying power-loss fix.</li>
+    <li><b>01.02.00.00 (July 2026)</b>: motors may be powered off while drying in the chamber, better spaghetti detection, live-view camera calibration no longer required.</li>
+  </ul>
+  <div class="callout tip"><span class="callout-title">Update etiquette</span>
+    <p>Update between jobs, never during one; keep Studio, Handy and printer firmware in step (a feature may need all three); and read the release notes for changes to calibrations before an important print. After an update that touches motion or leveling, run the full calibration once.</p></div>
+
+  <h2 id="starting-profiles">13. Recommended starting profiles by material</h2>
+  <div class="callout warn"><span class="callout-title">These are starting points, not guarantees</span>
+    <p>Numbers marked with <span class="chip blue">doc</span> come from Bambu's published material for the X2D. All others are <span class="chip yellow">typical</span> ranges that spool manufacturers and the wider community commonly use; check the spool label and adjust from a test print. Your spool, your room, your plate.</p></div>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Material</th><th>Nozzle</th><th>Plate (typical)</th><th>Bed</th><th>Chamber / air mode</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><b>PLA (Basic)</b></td><td>Left; right is fine for supports</td><td>Cool plate or textured PEI</td><td>35–45 °C on cool plate <span class="chip blue">doc</span></td><td>No heating; Strong Cooling <span class="chip blue">doc</span></td><td>Open door or lid not needed; vent with exhaust if enabled.</td></tr>
+      <tr><td><b>PETG</b></td><td>Left; right possible with caution</td><td>Textured PEI</td><td>typical 70–80 °C</td><td>No active heating needed (typical)</td><td>Use glue stick on smooth plates only.</td></tr>
+      <tr><td><b>ABS / ASA</b></td><td>Left; right allowed (rated with caution)</td><td>Textured PEI or engineering plate</td><td>100–110 °C <span class="chip blue">doc</span></td><td>Heating mode, heat-soak per section 6 <span class="chip blue">doc</span></td><td>High-temperature bed leveling first <span class="chip blue">doc</span>; recommended filter on.</td></tr>
+      <tr><td><b>PC / PC blends</b></td><td>Left (0.4 mm or larger); right rated OK</td><td>Textured PEI / engineering plate</td><td>100–110 °C <span class="chip blue">doc</span></td><td>Heating mode, long soak</td><td>Dry thoroughly; see the engineering page.</td></tr>
+      <tr><td><b>PA / PAHT / CF blends</b></td><td>Left (hardened nozzle already fitted)</td><td>Engineering plate</td><td>typical 80–100 °C</td><td>Heating mode</td><td>Dry before use; aux rating varies (PA6-CF not recommended on aux).</td></tr>
+      <tr><td><b>TPU 85A / 90A / 95A HF</b></td><td>Left ONLY <span class="chip blue">doc</span></td><td>Engineering, smooth PEI or textured PEI; not cool plate <span class="chip blue">doc</span></td><td>30–35 °C <span class="chip blue">doc</span></td><td>No heating; Strong Cooling <span class="chip blue">doc</span></td><td>Nozzle 225 °C <span class="chip blue">doc</span>; flow dynamics Auto or Off; default volumetric speed.</td></tr>
+      <tr><td><b>Support (PLA/PETG family)</b></td><td>Right nozzle</td><td>—</td><td>follows model</td><td>follows model</td><td>Rated on both nozzles <span class="chip blue">doc</span>.</td></tr>
+    </tbody></table></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 340" role="img" aria-label="Chart of the heatbed temperature ranges that apply to PLA, TPU, and ABS or PC, based on documented values">
+      <path class="d-ink arrow" d="M80 290 V20"/>
+      <path class="d-ink arrow" d="M80 290 H730"/>
+      <text class="t-sm t-b" x="20" y="20">Bed °C</text>
+      <g class="d-grid"><path d="M80 250 H730"/><path d="M80 210 H730"/><path d="M80 170 H730"/><path d="M80 130 H730"/><path d="M80 90 H730"/><path d="M80 50 H730"/></g>
+      <text class="t-xs t-r" x="74" y="254">20</text><text class="t-xs t-r" x="74" y="214">40</text><text class="t-xs t-r" x="74" y="174">60</text><text class="t-xs t-r" x="74" y="134">80</text><text class="t-xs t-r" x="74" y="94">100</text><text class="t-xs t-r" x="74" y="54">120</text>
+      <rect class="f-green" x="120" y="226" width="110" height="24" rx="3"/>
+      <text class="t-xs t-c" x="175" y="270">PLA</text><text class="t-xs t-c t-b" x="175" y="244">35–45</text>
+      <rect class="f-teal" x="300" y="246" width="110" height="10" rx="3"/>
+      <text class="t-xs t-c" x="355" y="270">TPU</text><text class="t-xs t-c t-b" x="355" y="238">30–35</text>
+      <rect class="f-red" x="480" y="70" width="110" height="40" rx="3"/>
+      <text class="t-xs t-c" x="535" y="270">ABS / PC</text><text class="t-xs t-c t-b" x="535" y="94">100–110</text>
+      <path class="d-dash d-ink" d="M80 50 H730"/>
+      <text class="t-xs t-m" x="600" y="44">printer maximum 120 °C</text>
+      <text class="t-xs t-m" x="100" y="320">Values are the documented typical bed ranges from Bambu's X2D material; chamber setpoint is separate (up to 65 °C).</text>
+    </svg>
+    <figcaption><b>Figure 10.</b> Documented bed ranges for three material groups. The scale shows how much headroom the 120 °C heatbed leaves.</figcaption>
+  </figure>
+
+  <h3>Process starting points by goal</h3>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Goal</th><th>Nozzle</th><th>Layer height</th><th>Walls / infill</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Detailed figurine</td><td>0.4 mm (or 0.2 mm if all filaments allow)</td><td>0.08–0.12 mm (typical)</td><td>2–3 walls, 10–15 % infill</td><td>Surface quality over time; keep outer wall slow.</td></tr>
+      <tr><td>General parts</td><td>0.4 mm</td><td>0.20 mm (typical default)</td><td>3 walls, 15–25 % infill</td><td>Balanced.</td></tr>
+      <tr><td>Strong functional</td><td>0.4–0.6 mm</td><td>0.20–0.28 mm</td><td>4+ walls, 30–40 % infill</td><td>Walls carry load; infill is secondary.</td></tr>
+      <tr><td>Fast draft</td><td>0.6–0.8 mm, high-flow if fitted</td><td>0.30–0.50 mm</td><td>2 walls, 10 % infill</td><td>Time saved by volume, not by only speed.</td></tr>
+      <tr><td>Flexible parts</td><td>0.4 mm (TPU 90A/95A HF), 0.6/0.8 for TPU 85A <span class="chip blue">doc</span></td><td>0.20 mm</td><td>2–3 walls, low-to-medium infill</td><td>Slow, steady flow beats clever tuning.</td></tr>
+    </tbody></table></div>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul class="checklist">
+    <li>Three presets plus per-object overrides define every slice; save changes as named user presets.</li>
+    <li>The X2D has two nozzles with different limits: the right one is capped at 200 mm/s and about 1000 mm/s² and its flow dynamics are calibrated manually.</li>
+    <li>Check the filament-to-nozzle assignment every time; choose Filament-saving, Convenience or Custom grouping deliberately.</li>
+    <li>Nozzle switches replace many color changes; flush volumes still matter inside one nozzle, and the prime tower still cleans and stabilizes pressure.</li>
+    <li>Run high-temperature bed leveling and a proper heat soak for ABS/ASA/PC/PA; put chamber setpoints in the filament preset.</li>
+    <li>Dry spools in the right mode and never mix high- and low-temperature filaments in one AMS during drying.</li>
+    <li>Share .3mf for collaboration, .gcode.3mf for ready-to-print results, and state nozzle size, plate and AMS slots.</li>
+  </ul>
+
+  <div class="callout goal"><span class="callout-title">Where to go next</span>
+    <p>Put these settings to work in <a href="engineering-and-chamber.html">engineering and chamber</a>, <a href="tpu-and-flexibles.html">TPU and flexibles</a> and the <a href="recipes.html">recipes</a>; practice them with <a href="../exercises/x2d-challenges.html">the X2D challenges</a>. For general slicer theory see <a href="../software/slicer-settings.html">slicer settings</a> and <a href="dual-nozzle-printing.html">dual-nozzle printing</a>.</p></div>
+
+</main>
+</body>
+</html>

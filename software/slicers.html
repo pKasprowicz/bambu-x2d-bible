@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Slicers compared · 3D Printing Compendium</title>
+  <meta name="description" content="What a slicer does, how Bambu Studio, OrcaSlicer, PrusaSlicer, Cura, SuperSlicer and others compare, a tour of a modern slicer interface, profiles, project files, preview tools and workflow best practices.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="software/slicers.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 3 · Software</div>
+    <h1>Slicers compared</h1>
+    <p class="lead">A slicer turns a 3D model into the thousands of tiny movements your printer actually performs. Learn what it does, how the popular ones differ, how to read their interface, and how to work in a way that avoids failed prints.</p>
+    <div class="meta"><span class="badge beginner">Beginner</span><span class="badge intermediate">Intermediate</span><span class="badge time">⏱ 35 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <ul>
+      <li>What happens between "File → Open" and a finished print, and why a slicer is needed at all.</li>
+      <li>How Bambu Studio, OrcaSlicer, PrusaSlicer, Cura, SuperSlicer, Simplify3D and online slicers differ.</li>
+      <li>How to find your way around any modern slicer: object list, plate, preview, presets.</li>
+      <li>How profiles and project files (<code>.3mf</code>, <code>.gcode.3mf</code>) work and how to share them safely.</li>
+      <li>A repeatable slicing workflow, plus what is special about the Bambu Lab X2D.</li>
+    </ul>
+  </div>
+
+  <h2 id="what-is-a-slicer">What a slicer does</h2>
+  <h3>🔰 The plain-language version</h3>
+  <p>Your printer cannot understand a 3D model directly. A model (usually an <code>STL</code> or <code>3MF</code> file) is only a description of a <em>surface</em>: a skin made of thousands of small triangles. A printer, on the other hand, needs a long list of simple instructions such as "move to X=100, Y=80 while pushing out 0.4 mm of plastic". The program that converts one into the other is called a <strong>slicer</strong>, because its core trick is to cut the model into thin horizontal layers, much like slicing a loaf of bread, and then work out how to draw each slice with a thin line of molten plastic.</p>
+  <p>The output of a slicer is <strong>G-code</strong> (see <a href="gcode-and-firmware.html">G-code, firmware &amp; ecosystem</a>), a text-like list of commands that the printer firmware executes line by line. Everything you set in the slicer (layer height, wall count, infill, speeds, temperatures, supports) ends up as numbers inside this file.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 330" role="img" aria-label="Four-stage slicing pipeline: triangle mesh, horizontal slicing planes, toolpaths per layer, G-code text">
+      <defs></defs>
+      <!-- Stage 1 -->
+      <rect class="f-blue" x="14" y="40" width="190" height="210" rx="12"/>
+      <text class="t t-c t-b" x="109" y="30">1 · Mesh</text>
+      <path class="d-surface" d="M64 190 L109 215 L154 190 L154 130 L109 105 L64 130 Z"/>
+      <path class="d-thin" d="M64 130 L109 155 L154 130 M109 155 L109 215 M64 190 L109 155 L154 190 M109 105 L109 155"/>
+      <path class="d-thin" d="M64 130 L154 190 M154 130 L64 190"/>
+      <text class="t-sm t-c" x="109" y="238" style="text-anchor:middle">triangles (STL / 3MF)</text>
+      <path class="d-ink arrow" d="M208 145 H240"/>
+      <!-- Stage 2 -->
+      <rect class="f-green" x="244" y="40" width="190" height="210" rx="12"/>
+      <text class="t t-c t-b" x="339" y="30">2 · Slice</text>
+      <path class="d-thin" d="M294 190 L339 215 L384 190 L384 130 L339 105 L294 130 Z"/>
+      <path class="k-green" d="M286 190 L339 220 L392 190"/>
+      <path class="k-green" d="M286 170 L339 200 L392 170"/>
+      <path class="k-green" d="M286 150 L339 180 L392 150"/>
+      <path class="k-green" d="M286 130 L339 160 L392 130"/>
+      <path class="k-green" d="M286 110 L339 140 L392 110"/>
+      <text class="t-sm t-c" x="339" y="238" style="text-anchor:middle">planes every layer height</text>
+      <path class="d-ink arrow" d="M438 145 H470"/>
+      <!-- Stage 3 -->
+      <rect class="f-orange" x="474" y="40" width="190" height="210" rx="12"/>
+      <text class="t t-c t-b" x="569" y="30">3 · Toolpaths</text>
+      <rect class="d-surface" x="514" y="90" width="110" height="110" rx="4"/>
+      <rect class="k-orange" x="522" y="98" width="94" height="94" rx="2"/>
+      <rect class="k-orange" x="530" y="106" width="78" height="78" rx="2"/>
+      <path class="d-thin" d="M538 114 L600 176 M538 140 L574 176 M564 114 L600 150 M538 166 L546 176 M590 114 L600 124"/>
+      <text class="t-sm t-c" x="569" y="238" style="text-anchor:middle">walls + infill per layer</text>
+      <path class="d-ink arrow" d="M668 145 H700"/>
+      <!-- Stage 4 -->
+      <rect class="f-purple" x="704" y="40" width="142" height="210" rx="12"/>
+      <text class="t t-c t-b" x="775" y="30">4 · G-code</text>
+      <text class="t-xs t-mono" x="716" y="76">G28</text>
+      <text class="t-xs t-mono" x="716" y="94">M104 S215</text>
+      <text class="t-xs t-mono" x="716" y="112">G1 Z0.2 F600</text>
+      <text class="t-xs t-mono" x="716" y="130">G1 X80 Y60</text>
+      <text class="t-xs t-mono" x="716" y="148">G1 X120 E1.9</text>
+      <text class="t-xs t-mono" x="716" y="166">G1 X120 Y100</text>
+      <text class="t-xs t-mono" x="716" y="184">E3.8 F3600</text>
+      <text class="t-xs t-mono" x="716" y="202">...</text>
+      <text class="t-sm t-c" x="775" y="238" style="text-anchor:middle">text commands</text>
+      <!-- Settings -->
+      <rect class="d-surface2" x="14" y="268" width="832" height="46" rx="10"/>
+      <text class="t-sm" x="30" y="288">Your settings steer every step:</text>
+      <text class="t-sm t-b" x="30" y="304">orientation, supports, layer height</text>
+      <text class="t-sm" x="248" y="304">→ slice plane spacing · walls, infill, speed → toolpaths · temperatures, retraction → commands</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> The slicing pipeline. A triangle mesh is cut into thin layers, each layer is filled with extrusion paths, and the paths are converted into machine commands.</figcaption>
+  </figure>
+
+  <h3>🔧 What the slicer actually computes</h3>
+  <p>Behind the friendly buttons a slicer solves several distinct problems, and knowing them helps you understand why a setting exists:</p>
+  <ol class="steps">
+    <li><strong>Intersect the mesh with planes.</strong>For each layer height step the slicer finds where the triangles cross the plane. The result is a set of closed 2D outlines (polygons). Holes become inner outlines. This is why a mesh must be <em>watertight</em>: an open edge means the outline cannot close (see <a href="files-and-meshes.html">File formats &amp; mesh repair</a>).</li>
+    <li><strong>Classify regions.</strong>Each polygon is analyzed against the layers above and below. Areas with nothing below are <em>overhangs</em> (they need support or bridging), areas with air above are <em>top surfaces</em>, and the rest is <em>interior</em>.</li>
+    <li><strong>Generate perimeters (walls).</strong>The outline is offset inward by one line width at a time to create the outer wall and inner walls. Modern slicers use <em>variable width</em> algorithms (Arachne) to fill thin features cleanly.</li>
+    <li><strong>Fill the interior.</strong>The remaining area gets sparse infill in a chosen pattern, plus solid infill for the top and bottom shells.</li>
+    <li><strong>Plan supports, brims and skirts.</strong>Support columns, interface layers, and adhesion aids are generated per layer.</li>
+    <li><strong>Order and optimize the paths.</strong>The slicer decides where each loop starts (the <em>seam</em>), which line to print first, when to retract, when to lift the nozzle and how to avoid crossing walls.</li>
+    <li><strong>Assign speeds, temperatures and cooling.</strong>Each feature type gets its speed and acceleration, layers that finish too fast are slowed, and fan speeds are set.</li>
+    <li><strong>Emit G-code.</strong>Finally, every path is converted to <code>G1</code> moves with an extrusion amount calculated from line width, layer height and filament diameter.</li>
+  </ol>
+
+  <div class="callout fact"><span class="callout-title">How much plastic is "E"?</span>
+    <p>The slicer calculates the extrusion for each move from the volume of the line. A 0.42 mm wide, 0.2 mm tall line that is 10 mm long has a volume of about 0.42 × 0.2 × 10 ≈ 0.84 mm³ (a rounded-rectangle model gives slightly less). A 1.75 mm filament has a cross-section of about 2.405 mm², so the feed length is about 0.35 mm. Multiply by your flow ratio and you have the <code>E</code> value in the G-code.</p>
+  </div>
+
+  <h2 id="landscape">The slicer landscape</h2>
+  <p>There are dozens of slicers, but almost all of them descend from a few families. Knowing the lineage tells you which interface and feature set to expect.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 380" role="img" aria-label="Family tree of slicers: Slic3r leads to PrusaSlicer, SuperSlicer, Bambu Studio and OrcaSlicer; Cura and Simplify3D are separate lines">
+      <text class="t-sm t-m" x="30" y="30">earlier</text>
+      <text class="t-sm t-m" x="830" y="30" style="text-anchor:end">later</text>
+      <path class="d-dash" d="M30 38 H830"/>
+      <rect class="f-gray" x="30" y="60" width="130" height="50" rx="10"/>
+      <text class="t t-c t-b" x="95" y="82">Slic3r</text><text class="t-xs t-c" x="95" y="98" style="text-anchor:middle">open source, 2011</text>
+      <rect class="f-orange" x="250" y="60" width="150" height="50" rx="10"/>
+      <text class="t t-c t-b" x="325" y="82">PrusaSlicer</text><text class="t-xs t-c" x="325" y="98" style="text-anchor:middle">Prusa Research</text>
+      <rect class="f-purple" x="250" y="150" width="150" height="50" rx="10"/>
+      <text class="t t-c t-b" x="325" y="172">SuperSlicer</text><text class="t-xs t-c" x="325" y="188" style="text-anchor:middle">community fork</text>
+      <rect class="f-green" x="500" y="60" width="150" height="50" rx="10"/>
+      <text class="t t-c t-b" x="575" y="82">Bambu Studio</text><text class="t-xs t-c" x="575" y="98" style="text-anchor:middle">Bambu Lab</text>
+      <rect class="f-red" x="700" y="60" width="130" height="50" rx="10"/>
+      <text class="t t-c t-b" x="765" y="82">OrcaSlicer</text><text class="t-xs t-c" x="765" y="98" style="text-anchor:middle">multi-brand fork</text>
+      <path class="d-ink arrow" d="M160 85 H246"/>
+      <path class="d-ink arrow" d="M160 95 C200 95 200 175 246 175"/>
+      <path class="d-ink arrow" d="M400 85 H496"/>
+      <path class="d-ink arrow" d="M650 85 H696"/>
+      <text class="t-xs t-m" x="448" y="76" style="text-anchor:middle">forked</text>
+      <text class="t-xs t-m" x="673" y="76" style="text-anchor:middle">forked</text>
+      <rect class="f-blue" x="30" y="260" width="150" height="50" rx="10"/>
+      <text class="t t-c t-b" x="105" y="282">UltiMaker Cura</text><text class="t-xs t-c" x="105" y="298" style="text-anchor:middle">CuraEngine, plug-ins</text>
+      <rect class="f-yellow" x="250" y="260" width="150" height="50" rx="10"/>
+      <text class="t t-c t-b" x="325" y="282">Simplify3D</text><text class="t-xs t-c" x="325" y="298" style="text-anchor:middle">commercial, one-time fee</text>
+      <rect class="f-teal" x="500" y="260" width="150" height="50" rx="10"/>
+      <text class="t t-c t-b" x="575" y="282">Kiri:Moto</text><text class="t-xs t-c" x="575" y="298" style="text-anchor:middle">runs in the browser</text>
+      <rect class="f-pink" x="700" y="260" width="130" height="50" rx="10"/>
+      <text class="t t-c t-b" x="765" y="282">Vendor tools</text><text class="t-xs t-c" x="765" y="298" style="text-anchor:middle">Creality Print, Elegoo…</text>
+      <text class="t-sm t-m" x="30" y="350">Separate lineages (no shared slicing core with the Slic3r family): Cura, Simplify3D, Kiri:Moto. Vendor tools are usually forks of Cura, Orca or Prusa.</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> Simplified slicer family tree. Slic3r-lineage slicers share a similar layout, terminology and many setting names, so skills transfer easily between them.</figcaption>
+  </figure>
+
+  <h3>Meet the slicers</h3>
+  <div class="grid cols-3">
+    <div class="card accent-green"><h3>Bambu Studio</h3><p>Free, open source (AGPL), by Bambu Lab. Best integration with Bambu printers: cloud/LAN sending, AMS color mapping, MakerWorld, filament RFID profiles, and the X2D's dual-nozzle logic. Based on PrusaSlicer's code base.</p></div>
+    <div class="card accent-red"><h3>OrcaSlicer</h3><p>Free, open source fork of Bambu Studio with support for many brands (Bambu, Prusa, Creality, Voron/Klipper, Anycubic…). Famous for its built-in calibration wizards (flow, pressure advance, temperature, retraction, max volumetric speed) and extra tuning options.</p></div>
+    <div class="card accent-orange"><h3>PrusaSlicer</h3><p>Free, open source, by Prusa Research. Mature and polished, excellent documentation, strong profiles for Prusa printers, variable layer height, modifiers, multi-material and Arachne wall generator. Also runs other Marlin and Klipper printers.</p></div>
+    <div class="card accent-blue"><h3>UltiMaker Cura</h3><p>Free, open source, huge community and by far the largest list of ready-made machine profiles. Simple "recommended" mode, deep "custom" mode with thousands of settings, and a plug-in marketplace (post-processing scripts, Arachne origin).</p></div>
+    <div class="card accent-purple"><h3>SuperSlicer</h3><p>Community fork of PrusaSlicer with extra expert options: built-in calibration prints, more infill patterns, more seam and thin-wall tweaks. Development is slower than the main projects, so check activity before committing to it.</p></div>
+    <div class="card accent-yellow"><h3>Simplify3D</h3><p>Commercial, paid slicer from the early 2010s era, once the go-to "pro" tool with powerful manual support placement and process-per-layer-range. Updates have been sparse; today most users have moved to free alternatives. Treat as legacy.</p></div>
+    <div class="card accent-teal"><h3>Kiri:Moto &amp; online slicers</h3><p>Browser-based slicers (Kiri:Moto is the best known) need no installation, run on Chromebooks and tablets, and are handy for a quick job. Limited calibration, profile and multi-material depth compared with desktop apps.</p></div>
+    <div class="card accent-pink"><h3>Vendor slicers</h3><p>Creality Print, Elegoo Slicer, Anycubic Slicer, Flashforge/Qidi tools and others are usually branded forks of Cura, Orca or Bambu Studio with the manufacturer's profiles pre-loaded. Convenient out of the box; often lag behind upstream.</p></div>
+    <div class="card accent-gray"><h3>Others worth knowing</h3><p>IdeaMaker (Raise3D, closed source), MatterControl, Slic3r PE legacy, Ultimaker Digital Factory (cloud), and resin slicers such as Lychee or ChiTuBox (different technology, covered in <a href="../foundations/printing-processes.html">Printing processes</a>).</p></div>
+  </div>
+
+  <h3>Feature matrix</h3>
+  <p>Ratings are approximate and reflect the state of the projects as commonly used in late 2026; features move quickly, so verify against current release notes before making a purchasing or workflow decision.</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Feature</th><th>Bambu Studio</th><th>OrcaSlicer</th><th>PrusaSlicer</th><th>Cura</th><th>SuperSlicer</th><th>Simplify3D</th></tr></thead>
+    <tbody>
+      <tr><td>Price / license</td><td><span class="chip green">Free · AGPL</span></td><td><span class="chip green">Free · AGPL</span></td><td><span class="chip green">Free · AGPL</span></td><td><span class="chip green">Free · LGPL</span></td><td><span class="chip green">Free · AGPL</span></td><td><span class="chip red">Paid</span></td></tr>
+      <tr><td>Best for</td><td>Bambu printers</td><td>Multi-brand, tuning</td><td>Prusa &amp; Marlin</td><td>Any printer, beginners</td><td>Tinkerers</td><td>Legacy workflows</td></tr>
+      <tr><td>Printer profile library</td><td><span class="rate"><i class="on"></i><i></i><i></i><i></i><i></i></span> Bambu only</td><td><span class="rate g"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td><td><span class="rate g"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td><td><span class="rate g"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td><td><span class="rate g"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></td><td><span class="rate g"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></td></tr>
+      <tr><td>Built-in calibration tools</td><td>Flow dynamics, flow rate</td><td><span class="chip teal">Extensive</span></td><td>Basic</td><td>Plug-ins</td><td>Several</td><td>None</td></tr>
+      <tr><td>Multi-material / AMS</td><td><span class="chip green">Native AMS</span></td><td>AMS + MMU + toolchangers</td><td>MMU, toolchanger</td><td>Limited</td><td>As Prusa</td><td>Dual extruder</td></tr>
+      <tr><td>Tree supports</td><td><span class="chip green">Yes</span></td><td><span class="chip green">Yes</span></td><td><span class="chip green">Yes (organic)</span></td><td><span class="chip green">Yes</span></td><td><span class="chip green">Yes</span></td><td><span class="chip red">No</span></td></tr>
+      <tr><td>Arachne wall generator</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes (origin)</td><td>Yes</td><td>No</td></tr>
+      <tr><td>Variable layer height</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Adaptive layers</td><td>Yes</td><td>Per-range</td></tr>
+      <tr><td>Per-object &amp; modifier settings</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Per-process</td></tr>
+      <tr><td>Paint supports / seams / colors</td><td>Yes</td><td>Yes</td><td>Supports, seams, MMU</td><td>Support blockers only</td><td>Yes</td><td>Manual placement</td></tr>
+      <tr><td>Cloud / network printing</td><td>Bambu Cloud, LAN</td><td>Bambu, OctoPrint, Moonraker, Duet…</td><td>PrusaConnect, OctoPrint, Moonraker</td><td>UltiMaker, OctoPrint plug-in</td><td>OctoPrint, Moonraker</td><td>OctoPrint</td></tr>
+      <tr><td>Plug-ins / scripting</td><td>Post-process script</td><td>Post-process script</td><td>Post-process script</td><td><span class="chip blue">Marketplace</span></td><td>Post-process script</td><td>Scripts</td></tr>
+      <tr><td>Learning curve</td><td>Gentle</td><td>Gentle → steep</td><td>Moderate</td><td>Gentle → steep</td><td>Steep</td><td>Moderate</td></tr>
+    </tbody></table></div>
+
+  <div class="callout info"><span class="callout-title">Bambu Studio, Orca and the lineage</span>
+    <p>If you learn Bambu Studio you can pick up OrcaSlicer in an hour, because the layout, setting names and project format are nearly identical. The reverse is also true. PrusaSlicer uses different tab structure (Print Settings / Filament Settings / Printer Settings) but the same underlying vocabulary.</p>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 400" role="img" aria-label="Decision tree to choose a slicer: Bambu printer, other brand, need browser only, or legacy">
+      <rect class="f-blue" x="320" y="12" width="220" height="44" rx="10"/>
+      <text class="t t-c t-b" x="430" y="40">Which printer do you own?</text>
+      <path class="d-ink arrow" d="M370 56 L150 110"/>
+      <path class="d-ink arrow" d="M430 56 V110"/>
+      <path class="d-ink arrow" d="M490 56 L710 110"/>
+      <text class="t-sm t-c" x="230" y="78" style="text-anchor:middle">Bambu Lab</text>
+      <text class="t-sm t-c" x="444" y="90">Prusa</text>
+      <text class="t-sm t-c" x="640" y="78" style="text-anchor:middle">Other / DIY</text>
+      <rect class="f-green" x="40" y="110" width="220" height="56" rx="10"/>
+      <text class="t t-c t-b" x="150" y="134">Start with Bambu Studio</text>
+      <text class="t-sm t-c" x="150" y="152" style="text-anchor:middle">full AMS / X2D feature support</text>
+      <rect class="f-orange" x="320" y="110" width="220" height="56" rx="10"/>
+      <text class="t t-c t-b" x="430" y="134">PrusaSlicer</text>
+      <text class="t-sm t-c" x="430" y="152" style="text-anchor:middle">official profiles, good docs</text>
+      <rect class="f-gray" x="600" y="110" width="220" height="56" rx="10"/>
+      <text class="t t-c t-b" x="710" y="134">Do you tune a lot?</text>
+      <text class="t-sm t-c" x="710" y="152" style="text-anchor:middle">Klipper, custom firmware?</text>
+      <path class="d-ink arrow" d="M150 166 V230"/>
+      <text class="t-sm" x="158" y="204">want calibration wizards,</text>
+      <text class="t-sm" x="158" y="220">other brands too?</text>
+      <rect class="f-red" x="40" y="230" width="220" height="56" rx="10"/>
+      <text class="t t-c t-b" x="150" y="254">Add OrcaSlicer</text>
+      <text class="t-sm t-c" x="150" y="272" style="text-anchor:middle">same look, more tuning</text>
+      <path class="d-ink arrow" d="M650 166 L560 230"/>
+      <path class="d-ink arrow" d="M770 166 L810 230"/>
+      <text class="t-sm t-c" x="590" y="198" style="text-anchor:middle">yes</text>
+      <text class="t-sm t-c" x="808" y="198" style="text-anchor:middle">no</text>
+      <rect class="f-red" x="440" y="230" width="200" height="56" rx="10"/>
+      <text class="t t-c t-b" x="540" y="254">OrcaSlicer</text>
+      <text class="t-sm t-c" x="540" y="272" style="text-anchor:middle">or SuperSlicer</text>
+      <rect class="f-blue" x="690" y="230" width="150" height="56" rx="10"/>
+      <text class="t t-c t-b" x="765" y="254">Cura</text>
+      <text class="t-sm t-c" x="765" y="272" style="text-anchor:middle">largest profile list</text>
+      <rect class="d-surface2" x="40" y="320" width="800" height="62" rx="10"/>
+      <text class="t-sm t-b" x="56" y="342">Special cases</text>
+      <text class="t-sm" x="56" y="360">No install allowed (school Chromebook)? Use a browser slicer such as Kiri:Moto. Existing Simplify3D license and a happy workflow?</text>
+      <text class="t-sm" x="56" y="376">Keep it, but expect to migrate eventually. Printer vendor slicer is a fine first step when it is the only source of official profiles.</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> A quick way to choose. You can install several slicers side by side; keep one as your daily driver and the others for comparison or special tasks.</figcaption>
+  </figure>
+
+  <h2 id="ui-tour">A tour of a modern slicer</h2>
+  <p>Open Bambu Studio, OrcaSlicer, PrusaSlicer or Cura and you will notice the same building blocks. The figure below is a generic layout; names of buttons differ, but the regions are always there.</p>
+
+  <figure class="fig wide">
+    <svg class="diagram" viewBox="0 0 900 520" role="img" aria-label="Annotated generic slicer window: top toolbar with Prepare, Preview and Device tabs, preset bar, object list on the left, 3D plate in the center, settings panel on the right, slice button at the bottom">
+      <rect class="d-surface" x="10" y="10" width="880" height="500" rx="10"/>
+      <!-- title/tabs -->
+      <rect class="f-gray" x="10" y="10" width="880" height="38" rx="10"/>
+      <rect class="s-orange" x="300" y="16" width="76" height="26" rx="6"/><text class="t-sm t-c t-w" x="338" y="34" style="text-anchor:middle">Prepare</text>
+      <text class="t-sm t-c" x="420" y="34" style="text-anchor:middle">Preview</text>
+      <text class="t-sm t-c" x="500" y="34" style="text-anchor:middle">Device</text>
+      <text class="t-sm t-c" x="582" y="34" style="text-anchor:middle">Project</text>
+      <text class="t-sm" x="28" y="34">File · Edit · View · Help</text>
+      <!-- left panel -->
+      <rect class="d-surface2" x="22" y="58" width="190" height="330" rx="8"/>
+      <text class="t-sm t-b" x="34" y="80">Object list</text>
+      <rect class="f-blue" x="32" y="90" width="170" height="26" rx="5"/><text class="t-sm" x="42" y="108">▸ bracket.stl</text>
+      <rect class="d-surface" x="48" y="122" width="154" height="22" rx="4"/><text class="t-xs" x="56" y="137">per-object settings</text>
+      <rect class="d-surface" x="48" y="148" width="154" height="22" rx="4"/><text class="t-xs" x="56" y="163">modifier: infill 40%</text>
+      <rect class="f-blue" x="32" y="178" width="170" height="26" rx="5"/><text class="t-sm" x="42" y="196">▸ lid.stl</text>
+      <text class="t-xs" x="34" y="232">Right-click: arrange, split,</text>
+      <text class="t-xs" x="34" y="246">cut, add support blocker,</text>
+      <text class="t-xs" x="34" y="260">change type, delete</text>
+      <rect class="f-green" x="32" y="280" width="170" height="92" rx="6"/>
+      <text class="t-sm t-b" x="42" y="300">Preset bar</text>
+      <text class="t-xs" x="42" y="318">Printer: X2D 0.4 nozzle</text>
+      <text class="t-xs" x="42" y="334">Filament: Generic PLA</text>
+      <text class="t-xs" x="42" y="350">Process: 0.20 Standard</text>
+      <text class="t-xs" x="42" y="366">AMS slot mapping</text>
+      <!-- plate -->
+      <rect class="d-surface2" x="222" y="58" width="420" height="330" rx="8"/>
+      <path class="d-surface" d="M262 330 L420 360 L600 320 L452 290 Z"/>
+      <path class="d-grid" d="M281 334 L440 304 M300 338 L459 308 M319 342 L478 312 M338 346 L497 316 M357 350 L516 320 M376 354 L535 324 M395 358 L554 328"/>
+      <path class="d-plastic" d="M380 300 L430 312 L470 302 L470 262 L430 252 L380 262 Z"/>
+      <path class="d-plastic2" d="M430 312 L470 302 L470 262 L430 272 Z"/>
+      <rect class="f-orange" x="500" y="296" width="44" height="22" rx="4"/>
+      <text class="t-sm t-b" x="232" y="80">Plate 1 / 3D view</text>
+      <text class="t-xs" x="232" y="96">Rotate · pan · zoom · select · gizmos</text>
+      <rect class="d-surface" x="232" y="108" width="34" height="140" rx="6"/>
+      <text class="t-xs" x="238" y="126">Move</text><text class="t-xs" x="238" y="146">Rot.</text><text class="t-xs" x="238" y="166">Scale</text><text class="t-xs" x="238" y="186">Cut</text><text class="t-xs" x="238" y="206">Supp.</text><text class="t-xs" x="238" y="226">Seam</text>
+      <!-- right panel -->
+      <rect class="d-surface2" x="652" y="58" width="226" height="330" rx="8"/>
+      <rect class="s-orange" x="662" y="66" width="60" height="22" rx="5"/><text class="t-xs t-w" x="692" y="82" style="text-anchor:middle">Quality</text>
+      <text class="t-xs" x="732" y="82">Strength</text><text class="t-xs" x="786" y="82">Support</text><text class="t-xs" x="836" y="82">Others</text>
+      <text class="t-sm" x="664" y="112">Layer height</text><rect class="d-surface" x="780" y="98" width="86" height="20" rx="4"/><text class="t-xs" x="788" y="112">0.20 mm</text>
+      <text class="t-sm" x="664" y="142">Wall loops</text><rect class="d-surface" x="780" y="128" width="86" height="20" rx="4"/><text class="t-xs" x="788" y="142">3</text>
+      <text class="t-sm" x="664" y="172">Infill density</text><rect class="d-surface" x="780" y="158" width="86" height="20" rx="4"/><text class="t-xs" x="788" y="172">15 %</text>
+      <text class="t-sm" x="664" y="202">Infill pattern</text><rect class="d-surface" x="780" y="188" width="86" height="20" rx="4"/><text class="t-xs" x="788" y="202">Gyroid</text>
+      <text class="t-sm" x="664" y="232">Supports</text><rect class="d-surface" x="780" y="218" width="86" height="20" rx="4"/><text class="t-xs" x="788" y="232">Tree auto</text>
+      <text class="t-sm" x="664" y="262">Brim type</text><rect class="d-surface" x="780" y="248" width="86" height="20" rx="4"/><text class="t-xs" x="788" y="262">Auto</text>
+      <text class="t-xs t-m" x="664" y="296">Simple / Advanced / Expert toggle</text>
+      <text class="t-xs t-m" x="664" y="312">Colored marker = changed from preset</text>
+      <text class="t-xs t-m" x="664" y="328">Global vs per-object scope tabs</text>
+      <!-- bottom -->
+      <rect class="f-gray" x="22" y="398" width="856" height="100" rx="8"/>
+      <rect class="s-green" x="720" y="412" width="146" height="34" rx="8"/><text class="t-sm t-b t-w" x="793" y="434" style="text-anchor:middle">Slice plate</text>
+      <rect class="f-blue" x="720" y="456" width="146" height="30" rx="8"/><text class="t-sm t-b" x="793" y="476" style="text-anchor:middle">Print plate / Send</text>
+      <text class="t-sm t-b" x="36" y="424">Status area</text>
+      <text class="t-xs" x="36" y="442">Estimated time 3 h 12 min · filament 48 g · cost · warnings</text>
+      <text class="t-xs" x="36" y="460">Messages: "support needed", "tower required", "object too large"</text>
+      <text class="t-xs" x="36" y="478">Layer slider (Preview) appears at the right edge of the 3D view</text>
+      <!-- callouts -->
+      <circle class="s-red" cx="22" cy="58" r="11"/><text class="t-xs t-w t-b" x="22" y="62" style="text-anchor:middle">1</text>
+      <circle class="s-red" cx="222" cy="58" r="11"/><text class="t-xs t-w t-b" x="222" y="62" style="text-anchor:middle">2</text>
+      <circle class="s-red" cx="652" cy="58" r="11"/><text class="t-xs t-w t-b" x="652" y="62" style="text-anchor:middle">3</text>
+      <circle class="s-red" cx="32" cy="280" r="11"/><text class="t-xs t-w t-b" x="32" y="284" style="text-anchor:middle">4</text>
+      <circle class="s-red" cx="720" cy="412" r="11"/><text class="t-xs t-w t-b" x="720" y="416" style="text-anchor:middle">5</text>
+      <circle class="s-red" cx="300" cy="16" r="11"/><text class="t-xs t-w t-b" x="300" y="20" style="text-anchor:middle">6</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> Generic slicer window. (1) Object list, (2) 3D plate with tool gizmos, (3) settings panel, (4) preset bar for printer/filament/process, (5) slice and send buttons, (6) workspace tabs such as Prepare/Preview/Device.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Region</th><th>What you do there</th><th>Common beginner trap</th></tr></thead>
+    <tbody>
+      <tr><td>1 Object list</td><td>Select objects, see per-object overrides, right-click for tools, add modifiers and support blockers.</td><td>Editing global settings when you meant per-object ones (or the other way around).</td></tr>
+      <tr><td>2 Plate view</td><td>Place, rotate, scale and arrange. Use gizmos for cutting and painting.</td><td>Orientation chosen for looks, not for strength or overhangs.</td></tr>
+      <tr><td>3 Settings panel</td><td>Change layer height, walls, infill, supports, speeds. Values different from the preset are marked.</td><td>Forgetting to save changes as a new user preset, then losing them when you switch preset.</td></tr>
+      <tr><td>4 Preset bar</td><td>Choose printer, filament and process presets; map filaments to AMS slots.</td><td>Slicing with the wrong nozzle size or filament type selected.</td></tr>
+      <tr><td>5 Slice / print</td><td>Generate G-code, estimate time and weight, then send to printer or export.</td><td>Sending a stale plate after changing settings without re-slicing.</td></tr>
+      <tr><td>6 Workspace tabs</td><td>Switch between prepare (editing), preview (checking), and device (monitoring).</td><td>Skipping the preview altogether.</td></tr>
+    </tbody></table></div>
+
+  <h2 id="profiles">Profiles, presets and project files</h2>
+  <h3>🔰 Three kinds of preset</h3>
+  <p>Almost every slicer separates its settings into three bundles. Understanding the split removes most "where did my setting go?" confusion.</p>
+  <div class="grid cols-3">
+    <div class="card accent-blue"><h3>🖨️ Printer (machine)</h3><p>Bed size, nozzle diameter, kinematics limits, max speeds and accelerations, retraction defaults, start/end G-code, number of extruders. Changes only when you change hardware (or nozzle).</p></div>
+    <div class="card accent-orange"><h3>🧵 Filament</h3><p>Temperatures, flow ratio, pressure advance or flow dynamics, fan curves, max volumetric speed, retraction overrides, drying hints, filament cost and density. One per material (and often per brand).</p></div>
+    <div class="card accent-green"><h3>🎚️ Process (print)</h3><p>Layer height, walls, infill, supports, speeds, seam, adhesion. The settings you change most often. Typically one per quality level such as 0.12 Fine, 0.20 Standard, 0.28 Draft.</p></div>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 330" role="img" aria-label="Diagram showing three presets feeding the slicer, per-object overrides on top, and the final settings written into the project file and G-code">
+      <rect class="f-blue" x="20" y="30" width="190" height="60" rx="10"/><text class="t t-c t-b" x="115" y="56">Printer preset</text><text class="t-xs t-c" x="115" y="74" style="text-anchor:middle">hardware, G-code</text>
+      <rect class="f-orange" x="20" y="130" width="190" height="60" rx="10"/><text class="t t-c t-b" x="115" y="156">Filament preset</text><text class="t-xs t-c" x="115" y="174" style="text-anchor:middle">material behavior</text>
+      <rect class="f-green" x="20" y="230" width="190" height="60" rx="10"/><text class="t t-c t-b" x="115" y="256">Process preset</text><text class="t-xs t-c" x="115" y="274" style="text-anchor:middle">how to build the part</text>
+      <path class="d-ink arrow" d="M210 60 H290"/><path class="d-ink arrow" d="M210 160 H290"/><path class="d-ink arrow" d="M210 260 H290"/>
+      <path class="d-thin" d="M290 60 V260"/>
+      <path class="d-ink arrow" d="M290 160 H330"/>
+      <rect class="f-purple" x="334" y="110" width="150" height="100" rx="12"/>
+      <text class="t t-c t-b" x="409" y="150">Global</text><text class="t t-c t-b" x="409" y="170">settings</text><text class="t-xs t-c" x="409" y="192" style="text-anchor:middle">(everything on plate)</text>
+      <rect class="f-yellow" x="334" y="236" width="150" height="54" rx="12"/>
+      <text class="t t-c t-b" x="409" y="260">Per-object &amp;</text><text class="t t-c t-b" x="409" y="278">modifier overrides</text>
+      <path class="d-ink arrow" d="M409 236 V212"/>
+      <path class="d-ink arrow" d="M488 160 H530"/>
+      <rect class="d-surface2" x="534" y="40" width="150" height="240" rx="12"/>
+      <text class="t t-c t-b" x="609" y="64">Slicer engine</text>
+      <path class="d-mute" d="M554 78 H664"/>
+      <text class="t-xs t-c" x="609" y="100" style="text-anchor:middle">mesh + settings</text>
+      <text class="t-xs t-c" x="609" y="118" style="text-anchor:middle">→ layers</text>
+      <text class="t-xs t-c" x="609" y="136" style="text-anchor:middle">→ toolpaths</text>
+      <text class="t-xs t-c" x="609" y="154" style="text-anchor:middle">→ G-code</text>
+      <path class="d-ink arrow" d="M688 100 H740"/><path class="d-ink arrow" d="M688 200 H740"/>
+      <rect class="f-teal" x="744" y="70" width="100" height="60" rx="10"/><text class="t t-c t-b" x="794" y="96">.3mf</text><text class="t-xs t-c" x="794" y="114" style="text-anchor:middle">project (editable)</text>
+      <rect class="f-pink" x="744" y="170" width="100" height="60" rx="10"/><text class="t t-c t-b" x="794" y="196">.gcode</text><text class="t-xs t-c" x="794" y="214" style="text-anchor:middle">machine file</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> Presets are layered. Printer, filament and process presets provide the global defaults; per-object settings and modifiers override them for just one part or region. The project file stores everything so you can reopen the job later.</figcaption>
+  </figure>
+
+  <h3>🔧 Project files and G-code containers</h3>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>File</th><th>Contains</th><th>Use it for</th></tr></thead>
+    <tbody>
+      <tr><td><code>.stl</code></td><td>Mesh only, no units, no colors, no settings.</td><td>Sharing a bare shape.</td></tr>
+      <tr><td><code>.3mf</code> (project)</td><td>A ZIP archive with meshes, plate layout, per-object settings, presets used, painted supports/colors, thumbnails and metadata.</td><td>Saving and sharing a whole job so someone else (or you next year) gets the same result.</td></tr>
+      <tr><td><code>.gcode.3mf</code></td><td>A Bambu-style package that wraps the sliced G-code together with the plate thumbnails and project info.</td><td>Sending a pre-sliced job to a Bambu printer; also downloadable from MakerWorld.</td></tr>
+      <tr><td><code>.gcode</code> / <code>.bgcode</code></td><td>Only machine commands (<code>.bgcode</code> is a compact binary form used by some printers).</td><td>Printing from SD card or a network host.</td></tr>
+      <tr><td><code>.json</code> / <code>.ini</code> / <code>.orca_*</code> bundles</td><td>Individual presets or preset bundles.</td><td>Backing up and sharing profiles.</td></tr>
+    </tbody></table></div>
+
+  <div class="callout warn"><span class="callout-title">Never open G-code from strangers blindly</span>
+    <p>G-code is a program for a machine with a heater and motors. A shared <code>.gcode</code> file that was sliced for another printer can crash into limits or set unsafe temperatures. Prefer sharing <code>.3mf</code> projects and slicing them yourself with your own printer preset, and read the start and end G-code if a file came from an unknown source.</p>
+  </div>
+
+  <h3>Importing, exporting and sharing profiles</h3>
+  <ol class="steps">
+    <li><strong>Modify a preset.</strong>Change values in the settings panel; changed fields get a marker. Click the save icon next to the preset name and give it a descriptive name such as <code>PETG-CF 0.4 – strong</code>.</li>
+    <li><strong>Inherit, do not copy.</strong>Your user preset inherits from a system preset. Updating the app updates the parent and keeps your differences, which is exactly what you want.</li>
+    <li><strong>Export.</strong>Use <em>File → Export → Export Preset Bundle</em> (or the per-preset export). Slicers write a <code>.json</code>, <code>.ini</code> or a zip. Filament profiles can be exported individually.</li>
+    <li><strong>Import.</strong>On another computer use <em>File → Import → Import Configs</em> (menu names vary). Check the printer and nozzle assigned to the profile before use.</li>
+    <li><strong>Share the project instead of settings when you can.</strong>A <code>.3mf</code> carries the settings for exactly that model and gets people to a working state faster than a list of numbers.</li>
+    <li><strong>Back up.</strong>Presets live in a user data folder (for example under your user profile or <code>AppData</code>). Include it in your regular backup; it holds months of tuning.</li>
+  </ol>
+
+  <div class="callout tip"><span class="callout-title">Naming that scales</span>
+    <p>Use a naming pattern like <code>Brand Material nozzle@printer</code> for filaments (<code>Bambu PLA Basic @X2D 0.4</code>) and <code>layer height – purpose</code> for process presets (<code>0.16 – visual</code>, <code>0.24 – functional</code>). You will thank yourself when you have thirty of them.</p>
+  </div>
+
+  <h2 id="preview">Reading the preview</h2>
+  <p>The preview is the single most underused feature in slicing. It shows the exact paths the printer will follow, layer by layer, and you can scrub through them with the layer slider. Spend one minute here before every print that matters; it catches failed supports, missing walls, strange travel moves and "this will take 31 hours" surprises.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 380" role="img" aria-label="Preview color legends: feature types such as outer wall, inner wall, infill, top surface, bridge, support, plus a speed gradient from slow blue to fast red and a flow gradient">
+      <text class="t-lg" x="20" y="28">Feature-type legend (typical colors)</text>
+      <rect class="s-red" x="24" y="44" width="22" height="16" rx="3"/><text class="t-sm" x="54" y="57">Outer wall</text>
+      <rect class="s-orange" x="24" y="68" width="22" height="16" rx="3"/><text class="t-sm" x="54" y="81">Inner wall</text>
+      <rect class="s-purple" x="24" y="92" width="22" height="16" rx="3"/><text class="t-sm" x="54" y="105">Sparse infill</text>
+      <rect class="s-pink" x="24" y="116" width="22" height="16" rx="3"/><text class="t-sm" x="54" y="129">Solid infill</text>
+      <rect class="s-yellow" x="24" y="140" width="22" height="16" rx="3"/><text class="t-sm" x="54" y="153">Top surface</text>
+      <rect class="s-blue" x="24" y="164" width="22" height="16" rx="3"/><text class="t-sm" x="54" y="177">Bridge</text>
+      <rect class="s-green" x="24" y="188" width="22" height="16" rx="3"/><text class="t-sm" x="54" y="201">Support / interface</text>
+      <rect class="s-gray" x="24" y="212" width="22" height="16" rx="3"/><text class="t-sm" x="54" y="225">Skirt / brim / prime tower</text>
+      <!-- sample layer -->
+      <rect class="d-surface2" x="250" y="40" width="270" height="190" rx="10"/>
+      <rect class="k-red" x="270" y="56" width="230" height="158" rx="6"/>
+      <rect class="k-orange" x="280" y="66" width="210" height="138" rx="4"/>
+      <rect class="k-orange" x="290" y="76" width="190" height="118" rx="3"/>
+      <path class="k-purple" d="M300 86 L470 184 M300 120 L400 184 M300 154 L350 184 M330 86 L470 168 M380 86 L470 138 M430 86 L470 112" style="stroke-width:1.6"/>
+      <path class="k-purple" d="M470 86 L300 184 M470 120 L370 184 M470 154 L420 184 M440 86 L300 168 M390 86 L300 138 M340 86 L300 112" style="stroke-width:1.6"/>
+      <text class="t-xs t-c" x="385" y="246" style="text-anchor:middle">One layer: loops outside, infill inside</text>
+      <!-- speed gradient -->
+      <text class="t-lg" x="560" y="28">Speed view</text>
+      <defs>
+        <linearGradient id="slc-speed" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0" stop-color="#2f7bd8"/><stop offset="0.35" stop-color="#2f9e5b"/><stop offset="0.65" stop-color="#d9a406"/><stop offset="1" stop-color="#d6393b"/>
+        </linearGradient>
+        <linearGradient id="slc-flow" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0" stop-color="#0f9a94"/><stop offset="0.5" stop-color="#7c4dcc"/><stop offset="1" stop-color="#d6347f"/>
+        </linearGradient>
+      </defs>
+      <rect x="560" y="44" width="280" height="20" rx="5" fill="url(#slc-speed)"/>
+      <text class="t-xs" x="560" y="80">slow (outer walls, overhangs)</text><text class="t-xs t-r" x="840" y="80">fast (sparse infill)</text>
+      <text class="t-sm" x="560" y="104">Check: are overhangs slow enough?</text>
+      <text class="t-sm" x="560" y="122">Is infill hitting your flow limit?</text>
+      <text class="t-lg" x="560" y="156">Volumetric flow view</text>
+      <rect x="560" y="172" width="280" height="20" rx="5" fill="url(#slc-flow)"/>
+      <text class="t-xs" x="560" y="208">low mm³/s</text><text class="t-xs t-r" x="840" y="208">high mm³/s</text>
+      <text class="t-sm" x="560" y="232">Red zones above the filament's maximum</text>
+      <text class="t-sm" x="560" y="250">volumetric speed will under-extrude.</text>
+      <!-- other views -->
+      <rect class="f-gray" x="20" y="272" width="820" height="92" rx="10"/>
+      <text class="t-sm t-b" x="36" y="294">More views you will find</text>
+      <text class="t-sm" x="36" y="314">Layer time (find layers cooled too little) · Fan speed · Temperature · Line width · Layer height (variable layer height)</text>
+      <text class="t-sm" x="36" y="334">Travel moves toggle (see stringing risk) · Retractions and Z-hops · Seams marker · Color print (which AMS slot prints where)</text>
+      <text class="t-sm" x="36" y="354">Layer slider and horizontal slider: scrub vertically, then replay one layer move by move.</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> Typical preview legends. Exact colors differ between slicers, but the categories and gradients are the same everywhere, and the legend is always shown next to the 3D view.</figcaption>
+  </figure>
+
+  <h3>What to look for, every time</h3>
+  <ul class="checklist">
+    <li>Scrub to layer 1: does the first layer cover the whole footprint, and is the brim where you want it?</li>
+    <li>Scrub through overhangs and bridges: is support placed where you expect it, and is anything floating without it?</li>
+    <li>Look at thin walls and small gaps: are there missing or sparse areas where the mesh is thinner than two lines?</li>
+    <li>Check the seam column: is it a neat line at the back or a scar down the front face?</li>
+    <li>Switch to speed or flow view: any extreme values on tiny features or on infill?</li>
+    <li>Read the estimate: time and filament weight plausible? Too much waste for a multi-color print?</li>
+    <li>For multi-color: does the color-print view show every part in the correct AMS slot?</li>
+  </ul>
+
+  <h2 id="plate-tools">Working on the plate</h2>
+  <h3>🔰 The essential tools</h3>
+  <div class="grid cols-2">
+    <div class="card accent-blue"><h3>Move, rotate, scale</h3><p>Hotkeys: <kbd>M</kbd>/<kbd>R</kbd>/<kbd>S</kbd> in most slicers. Use "place on face" to lay a flat surface on the bed. Scale with caution: uniform scaling changes wall counts and hole fits; non-uniform scaling changes proportions of threads and text.</p></div>
+    <div class="card accent-green"><h3>Auto-orient &amp; arrange</h3><p>Auto-orient picks an angle that reduces overhang area; arrange packs objects with spacing for brim, prime tower and nozzle clearance. Good starting suggestions, but always judge strength and visible faces yourself.</p></div>
+    <div class="card accent-orange"><h3>Cut tool</h3><p>Slice a model with a plane to print in parts, to lay a flat face on the bed or to hide seams. Many slicers add pegs or dovetail connectors so the pieces register and glue easily. See the figure below.</p></div>
+    <div class="card accent-purple"><h3>Text / emboss &amp; shapes</h3><p>Add text, simple shapes and SVG-based logos directly on a face. Great for labels. Keep line width in mind: letters narrower than about 2 nozzle widths get fuzzy; use bold fonts and at least 0.8 mm raised depth.</p></div>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 330" role="img" aria-label="Cut tool example: a tall part is cut by a plane and the two halves are laid flat with round connector pegs and sockets">
+      <text class="t-lg" x="20" y="28">1 · Tall part, plane placed</text>
+      <path class="d-plastic" d="M60 280 H180 V80 L120 50 L60 80 Z"/>
+      <path class="k-red" d="M30 170 H210" style="stroke-dasharray:8 5"/>
+      <text class="t-sm c-red" x="30" y="160">cut plane</text>
+      <path class="d-ink arrow" d="M235 175 H290"/>
+      <text class="t-lg" x="300" y="28">2 · Halves with connectors</text>
+      <path class="d-plastic" d="M310 150 H430 V80 L370 50 L310 80 Z"/>
+      <rect class="d-surface" x="361" y="140" width="18" height="22" rx="2" style="stroke:var(--ink)"/>
+      <path class="d-plastic" d="M310 190 H430 V280 H310 Z"/>
+      <rect class="d-surface2" x="361" y="190" width="18" height="12" rx="2"/>
+      <text class="t-xs" x="440" y="162">peg</text><text class="t-xs" x="440" y="200">socket +0.2 mm gap</text>
+      <path class="d-ink arrow" d="M520 175 H575"/>
+      <text class="t-lg" x="590" y="28">3 · Printed flat, glued</text>
+      <path class="d-plastic" d="M600 80 H720 V150 H600 Z"/>
+      <path class="d-plastic" d="M740 80 H840 V150 H740 Z"/>
+      <text class="t-xs t-c" x="660" y="120" style="text-anchor:middle">flat cut face down</text>
+      <text class="t-xs t-c" x="790" y="120" style="text-anchor:middle">no support needed</text>
+      <path class="d-ink arrow" d="M720 190 L740 190"/>
+      <rect class="d-surface2" x="600" y="200" width="240" height="100" rx="10"/>
+      <text class="t-sm t-b" x="612" y="222">Cutting rules of thumb</text>
+      <text class="t-xs" x="612" y="242">• Cut on a flat, load-light plane</text>
+      <text class="t-xs" x="612" y="258">• Pegs 0.1–0.2 mm smaller than sockets</text>
+      <text class="t-xs" x="612" y="274">• Cut where seams will be hidden</text>
+      <text class="t-xs" x="612" y="290">• Glue: CA for PLA, solvent for ABS</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> Cutting a part turns a hard-to-print shape into two flat-faced parts that print without support and with better strength along the layer lines.</figcaption>
+  </figure>
+
+  <h3>🔧 Per-object settings and modifiers</h3>
+  <p>The global process preset applies to the whole plate. Right-click an object to give it its own settings: more walls for a load-bearing bracket, a thinner layer for a figurine, or support only on one object. A <strong>modifier</strong> is a shape (box, cylinder, sphere, or an imported part) placed inside or around an object; any setting you attach to it applies only where the shape overlaps the model. Typical uses:</p>
+  <ul>
+    <li>A modifier cylinder around a bolt hole with 100% infill and extra walls to resist crushing.</li>
+    <li>A box over a thin region with lower speed, or a taller layer range with a different infill pattern.</li>
+    <li>A <em>support blocker</em> to prevent useless support, or a <em>support enforcer</em> to add it in one tricky spot.</li>
+  </ul>
+  <p>A <em>height-range modifier</em> changes settings between two Z heights, which is great for inserting a pause, changing filament, or tweaking temperature at a specific layer. Modifiers are explored further in <a href="../techniques/advanced-techniques.html">Advanced techniques</a>.</p>
+
+  <h3>🔧 Painting: supports, seams, colors</h3>
+  <p>Most modern slicers include "paint-on" tools that let you brush onto the 3D model:</p>
+  <div class="grid cols-3">
+    <div class="card accent-green"><h3>Paint-on supports</h3><p>Brush enforcers (where support must exist) or blockers (where it must not). Use a smart-fill option to select whole faces by angle threshold.</p></div>
+    <div class="card accent-yellow"><h3>Seam painting</h3><p>Paint where the layer start/stop scars may be placed or avoided. Ideal for hiding the seam in a sharp inner corner or on the back.</p></div>
+    <div class="card accent-pink"><h3>Color painting</h3><p>For multi-color printing, brush filaments directly onto faces or fill a region by surface angle. The slicer figures out the layer-by-layer toolpath; the printer swaps filament or nozzle as needed. See <a href="../techniques/multi-color-and-multi-material.html">Multi-color &amp; multi-material</a>.</p></div>
+  </div>
+
+  <div class="callout trick"><span class="callout-title">Seam hiding trick</span>
+    <p>Paint a thin vertical strip on a sharp outside corner as the "preferred" seam zone. Round faces always show a seam; sharp corners hide it because the nozzle's start and stop blob gets absorbed into the corner geometry.</p>
+  </div>
+
+  <h2 id="workflow">A reliable slicing workflow</h2>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 220" role="img" aria-label="Slicing workflow flow chart: import, orient, choose presets, supports and adhesion, slice, preview, send, watch first layer, adjust">
+      <rect class="f-blue" x="10" y="30" width="86" height="60" rx="10"/><text class="t-sm t-c t-b" x="53" y="56" style="text-anchor:middle">Import</text><text class="t-xs t-c" x="53" y="74" style="text-anchor:middle">check units</text>
+      <rect class="f-blue" x="112" y="30" width="86" height="60" rx="10"/><text class="t-sm t-c t-b" x="155" y="56" style="text-anchor:middle">Orient</text><text class="t-xs t-c" x="155" y="74" style="text-anchor:middle">strength first</text>
+      <rect class="f-green" x="214" y="30" width="86" height="60" rx="10"/><text class="t-sm t-c t-b" x="257" y="56" style="text-anchor:middle">Presets</text><text class="t-xs t-c" x="257" y="74" style="text-anchor:middle">3 correct?</text>
+      <rect class="f-green" x="316" y="30" width="86" height="60" rx="10"/><text class="t-sm t-c t-b" x="359" y="56" style="text-anchor:middle">Tune</text><text class="t-xs t-c" x="359" y="74" style="text-anchor:middle">walls, infill</text>
+      <rect class="f-orange" x="418" y="30" width="86" height="60" rx="10"/><text class="t-sm t-c t-b" x="461" y="56" style="text-anchor:middle">Support</text><text class="t-xs t-c" x="461" y="74" style="text-anchor:middle">+ adhesion</text>
+      <rect class="f-orange" x="520" y="30" width="86" height="60" rx="10"/><text class="t-sm t-c t-b" x="563" y="56" style="text-anchor:middle">Slice</text><text class="t-xs t-c" x="563" y="74" style="text-anchor:middle">read warnings</text>
+      <rect class="f-purple" x="622" y="30" width="86" height="60" rx="10"/><text class="t-sm t-c t-b" x="665" y="56" style="text-anchor:middle">Preview</text><text class="t-xs t-c" x="665" y="74" style="text-anchor:middle">scrub layers</text>
+      <rect class="f-red" x="724" y="30" width="86" height="60" rx="10"/><text class="t-sm t-c t-b" x="767" y="56" style="text-anchor:middle">Print</text><text class="t-xs t-c" x="767" y="74" style="text-anchor:middle">watch layer 1</text>
+      <path class="d-ink arrow" d="M96 60 H110"/><path class="d-ink arrow" d="M198 60 H212"/><path class="d-ink arrow" d="M300 60 H314"/><path class="d-ink arrow" d="M402 60 H416"/><path class="d-ink arrow" d="M504 60 H518"/><path class="d-ink arrow" d="M606 60 H620"/><path class="d-ink arrow" d="M708 60 H722"/>
+      <path class="d-dash arrow" d="M767 90 V170 H665 V92"/>
+      <text class="t-sm" x="690" y="190">issue found → adjust one thing, re-slice</text>
+      <rect class="d-surface2" x="10" y="130" width="560" height="76" rx="10"/>
+      <text class="t-sm t-b" x="24" y="152">Change one variable at a time.</text>
+      <text class="t-sm" x="24" y="172">Save the working .3mf with a version number. Write what changed in the file name</text>
+      <text class="t-sm" x="24" y="190">(bracket_v3_walls4.3mf). Future-you will not remember which tweak helped.</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> A defensive workflow. The loop at the end matters most: iterate with single changes and a saved project file.</figcaption>
+  </figure>
+
+  <h3>Best-practice checklist</h3>
+  <ol class="steps">
+    <li><strong>Verify the model first.</strong>Check dimensions in the slicer (it shows the size in mm), unit scale (a model in inches imports 25.4× too small), and any warnings about open edges. See <a href="files-and-meshes.html">File formats &amp; mesh repair</a>.</li>
+    <li><strong>Orient for the load, not the looks.</strong>Layers are weakest between each other. Orient so forces run along layers, and so that critical holes are vertical (round) rather than horizontal (teardrop). See <a href="../design/principles.html">Design principles</a> and <a href="../design/strength-and-orientation.html">Strength &amp; orientation</a>.</li>
+    <li><strong>Confirm the three presets.</strong>Correct printer and nozzle, the exact filament you loaded (not just "PLA"), and a process that suits the goal.</li>
+    <li><strong>Change a few things on purpose.</strong>Start from a known-good process preset. Adjust walls, infill and supports with intent; consult <a href="slicer-settings.html">Slicer settings explained</a> for what each does.</li>
+    <li><strong>Slice, then read all warnings.</strong>Messages such as "object floating", "thin walls ignored" and "flush volume large" are free advice.</li>
+    <li><strong>Preview with the checklist above.</strong>Always check layer 1 and the first overhang.</li>
+    <li><strong>Print, and watch the first layer.</strong>Most failures are visible within the first 3–5 minutes. Watch via camera or in person.</li>
+    <li><strong>Save and annotate.</strong>Save the project; write the outcome in the file name or a notes field.</li>
+  </ol>
+
+  <div class="callout warn"><span class="callout-title">Common mistakes</span>
+    <ul>
+      <li>Slicing for the wrong nozzle (0.4 preset, 0.6 nozzle installed). The first layer will be wrong in width and flow.</li>
+      <li>Using a "Generic PLA" preset for a silk or wood-filled PLA, which needs different temperatures and speeds.</li>
+      <li>Editing settings while a preset marked "system" is selected and not saving, so changes disappear on restart.</li>
+      <li>Trusting auto-support blindly on overhangs that are better solved by reorienting.</li>
+      <li>Never updating the slicer, or updating in the middle of a project without a backup; settings names sometimes change between major versions.</li>
+    </ul>
+  </div>
+
+  <h2 id="network">Cloud, LAN and other ways to send a job</h2>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 300" role="img" aria-label="Three ways to get a sliced file to a printer: USB or SD card, local network (LAN mode), and cloud relay">
+      <rect class="f-blue" x="20" y="100" width="150" height="70" rx="12"/><text class="t t-c t-b" x="95" y="130">Slicer</text><text class="t-xs t-c" x="95" y="150" style="text-anchor:middle">your computer</text>
+      <rect class="f-red" x="690" y="100" width="150" height="70" rx="12"/><text class="t t-c t-b" x="765" y="130">Printer</text><text class="t-xs t-c" x="765" y="150" style="text-anchor:middle">firmware + storage</text>
+      <path class="d-ink arrow" d="M170 120 C300 40 560 40 690 120"/>
+      <text class="t-sm t-c t-b" x="430" y="42" style="text-anchor:middle">A · Cloud relay (vendor server)</text>
+      <text class="t-xs t-c" x="430" y="60" style="text-anchor:middle">works from anywhere · account required · data leaves your network</text>
+      <path class="d-ink arrow" d="M170 135 H690"/>
+      <text class="t-sm t-c t-b" x="430" y="128" style="text-anchor:middle">B · LAN mode (same network)</text>
+      <text class="t-xs t-c" x="430" y="156" style="text-anchor:middle">needs printer IP + access code · direct, fast, private</text>
+      <path class="d-ink arrow" d="M170 150 C300 240 560 240 690 150" style="stroke-dasharray:6 5"/>
+      <text class="t-sm t-c t-b" x="430" y="212" style="text-anchor:middle">C · Sneakernet: USB stick / SD card</text>
+      <text class="t-xs t-c" x="430" y="230" style="text-anchor:middle">no network at all · you walk the file over</text>
+      <rect class="d-surface2" x="20" y="256" width="820" height="36" rx="8"/>
+      <text class="t-sm" x="34" y="279">Third-party hosts (OctoPrint, Moonraker/Mainsail, Duet web) add a fourth option: send via the printer's own web server.</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> Delivery paths. Choose by convenience versus privacy. Network security details are in <a href="gcode-and-firmware.html#network-security">G-code, firmware &amp; ecosystem</a>.</figcaption>
+  </figure>
+
+  <ul>
+    <li><strong>Cloud sending</strong> is the easiest: log in once and send from anywhere, with remote monitoring in the app. The trade-off is that your files and camera stream pass through the manufacturer's servers.</li>
+    <li><strong>LAN mode</strong> keeps everything inside your home network; you enter the printer's address and its access code in the slicer. Typically faster for big files and independent of the internet.</li>
+    <li><strong>USB / SD card</strong> is the lowest-tech and most robust. Good when the printer is isolated on purpose.</li>
+    <li><strong>Host software</strong> such as OctoPrint, Mainsail or Fluidd gives queueing, timelapse and plug-ins on printers that run open firmware.</li>
+  </ul>
+
+  <h2 id="switching">When to switch slicers</h2>
+  <p>You do not need to be loyal. Reasons to try another slicer:</p>
+  <ul>
+    <li><strong>A bug or limitation blocks you</strong> (say, a seam bug on your geometry). Slice the same <code>3MF</code> in a second slicer to see if the issue is software or physical.</li>
+    <li><strong>You bought a different brand of printer</strong> and the vendor profiles are in another slicer.</li>
+    <li><strong>You want better calibration tools</strong> (Orca) or documented stability (PrusaSlicer).</li>
+    <li><strong>You need a feature</strong>, e.g. a particular infill, wall ordering or support style that only one slicer offers.</li>
+  </ul>
+  <div class="callout info"><span class="callout-title">Moving projects between slicers</span>
+    <p>A <code>3MF</code> from Bambu Studio opens cleanly in OrcaSlicer, with settings mapped by name. Going to PrusaSlicer or Cura keeps geometry and often object placement, but process settings are mostly lost; plan to rebuild your presets. Painted colors and supports travel only between close relatives.</p>
+  </div>
+
+  <h2 id="bambu-studio">Bambu Studio specifics for the X2D</h2>
+  <p>Bambu Studio is the reference slicer for Bambu printers. Rather than repeat everything about the X2D here, this section highlights what is different from a "generic" slicer. For deeper coverage go to <a href="../x2d/settings-and-profiles.html">Bambu Studio settings &amp; profiles</a> and <a href="../x2d/dual-nozzle-printing.html">Dual-nozzle printing</a>.</p>
+
+  <div class="callout x2d"><span class="callout-title">What changes with a dual-nozzle X2D</span>
+    <ul>
+      <li><strong>Two nozzles, two extruders.</strong> The left nozzle is the main hotend with a direct-drive servo extruder in the toolhead; the right nozzle is the auxiliary hotend, fed by a stepper-driven auxiliary extruder at the back via a PTFE tube. Bambu Studio assigns each filament to a nozzle ("left" or "right") and shows the assignment in the plate and preview.</li>
+      <li><strong>Build area differs by nozzle.</strong> Printing with the main nozzle uses the full 256 × 256 × 260 mm volume; the area both nozzles can reach is 235.5 × 256 × 256 mm. The slicer warns when an object cannot be reached by the nozzle it is assigned to.</li>
+      <li><strong>Auxiliary limits.</strong> The auxiliary extruder is limited to about 200 mm/s and roughly 1000 mm/s² acceleration, and needs longer retraction and a much larger flow-dynamics K value than the main nozzle. Expect slightly lower quality on fine detail from the auxiliary nozzle and keep it for supports, secondary colors or less demanding parts.</li>
+      <li><strong>Flow Dynamics Calibration</strong> applies to the main nozzle only; the auxiliary nozzle uses built-in values.</li>
+      <li><strong>Fewer purges.</strong> Switching nozzles replaces many filament changes, so flush volumes and prime-tower waste can be much lower than with a single-nozzle AMS printer. The Dual-nozzle chapter explains when the slicer reduces tower use automatically.</li>
+      <li><strong>Filament mapping.</strong> The AMS 2 Pro gives you four slots per unit. Bambu Studio's <em>Filament Track Switch / dynamic mapping</em> logic decides which path (left or right nozzle) takes each AMS slot; review the mapping dialog before every multi-color job.</li>
+    </ul>
+  </div>
+
+  <h3>X2D-aware tips</h3>
+  <ul>
+    <li><strong>Pick the printer and nozzle in the preset bar first</strong>; filament and process presets filter by what the printer supports.</li>
+    <li><strong>Use presets with RFID-tagged Bambu filament</strong> so the slicer syncs the type, color and remaining spool length from the AMS.</li>
+    <li><strong>Print supports from the auxiliary nozzle</strong> if you want an easy-peel interface material, for example a different PLA or PETG support interface under a main-nozzle ABS part, subject to the compatibility table in <a href="../x2d/filament-compatibility.html">Filament compatibility</a>.</li>
+    <li><strong>Mind the plate type setting.</strong> If the plate selected in the slicer differs from the plate actually installed, the printer may refuse or warn before starting.</li>
+    <li><strong>Check the Device tab</strong> for live camera, AMS drying status and printer messages once the job is sent.</li>
+  </ul>
+
+  <div class="callout tip"><span class="callout-title">Handy cross-references</span>
+    <p>Looking for temperatures and speeds for a material? See <a href="slicer-settings.html#starting-profiles">starting profiles</a>. Multi-color waste and flush volumes? <a href="../techniques/multi-color-and-multi-material.html">Multi-color &amp; multi-material</a>. Dual-nozzle strategy? <a href="../x2d/dual-nozzle-printing.html">Dual-nozzle printing</a>.</p>
+  </div>
+
+  <h2 id="quiz">Quick self-check</h2>
+  <div class="quiz"><p class="q">Which statement best describes G-code?</p>
+    <ul class="options"><li>A 3D model description made of triangles</li><li data-correct>A list of machine commands that the firmware executes line by line</li><li>A setting preset for the slicer</li></ul>
+    <p class="explain">The mesh describes the shape; G-code describes the motion and extrusion that produces it.</p></div>
+  <div class="quiz"><p class="q">You want to share a complete job with a friend so they get the same settings. What should you send?</p>
+    <ul class="options"><li>The STL file</li><li data-correct>A project .3mf</li><li>A screenshot of the settings</li></ul>
+    <p class="explain">The project file embeds meshes, plate layout, per-object overrides and the presets used.</p></div>
+  <div class="quiz"><p class="q">A per-object setting overrides which level of settings?</p>
+    <ul class="options"><li data-correct>The global process preset for that object only</li><li>The printer firmware</li><li>Nothing; it is cosmetic</li></ul>
+    <p class="explain">Per-object settings and modifiers are the most specific scope and win over the global values.</p></div>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul>
+    <li>A slicer converts a mesh into G-code: slice into layers, generate walls and infill, add supports, order the paths, write commands.</li>
+    <li>Bambu Studio, OrcaSlicer and PrusaSlicer share a lineage; Cura is separate but covers the broadest printer list.</li>
+    <li>Presets come in three layers (printer, filament, process) with per-object overrides on top.</li>
+    <li>Share <code>.3mf</code> projects instead of raw G-code; treat unknown G-code with suspicion.</li>
+    <li>The preview is your cheapest quality-control step; use the legends and the layer slider every time.</li>
+    <li>On the X2D, filament-to-nozzle assignment, build-area limits and auxiliary-nozzle limits are the new things to learn.</li>
+  </ul>
+  <p>Practice: <a href="../exercises/level-1-beginner.html">Level 1 exercises</a> include slicing and preview tasks, and <a href="../exercises/x2d-challenges.html">X2D challenges</a> use the dual-nozzle workflow.</p>
+
+</main>
+</body>
+</html>

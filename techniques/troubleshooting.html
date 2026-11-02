@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Troubleshooting gallery · 3D Printing Compendium</title>
+  <meta name="description" content="Illustrated 3D printing troubleshooting gallery with 40 defects: causes ranked by likelihood, fixes and prevention, an interactive symptom picker, a diagnostic decision tree, cold-pull procedure and a when-to-stop guide.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+  <style>
+    .ts-tools { display: grid; gap: 10px; margin: 1em 0; }
+    .ts-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+    button.ts-chip { cursor: pointer; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); border-radius: 999px; padding: 5px 14px; font: inherit; font-size: 13.5px; font-weight: 650; }
+    button.ts-chip:hover { border-color: var(--brand); }
+    button.ts-chip[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: #fff; }
+    .ts-search { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .ts-search input { flex: 1 1 260px; font: inherit; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+    .ts-count { color: var(--muted); font-size: 14px; }
+    .ts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 16px; margin: 1em 0 2em; }
+    .ts-card { background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--c, var(--brand)); border-radius: var(--radius); box-shadow: var(--shadow); padding: 12px 16px 14px; scroll-margin-top: 80px; }
+    .ts-card[data-cat~="extrusion"] { --c: var(--orange); } .ts-card[data-cat~="adhesion"] { --c: var(--blue); }
+    .ts-card[data-cat~="structure"] { --c: var(--purple); } .ts-card[data-cat~="surface"] { --c: var(--teal); }
+    .ts-card[data-cat~="motion"] { --c: var(--pink); } .ts-card[data-cat~="overhang"] { --c: var(--yellow); }
+    .ts-card[data-cat~="multi"] { --c: var(--red); }
+    .ts-card.ts-hit { outline: 3px solid var(--brand); }
+    .ts-card h4 { margin: 0 0 .4em; font-size: 1.08rem; display: flex; gap: 8px; align-items: baseline; }
+    .ts-card h4 small { font-size: 12px; font-weight: 700; color: var(--muted); }
+    .ts-card svg.ts-svg { width: 100%; max-width: 300px; height: auto; display: block; margin: 0 auto .5em; background: var(--surface-2); border-radius: 10px; }
+    .ts-card p { margin: .35em 0; font-size: 14.5px; }
+    .ts-card h5 { margin: .8em 0 .2em; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .ts-card ol, .ts-card ul { margin: .2em 0 .2em 1.2em; padding: 0; font-size: 14.5px; }
+    .ts-card li { margin: .15em 0; }
+    .ts-none { display: none; padding: 18px; border: 1px dashed var(--line); border-radius: var(--radius); color: var(--muted); text-align: center; }
+    .ts-group[hidden], .ts-card[hidden] { display: none; }
+  </style>
+</head>
+<body data-page="techniques/troubleshooting.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 4 · Techniques</div>
+    <h1>Troubleshooting gallery</h1>
+    <p class="lead">Forty illustrated defects, each with a picture of what you are looking at, the causes ranked from most to least likely, step-by-step fixes and prevention. Use the symptom picker, the decision tree, or just scroll the gallery.</p>
+    <div class="meta"><span class="badge beginner">Beginner → Expert</span><span class="badge time">⏱ 45 min read · reference</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">How to use this page</span>
+    <p>1) Run the <a href="#first5">first five checks</a>, which fix more than half of all failures. 2) Find your symptom with the <a href="#picker">symptom picker</a> or the <a href="#tree">decision tree</a>. 3) Work through the <b>causes in the order listed</b> and change <em>one thing at a time</em>. 4) Log what worked. Settings names follow Bambu Studio/OrcaSlicer; PrusaSlicer and Cura use near-identical terms. For X2D-specific parts, see <a href="../x2d/maintenance-and-troubleshooting.html">X2D maintenance &amp; troubleshooting</a>.</p></div>
+
+  <h2 id="first5">The first five checks for any failure</h2>
+  <p>Most printing problems come from a short list of root causes. Before you tune a single setting, run through this list. It takes five minutes and saves hours of chasing symptoms.</p>
+  <ul class="checklist">
+    <li><b>1 · The first layer.</b> Is it squished evenly, with lines touching and no gaps or ridges? Is the plate clean (wipe with IPA, or warm water and dish soap, no finger oils)? See <a href="first-layer-and-adhesion.html">first layer &amp; adhesion</a>.</li>
+    <li><b>2 · The filament.</b> Is it dry and the right type in the right profile? Popping, hissing, fuzzy surfaces and stringing mean wet filament. See <a href="../materials/drying-and-storage.html">drying &amp; storage</a>.</li>
+    <li><b>3 · The filament path.</b> Does the spool unwind freely, with no tangles, kinks or sharp bends? Is the extruder gripping with no grinding and no clicking?</li>
+    <li><b>4 · The nozzle.</b> Is it clean (no burnt crust), the right size, tightened, and flowing a smooth, straight strand when you extrude by hand? Compare the flow to a fresh nozzle.</li>
+    <li><b>5 · The profile.</b> Are temperature, cooling and speed set for <em>this</em> material and layer height? Is volumetric flow within the hotend’s limit? See <a href="speed-cooling-quality.html">speed, cooling &amp; quality</a>.</li>
+  </ul>
+  <div class="callout tip"><span class="callout-title">The golden rule</span><p>Change one variable, print a small test (a 20 mm cube or a calibration tower takes 10–20 minutes), compare, and keep notes. Changing five things at once turns troubleshooting into guessing.</p></div>
+
+  <h2 id="tree">Diagnostic decision tree</h2>
+  <p>Start at the top. Pick the column that matches <em>when</em> and <em>where</em> the problem appears; each box links to the matching card in the gallery.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 470" role="img" aria-label="Decision tree: four branches by when the problem appears, each linking to defect cards">
+      <rect class="f-orange" x="290" y="10" width="240" height="44" rx="12"/><text class="t t-c t-b" x="410" y="38">What do you see?</text>
+      <path class="d-ink" d="M410 54 V72 M100 72 H720 M100 72 V90 M300 72 V90 M520 72 V90 M720 72 V90"/>
+      <rect class="f-blue" x="10" y="90" width="180" height="50" rx="10"/><text class="t t-c t-b" x="100" y="112">Early layers go wrong</text><text class="t t-c t-sm" x="100" y="130">first 1–5 layers</text>
+      <rect class="f-teal" x="210" y="90" width="180" height="50" rx="10"/><text class="t t-c t-b" x="300" y="112">Surface looks wrong</text><text class="t t-c t-sm" x="300" y="130">print completes</text>
+      <rect class="f-purple" x="430" y="90" width="180" height="50" rx="10"/><text class="t t-c t-b" x="520" y="112">Part is weak / splits</text><text class="t t-c t-sm" x="520" y="130">layers, cracks, size</text>
+      <rect class="f-red" x="630" y="90" width="180" height="50" rx="10"/><text class="t t-c t-b" x="720" y="112">Print stops / detaches</text><text class="t t-c t-sm" x="720" y="130">mid-print failure</text>
+      <path class="d-thin" d="M100 140 V160 M300 140 V160 M520 140 V160 M720 140 V160"/>
+      <g>
+        <a href="#d-first-layer"><rect class="d-surface2" x="15" y="160" width="170" height="36" rx="8"/><text class="t t-sm t-c" x="100" y="183">Not sticking</text></a>
+        <a href="#d-warping"><rect class="d-surface2" x="15" y="204" width="170" height="36" rx="8"/><text class="t t-sm t-c" x="100" y="227">Corners lift (warping)</text></a>
+        <a href="#d-elephant"><rect class="d-surface2" x="15" y="248" width="170" height="36" rx="8"/><text class="t t-sm t-c" x="100" y="271">Flared base (elephant foot)</text></a>
+        <a href="#d-underextrusion"><rect class="d-surface2" x="15" y="292" width="170" height="36" rx="8"/><text class="t t-sm t-c" x="100" y="315">Gaps / thin lines</text></a>
+        <a href="#d-too-strong"><rect class="d-surface2" x="15" y="336" width="170" height="36" rx="8"/><text class="t t-sm t-c" x="100" y="359">Won’t release</text></a>
+      </g>
+      <g>
+        <a href="#d-stringing"><rect class="d-surface2" x="215" y="160" width="170" height="36" rx="8"/><text class="t t-sm t-c" x="300" y="183">Strings / hairs</text></a>
+        <a href="#d-blobs"><rect class="d-surface2" x="215" y="204" width="170" height="36" rx="8"/><text class="t t-sm t-c" x="300" y="227">Blobs / zits / seam</text></a>
+        <a href="#d-pillowing"><rect class="d-surface2" x="215" y="248" width="170" height="36" rx="8"/><text class="t t-sm t-c" x="300" y="271">Rough or holey top</text></a>
+        <a href="#d-ringing"><rect class="d-surface2" x="215" y="292" width="170" height="36" rx="8"/><text class="t t-sm t-c" x="300" y="315">Ripples / ghosting</text></a>
+        <a href="#d-zbanding"><rect class="d-surface2" x="215" y="336" width="170" height="36" rx="8"/><text class="t t-sm t-c" x="300" y="359">Horizontal bands</text></a>
+        <a href="#d-overhang-sag"><rect class="d-surface2" x="215" y="380" width="170" height="36" rx="8"/><text class="t t-sm t-c" x="300" y="403">Droopy overhangs</text></a>
+      </g>
+      <g>
+        <a href="#d-delamination"><rect class="d-surface2" x="435" y="160" width="170" height="36" rx="8"/><text class="t t-sm t-c" x="520" y="183">Layers separate</text></a>
+        <a href="#d-cracking"><rect class="d-surface2" x="435" y="204" width="170" height="36" rx="8"/><text class="t t-sm t-c" x="520" y="227">Cracks as it grows</text></a>
+        <a href="#d-dimensions"><rect class="d-surface2" x="435" y="248" width="170" height="36" rx="8"/><text class="t t-sm t-c" x="520" y="271">Wrong size</text></a>
+        <a href="#d-holes"><rect class="d-surface2" x="435" y="292" width="170" height="36" rx="8"/><text class="t t-sm t-c" x="520" y="315">Holes too small</text></a>
+        <a href="#d-moisture"><rect class="d-surface2" x="435" y="336" width="170" height="36" rx="8"/><text class="t t-sm t-c" x="520" y="359">Bubbles / popping</text></a>
+      </g>
+      <g>
+        <a href="#d-clog"><rect class="d-surface2" x="635" y="160" width="170" height="36" rx="8"/><text class="t t-sm t-c" x="720" y="183">Nothing comes out</text></a>
+        <a href="#d-clicking"><rect class="d-surface2" x="635" y="204" width="170" height="36" rx="8"/><text class="t t-sm t-c" x="720" y="227">Clicking / grinding</text></a>
+        <a href="#d-spaghetti"><rect class="d-surface2" x="635" y="248" width="170" height="36" rx="8"/><text class="t t-sm t-c" x="720" y="271">Spaghetti</text></a>
+        <a href="#d-layershift"><rect class="d-surface2" x="635" y="292" width="170" height="36" rx="8"/><text class="t t-sm t-c" x="720" y="315">Layers shifted</text></a>
+        <a href="#d-ams-jam"><rect class="d-surface2" x="635" y="336" width="170" height="36" rx="8"/><text class="t t-sm t-c" x="720" y="359">Feeder / AMS jam</text></a>
+        <a href="#d-heatcreep"><rect class="d-surface2" x="635" y="380" width="170" height="36" rx="8"/><text class="t t-sm t-c" x="720" y="403">Jams after minutes</text></a>
+      </g>
+      <text class="t t-xs" x="10" y="448">Click a box to jump to the card. Several defects share a cause (wet filament, temperature, cooling): read the whole card.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> A four-branch decision tree. If two branches fit, start with the one that appeared earliest in the print.</figcaption>
+  </figure>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 230" role="img" aria-label="Timeline of when common failures appear: first layer, early layers, middle, late, after hours">
+      <path class="d-ink arrow" d="M30 100 H790"/>
+      <g>
+        <circle class="s-blue" cx="80" cy="100" r="8"/><text class="t t-sm t-b t-c" x="80" y="80">0–2 min</text>
+        <circle class="s-teal" cx="250" cy="100" r="8"/><text class="t t-sm t-b t-c" x="250" y="80">2–30 min</text>
+        <circle class="s-purple" cx="440" cy="100" r="8"/><text class="t t-sm t-b t-c" x="440" y="80">mid-print</text>
+        <circle class="s-orange" cx="620" cy="100" r="8"/><text class="t t-sm t-b t-c" x="620" y="80">late / tall part</text>
+        <circle class="s-red" cx="770" cy="100" r="8"/><text class="t t-sm t-b t-c" x="770" y="80">anytime</text>
+      </g>
+      <text class="t t-sm t-c" x="80" y="130">Not sticking</text><text class="t t-sm t-c" x="80" y="148">Z offset wrong</text><text class="t t-sm t-c" x="80" y="166">Dirty plate</text>
+      <text class="t t-sm t-c" x="250" y="130">Warping starts</text><text class="t t-sm t-c" x="250" y="148">Elephant foot</text><text class="t t-sm t-c" x="250" y="166">Part knocked loose</text>
+      <text class="t t-sm t-c" x="440" y="130">Layer shift</text><text class="t t-sm t-c" x="440" y="148">Delamination</text><text class="t t-sm t-c" x="440" y="166">Clog, heat creep</text>
+      <text class="t t-sm t-c" x="620" y="130">Wobble, ringing</text><text class="t t-sm t-c" x="620" y="148">Part tips (tall)</text><text class="t t-sm t-c" x="620" y="166">Filament runs out</text>
+      <text class="t t-sm t-c" x="770" y="130">Tangle</text><text class="t t-sm t-c" x="770" y="148">Power loss</text><text class="t t-sm t-c" x="770" y="166">Wet filament</text>
+      <text class="t t-xs" x="30" y="205">Timing is a strong clue: problems in the first minutes are almost always adhesion or setup; late problems are mechanical, thermal or material.</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> When each class of problem typically shows up.</figcaption>
+  </figure>
+
+  <h2 id="picker">Symptom picker and defect gallery</h2>
+  <p>Filter by category or type a word (<em>strings, gaps, rough, clicking, color…</em>) to narrow the gallery. Cards are listed within their category; each card shows a schematic (not a photo) of what to look for, then causes in descending likelihood.</p>
+
+  <div class="tool"><h3>🔎 Symptom picker</h3>
+    <div style="padding:14px 20px 16px">
+      <div class="ts-tools">
+        <div class="ts-filters" role="group" aria-label="Defect categories">
+          <button type="button" class="ts-chip" data-cat="all" aria-pressed="true">All</button>
+          <button type="button" class="ts-chip" data-cat="extrusion" aria-pressed="false">Extrusion &amp; flow</button>
+          <button type="button" class="ts-chip" data-cat="adhesion" aria-pressed="false">Adhesion &amp; warping</button>
+          <button type="button" class="ts-chip" data-cat="structure" aria-pressed="false">Layers &amp; structure</button>
+          <button type="button" class="ts-chip" data-cat="surface" aria-pressed="false">Surface &amp; dimensions</button>
+          <button type="button" class="ts-chip" data-cat="motion" aria-pressed="false">Motion &amp; vibration</button>
+          <button type="button" class="ts-chip" data-cat="overhang" aria-pressed="false">Overhangs &amp; supports</button>
+          <button type="button" class="ts-chip" data-cat="multi" aria-pressed="false">Multi-material &amp; AMS</button>
+        </div>
+        <div class="ts-search"><input type="search" id="ts-q" placeholder="Search symptoms: stringing, gaps, rough, clicking, color…" aria-label="Search defects"><span class="ts-count" id="ts-count" aria-live="polite"></span></div>
+      </div>
+    </div>
+  </div>
+  <p class="ts-none" id="ts-none">No defect matches. Try a broader word such as “gaps”, “rough”, “weak” or “noise”, or reset the category to “All”.</p>
+
+  <div class="ts-group" data-group="extrusion">
+  <h3 id="g-extrusion">🟠 Extrusion &amp; flow</h3>
+  <div class="ts-grid">
+
+    <article class="ts-card" id="d-stringing" data-cat="extrusion" data-tags="strings hairs wisps cobwebs thin threads travel retraction">
+      <h4>1 · Stringing <small>hairs between parts</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Two pillars connected by thin plastic strings">
+        <rect class="d-metal2" x="10" y="94" width="220" height="8"/>
+        <rect class="d-plastic" x="40" y="30" width="36" height="64"/><rect class="d-plastic" x="164" y="30" width="36" height="64"/>
+        <path class="d-thin" d="M76 40 C100 52 140 34 164 44 M76 56 C100 68 140 50 164 60 M76 72 C100 82 140 66 164 76"/>
+        <text class="t t-xs t-c" x="120" y="22">fine strings across the gap</text>
+      </svg>
+      <p><b>Look for:</b> thin hairs or cobwebs across open spaces after the nozzle travels.</p>
+      <h5>Causes (most likely first)</h5>
+      <ol><li>Wet filament (steam pushes plastic out during travel)</li><li>Nozzle temperature too high</li><li>Retraction too short or off, or travel too slow</li><li>Slow travel speed / wiping disabled</li><li>Material is naturally stringy (PETG, TPU)</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Dry the filament (PLA 45–55 °C for 6–8 h; PETG 60–65 °C for 6–8 h).</li><li>Lower nozzle temperature in 5 °C steps until stringing fades but layer bonding stays good.</li><li>Increase retraction in small steps (direct drive: 0.4–1.0 mm; Bowden: 2–5 mm). Enable wipe on retract and avoid crossing open areas.</li><li>Raise travel speed (150–300 mm/s); run a retraction test tower.</li></ol>
+      <p><b>Prevention:</b> store filament sealed or in a dry box; use a calibrated profile per filament.</p>
+    </article>
+
+    <article class="ts-card" id="d-oozing" data-cat="extrusion" data-tags="oozing drooling dripping leaking nozzle drips blobs travel idle">
+      <h4>2 · Oozing / drooling <small>plastic leaks from a resting nozzle</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="A nozzle with a drop of plastic leaking and small blobs on the print">
+        <path class="d-metal" d="M100 8 H140 L130 40 H110 Z"/><circle class="d-plastic" cx="120" cy="49" r="5"/><circle class="d-plastic" cx="120" cy="63" r="3"/>
+        <rect class="d-plastic" x="30" y="80" width="180" height="14"/><circle class="d-plastic" cx="70" cy="77" r="4"/><circle class="d-plastic" cx="165" cy="77" r="4"/>
+        <text class="t t-xs" x="150" y="46">drips</text>
+      </svg>
+      <p><b>Look for:</b> blobs on the surface, a thin line of plastic at the start of moves, a drip on the bed.</p>
+      <h5>Causes</h5>
+      <ol><li>Wet filament or too-hot nozzle (pressure remains in the melt chamber)</li><li>Retraction disabled or too small</li><li>Waiting on a hot nozzle (heat soak, filament changes)</li><li>Worn or loose nozzle (leak around the thread)</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Dry filament; lower temperature 5–10 °C.</li><li>Increase retraction, enable wipe and “retract on layer change”.</li><li>Keep waiting times short, or retract before long pauses.</li><li>Hot-tighten the nozzle (see <a href="maintenance.html">maintenance</a>) or replace it.</li></ol>
+      <p><b>Prevention:</b> use a purge/wipe move before printing and avoid keeping the nozzle hot while idle.</p>
+    </article>
+
+    <article class="ts-card" id="d-blobs" data-cat="extrusion surface" data-tags="blobs zits pimples bumps dots seam start stop">
+      <h4>3 · Blobs and zits <small>small bumps on the wall</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Wall with small bumps lined up along one vertical line">
+        <rect class="d-plastic" x="80" y="14" width="70" height="80"/>
+        <circle class="d-plastic" cx="150" cy="26" r="5"/><circle class="d-plastic" cx="151" cy="42" r="6"/><circle class="d-plastic" cx="150" cy="58" r="5"/><circle class="d-plastic" cx="151" cy="76" r="6"/>
+        <path class="d-dash" d="M168 10 V98"/><text class="t t-xs" x="174" y="58">seam line</text>
+      </svg>
+      <p><b>Look for:</b> pimples at the same spot every layer (seam) or random dots.</p>
+      <h5>Causes</h5>
+      <ol><li>Pressure not released at layer start/end (retraction, pressure advance too low)</li><li>Over-extrusion or temperature too high</li><li>Seam position set to “nearest” or “random” on a visible face</li><li>Wet filament or dirty nozzle</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Calibrate pressure advance/flow dynamics, then flow ratio.</li><li>Set seam to “aligned” or “back” and hide it at a sharp edge; use scarf seam if available.</li><li>Enable “wipe before outer wall” and reduce temperature 5 °C.</li><li>Dry filament; clean the nozzle.</li></ol>
+      <p><b>Prevention:</b> run <a href="calibration.html">the calibration sequence</a> whenever you change filament.</p>
+    </article>
+
+    <article class="ts-card" id="d-underextrusion" data-cat="extrusion" data-tags="under extrusion gaps thin weak lines missing material skipping">
+      <h4>4 · Under-extrusion <small>not enough plastic</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Wall made of thin lines with visible gaps between them">
+        <rect class="d-plastic" x="70" y="14" width="100" height="6" rx="3"/><rect class="d-plastic" x="72" y="28" width="96" height="4" rx="2"/><rect class="d-plastic" x="70" y="40" width="100" height="6" rx="3"/><rect class="d-plastic" x="76" y="54" width="82" height="3" rx="1.5"/><rect class="d-plastic" x="70" y="64" width="100" height="6" rx="3"/><rect class="d-plastic" x="74" y="78" width="90" height="4" rx="2"/>
+        <text class="t t-xs" x="176" y="52">gaps between lines</text>
+      </svg>
+      <p><b>Look for:</b> thin, gappy or missing lines, weak parts, rough infill, dotted lines in the first layer.</p>
+      <h5>Causes</h5>
+      <ol><li>Partial clog or worn nozzle</li><li>Nozzle too cold or speed too high for volumetric flow limit</li><li>Wet or bad-quality filament; wrong diameter</li><li>Extruder tension/gear dirt or filament path friction</li><li>Flow ratio too low</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Do a cold pull (<a href="#coldpull">procedure below</a>) or replace the nozzle.</li><li>Raise temperature 5–10 °C or lower max volumetric speed to the filament’s limit.</li><li>Dry filament; measure its diameter in three places.</li><li>Clean the extruder gear and check feed tension; remove tight bends.</li><li>Re-run flow calibration.</li></ol>
+      <p><b>Prevention:</b> replace nozzles on schedule and keep filament dry.</p>
+    </article>
+
+    <article class="ts-card" id="d-overextrusion" data-cat="extrusion" data-tags="over extrusion too much plastic bulging rough shiny blobby flow">
+      <h4>5 · Over-extrusion <small>too much plastic</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Wall lines bulging past a dashed ideal outline">
+        <path class="d-dash" d="M80 12 V96 M160 12 V96"/>
+        <rect class="d-plastic" x="72" y="14" width="96" height="12" rx="6"/><rect class="d-plastic" x="70" y="28" width="100" height="12" rx="6"/><rect class="d-plastic" x="72" y="42" width="96" height="12" rx="6"/><rect class="d-plastic" x="68" y="56" width="104" height="12" rx="6"/><rect class="d-plastic" x="72" y="70" width="96" height="12" rx="6"/><rect class="d-plastic" x="70" y="84" width="100" height="12" rx="6"/>
+        <text class="t t-xs" x="176" y="52">bulges</text>
+      </svg>
+      <p><b>Look for:</b> parts larger than designed, rough or bumpy walls, filled corners, ridged top surfaces.</p>
+      <h5>Causes</h5>
+      <ol><li>Flow ratio too high for this filament</li><li>Wrong filament diameter in profile</li><li>Temperature too high (low viscosity)</li><li>Pressure advance too low</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Calibrate flow ratio (typical 0.94–1.0).</li><li>Check diameter (1.75 mm) in the filament profile.</li><li>Lower temperature 5 °C and tune pressure advance.</li></ol>
+      <p><b>Prevention:</b> keep per-filament profiles with calibrated flow.</p>
+    </article>
+
+    <article class="ts-card" id="d-topgaps" data-cat="extrusion surface" data-tags="gaps top surface holes thin top lines not closed">
+      <h4>6 · Gaps in the top surface <small>top layers don’t close</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Top view of parallel lines with open gaps between them">
+        <rect class="d-surface2" x="40" y="12" width="160" height="86" rx="4"/>
+        <g class="d-plastic"><rect x="46" y="20" width="148" height="9"/><rect x="46" y="36" width="148" height="9"/><rect x="46" y="52" width="148" height="9"/><rect x="46" y="68" width="148" height="9"/><rect x="46" y="84" width="148" height="9"/></g>
+        <text class="t t-xs t-c" x="120" y="108">open gaps between lines</text>
+      </svg>
+      <p><b>Look for:</b> parallel lines on top with slits you can see through to the infill.</p>
+      <h5>Causes</h5>
+      <ol><li>Too few top layers over sparse infill</li><li>Under-extrusion on the top layers</li><li>Infill too sparse or line spacing too large</li><li>Top layers cooling too slowly (soft, sagging)</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Use 5–7 top layers (≥ 1 mm); increase top solid infill density.</li><li>Raise flow slightly on top surfaces; fix under-extrusion.</li><li>Use 15–25 % infill with a pattern that supports the roof (gyroid, cubic).</li><li>Increase part-cooling fan on top layers.</li></ol>
+      <p><b>Prevention:</b> choose top-layer count by the infill spacing, not by habit.</p>
+    </article>
+
+    <article class="ts-card" id="d-pillowing" data-cat="extrusion surface" data-tags="pillowing rough top bumpy sagging infill dimples">
+      <h4>7 · Pillowing <small>top skin bulges between infill lines</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Cross-section: top skin dipping between infill lines">
+        <path class="d-plastic" d="M30 40 C45 30 65 30 80 40 C95 30 115 30 130 40 C145 30 165 30 180 40 C195 30 205 32 210 40 V50 H30 Z"/>
+        <path class="d-ink" d="M30 50 H210 M50 50 V94 M110 50 V94 M170 50 V94" />
+        <text class="t t-xs t-c" x="120" y="20">wavy top skin</text><text class="t t-xs t-c" x="120" y="106">sparse infill below</text>
+      </svg>
+      <p><b>Look for:</b> pillow-like dips on the top face, strongest on large flat areas with low infill.</p>
+      <h5>Causes</h5>
+      <ol><li>Not enough top layers</li><li>Too little cooling of the first top layers</li><li>Too-hot nozzle or too-fast speed on top</li><li>Sparse, widely spaced infill</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Add top layers (to ≥ 1 mm) and increase infill to 20–30 %.</li><li>Boost fan on top layers; reduce temperature 5 °C.</li><li>Enable <a href="advanced-techniques.html#ironing">ironing</a> as a cosmetic top-up.</li></ol>
+      <p><b>Prevention:</b> match infill density to the roof span.</p>
+    </article>
+
+    <article class="ts-card" id="d-roughtop" data-cat="extrusion surface" data-tags="rough top holey top surface bumpy scratchy stringy top uneven">
+      <h4>8 · Rough, holey top <small>pitted or scratchy top</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Top view with random pits and bumps">
+        <rect class="d-plastic" x="40" y="14" width="160" height="82" rx="4"/>
+        <g class="d-surface2"><circle cx="70" cy="40" r="4"/><circle cx="110" cy="60" r="3"/><circle cx="150" cy="34" r="4"/><circle cx="170" cy="72" r="3"/><circle cx="90" cy="82" r="3"/><circle cx="130" cy="44" r="2.5"/></g>
+        <g class="d-plastic2"><circle cx="60" cy="70" r="3"/><circle cx="125" cy="80" r="3"/><circle cx="180" cy="44" r="3"/></g>
+      </svg>
+      <p><b>Look for:</b> tiny holes, bumps or dragging lines across the final layer.</p>
+      <h5>Causes</h5>
+      <ol><li>Wet filament (steam pits)</li><li>Over- or under-extrusion on the top layer</li><li>Nozzle dragging on curled corners</li><li>Dirty nozzle with burnt residue</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Dry filament and clean nozzle.</li><li>Calibrate flow; use “ensure vertical shell thickness”.</li><li>Enable “avoid crossing walls”, reduce overhang curling (more cooling).</li><li>Slow top-surface speed (≈ 60–100 mm/s).</li></ol>
+      <p><b>Prevention:</b> clean the nozzle at the start of each session.</p>
+    </article>
+
+    <article class="ts-card" id="d-perimetergaps" data-cat="extrusion structure" data-tags="missing walls gaps between perimeters thin walls hollow lines not touching">
+      <h4>9 · Missing walls / gaps between perimeters <small>thin features lack material</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Top view of a thin wall: two outlines with a gap in the middle">
+        <rect class="d-surface2" x="30" y="30" width="180" height="50" rx="4"/>
+        <rect class="d-plastic" x="40" y="36" width="160" height="8"/><rect class="d-plastic" x="40" y="66" width="160" height="8"/>
+        <text class="t t-xs t-c" x="120" y="58">gap left unfilled</text>
+      </svg>
+      <p><b>Look for:</b> gaps in thin walls and fine details; walls that should join but don’t.</p>
+      <h5>Causes</h5>
+      <ol><li>Wall thickness not a multiple of the line width</li><li>Feature thinner than the minimum the slicer can fill</li><li>Under-extrusion</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Make walls 2 × line width (e.g. 0.84 mm for 0.42 mm lines) or enable “detect thin walls” / “arachne” wall generator.</li><li>Increase the thin-wall width in CAD to ≥ 0.8 mm.</li><li>Check flow and nozzle.</li></ol>
+      <p><b>Prevention:</b> design with nozzle multiples; see <a href="../design/principles.html">design principles</a>.</p>
+    </article>
+
+    <article class="ts-card" id="d-burnt" data-cat="extrusion material" data-tags="burnt filament dark flecks black specks brown carbonized discoloration">
+      <h4>10 · Burnt filament / dark flecks <small>black specks in the plastic</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Filament strand with dark carbonized specks">
+        <rect class="d-plastic" x="30" y="40" width="180" height="28" rx="14"/>
+        <g class="s-black"><circle cx="70" cy="52" r="2.5"/><circle cx="105" cy="58" r="3"/><circle cx="130" cy="46" r="2"/><circle cx="165" cy="56" r="3.5"/><circle cx="190" cy="50" r="2"/></g>
+        <text class="t t-xs t-c" x="120" y="92">carbonized bits</text>
+      </svg>
+      <p><b>Look for:</b> black or brown specks, a darkened surface, a burnt smell, clogs that return quickly.</p>
+      <h5>Causes</h5>
+      <ol><li>Nozzle too hot or filament sitting hot too long (idling, slow prints)</li><li>Residue from a previous high-temperature material</li><li>Contaminated or dusty filament</li><li>Wrong material profile (PLA at ABS temperatures)</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Lower temperature; avoid parking hot.</li><li>Purge 100+ mm with a fresh filament; do a cold pull; replace the nozzle if specks persist.</li><li>Clean the spool path (a dust-wiping sponge).</li></ol>
+      <p><b>Prevention:</b> always flush between materials with different temperatures.</p>
+    </article>
+
+    <article class="ts-card" id="d-moisture" data-cat="extrusion material" data-tags="moisture wet filament bubbling popping hissing steam crackling stringing rough matte">
+      <h4>11 · Moisture bubbling <small>wet filament</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Extruded strand with bubbles and steam wisps">
+        <path class="d-metal" d="M100 8 H140 L130 36 H110 Z"/>
+        <rect class="d-plastic" x="112" y="38" width="16" height="50"/>
+        <g class="d-thin"><circle cx="150" cy="30" r="4"/><circle cx="162" cy="46" r="3"/><circle cx="148" cy="58" r="3.5"/></g>
+        <path class="d-mute" d="M92 40 C86 30 98 24 92 14 M80 52 C74 42 86 36 80 26"/>
+        <text class="t t-xs" x="170" y="68">steam, pops</text>
+      </svg>
+      <p><b>Look for:</b> crackling or hissing, tiny bubbles in the strand, stringing, rough and matte surfaces, weak layers.</p>
+      <h5>Causes</h5>
+      <ol><li>Filament absorbed humidity (nylon, PETG, TPU, PVA, PLA all do)</li><li>Open spool storage for weeks</li><li>Humid room and no dry box</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Dry at the material’s temperature (PLA ~50 °C, PETG ~65 °C, nylon ~80 °C, TPU ~55 °C, per maker).</li><li>Print from a sealed box or the AMS 2 Pro with fresh desiccant.</li><li>Check desiccant indicator color.</li></ol>
+      <p><b>Prevention:</b> see <a href="../materials/drying-and-storage.html">drying &amp; storage</a>.</p>
+    </article>
+
+    <article class="ts-card" id="d-clicking" data-cat="extrusion" data-tags="clicking grinding extruder skipping noise filament chewed gear slipping tick">
+      <h4>12 · Clicking / grinding extruder <small>the gear can’t push</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Extruder gear biting into filament leaving a flat chewed spot">
+        <circle class="d-metal" cx="90" cy="55" r="26"/><circle class="d-surface2" cx="90" cy="55" r="8"/>
+        <g class="d-thin"><path d="M90 26 V32 M116 55 H110 M90 84 V78 M64 55 H70 M108 37 L104 41 M72 73 L76 69 M108 73 L104 69 M72 37 L76 41"/></g>
+        <rect class="d-plastic" x="116" y="49" width="100" height="12"/><path class="d-surface2" d="M150 49 H170 V54 H150 Z"/>
+        <text class="t t-xs t-c" x="160" y="86">chewed flat spot</text>
+      </svg>
+      <p><b>Look for:</b> ticking sounds, the gear spinning without feeding, filament shavings on the gear.</p>
+      <h5>Causes</h5>
+      <ol><li>Clogged or too-cold nozzle (back pressure)</li><li>Printing faster than the hotend can melt</li><li>Retraction too large or too frequent</li><li>Spool tangle or too much friction</li><li>Dirty gear / wrong tension</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Cold pull the nozzle; raise temperature by 5–10 °C.</li><li>Cut max volumetric speed.</li><li>Clean the gear with a brush; check the tension; reseat the filament.</li><li>Lower retraction length.</li></ol>
+      <p><b>Prevention:</b> keep the filament path clean and don’t exceed the filament’s flow limit.</p>
+    </article>
+
+    <article class="ts-card" id="d-clog" data-cat="extrusion" data-tags="nozzle clog partial blocked jam no extrusion thin stream clogged">
+      <h4>13 · Nozzle clog (full or partial) <small>stream is thin, curling or absent</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Nozzle with a blockage and a thin curled stream">
+        <path class="d-metal" d="M90 8 H150 L134 62 H106 Z"/><ellipse class="s-red" cx="120" cy="52" rx="10" ry="6"/>
+        <path class="k-orange" d="M120 64 C118 76 130 84 122 96"/>
+        <text class="t t-xs" x="156" y="54">blockage</text>
+      </svg>
+      <p><b>Look for:</b> nothing extrudes, the strand curls sideways, or flow is weak and uneven.</p>
+      <h5>Causes</h5>
+      <ol><li>Debris or burnt residue in the nozzle</li><li>Switching between very different temperatures without a purge</li><li>Dust or abrasive wear (CF/GF filaments in a brass nozzle)</li><li>Heat creep (softened filament in the cold zone)</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Do a cold pull (see below); repeat until the plug comes out clean.</li><li>Clear the nozzle with a 0.35 mm needle at operating temperature (careful, hot).</li><li>Replace the nozzle if it still flows poorly.</li></ol>
+      <p><b>Prevention:</b> purge between materials, use hardened nozzles for abrasives, schedule replacement.</p>
+    </article>
+
+    <article class="ts-card" id="d-heatcreep" data-cat="extrusion" data-tags="heat creep jam after minutes cooling fan heatsink cold end softened filament enclosure">
+      <h4>14 · Heat creep <small>jams that return after minutes</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Hotend cross-section: heat rising above the heat break into the cold zone softening filament">
+        <rect class="d-metal" x="100" y="10" width="40" height="40"/><rect class="d-metal2" x="104" y="50" width="32" height="16"/><rect class="d-hot" x="96" y="66" width="48" height="22"/>
+        <rect class="d-plastic" x="116" y="4" width="8" height="82"/>
+        <path class="k-red" d="M154 86 C170 70 170 40 154 24" /><path class="d-ink arrow" d="M154 34 V22"/>
+        <text class="t t-xs" x="162" y="56">heat rises</text><text class="t t-xs" x="30" y="30">fan?</text>
+      </svg>
+      <p><b>Look for:</b> a good start, then clicking or a jam after 10–60 minutes, especially in hot enclosures.</p>
+      <h5>Causes</h5>
+      <ol><li>Heatsink fan failing, blocked or dusty</li><li>Hot chamber or ambient (PLA in an enclosure at 40+ °C)</li><li>Frequent long retractions pulling hot filament up</li><li>Heatbreak/thermal paste issue</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Check that the hotend fan spins at full speed; clean the duct.</li><li>Open the enclosure door or lower chamber temperature for PLA/PETG.</li><li>Shorten retraction; print slower.</li><li>Reassemble the heatbreak properly.</li></ol>
+      <p><b>Prevention:</b> keep hotend cooling clean; see <a href="maintenance.html">maintenance</a>.</p>
+    </article>
+
+  </div>
+  </div>
+
+  <div class="ts-group" data-group="adhesion">
+  <h3 id="g-adhesion">🔵 Adhesion &amp; warping</h3>
+  <div class="ts-grid">
+
+    <article class="ts-card" id="d-first-layer" data-cat="adhesion" data-tags="first layer not sticking bed adhesion peeling lifting z offset dirty plate loops dragging">
+      <h4>15 · First layer not sticking <small>lines lift or drag</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="First-layer lines on the bed, one curled up and loose">
+        <rect class="d-metal2" x="10" y="86" width="220" height="10"/>
+        <g class="d-plastic"><rect x="30" y="76" width="60" height="10" rx="5"/><rect x="100" y="76" width="50" height="10" rx="5"/></g>
+        <path class="d-plastic" d="M160 76 C200 76 210 60 195 50 C185 42 175 52 185 60 C192 66 170 70 160 72 Z"/>
+        <text class="t t-xs" x="170" y="36">loose, curled</text>
+      </svg>
+      <p><b>Look for:</b> lines that do not bond, loops of plastic dragged by the nozzle, a print that detaches in the first minutes.</p>
+      <h5>Causes</h5>
+      <ol><li>Dirty plate (oil, dust, glue residue)</li><li>Z offset too high (nozzle too far)</li><li>Bed or nozzle too cold; first layer too fast</li><li>Bed not level/warped (auto-leveling data stale)</li><li>Wrong plate for the material</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Wash the plate with warm water and dish soap, then IPA; do not touch the surface.</li><li>Re-run calibration; lower Z offset in 0.02 mm steps until lines are slightly flattened and touching.</li><li>First layer: 50–60 °C bed (PLA), 70–80 °C (PETG), slow (20–30 mm/s), 0.2–0.3 mm height.</li><li>Use glue stick for PETG/nylon on smooth plates (also prevents damage).</li></ol>
+      <p><b>Prevention:</b> a clean plate and a calibrated first layer. See <a href="first-layer-and-adhesion.html">first layer &amp; adhesion</a>.</p>
+    </article>
+
+    <article class="ts-card" id="d-warping" data-cat="adhesion" data-tags="warping curling corners lifting edges shrinkage draft enclosure abs nylon big flat parts">
+      <h4>16 · Warping <small>corners curl up</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="A part with corners lifted off the bed">
+        <rect class="d-metal2" x="10" y="92" width="220" height="8"/>
+        <path class="d-plastic" d="M40 78 C40 90 60 90 80 90 H160 C180 90 200 90 200 78 V62 H40 Z" />
+        <path class="d-ink arrow" d="M40 66 V48 M200 66 V48"/>
+        <text class="t t-xs t-c" x="120" y="30">corners lift as plastic shrinks</text>
+      </svg>
+      <p><b>Look for:</b> corners or edges lifting, a gap under the part, cracked layers in tall parts.</p>
+      <h5>Causes</h5>
+      <ol><li>Material shrinks while cooling (ABS, ASA, nylon, PC, PET-CF)</li><li>Drafts or a cold chamber</li><li>Large flat footprint, sharp corners</li><li>Bed too cool; poor adhesion</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Close the enclosure and let the chamber warm; stop part-fan cooling for ABS/ASA.</li><li>Add a brim (5–10 mm); round the corners; use mouse ears on large parts.</li><li>Raise bed temperature; apply adhesive; use an appropriate plate.</li></ol>
+      <p><b>Prevention:</b> use a heated chamber for high-shrink materials (X2D chamber up to 65 °C).</p>
+    </article>
+
+    <article class="ts-card" id="d-elephant" data-cat="adhesion surface" data-tags="elephant foot flared bottom squished first layers bulge base wider">
+      <h4>17 · Elephant foot <small>flared first layers</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Part with a flared bottom compared with a dashed straight wall">
+        <path class="d-dash" d="M80 14 V92 M160 14 V92"/>
+        <path class="d-plastic" d="M80 14 H160 V80 C160 86 166 88 168 92 H72 C74 88 80 86 80 80 Z"/>
+        <text class="t t-xs" x="174" y="86">bulge</text>
+      </svg>
+      <p><b>Look for:</b> first layers wider than the rest, mating parts that no longer fit.</p>
+      <h5>Causes</h5>
+      <ol><li>Nozzle too close / Z offset too low (squish)</li><li>Hot bed (especially 70 °C+) softens lower layers under weight</li><li>First layer too thick or too much flow</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Raise Z offset a little; use slicer’s “elephant foot compensation” (0.1–0.25 mm).</li><li>Lower bed temperature by 5–10 °C after the first layers.</li><li>Chamfer the bottom edge (0.4–0.6 mm × 45°) in CAD.</li></ol>
+      <p><b>Prevention:</b> chamfer the base of critical parts.</p>
+    </article>
+
+    <article class="ts-card" id="d-too-strong" data-cat="adhesion" data-tags="adhesion too strong stuck to plate won't release damaged pei torn plate difficult removal">
+      <h4>18 · Adhesion too strong <small>part won’t release</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="A part fused to the plate with a scraper and torn plate surface">
+        <rect class="d-metal2" x="10" y="86" width="220" height="10"/>
+        <rect class="d-plastic" x="50" y="46" width="100" height="40"/>
+        <path class="d-metal" d="M170 70 L220 56 L222 64 L172 80 Z"/>
+        <path class="k-red" d="M60 90 L72 100 M90 90 L100 100"/>
+        <text class="t t-xs" x="40" y="30">fused to plate</text>
+      </svg>
+      <p><b>Look for:</b> chips of plate coating pulled off, difficulty removing PETG from smooth PEI, bent plate.</p>
+      <h5>Causes</h5>
+      <ol><li>PETG, TPU or nylon on smooth/high-adhesion plates</li><li>Z offset too low or bed too hot</li><li>No release agent (glue stick layer)</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Let the plate cool completely; flex a spring-steel plate.</li><li>Use a thin layer of glue stick (acts as a release agent for PETG on smooth PEI).</li><li>Raise Z offset slightly; lower bed temp.</li><li>Use a textured plate for PETG.</li></ol>
+      <p><b>Prevention:</b> match plate and material; see <a href="first-layer-and-adhesion.html">first layer &amp; adhesion</a>.</p>
+    </article>
+
+    <article class="ts-card" id="d-spaghetti" data-cat="adhesion" data-tags="spaghetti detached failed print knocked off mess tangled strands air printing">
+      <h4>19 · Spaghetti / detachment <small>print becomes a plastic bird’s nest</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Tangled loops of filament on the bed beneath a nozzle">
+        <path class="d-metal" d="M100 6 H140 L132 30 H108 Z"/>
+        <path class="k-orange" d="M50 90 C70 40 100 100 120 50 S160 100 180 40 S200 90 190 92 M60 60 C90 80 110 30 140 70 C160 90 180 60 200 76 M40 76 C70 96 100 64 130 90"/>
+        <rect class="d-metal2" x="10" y="94" width="220" height="8"/>
+      </svg>
+      <p><b>Look for:</b> the print is gone from the plate while the nozzle continues printing in the air.</p>
+      <h5>Causes</h5>
+      <ol><li>Adhesion failure of the first layers (see card 15–16)</li><li>Part tipped by warping or by a collision with a curled edge</li><li>Support failure under an overhang</li><li>Clog or runout mid-print leading to broken layers</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Stop the print immediately (see the <a href="#whenstop">when-to-stop guide</a>) and remove the mess before it wraps the nozzle.</li><li>Clear nozzle and heater block of plastic; check for damage.</li><li>Fix the root cause above before reprint; enable AI spaghetti detection if your printer has it.</li></ol>
+      <p><b>Prevention:</b> watch the first layer and use a brim for tall, thin or warp-prone parts.</p>
+    </article>
+
+  </div>
+  </div>
+
+  <div class="ts-group" data-group="structure">
+  <h3 id="g-structure">🟣 Layers &amp; structure</h3>
+  <div class="ts-grid">
+
+    <article class="ts-card" id="d-delamination" data-cat="structure" data-tags="layer separation delamination splitting weak layers peeling snap along layers cold nozzle">
+      <h4>20 · Layer separation / delamination <small>layers split apart</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Stack of layers with a gap opening between two of them">
+        <g class="d-plastic"><rect x="70" y="16" width="100" height="10" rx="5"/><rect x="70" y="28" width="100" height="10" rx="5"/><rect x="70" y="40" width="100" height="10" rx="5"/><rect x="70" y="58" width="100" height="10" rx="5"/><rect x="70" y="70" width="100" height="10" rx="5"/><rect x="70" y="82" width="100" height="10" rx="5"/></g>
+        <path class="k-red" d="M64 53 H176" stroke-dasharray="4 3"/><text class="t t-xs" x="180" y="56">split</text>
+      </svg>
+      <p><b>Look for:</b> visible gaps between layers or parts that split along layer lines.</p>
+      <h5>Causes</h5>
+      <ol><li>Nozzle temperature too low for the speed</li><li>Too much cooling (ABS/ASA/PC/nylon)</li><li>Wet filament; under-extrusion</li><li>Layer height too large for the nozzle (&gt; 75 %)</li><li>Cold, drafty chamber</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Raise temperature 5–10 °C; slow down.</li><li>Reduce fan to 0–30 % for high-temp materials; close the enclosure.</li><li>Dry filament; fix flow.</li><li>Use layer height ≤ 60 % of the nozzle diameter.</li></ol>
+      <p><b>Prevention:</b> print functional parts hot and warm; consider <a href="post-processing.html#annealing">annealing</a>.</p>
+    </article>
+
+    <article class="ts-card" id="d-cracking" data-cat="structure" data-tags="cracking splitting cracks tall parts shrinkage stress abs asa nylon corners">
+      <h4>21 · Cracking <small>vertical splits as the part grows</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Tall part with a jagged vertical crack">
+        <rect class="d-plastic" x="80" y="10" width="80" height="84"/>
+        <path class="k-red" d="M120 10 L114 28 L124 44 L116 62 L126 80 L120 94"/>
+        <g class="d-thin"><path d="M80 28 H160 M80 46 H160 M80 64 H160 M80 82 H160"/></g>
+      </svg>
+      <p><b>Look for:</b> cracks that run along or across layers on tall or boxy parts, often at corners.</p>
+      <h5>Causes</h5>
+      <ol><li>Thermal stress: part cools unevenly (drafts, fan, cold chamber)</li><li>Material with high shrinkage (ABS, ASA, PC, PA)</li><li>Sharp internal corners (stress concentrators)</li><li>Weak layer bonding (see delamination)</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Increase chamber and bed temperature; stop drafts; close the lid.</li><li>Lower or disable the part fan.</li><li>Add fillets (radius ≥ 1–2 mm) at internal corners and use more walls.</li></ol>
+      <p><b>Prevention:</b> enclosure and warm chamber for engineering materials.</p>
+    </article>
+
+    <article class="ts-card" id="d-layershift" data-cat="structure motion" data-tags="layer shift shifted layers misaligned belt loose collision stepper skipping">
+      <h4>22 · Layer shifting <small>part jumps sideways</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Stack of layers where the upper layers are offset sideways">
+        <g class="d-plastic"><rect x="80" y="68" width="80" height="12" rx="3"/><rect x="80" y="80" width="80" height="12" rx="3"/><rect x="104" y="56" width="80" height="12" rx="3"/><rect x="104" y="44" width="80" height="12" rx="3"/><rect x="104" y="32" width="80" height="12" rx="3"/><rect x="104" y="20" width="80" height="12" rx="3"/></g>
+        <path class="d-ink arrow" d="M84 62 H102"/>
+      </svg>
+      <p><b>Look for:</b> a clean offset in X or Y at a certain height; everything above is shifted.</p>
+      <h5>Causes</h5>
+      <ol><li>Collision with a curled edge or a knocked part</li><li>Loose belt or pulley set screw</li><li>Speed or acceleration too high; motor current too low (skipped steps)</li><li>Toolhead cable or tube snagging</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Check for warped edges; fix warping or enable lift (Z hop) on travel.</li><li>Tighten pulleys, check belt tension (see <a href="maintenance.html">maintenance</a>).</li><li>Reduce acceleration and speed; check the cable path.</li></ol>
+      <p><b>Prevention:</b> inspect mechanics monthly; avoid crashes by keeping prints flat.</p>
+    </article>
+
+    <article class="ts-card" id="d-zbanding" data-cat="structure motion surface" data-tags="z banding wobble horizontal bands ridges regular lines lead screw z axis">
+      <h4>23 · Z-banding / wobble <small>regular horizontal bands</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Wall profile with a repeating wave along its height">
+        <path class="d-plastic" d="M90 12 C100 22 80 32 90 42 C100 52 80 62 90 72 C100 82 82 90 90 98 H160 V12 Z"/>
+        <path class="d-dash" d="M95 12 V98"/>
+        <text class="t t-xs" x="172" y="58">wave every few mm</text>
+      </svg>
+      <p><b>Look for:</b> repeating ripples at a fixed distance, or a wobbly column.</p>
+      <h5>Causes</h5>
+      <ol><li>Bent lead screw, loose or dirty Z coupler (on non-Bambu printers)</li><li>Temperature or flow fluctuation</li><li>Binding Z rods, missing lubrication</li><li>Unstable frame</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Clean and lubricate Z mechanics; check straightness of rods/screws.</li><li>Use steady temperatures; avoid fan surges.</li><li>Tighten the frame and bed supports.</li></ol>
+      <p><b>Prevention:</b> keep Z mechanics clean and lubricated.</p>
+    </article>
+
+  </div>
+  </div>
+
+  <div class="ts-group" data-group="surface">
+  <h3 id="g-surface">🟢 Surface &amp; dimensions</h3>
+  <div class="ts-grid">
+
+    <article class="ts-card" id="d-dimensions" data-cat="surface" data-tags="dimensional inaccuracy wrong size too big too small tolerance shrinkage calibration scale">
+      <h4>24 · Dimensional inaccuracy <small>parts are not the size they should be</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Square printed larger than the dashed nominal outline">
+        <rect class="d-dash" x="70" y="20" width="100" height="70"/><rect class="d-plastic" x="66" y="16" width="108" height="78" opacity="0.7"/>
+        <path class="d-ink arrow arrow-start" d="M66 102 H174"/><text class="t t-xs t-c" x="120" y="12">20.0 → 20.3 mm</text>
+      </svg>
+      <p><b>Look for:</b> consistent size errors (+/– 0.1–0.4 mm), or errors that depend on direction.</p>
+      <h5>Causes</h5>
+      <ol><li>Flow ratio too high (outer walls bloated)</li><li>Material shrinkage (ABS 0.5–1 %, PA 1–2 %)</li><li>Elephant foot, over-extruded corners</li><li>Belt tension or steps/mm miscalibrated</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Calibrate flow and pressure advance first.</li><li>Print a calibration cube, measure, and use XY size compensation or filament shrink factor.</li><li>Verify motion calibration (see <a href="calibration.html">calibration</a>).</li></ol>
+      <p><b>Prevention:</b> keep a tolerance coupon for each material.</p>
+    </article>
+
+    <article class="ts-card" id="d-holes" data-cat="surface" data-tags="holes too small undersized holes circles pins fit tolerance horizontal expansion polyholes">
+      <h4>25 · Holes too small <small>screws and pegs won’t fit</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Plate with a printed hole smaller than the dashed nominal hole">
+        <rect class="d-plastic" x="50" y="14" width="140" height="82"/>
+        <circle class="d-dash" cx="120" cy="55" r="26"/><circle class="s-white d-thin" cx="120" cy="55" r="20"/>
+        <text class="t t-xs t-c" x="120" y="106">hole prints 0.1–0.3 mm smaller</text>
+      </svg>
+      <p><b>Look for:</b> holes below the designed diameter; screws bind.</p>
+      <h5>Causes</h5>
+      <ol><li>Perimeters slightly overfill small circles</li><li>Over-extrusion or low-resolution polygon approximation</li><li>Material shrinkage inside the hole</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Add 0.2–0.4 mm to hole diameters in CAD, or use hole compensation (e.g. “XY hole compensation”).</li><li>Use “detect small circles” / slow small perimeters.</li><li>Ream with a drill bit by hand.</li></ol>
+      <p><b>Prevention:</b> keep a clearance parameter in CAD. See <a href="../design/tolerances-and-fits.html">tolerances &amp; fits</a>.</p>
+    </article>
+
+    <article class="ts-card" id="d-corner-bulge" data-cat="surface" data-tags="corner bulging sharp corners rounded bulge pressure advance corners swollen">
+      <h4>26 · Corner bulging <small>corners balloon outward</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Top view of a square corner with a bulge beyond the ideal edge">
+        <path class="d-dash" d="M60 90 V20 H180"/>
+        <path class="d-plastic" d="M60 90 V28 C60 18 62 14 70 12 C76 10 80 10 90 20 H180 V30 H88 L80 36 V90 Z"/>
+        <circle class="d-plastic2" cx="68" cy="22" r="6"/>
+      </svg>
+      <p><b>Look for:</b> swollen, rounded corners, especially on tall parts or fast prints.</p>
+      <h5>Causes</h5>
+      <ol><li>Pressure advance too low or not calibrated</li><li>Corners are too hot because layers are short (high temp, low cooling)</li><li>Acceleration or jerk too low/high, causing pressure surges</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Calibrate pressure advance (flow dynamics).</li><li>Add cooling and slow small layers (“slow down for layer cooling”).</li><li>Use “scarf” or aligned seam away from sharp corners.</li></ol>
+      <p><b>Prevention:</b> re-run PA after changing filament, temperature or nozzle.</p>
+    </article>
+
+    <article class="ts-card" id="d-seam" data-cat="surface" data-tags="seam bulges z seam line vertical zipper start end point scar cylinder">
+      <h4>27 · Seam bulges <small>a vertical line where layers start and end</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Top view of a circle with a bump at the seam point">
+        <circle class="d-plastic" cx="120" cy="55" r="38"/><circle class="d-surface2" cx="120" cy="55" r="26"/>
+        <circle class="d-plastic" cx="156" cy="40" r="6"/><path class="d-dash" d="M160 30 L190 20"/><text class="t t-xs" x="170" y="16">seam</text>
+      </svg>
+      <p><b>Look for:</b> a visible zipper-like line on cylinders and smooth walls.</p>
+      <h5>Causes</h5>
+      <ol><li>Seam position nearest/random on a visible face</li><li>Pressure not released at start/end of the perimeter</li><li>Slight over-extrusion at the start point</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Align the seam to the back or paint a seam in an inside corner.</li><li>Use scarf-joint seams and “wipe on loops” if available.</li><li>Tune pressure advance and flow.</li></ol>
+      <p><b>Prevention:</b> design a shallow vertical groove where the seam can hide.</p>
+    </article>
+
+    <article class="ts-card" id="d-scarring" data-cat="surface" data-tags="scarring combing marks scratches top surface travel nozzle drag lines wiping">
+      <h4>28 · Scarring / combing marks <small>scratch lines across the top</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Top view with diagonal scratch lines across a flat top">
+        <rect class="d-plastic" x="40" y="14" width="160" height="82"/>
+        <path class="d-surface2" d="M60 90 L100 20 M90 90 L130 20 M120 90 L160 20 M150 90 L190 20"/>
+        <text class="t t-xs t-c" x="120" y="108">drag lines</text>
+      </svg>
+      <p><b>Look for:</b> thin scratches and tiny ridges on the top surface following travel paths.</p>
+      <h5>Causes</h5>
+      <ol><li>Nozzle travels across the top layer while hot (combing)</li><li>Nozzle drags through slightly high top lines</li><li>Over-extrusion on the top surface</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Enable “avoid crossing walls” and “z hop when retracting” (0.2–0.4 mm).</li><li>Reduce flow on top layers; lower top-layer temperature.</li><li>Iron the top surface.</li></ol>
+      <p><b>Prevention:</b> use top-layer settings tuned for quality.</p>
+    </article>
+
+    <article class="ts-card" id="d-fuzzy-unintended" data-cat="surface" data-tags="fuzzy skin unintended rough texture vibration wiggly walls wet filament texture">
+      <h4>29 · Unintended fuzzy or rough walls <small>walls look like sandpaper</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Wall edge with a jagged random outline">
+        <path class="d-plastic" d="M80 12 H150 L152 18 L148 24 L153 30 L148 38 L154 46 L148 54 L153 62 L149 70 L154 78 L150 86 L152 96 H80 Z"/>
+        <text class="t t-xs" x="162" y="56">rough edge</text>
+      </svg>
+      <p><b>Look for:</b> a grainy, random texture on walls even though fuzzy skin is off.</p>
+      <h5>Causes</h5>
+      <ol><li>Wet filament (steam bursts)</li><li>Fuzzy skin accidentally enabled by a modifier or a profile</li><li>Wobbling spool or unstable feed</li><li>Too-hot nozzle plus fast outer walls</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Dry the filament.</li><li>Check “fuzzy skin” in the process settings and modifiers.</li><li>Smooth the feed path; slow outer walls to 60–100 mm/s.</li></ol>
+      <p><b>Prevention:</b> check your profile before blaming hardware.</p>
+    </article>
+
+  </div>
+  </div>
+
+  <div class="ts-group" data-group="motion">
+  <h3 id="g-motion">🌸 Motion &amp; vibration</h3>
+  <div class="ts-grid">
+
+    <article class="ts-card" id="d-ringing" data-cat="motion" data-tags="ringing ghosting ripples echoes vibration corners acceleration input shaping resonance">
+      <h4>30 · Ringing / ghosting <small>echo ripples after corners</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Square corner followed by decaying ripples along the wall">
+        <path class="d-plastic" d="M50 20 H190 V92 H50 Z" opacity="0.5"/>
+        <path class="d-ink" d="M50 92 V20 H100 C108 14 114 26 120 20 C126 16 130 24 136 20 C140 18 142 22 146 20 H190"/>
+        <text class="t t-xs t-c" x="120" y="108">decaying ripples</text>
+      </svg>
+      <p><b>Look for:</b> faint echoes of a sharp feature (text, a hole) on the wall after a corner.</p>
+      <h5>Causes</h5>
+      <ol><li>High acceleration or jerk for the frame’s stiffness</li><li>Input shaping not calibrated (resonance compensation)</li><li>Loose belts, loose frame, printer on a wobbly table</li><li>Heavy toolhead or long moving mass</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Run vibration compensation / input shaping calibration; lower outer-wall acceleration.</li><li>Tighten belts and screws; put the printer on a heavy, stable base with isolating feet.</li><li>Lower outer wall speeds (100–150 mm/s) for finish.</li></ol>
+      <p><b>Prevention:</b> recalibrate after moving or transporting the printer. See <a href="speed-cooling-quality.html">speed, cooling &amp; quality</a>.</p>
+    </article>
+
+    <article class="ts-card" id="d-vfa" data-cat="motion" data-tags="vfa vertical fine artifacts vertical lines stripes motor stepper resonance speed dependent">
+      <h4>31 · VFA <small>fine vertical stripes</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Flat wall with fine regular vertical stripes">
+        <rect class="d-plastic" x="40" y="14" width="160" height="82"/>
+        <path class="d-surface2" d="M50 14 V96 M62 14 V96 M74 14 V96 M86 14 V96 M98 14 V96 M110 14 V96 M122 14 V96 M134 14 V96 M146 14 V96 M158 14 V96 M170 14 V96 M182 14 V96"/>
+        <text class="t t-xs t-c" x="120" y="108">regular fine stripes</text>
+      </svg>
+      <p><b>Look for:</b> fine regular vertical lines that change with print speed, not with layer height.</p>
+      <h5>Causes</h5>
+      <ol><li>Stepper microstep resonance at a particular speed</li><li>Belt, pulley or bearing roughness</li><li>Outer-wall speed in a resonance band</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Change the outer wall speed by ±20 mm/s and compare.</li><li>Check belts and bearings; recalibrate motion.</li><li>Print at consistent speed in the quiet band.</li></ol>
+      <p><b>Prevention:</b> tune outer wall speed on a test print.</p>
+    </article>
+
+  </div>
+  </div>
+
+  <div class="ts-group" data-group="overhang">
+  <h3 id="g-overhang">🟠 Bridges, overhangs &amp; supports</h3>
+  <div class="ts-grid">
+
+    <article class="ts-card" id="d-bridging" data-cat="overhang" data-tags="poor bridging sagging bridge strands drooping spans cooling bridge speed flow">
+      <h4>32 · Poor bridging <small>strands droop across gaps</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Two pillars with a sagging bridge between them">
+        <rect class="d-plastic" x="30" y="40" width="40" height="56"/><rect class="d-plastic" x="170" y="40" width="40" height="56"/>
+        <path class="d-plastic2" d="M70 40 C100 66 140 66 170 40 V30 H70 Z"/>
+        <path class="d-dash" d="M70 38 H170"/>
+      </svg>
+      <p><b>Look for:</b> sagging, stringy undersides over gaps, rough bridge surfaces.</p>
+      <h5>Causes</h5>
+      <ol><li>Too little cooling on the bridge</li><li>Nozzle too hot; bridge speed or flow wrong</li><li>Span too long (&gt; 30–50 mm)</li><li>Wet filament</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Maximum fan for bridge layers; lower the temperature 5–10 °C.</li><li>Use the slicer’s bridge flow ratio (start at 0.85–0.95) and slow bridge speed to 20–40 mm/s.</li><li>Add a support or a mid-span pillar for long spans.</li></ol>
+      <p><b>Prevention:</b> design spans under 30 mm. See <a href="supports-bridges-overhangs.html">supports, bridges &amp; overhangs</a>.</p>
+    </article>
+
+    <article class="ts-card" id="d-overhang-sag" data-cat="overhang" data-tags="sagging overhangs drooping rough underside steep angles 45 degrees cooling">
+      <h4>33 · Sagging overhangs <small>rough, drooping undersides</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Wall with an angled overhang whose edge droops">
+        <path class="d-plastic" d="M60 96 V20 H100 L160 70 C170 78 176 82 180 80 L150 100 Z"/>
+        <path class="d-dash" d="M100 20 L190 96"/>
+        <text class="t t-xs" x="170" y="42">droop</text>
+      </svg>
+      <p><b>Look for:</b> messy, shiny, drooping surfaces on steep overhangs.</p>
+      <h5>Causes</h5>
+      <ol><li>Angle beyond ~45–55° from vertical without supports</li><li>Too hot / too little cooling</li><li>Layer too tall or too fast</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Increase fan, lower temperature; use “slow down for overhangs”.</li><li>Reorient the part or add supports.</li><li>Add chamfers instead of horizontal ledges.</li></ol>
+      <p><b>Prevention:</b> design self-supporting angles (≤ 45°).</p>
+    </article>
+
+    <article class="ts-card" id="d-curling" data-cat="overhang" data-tags="curling overhang edges lifting upward perimeters curl nozzle hits corners tall thin">
+      <h4>34 · Curling overhangs <small>edges roll upward</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Overhang edge curled upward above the next layer">
+        <path class="d-plastic" d="M50 96 V50 H150 C176 50 186 36 190 22 L198 24 C192 48 176 62 150 62 H62 V96 Z"/>
+        <text class="t t-xs" x="140" y="16">curl up</text>
+      </svg>
+      <p><b>Look for:</b> overhang edges lifting into the nozzle path; clicking or scuffing sounds.</p>
+      <h5>Causes</h5>
+      <ol><li>Thin perimeters cooling unevenly and shrinking upward</li><li>Too much flow on the overhanging line</li><li>Insufficient cooling</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Increase cooling; lower the temperature; reduce speed on overhangs.</li><li>Print with “reverse on odd” or “ensure vertical shell thickness”.</li><li>Use supports for the edge.</li></ol>
+      <p><b>Prevention:</b> a hotter bed hurts overhangs, so keep it modest for PLA.</p>
+    </article>
+
+    <article class="ts-card" id="d-support-interface" data-cat="overhang" data-tags="poor support interface rough underside scarred supports gap z distance bottom surface">
+      <h4>35 · Poor support interface <small>rough underside above supports</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Supports under a bridge leaving a rough surface">
+        <rect class="d-plastic" x="40" y="30" width="160" height="14"/>
+        <g class="d-plastic2"><path d="M60 44 V94 M80 44 V94 M100 44 V94 M120 44 V94 M140 44 V94 M160 44 V94 M180 44 V94" stroke-width="3"/></g>
+        <path class="k-red" d="M44 48 L56 52 L68 48 L80 52 L92 48"/>
+      </svg>
+      <p><b>Look for:</b> rough or pitted underside after support removal.</p>
+      <h5>Causes</h5>
+      <ol><li>Z gap too small or too large</li><li>No interface layers; bad interface density</li><li>Support too dense near the part</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Use 2–3 interface layers and a Z gap of one layer (0.1–0.2 mm).</li><li>Slow interface speed; add cooling.</li><li>Use dedicated interface material (e.g. PVA, BVOH, or support filament) when possible.</li></ol>
+      <p><b>Prevention:</b> match support material to part material.</p>
+    </article>
+
+    <article class="ts-card" id="d-support-welded" data-cat="overhang" data-tags="support welded fused stuck won't break off supports petg nylon z gap too small">
+      <h4>36 · Supports welded to the part <small>won’t release</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Support structure fused to a part without any gap">
+        <rect class="d-plastic" x="40" y="30" width="160" height="16"/>
+        <rect class="d-plastic2" x="80" y="46" width="80" height="48"/>
+        <path class="k-red" d="M80 46 H160"/>
+        <text class="t t-xs t-c" x="120" y="108">no gap: fused</text>
+      </svg>
+      <p><b>Look for:</b> supports that tear chunks off the part when removed.</p>
+      <h5>Causes</h5>
+      <ol><li>Z gap of 0 or less than a layer</li><li>Same material at high temperature, especially PETG</li><li>Support density too high near the contact</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Increase Z gap to 0.2–0.3 mm; use a looser support pattern at the interface.</li><li>Use a different support material or tree supports.</li><li>Cut with flush cutters and a hobby knife; use heat or a thin blade.</li></ol>
+      <p><b>Prevention:</b> test a support-gap tower. See <a href="post-processing.html">post-processing</a>.</p>
+    </article>
+
+  </div>
+  </div>
+
+  <div class="ts-group" data-group="multi">
+  <h3 id="g-multi">🌈 Multi-material &amp; feeding</h3>
+  <div class="ts-grid">
+
+    <article class="ts-card" id="d-toolchange-blob" data-cat="multi extrusion" data-tags="blobs at tool change purge nozzle ooze filament swap color change flush wipe tower">
+      <h4>37 · Blobs at tool change <small>lumps where colors switch</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Color boundary with a blob of the previous color">
+        <rect class="f-blue" x="50" y="20" width="70" height="74"/><rect class="f-orange" x="120" y="20" width="70" height="74"/>
+        <circle class="f-blue" cx="130" cy="38" r="8"/>
+        <text class="t t-xs t-c" x="120" y="12">stray blob</text>
+      </svg>
+      <p><b>Look for:</b> small blobs or streaks of the old color near the transition.</p>
+      <h5>Causes</h5>
+      <ol><li>Oozing while idle or during the swap</li><li>Insufficient purge volume or poor pressure advance after the swap</li><li>Wipe or prime tower too small or too far</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Enable the prime/wipe tower and increase flush volume between very different colors.</li><li>Reduce standby temperature differences; check retraction.</li><li>Use “wipe into infill / object” for waste reduction only after the basics work.</li></ol>
+      <p><b>Prevention:</b> see <a href="multi-color-and-multi-material.html">multi-color &amp; multi-material</a>.</p>
+    </article>
+
+    <article class="ts-card" id="d-color-bleed" data-cat="multi" data-tags="color bleed mixed colors contamination muddy edges residual dark to light purge">
+      <h4>38 · Color bleed <small>old color tints the new one</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Gradient where one color fades into another unintentionally">
+        <defs><linearGradient id="tsbleed" x1="0" x2="1"><stop offset="0" stop-color="#2d6cdf"/><stop offset="1" stop-color="#f5a623"/></linearGradient></defs>
+        <rect fill="url(#tsbleed)" x="40" y="24" width="160" height="60" rx="4"/>
+        <text class="t t-xs t-c" x="120" y="102">tinted transition</text>
+      </svg>
+      <p><b>Look for:</b> muddy colors, tinted whites, streaks after a swap.</p>
+      <h5>Causes</h5>
+      <ol><li>Purge volume too low (especially dark → light)</li><li>Residual filament in the nozzle</li><li>Old color in the AMS path or hotend</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Raise flush volumes for dark → light; print light-to-dark where possible.</li><li>Purge manually before starting.</li><li>Print a clean test and re-check.</li></ol>
+      <p><b>Prevention:</b> order colors from light to dark; plan purge volume.</p>
+    </article>
+
+    <article class="ts-card" id="d-ams-jam" data-cat="multi extrusion" data-tags="ams feeder jam filament stuck feed error loading unloading buffer tube spool resistance">
+      <h4>39 · AMS / feeder jams <small>filament will not load or unload</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Filament path from a spool through a tube with a jam point">
+        <circle class="d-plastic" cx="40" cy="55" r="26"/><circle class="s-white d-thin" cx="40" cy="55" r="8"/>
+        <path class="d-ink" d="M66 55 H190 L210 40"/>
+        <circle class="k-red f-red" cx="130" cy="55" r="6"/>
+        <text class="t t-xs t-c" x="130" y="82">jam</text>
+      </svg>
+      <p><b>Look for:</b> feed errors, filament chewed or stopped, repeated retry loops.</p>
+      <h5>Causes</h5>
+      <ol><li>Tangled or crossed spool, snag at the spool edge</li><li>Brittle or wet filament snapping</li><li>Kinked or dirty PTFE tube, debris in the feeder</li><li>Bent filament tip or blob on the end</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Untangle and respool; cut a clean, tapered tip.</li><li>Remove the tube; pull the filament through by hand.</li><li>Clean the feeder gear and path; replace worn tubing.</li></ol>
+      <p><b>Prevention:</b> store filament dry; avoid brittle old spools. For the X2D see <a href="../x2d/maintenance-and-troubleshooting.html">X2D maintenance &amp; troubleshooting</a>.</p>
+    </article>
+
+    <article class="ts-card" id="d-tangles" data-cat="multi extrusion" data-tags="tangles tangled spool crossed loops filament knot snag unwind feed resistance">
+      <h4>40 · Spool tangles <small>loops cross and bind</small></h4>
+      <svg class="diagram ts-svg" viewBox="0 0 240 110" role="img" aria-label="Spool with crossed filament loops forming a knot">
+        <circle class="d-plastic" cx="90" cy="55" r="38"/><circle class="s-white d-thin" cx="90" cy="55" r="10"/>
+        <path class="d-ink" d="M128 55 C160 20 190 90 200 50 C210 10 150 90 140 40"/>
+        <circle class="d-hot" cx="168" cy="52" r="5" opacity="0"/>
+      </svg>
+      <p><b>Look for:</b> spool stops turning; sudden under-extrusion mid-print.</p>
+      <h5>Causes</h5>
+      <ol><li>Loose end not secured after use</li><li>Crossed windings on a re-spooled roll</li><li>Spool resting too high or at a sharp angle to the tube</li></ol>
+      <h5>Fix</h5>
+      <ol><li>Pause; unwind slack and clear the cross.</li><li>Use a smooth path with minimal friction.</li><li>Secure the end in the spool clip every time.</li></ol>
+      <p><b>Prevention:</b> always clip the end; store spools sealed.</p>
+    </article>
+
+  </div>
+  </div>
+
+  <section id="coldpull" aria-labelledby="coldpull-h">
+    <h2 id="coldpull-h">Nozzle clog: the cold-pull procedure</h2>
+    <p>A cold pull (also called an atomic pull) removes the carbonized residue and foreign particles that a normal purge leaves behind. Do it when flow is partial, when filament will not extrude after a swap, or when you see dark flecks.</p>
+    <figure class="fig">
+      <svg viewBox="0 0 520 200" role="img" aria-label="Cold pull in three stages: heat, cool to pulling temperature, pull">
+        <rect class="d-surface" x="10" y="10" width="160" height="180" rx="8"/><rect class="d-surface" x="180" y="10" width="160" height="180" rx="8"/><rect class="d-surface" x="350" y="10" width="160" height="180" rx="8"/>
+        <text class="t t-b t-c" x="90" y="34">1 · Heat &amp; push</text><text class="t t-b t-c" x="260" y="34">2 · Cool</text><text class="t t-b t-c" x="430" y="34">3 · Pull</text>
+        <path class="d-metal" d="M60 60 H120 V80 H110 L100 110 H80 L70 80 H60 Z"/><path class="d-hot" d="M60 80 H120 V96 H60 Z"/>
+        <path class="d-plastic" d="M88 40 V110"/>
+        <path class="d-metal" d="M230 60 H290 V80 H280 L270 110 H250 L240 80 H230 Z"/><path class="d-cool" d="M230 80 H290 V96 H230 Z"/>
+        <path class="d-plastic" d="M258 40 V110"/>
+        <path class="d-metal" d="M400 60 H460 V80 H450 L440 110 H420 L410 80 H400 Z"/>
+        <path class="d-plastic" d="M428 20 V150"/><path class="d-ink arrow" d="M440 120 V46"/>
+        <text class="t t-xs t-c" x="90" y="140">240–260 °C</text><text class="t t-xs t-c" x="90" y="156">push by hand</text>
+        <text class="t t-xs t-c" x="260" y="140">to 90–100 °C (PLA)</text><text class="t t-xs t-c" x="260" y="156">hold 1–2 min</text>
+        <text class="t t-xs t-c" x="430" y="170">firm steady pull</text><text class="t t-xs t-c" x="430" y="184">inspect the tip</text>
+      </svg>
+      <figcaption><b>Figure.</b> Heat so the filament fills the nozzle, cool until it is just soft, then pull the plug out with the debris stuck to it.</figcaption>
+    </figure>
+    <ol class="steps">
+      <li><b>Prepare.</b> Use a cheap, clean, medium-stiff filament (nylon or PLA). Preheat to 240–260 °C and push filament by hand until it flows freely.</li>
+      <li><b>Cool.</b> Set the nozzle to the pull temperature (about 90–100 °C for PLA, 120–140 °C for PETG, 140–160 °C for nylon). Keep light pressure on the filament.</li>
+      <li><b>Pull.</b> When the nozzle reaches the target, pull the filament out in one firm motion. The tip should show a molded nozzle-shaped end with dark specks.</li>
+      <li><b>Repeat.</b> Cut off the tip and repeat 3–5 times until the tip is clean.</li>
+      <li><b>Verify.</b> Extrude 50 mm at normal temperature; the stream should be even and straight.</li>
+    </ol>
+    <div class="callout warn"><b>Careful:</b> the nozzle is hot for steps 1–2. Do not pull on a printer with a hotend that needs tools to open (follow your manufacturer’s manual for the X2D; use the guided unload/nozzle procedures). If the pull fails, replace the nozzle (see <a href="maintenance.html">maintenance</a>).</div>
+  </section>
+
+  <section id="whenstop" aria-labelledby="whenstop-h">
+    <h2 id="whenstop-h">When to stop a print</h2>
+    <p>Not every flaw is fatal. Stopping early saves filament and protects the printer, but stopping too early wastes good prints. Use this traffic-light guide.</p>
+    <figure class="fig">
+      <svg viewBox="0 0 520 190" role="img" aria-label="Traffic light guide: red stop now, amber pause and inspect, green continue">
+        <rect class="d-surface" x="10" y="10" width="160" height="170" rx="8"/><rect class="d-surface" x="180" y="10" width="160" height="170" rx="8"/><rect class="d-surface" x="350" y="10" width="160" height="170" rx="8"/>
+        <circle class="f-red" cx="90" cy="40" r="14"/><circle class="f-yellow" cx="260" cy="40" r="14"/><circle class="f-green" cx="430" cy="40" r="14"/>
+        <text class="t t-b t-c" x="90" y="76">STOP NOW</text><text class="t t-b t-c" x="260" y="76">PAUSE &amp; LOOK</text><text class="t t-b t-c" x="430" y="76">KEEP GOING</text>
+        <text class="t t-xs t-c" x="90" y="98">spaghetti or detached part</text><text class="t t-xs t-c" x="90" y="114">filament wrapped on nozzle</text><text class="t t-xs t-c" x="90" y="130">smoke, burning smell</text><text class="t t-xs t-c" x="90" y="146">grinding crashes, shifted layers</text>
+        <text class="t t-xs t-c" x="260" y="98">first layer patchy</text><text class="t t-xs t-c" x="260" y="114">corner lifting (&lt; 1 mm)</text><text class="t t-xs t-c" x="260" y="130">under-extrusion begins</text><text class="t t-xs t-c" x="260" y="146">strange noises</text>
+        <text class="t t-xs t-c" x="430" y="98">minor stringing</text><text class="t t-xs t-c" x="430" y="114">small blobs, seam bumps</text><text class="t t-xs t-c" x="430" y="130">cosmetic roughness</text><text class="t t-xs t-c" x="430" y="146">slight ringing</text>
+      </svg>
+      <figcaption><b>Figure.</b> Stop for danger or hopeless prints; pause when a fix is cheap; carry on for cosmetic flaws.</figcaption>
+    </figure>
+    <div class="callout danger"><b>Safety first:</b> if you see smoke, smell burning plastic, notice scorched wiring or see sparks, power off and unplug the printer. Do not restart until the cause is found.</div>
+  </section>
+
+  <section id="quickref" aria-labelledby="quickref-h">
+    <h2 id="quickref-h">Quick reference: symptom → setting</h2>
+    <div class="table-wrap"><table class="data compact">
+      <thead><tr><th>Symptom</th><th>First setting to change</th><th>Direction</th></tr></thead>
+      <tbody>
+        <tr><td>Stringing</td><td>Dry filament, then retraction / temperature</td><td>Retraction up a little; temperature −5 to −10 °C</td></tr>
+        <tr><td>Blobs and zits</td><td>Seam position, pressure advance</td><td>Align/scarf seam; calibrate PA</td></tr>
+        <tr><td>Under-extrusion</td><td>Flow, temperature, speed</td><td>Slower, hotter by 5–10 °C, check for clog</td></tr>
+        <tr><td>Over-extrusion</td><td>Flow ratio</td><td>Down 2–5 %</td></tr>
+        <tr><td>First layer not sticking</td><td>Z offset, plate cleanliness</td><td>Closer by 0.02 mm; wash plate</td></tr>
+        <tr><td>Warping</td><td>Brim, enclosure, bed temp</td><td>Add brim; close lid; reduce fan</td></tr>
+        <tr><td>Elephant foot</td><td>Z offset, first-layer compensation</td><td>Raise slightly; add 0.1–0.2 mm compensation</td></tr>
+        <tr><td>Delamination</td><td>Nozzle temperature, fan</td><td>Hotter 5–10 °C; fan lower</td></tr>
+        <tr><td>Ringing</td><td>Outer wall acceleration, input shaping</td><td>Lower; recalibrate</td></tr>
+        <tr><td>Sagging overhangs</td><td>Fan, temperature, overhang speed</td><td>Fan up; temp down; slower</td></tr>
+        <tr><td>Poor bridges</td><td>Bridge flow, speed, fan</td><td>Flow 0.85–0.95; 20–40 mm/s; fan 100 %</td></tr>
+        <tr><td>Top surface gaps</td><td>Top layers, infill density</td><td>More top layers (4–5); more infill</td></tr>
+        <tr><td>Pillowing</td><td>Top layers, cooling</td><td>More top layers; more fan</td></tr>
+        <tr><td>Holes too small</td><td>Hole compensation / CAD clearance</td><td>Add 0.2–0.4 mm</td></tr>
+        <tr><td>Color bleed</td><td>Flush volumes</td><td>Increase for dark → light</td></tr>
+        <tr><td>Support welded</td><td>Support Z gap</td><td>Increase to 0.2–0.3 mm</td></tr>
+        <tr><td>Clicking extruder</td><td>Nozzle temperature, flow, clog</td><td>Hotter, slower, cold pull</td></tr>
+      </tbody></table></div>
+  </section>
+
+  <section id="materials" aria-labelledby="materials-h">
+    <h2 id="materials-h">Typical problems by material</h2>
+    <p>Different plastics fail in different ways. Use this table to jump to the most likely cards before you start changing settings.</p>
+    <div class="table-wrap"><table class="data compact">
+      <thead><tr><th>Material</th><th>Most common failures</th><th>Biggest lever</th><th>Cards</th></tr></thead>
+      <tbody>
+        <tr><td>PLA</td><td>Stringing when wet, sagging overhangs, heat creep in warm enclosures</td><td>Dry filament; fan up; open the lid in a hot chamber</td><td>1, 11, 14, 33</td></tr>
+        <tr><td>PETG</td><td>Stringing, blobs, over-adhesion to smooth plates, oozing</td><td>Dry filament; glue stick as a release layer; retraction</td><td>1, 2, 3, 18</td></tr>
+        <tr><td>ABS / ASA</td><td>Warping, cracking, delamination, fumes</td><td>Warm closed chamber; low or no part fan; brim</td><td>16, 20, 21</td></tr>
+        <tr><td>TPU</td><td>Under-extrusion, jams, stringing</td><td>Slow speeds (often 20–40 mm/s), short filament path, low retraction</td><td>4, 12, 39</td></tr>
+        <tr><td>Nylon (PA)</td><td>Moisture bubbling, warping, poor adhesion</td><td>Dry before and during printing; glue stick; chamber heat</td><td>11, 16, 15</td></tr>
+        <tr><td>PC / PC blends</td><td>Warping, cracking, layer splitting</td><td>High nozzle and chamber temperature; a firm adhesion surface</td><td>16, 20, 21</td></tr>
+        <tr><td>CF / GF filled</td><td>Clogs, nozzle wear, rough surface</td><td>Hardened nozzle; larger nozzle (0.6 mm); drying</td><td>13, 29</td></tr>
+        <tr><td>Silk / metallic PLA</td><td>Under-extrusion, gloss artifacts, clogs, weak layers</td><td>Hotter nozzle, slower speed, less retraction</td><td>4, 13, 20</td></tr>
+      </tbody></table></div>
+  </section>
+
+  <section id="method" aria-labelledby="method-h">
+    <h2 id="method-h">A repeatable diagnosis method</h2>
+    <ol class="steps">
+      <li><b>Describe the symptom precisely.</b> Where on the part (first layer, one side, everywhere, only tall sections)? When did it start? Is it regular or random?</li>
+      <li><b>Separate mechanics, material and settings.</b> Regular patterns point to mechanics; random blobs and bubbles point to material; changes between prints point to settings or hardware wear.</li>
+      <li><b>Check the cheap things first.</b> Dry filament, clean plate, clear nozzle, tight belts, correct profile for the filament actually loaded.</li>
+      <li><b>Change one variable and print a small test.</b> A 20 mm cube or a calibration tower takes minutes; a full failed print wastes hours.</li>
+      <li><b>Write it down.</b> A short log (date, filament, change, result) saves you from repeating the same experiment. The <a href="maintenance.html">maintenance log</a> has a template.</li>
+    </ol>
+    <div class="callout tip"><b>Rule of thumb:</b> if a problem appears suddenly on a profile that worked yesterday, suspect something that changed physically: a new spool, a worn nozzle, a moved printer, a dirty plate, humid weather.</div>
+  </section>
+
+  <section id="takeaways" aria-labelledby="takeaways-h">
+    <h2 id="takeaways-h">Key takeaways</h2>
+    <ul class="checklist">
+      <li>Change one thing at a time and write down what you changed.</li>
+      <li>Most problems come from five causes: wet filament, dirty plate, wrong Z offset, wrong temperature, mechanical looseness.</li>
+      <li>Match the symptom to a card, test the most likely cause first, and verify with a small test print.</li>
+      <li>Stop failing prints early; protect the nozzle and the build plate.</li>
+      <li>Keep a maintenance habit so that problems do not appear: see <a href="maintenance.html">maintenance</a>.</li>
+    </ul>
+  </section>
+
+  <script>
+  document.addEventListener("c3d:ready", function () {
+    var q = document.getElementById("ts-q");
+    var count = document.getElementById("ts-count");
+    var none = document.getElementById("ts-none");
+    var chips = Array.prototype.slice.call(document.querySelectorAll(".ts-chip"));
+    var cards = Array.prototype.slice.call(document.querySelectorAll(".ts-card"));
+    var groups = Array.prototype.slice.call(document.querySelectorAll(".ts-group"));
+    var cat = "all";
+
+    function apply() {
+      var terms = (q ? q.value : "").toLowerCase().split(/\s+/).filter(Boolean);
+      var shown = 0;
+      cards.forEach(function (c) {
+        var cats = (c.getAttribute("data-cat") || "").split(/\s+/);
+        var okCat = cat === "all" || cats.indexOf(cat) !== -1;
+        var hay = (c.querySelector("h4").textContent + " " + (c.getAttribute("data-tags") || "")).toLowerCase();
+        var okQ = terms.every(function (t) { return hay.indexOf(t) !== -1; });
+        var vis = okCat && okQ;
+        c.style.display = vis ? "" : "none";
+        if (vis) shown++;
+      });
+      groups.forEach(function (g) {
+        var any = Array.prototype.some.call(g.querySelectorAll(".ts-card"), function (c) { return c.style.display !== "none"; });
+        g.style.display = any ? "" : "none";
+      });
+      if (count) count.textContent = shown + " of " + cards.length + " defects shown";
+      if (none) none.style.display = shown ? "none" : "block";
+    }
+
+    chips.forEach(function (b) {
+      b.addEventListener("click", function () {
+        cat = b.getAttribute("data-cat") || "all";
+        chips.forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+        apply();
+      });
+    });
+    if (q) q.addEventListener("input", apply);
+
+    function fromHash() {
+      var id = decodeURIComponent((location.hash || "").slice(1));
+      if (!id) return;
+      var el = document.getElementById(id);
+      if (!el || !el.classList.contains("ts-card")) return;
+      cat = "all";
+      if (q) q.value = "";
+      chips.forEach(function (x) { x.setAttribute("aria-pressed", x.getAttribute("data-cat") === "all" ? "true" : "false"); });
+      apply();
+      cards.forEach(function (c) { c.classList.remove("ts-hit"); });
+      el.classList.add("ts-hit");
+      el.scrollIntoView({ block: "center" });
+    }
+    window.addEventListener("hashchange", fromHash);
+    apply();
+    fromHash();
+  });
+  </script>
+
+
+</main>
+</body>
+</html>

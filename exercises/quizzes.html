@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quizzes · 90 questions on 3D printing · 3D Printing Compendium</title>
+  <meta name="description" content="Six quiz sets with 15 questions each on 3D printing basics, materials, slicing, design, troubleshooting and the Bambu Lab X2D with AMS 2 Pro, with explanations and a final scoreboard.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+  <style>
+    .qz-set { margin: 2.4em 0; }
+    .qz-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .qz-pill { font-size: .85rem; font-weight: 700; padding: 3px 12px; border-radius: 999px; border: 1px solid var(--brand); background: var(--surface); color: var(--brand-ink); }
+    .qz-pill.done { background: var(--green-s); border-color: var(--green); }
+    .qz-final { margin: 1.4em auto; }
+    .qz-final td, .qz-final th { vertical-align: middle; }
+    .qz-bar { height: 12px; min-width: 120px; border-radius: 6px; background: var(--line); overflow: hidden; }
+    .qz-bar > i { display: block; height: 100%; width: 0; background: var(--brand); transition: width .4s; }
+    .qz-verdict { margin-top: 1em; padding: 14px 18px; border: 1px solid var(--brand); border-radius: var(--radius); background: var(--surface); font-weight: 650; }
+    .qz-actions { margin: 1em 0; display: flex; gap: 10px; flex-wrap: wrap; }
+    .qz-actions button { font: inherit; font-weight: 650; padding: 8px 16px; border-radius: 10px; border: 1px solid var(--brand); background: var(--surface); color: var(--ink); cursor: pointer; }
+    .qz-actions button:hover { background: var(--blue-s); }
+  </style>
+</head>
+<body data-page="exercises/quizzes.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 7 · Practice &amp; exercises</div>
+    <h1>Quizzes</h1>
+    <p class="lead">Six sets of fifteen questions test what you have read: basics, materials, slicing, design, troubleshooting, and the Bambu Lab X2D with the AMS 2 Pro. Click an answer to see right or wrong plus a short explanation. A final scoreboard at the bottom sums everything up.</p>
+    <div class="meta"><span class="badge beginner">All levels</span><span class="badge time">⏱ ~10 min per set</span><span class="badge time">90 questions</span></div>
+  </header>
+
+  <h2>How the quizzes work</h2>
+  <p>Each question has one correct answer. You get immediate feedback and an explanation; the explanation is often the most useful part, so read it even when you were right. Answers are not stored between visits (reload the page to start over), but your <strong>best score per set</strong> is remembered in this browser, so you can see progress over time.</p>
+  <p>If a set goes badly, follow the link at the top of that set and read the matching chapter, then try again. Mixed scores are normal: most printing experts are strong in two or three areas and rusty in the rest.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 200" role="img" aria-label="Map of the six quiz sets: basics, materials, slicing, design, troubleshooting and X2D with AMS 2 Pro, each with the chapters it covers">
+      <g class="t-sm t-c t-b">
+        <rect class="f-blue" x="10" y="20" width="118" height="70" rx="10"/><text x="69" y="50">1 Basics</text><text class="t-xs t-m" x="69" y="70">processes, files, safety</text>
+        <rect class="f-green" x="136" y="20" width="118" height="70" rx="10"/><text x="195" y="50">2 Materials</text><text class="t-xs t-m" x="195" y="70">PLA to PC, drying</text>
+        <rect class="f-orange" x="262" y="20" width="118" height="70" rx="10"/><text x="321" y="50">3 Slicing</text><text class="t-xs t-m" x="321" y="70">walls, infill, flow</text>
+        <rect class="f-purple" x="388" y="20" width="118" height="70" rx="10"/><text x="447" y="50">4 Design</text><text class="t-xs t-m" x="447" y="70">tolerance, joints</text>
+        <rect class="f-red" x="514" y="20" width="118" height="70" rx="10"/><text x="573" y="50">5 Fixing</text><text class="t-xs t-m" x="573" y="70">defects and causes</text>
+        <rect class="f-teal" x="640" y="20" width="130" height="70" rx="10"/><text x="705" y="50">6 X2D + AMS</text><text class="t-xs t-m" x="705" y="70">dual nozzle, drying</text>
+      </g>
+      <path class="d-thin arrow" d="M69 110 H705"/>
+      <text class="t-sm t-m" x="69" y="140">foundations</text><text class="t-sm t-m t-r" x="705" y="140">machine-specific</text>
+      <text class="t-sm t-c" x="390" y="140">15 questions each · 90 in total</text>
+      <text class="t-sm t-c t-m" x="390" y="176">Aim for 11 of 15 or more before moving up a level.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> The six sets run from general foundations (left) to machine-specific knowledge (right).</figcaption>
+  </figure>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 170" role="img" aria-label="Score ladder: below 55 percent review the chapter, 55 to 74 learning, 75 to 89 solid, 90 and above expert">
+      <g class="t-sm t-c t-b">
+        <rect class="f-red" x="20" y="60" width="170" height="40" rx="6"/><text x="105" y="85">&lt; 55 %: review</text>
+        <rect class="f-orange" x="200" y="45" width="170" height="55" rx="6"/><text x="285" y="78">55–74 %: learning</text>
+        <rect class="f-green" x="380" y="30" width="170" height="70" rx="6"/><text x="465" y="70">75–89 %: solid</text>
+        <rect class="f-blue" x="560" y="15" width="200" height="85" rx="6"/><text x="660" y="62">≥ 90 %: expert</text>
+      </g>
+      <text class="t-sm t-c" x="390" y="130">Per-set verdicts appear in the scoreboard at the bottom of the page.</text>
+      <text class="t-sm t-c t-m" x="390" y="152">Thresholds are for your own orientation, not a grade.</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> How to read your score: the verdict thresholds used by the final scoreboard.</figcaption>
+  </figure>
+
+  <nav class="callout info"><span class="callout-title">Jump to a set</span>
+    <p><a href="#set-basics">Basics</a> · <a href="#set-materials">Materials</a> · <a href="#set-slicing">Slicing</a> · <a href="#set-design">Design</a> · <a href="#set-troubleshooting">Troubleshooting</a> · <a href="#set-x2d">X2D &amp; AMS 2 Pro</a> · <a href="#scoreboard">Final scoreboard</a></p>
+  </nav>
+
+  <div class="score-board"></div>
+
+  <!-- SET 1 -->
+  <section class="qz-set" id="set-basics" data-name="Basics">
+    <h2 class="qz-head">1 · Basics <span class="qz-pill">0 / 15</span></h2>
+    <p>Read first: <a href="../foundations/what-is-3d-printing.html">What is 3D printing?</a>, <a href="../foundations/printing-processes.html">Printing processes</a>, <a href="../foundations/first-print.html">First print</a>.</p>
+
+    <div class="quiz"><p class="q">1. What does FDM stand for?</p><ul class="options">
+      <li>Fast Digital Molding</li>
+      <li data-correct>Fused Deposition Modeling</li>
+      <li>Filament Density Measurement</li>
+      <li>Flat Dimensional Manufacturing</li></ul>
+      <p class="explain">FDM (also called FFF, fused filament fabrication) melts plastic filament and deposits it layer by layer.</p></div>
+
+    <div class="quiz"><p class="q">2. Which process cures liquid photopolymer with light?</p><ul class="options">
+      <li data-correct>Resin printing (SLA, DLP, LCD)</li>
+      <li>FDM</li>
+      <li>Selective laser sintering</li>
+      <li>CNC milling</li></ul>
+      <p class="explain">Vat photopolymerization hardens liquid resin with UV light. SLS fuses powder; FDM melts filament; milling cuts material away.</p></div>
+
+    <div class="quiz"><p class="q">3. What does a G-code file contain?</p><ul class="options">
+      <li>The 3D mesh of the model</li>
+      <li>The color of each filament spool</li>
+      <li data-correct>Machine instructions: moves, temperatures, extrusion, fan speeds</li>
+      <li>A photograph of the finished part</li></ul>
+      <p class="explain">The slicer converts a mesh (STL or 3MF) into G-code, the movement and temperature commands the printer follows line by line.</p></div>
+
+    <div class="quiz"><p class="q">4. A common layer height for general-purpose printing with a 0.4 mm nozzle is:</p><ul class="options">
+      <li>0.02 mm</li>
+      <li>0.05 mm</li>
+      <li data-correct>0.2 mm</li>
+      <li>0.8 mm</li></ul>
+      <p class="explain">A rule of thumb is a layer height between 25 % and 75 % of the nozzle diameter, so 0.1–0.3 mm for a 0.4 mm nozzle, with 0.2 mm as the default.</p></div>
+
+    <div class="quiz"><p class="q">5. Which file format stores only surface geometry, with no units or colors?</p><ul class="options">
+      <li>3MF</li>
+      <li data-correct>STL</li>
+      <li>STEP</li>
+      <li>G-code</li></ul>
+      <p class="explain">STL is a triangle mesh without units or color. 3MF can carry units, colors and settings; STEP is a CAD exchange format with exact surfaces.</p></div>
+
+    <div class="quiz"><p class="q">6. Why is the first layer printed slightly “squished” onto the bed?</p><ul class="options">
+      <li>To save filament</li>
+      <li data-correct>To press the plastic into the surface for adhesion</li>
+      <li>To make the part taller</li>
+      <li>To cool the nozzle</li></ul>
+      <p class="explain">Good squish gives wide, flat lines that fuse with each other and grip the plate. Too much causes elephant foot; too little lets the part peel off.</p></div>
+
+    <div class="quiz"><p class="q">7. What is a brim?</p><ul class="options">
+      <li>A support structure under overhangs</li>
+      <li>A cooling fan setting</li>
+      <li data-correct>A flat ring of extra first-layer lines around the part to increase bed contact</li>
+      <li>A way to hide the seam</li></ul>
+      <p class="explain">A brim attaches to the part and resists warping and tipping. It is removed after printing; a skirt, in contrast, is a loop that does not touch the part.</p></div>
+
+    <div class="quiz"><p class="q">8. The nozzle is too far from the bed. What does the first layer look like?</p><ul class="options">
+      <li>Flat and transparent</li>
+      <li>Smeared and cut through by the nozzle</li>
+      <li data-correct>Round lines that barely stick and may drag or peel</li>
+      <li>Perfect but too thick</li></ul>
+      <p class="explain">If the gap is too large, the extruded lines stay round and do not bond to the bed or each other. Lower the Z offset in small steps.</p></div>
+
+    <div class="quiz"><p class="q">9. What does a slicer do?</p><ul class="options">
+      <li>Heats the filament</li>
+      <li data-correct>Cuts the model into layers and generates the toolpath (G-code)</li>
+      <li>Repairs the printer firmware</li>
+      <li>Measures the model with a scanner</li></ul>
+      <p class="explain">Slicers such as Bambu Studio turn a 3D model and your settings into G-code for a specific printer and filament.</p></div>
+
+    <div class="quiz"><p class="q">10. A typical nozzle temperature range for PLA is:</p><ul class="options">
+      <li>120–140 °C</li>
+      <li data-correct>190–220 °C</li>
+      <li>260–290 °C</li>
+      <li>320–350 °C</li></ul>
+      <p class="explain">PLA prints well at roughly 190–220 °C. Higher temperatures are used for PETG, ABS, nylon and polycarbonate.</p></div>
+
+    <div class="quiz"><p class="q">11. In a typical FDM printer, which axis is vertical?</p><ul class="options">
+      <li>X</li>
+      <li>Y</li>
+      <li data-correct>Z</li>
+      <li>E</li></ul>
+      <p class="explain">Z is vertical and moves in layer-height steps. X and Y span the print plane; E is the extruder axis.</p></div>
+
+    <div class="quiz"><p class="q">12. Which of these is a subtractive manufacturing process?</p><ul class="options">
+      <li>FDM</li>
+      <li>Resin printing</li>
+      <li data-correct>CNC milling</li>
+      <li>Powder bed fusion</li></ul>
+      <p class="explain">Subtractive processes remove material from a block. Additive processes, including all kinds of 3D printing, build the part up.</p></div>
+
+    <div class="quiz"><p class="q">13. A surface that overhangs by more than about 45–60° from vertical usually needs:</p><ul class="options">
+      <li>A larger nozzle</li>
+      <li data-correct>Support, a different orientation or a redesigned angle</li>
+      <li>A hotter bed</li>
+      <li>Thicker filament</li></ul>
+      <p class="explain">Beyond roughly 45° each layer is increasingly unsupported by the one below, so the underside gets rough or droops without support.</p></div>
+
+    <div class="quiz"><p class="q">14. Which safety measure is most important for a printer in a living space?</p><ul class="options">
+      <li>Covering the printer with a blanket</li>
+      <li data-correct>A working smoke detector nearby and a hard, non-flammable surface; do not leave it unattended for hours without precautions</li>
+      <li>Printing only at night</li>
+      <li>Removing the filament sensor</li></ul>
+      <p class="explain">Fire is rare but serious. See <a href="../foundations/safety-and-workspace.html">Safety &amp; workspace</a> for ventilation, burn hazards and fire precautions.</p></div>
+
+    <div class="quiz"><p class="q">15. What does “0.4 mm nozzle” refer to?</p><ul class="options">
+      <li>The nozzle length</li>
+      <li>The filament diameter</li>
+      <li data-correct>The diameter of the hole the plastic comes out of</li>
+      <li>The maximum layer height of the machine</li></ul>
+      <p class="explain">The orifice diameter limits line width and detail. Filament is typically 1.75 mm in diameter, which is unrelated.</p></div>
+  </section>
+
+  <!-- SET 2 -->
+  <section class="qz-set" id="set-materials" data-name="Materials">
+    <h2 class="qz-head">2 · Materials <span class="qz-pill">0 / 15</span></h2>
+    <p>Read first: <a href="../materials/overview.html">Materials overview</a>, <a href="../materials/everyday-plastics.html">Everyday plastics</a>, <a href="../materials/drying-and-storage.html">Drying &amp; storage</a>.</p>
+
+    <div class="quiz"><p class="q">1. Which filament is generally the easiest for a beginner?</p><ul class="options">
+      <li>Nylon</li>
+      <li>Polycarbonate</li>
+      <li data-correct>PLA</li>
+      <li>ABS</li></ul>
+      <p class="explain">PLA prints at low temperature, hardly warps and needs no enclosure.</p></div>
+
+    <div class="quiz"><p class="q">2. A PLA part is left on a car dashboard in summer. What is the most likely outcome?</p><ul class="options">
+      <li>It becomes stronger</li>
+      <li data-correct>It softens and deforms</li>
+      <li>It turns to powder</li>
+      <li>Nothing, because PLA withstands 100 °C</li></ul>
+      <p class="explain">PLA softens at about 55–60 °C, a temperature that a closed car easily exceeds. Use PETG, ASA or stronger material for heat.</p></div>
+
+    <div class="quiz"><p class="q">3. Compared with PLA, PETG is typically:</p><ul class="options">
+      <li>More brittle and easier to print</li>
+      <li data-correct>Tougher and more heat-tolerant, but more prone to stringing</li>
+      <li>Water soluble</li>
+      <li>Magnetic</li></ul>
+      <p class="explain">PETG has better impact resistance and a higher softening temperature than PLA, but it strings and sticks very strongly to some build plates.</p></div>
+
+    <div class="quiz"><p class="q">4. Why do ABS and ASA usually need an enclosure?</p><ul class="options">
+      <li>They are toxic when cold</li>
+      <li data-correct>They shrink noticeably on cooling, so drafts cause warping and layer splitting</li>
+      <li>They are conductive</li>
+      <li>They only print in the dark</li></ul>
+      <p class="explain">A warm, draft-free chamber slows cooling and reduces stress. It also contains fumes, so ventilate or filter the space.</p></div>
+
+    <div class="quiz"><p class="q">5. What is ASA's main advantage over ABS?</p><ul class="options">
+      <li>It dissolves in water</li>
+      <li>It is flexible</li>
+      <li data-correct>Much better UV and weather resistance</li>
+      <li>It prints without any heat</li></ul>
+      <p class="explain">ASA is chemically similar to ABS but keeps color and strength outdoors, which makes it popular for outdoor parts.</p></div>
+
+    <div class="quiz"><p class="q">6. What does a Shore hardness of 95A on a TPU filament tell you?</p><ul class="options">
+      <li>The nozzle temperature</li>
+      <li data-correct>How stiff or soft the material is; 95A is a fairly firm flexible material</li>
+      <li>The melting point</li>
+      <li>The humidity limit</li></ul>
+      <p class="explain">A lower Shore A number means softer. 95A TPU is easier to print than 85A or softer grades.</p></div>
+
+    <div class="quiz"><p class="q">7. Nylon (PA) is described as hygroscopic. What does this mean?</p><ul class="options">
+      <li>It repels water</li>
+      <li data-correct>It absorbs moisture from the air, so it must be dried and stored dry</li>
+      <li>It conducts heat very well</li>
+      <li>It glows under UV light</li></ul>
+      <p class="explain">Wet nylon bubbles, pops and gives weak, rough parts. It is best dried before use and printed from a dry box.</p></div>
+
+    <div class="quiz"><p class="q">8. Which is a sensible drying temperature range for PLA?</p><ul class="options">
+      <li>150–180 °C</li>
+      <li>90–110 °C</li>
+      <li data-correct>About 45–55 °C for several hours</li>
+      <li>Room temperature for 5 minutes</li></ul>
+      <p class="explain">PLA softens at around 55–60 °C, so dry well below that. Check the manufacturer's recommendation for the particular spool.</p></div>
+
+    <div class="quiz"><p class="q">9. Why should carbon-fiber or glass-fiber filled filaments be printed with a hardened nozzle?</p><ul class="options">
+      <li>They are too cold for brass</li>
+      <li data-correct>The fibers are abrasive and wear soft brass nozzles quickly</li>
+      <li>They need a thicker filament</li>
+      <li>Hardened nozzles reduce humidity</li></ul>
+      <p class="explain">Brass wears out after a short time with abrasive fillers, and the nozzle diameter grows. Hardened steel or similar nozzles last much longer.</p></div>
+
+    <div class="quiz"><p class="q">10. Which of these materials has the highest heat resistance?</p><ul class="options">
+      <li>PLA</li>
+      <li>PETG</li>
+      <li>ABS</li>
+      <li data-correct>Polycarbonate (PC)</li></ul>
+      <p class="explain">PC has a glass transition above roughly 140 °C, so it is the most heat tolerant of these. It is also demanding to print: high temperatures and an enclosure are needed.</p></div>
+
+    <div class="quiz"><p class="q">11. Which is a typical symptom of wet filament?</p><ul class="options">
+      <li data-correct>Popping or crackling sounds, tiny bubbles, stringing and a rough surface</li>
+      <li>A smoother surface</li>
+      <li>Stronger bridges</li>
+      <li>Less stringing</li></ul>
+      <p class="explain">Water in the filament turns to steam in the hot nozzle. The result is bubbles, noise, rough finish and weaker parts.</p></div>
+
+    <div class="quiz"><p class="q">12. What is the best way to store filament long term?</p><ul class="options">
+      <li>On an open shelf in the bathroom</li>
+      <li>In direct sunlight</li>
+      <li data-correct>In a sealed container or bag with desiccant, away from heat and light</li>
+      <li>In the freezer, uncovered</li></ul>
+      <p class="explain">Humidity and sun are the enemies. A sealed bag with desiccant keeps the spool dry for months.</p></div>
+
+    <div class="quiz"><p class="q">13. What is PVA used for in 3D printing?</p><ul class="options">
+      <li>As a very strong structural plastic</li>
+      <li data-correct>As a water-soluble support material</li>
+      <li>As an electrical conductor</li>
+      <li>As a flexible gasket</li></ul>
+      <p class="explain">PVA dissolves in water, so it supports complex overhangs that cannot be removed by hand. It is very sensitive to moisture and needs careful storage.</p></div>
+
+    <div class="quiz"><p class="q">14. Why is a printed part not automatically food safe, even if the filament is rated food safe?</p><ul class="options">
+      <li>Plastic cannot touch food</li>
+      <li data-correct>Layer lines and gaps trap bacteria and are hard to clean; additives and nozzles may also contaminate</li>
+      <li>Because filament is always toxic</li>
+      <li>Because food is too hot</li></ul>
+      <p class="explain">Rough, porous surfaces are difficult to sanitize. Short contact with dry food may be fine; reusable utensils and cups are a risk.</p></div>
+
+    <div class="quiz"><p class="q">15. Which statement about PETG and bed adhesion is correct?</p><ul class="options">
+      <li>PETG never sticks to anything</li>
+      <li data-correct>PETG can bond so strongly to smooth PEI that it can damage the surface, so use a release agent or a textured plate</li>
+      <li>PETG needs a bed at 0 °C</li>
+      <li>PETG only sticks to glass</li></ul>
+      <p class="explain">The classic mistake is printing PETG with too little Z offset on smooth PEI. A thin glue-stick layer or a textured plate prevents damage.</p></div>
+  </section>
+
+  <!-- SET 3 -->
+  <section class="qz-set" id="set-slicing" data-name="Slicing">
+    <h2 class="qz-head">3 · Slicing <span class="qz-pill">0 / 15</span></h2>
+    <p>Read first: <a href="../software/slicers.html">Slicers</a>, <a href="../software/slicer-settings.html">Slicer settings</a>, <a href="../techniques/speed-cooling-quality.html">Speed, cooling &amp; quality</a>.</p>
+
+    <div class="quiz"><p class="q">1. For most functional parts, which setting adds more strength per gram of filament?</p><ul class="options">
+      <li>Infill from 20 % to 100 %</li>
+      <li data-correct>More perimeters (walls)</li>
+      <li>Higher print speed</li>
+      <li>Larger skirt</li></ul>
+      <p class="explain">Bending loads act mostly on the outer shell, so walls add far more strength than infill. Infill mainly supports the top surfaces and adds compression resistance.</p></div>
+
+    <div class="quiz"><p class="q">2. What is a typical infill density for a general-purpose part?</p><ul class="options">
+      <li>0 % for all parts</li>
+      <li data-correct>10–20 %</li>
+      <li>60–80 %</li>
+      <li>Always 100 %</li></ul>
+      <p class="explain">Above about 25 % the gain in strength is small compared with the extra print time and material.</p></div>
+
+    <div class="quiz"><p class="q">3. What is retraction for?</p><ul class="options">
+      <li>To cool the part</li>
+      <li data-correct>To pull filament back during travel moves, so that oozing and stringing are reduced</li>
+      <li>To fix the Z-offset</li>
+      <li>To change filament</li></ul>
+      <p class="explain">Retraction reduces pressure in the nozzle before a travel move. Too much retraction can cause clogs; too little causes strings.</p></div>
+
+    <div class="quiz"><p class="q">4. A 0.42 mm line width, 0.2 mm layer height and 100 mm/s speed require which volumetric flow?</p><ul class="options">
+      <li>0.84 mm³/s</li>
+      <li data-correct>8.4 mm³/s</li>
+      <li>84 mm³/s</li>
+      <li>840 mm³/s</li></ul>
+      <p class="explain">Flow = width × height × speed = 0.42 × 0.2 × 100 = 8.4 mm³/s. Compare it with the maximum flow of your hotend and filament.</p></div>
+
+    <div class="quiz"><p class="q">5. What is the seam?</p><ul class="options">
+      <li>The border between two filament colors</li>
+      <li data-correct>The point where each outer wall loop starts and ends, which often leaves a visible line</li>
+      <li>The place where two STL files overlap</li>
+      <li>A crack in the print</li></ul>
+      <p class="explain">Seam position is adjustable (aligned, nearest, back, random). Hide it in a corner or on the back face.</p></div>
+
+    <div class="quiz"><p class="q">6. Tree supports compared with normal grid supports usually:</p><ul class="options">
+      <li>Use more material and are harder to remove</li>
+      <li data-correct>Use less material and touch the model in fewer places</li>
+      <li>Cannot support overhangs</li>
+      <li>Only work with PLA</li></ul>
+      <p class="explain">Trees branch to touch only where needed, which saves time and often leaves a better surface. Thin branches can be fragile on tall models.</p></div>
+
+    <div class="quiz"><p class="q">7. Which kind of cooling does PLA benefit from the most?</p><ul class="options">
+      <li>No fan at all</li>
+      <li data-correct>High part-cooling fan speed</li>
+      <li>Heated chamber at 60 °C</li>
+      <li>Fan only on the first layer</li></ul>
+      <p class="explain">PLA hardens quickly with strong cooling, which gives better overhangs and bridges. ABS and ASA need little or no part cooling.</p></div>
+
+    <div class="quiz"><p class="q">8. What does ironing do?</p><ul class="options">
+      <li>Removes support material</li>
+      <li data-correct>Passes the hot nozzle over the top surface with very little extrusion to smooth it</li>
+      <li>Heats the bed to a higher temperature</li>
+      <li>Calibrates the flow</li></ul>
+      <p class="explain">Ironing improves flat top surfaces at the cost of print time and can leave artefacts on small areas.</p></div>
+
+    <div class="quiz"><p class="q">9. Which is the best way to improve long bridges?</p><ul class="options">
+      <li>Faster speed with no fan</li>
+      <li data-correct>Slower bridge speed, strong cooling and a tuned bridge flow</li>
+      <li>Hotter nozzle</li>
+      <li>Thicker layers on the bridge</li></ul>
+      <p class="explain">Cooling solidifies the plastic strand before it sags, and a lower flow or thinner bridge line makes it lighter.</p></div>
+
+    <div class="quiz"><p class="q">10. What does variable (adaptive) layer height do?</p><ul class="options">
+      <li>Changes the nozzle diameter</li>
+      <li data-correct>Uses thinner layers on curved surfaces and thicker layers on vertical areas</li>
+      <li>Prints every second layer</li>
+      <li>Increases the bed temperature</li></ul>
+      <p class="explain">It saves time and keeps the fine detail where stair-stepping would otherwise be visible.</p></div>
+
+    <div class="quiz"><p class="q">11. High acceleration and high print speeds mostly cause which defect?</p><ul class="options">
+      <li>Warping</li>
+      <li data-correct>Ringing (ghosting) and loss of corner sharpness</li>
+      <li>Bubbles in the filament</li>
+      <li>Elephant foot</li></ul>
+      <p class="explain">Fast direction changes excite frame vibration. Input shaping and lower acceleration reduce the ripples.</p></div>
+
+    <div class="quiz"><p class="q">12. What is a “skirt”?</p><ul class="options">
+      <li data-correct>A loop printed near the part that does not touch it, used to prime the nozzle</li>
+      <li>A support structure</li>
+      <li>A top layer pattern</li>
+      <li>The same as a brim</li></ul>
+      <p class="explain">A skirt primes the extruder and lets you check the first layer. A brim, in contrast, touches the part to increase adhesion.</p></div>
+
+    <div class="quiz"><p class="q">13. Gaps in the top surface of a part with sparse infill most likely indicate:</p><ul class="options">
+      <li>Too many top layers</li>
+      <li data-correct>Too few top layers or too sparse infill under the top surface</li>
+      <li>A bed that is too hot</li>
+      <li>A nozzle that is too big</li></ul>
+      <p class="explain">The top skin bridges the infill. Use at least 4–5 top layers at 0.2 mm, or a denser infill beneath.</p></div>
+
+    <div class="quiz"><p class="q">14. Which slicer feature compensates for the slightly squashed first layer that makes the bottom of a part too wide?</p><ul class="options">
+      <li>Ironing</li>
+      <li>Fuzzy skin</li>
+      <li data-correct>Elephant-foot compensation</li>
+      <li>Spiral vase mode</li></ul>
+      <p class="explain">It shrinks the first layer outline by a small amount (for example 0.1–0.2 mm), so the final bottom edge is correct.</p></div>
+
+    <div class="quiz"><p class="q">15. What happens when you print faster than the hotend can melt plastic?</p><ul class="options">
+      <li>The part gets stronger</li>
+      <li data-correct>Under-extrusion: gaps, weak layers and a clicking or grinding extruder</li>
+      <li>The nozzle gets colder</li>
+      <li>The bed gets hotter</li></ul>
+      <p class="explain">Every hotend has a maximum volumetric flow. Limit it in the filament profile (mm³/s) so that speeds drop automatically on thick lines.</p></div>
+  </section>
+
+  <!-- SET 4 -->
+  <section class="qz-set" id="set-design" data-name="Design">
+    <h2 class="qz-head">4 · Design <span class="qz-pill">0 / 15</span></h2>
+    <p>Read first: <a href="../design/principles.html">Design principles</a>, <a href="../design/tolerances-and-fits.html">Tolerances &amp; fits</a>, <a href="../design/joints-and-fasteners.html">Joints &amp; fasteners</a>, <a href="../design/strength-and-orientation.html">Strength &amp; orientation</a>.</p>
+
+    <div class="quiz"><p class="q">1. What is the practical minimum wall thickness for a 0.4 mm nozzle?</p><ul class="options">
+      <li>0.1 mm</li>
+      <li>0.4 mm, one line, for any load</li>
+      <li data-correct>About 0.8 mm (two lines), with 1.2 mm or more for load-bearing walls</li>
+      <li>5 mm</li></ul>
+      <p class="explain">Wall thickness should be a multiple of the line width so that the slicer fills it cleanly with whole lines.</p></div>
+
+    <div class="quiz"><p class="q">2. A printed 6.0 mm hole in CAD usually measures:</p><ul class="options">
+      <li>Exactly 6.0 mm</li>
+      <li data-correct>Slightly less than 6.0 mm, so add clearance (often 0.1–0.3 mm)</li>
+      <li>Much larger, around 7 mm</li>
+      <li>Random, depending on the weather</li></ul>
+      <p class="explain">Plastic flows inward and corners get rounded, so holes print small. Print a hole gauge (<a href="models.html#hole-gauge">hole_gauge.scad</a>) and keep the numbers for your printer.</p></div>
+
+    <div class="quiz"><p class="q">3. Which direction is a standard FDM part weakest in?</p><ul class="options">
+      <li>Along the layer lines in the XY plane</li>
+      <li data-correct>Across the layers (Z direction), where the bonds between layers carry tension</li>
+      <li>In compression</li>
+      <li>It is equally strong in all directions</li></ul>
+      <p class="explain">Layers are welded together by heat, so tension across layers is often 30–60 % weaker than along them. Orient parts so the main tensile load runs along the layers.</p></div>
+
+    <div class="quiz"><p class="q">4. Why add a fillet to an inside corner?</p><ul class="options">
+      <li>To save filament only</li>
+      <li data-correct>To reduce stress concentration, which makes parts break less often</li>
+      <li>To make the part heavier</li>
+      <li>To hide the seam</li></ul>
+      <p class="explain">Sharp inside corners concentrate stress, so cracks start there. A radius of 1–3 mm makes a large difference.</p></div>
+
+    <div class="quiz"><p class="q">5. How do you print a horizontal round hole without support?</p><ul class="options">
+      <li>Make it a perfect circle and hope</li>
+      <li data-correct>Make the top of the hole a teardrop or a diamond shape (about 45° slopes)</li>
+      <li>Make it square at the bottom</li>
+      <li>Print it with 100 % infill</li></ul>
+      <p class="explain">A circle has a nearly horizontal ceiling at its top, which sags. A teardrop keeps every slope self-supporting.</p></div>
+
+    <div class="quiz"><p class="q">6. Which installation method is typical for heat-set inserts?</p><ul class="options">
+      <li>Gluing with superglue only</li>
+      <li data-correct>Pressing them into a slightly smaller hole with a soldering iron until they are flush</li>
+      <li>Printing them in place</li>
+      <li>Hammering them in cold</li></ul>
+      <p class="explain">The molten plastic flows into the knurls, so the insert anchors well. The hole size is given in the insert's datasheet.</p></div>
+
+    <div class="quiz"><p class="q">7. How can you lower the strain in a snap-fit cantilever beam?</p><ul class="options">
+      <li>Make it shorter and thicker</li>
+      <li data-correct>Make it longer, thinner (within limits) or reduce the deflection</li>
+      <li>Add sharp corners at the base</li>
+      <li>Print it with the layers across the beam</li></ul>
+      <p class="explain">Strain is proportional to thickness × deflection ÷ length². Always print a snap beam with the layers along its length.</p></div>
+
+    <div class="quiz"><p class="q">8. What is the main advantage of parametric design?</p><ul class="options">
+      <li>The part prints faster</li>
+      <li data-correct>You change a named value (for example wall thickness) and the whole model updates</li>
+      <li>It needs no CAD software</li>
+      <li>It makes STL files smaller</li></ul>
+      <p class="explain">Parameters let you adapt a design to another size or printer in seconds. See <a href="../design/parametric-cad-workflow.html">Parametric CAD workflow</a>.</p></div>
+
+    <div class="quiz"><p class="q">9. How do you avoid support on the bottom edge of a part that overhangs?</p><ul class="options">
+      <li>Use a fillet</li>
+      <li data-correct>Use a chamfer of 45° or less instead of a fillet or a flat overhang</li>
+      <li>Use a bigger brim</li>
+      <li>Make the part thicker</li></ul>
+      <p class="explain">A fillet starts with a nearly horizontal slope at the bottom. A 45° chamfer prints cleanly without support.</p></div>
+
+    <div class="quiz"><p class="q">10. A self-tapping screw goes into a printed boss. What is good practice?</p><ul class="options">
+      <li>No hole at all</li>
+      <li data-correct>A pilot hole slightly smaller than the screw's core diameter and a thick wall around it</li>
+      <li>A hole larger than the screw's outer diameter</li>
+      <li>Use only a single wall around the boss</li></ul>
+      <p class="explain">A thick boss (wall at least equal to the screw diameter) resists splitting. Repeated assembly is better done with heat-set inserts.</p></div>
+
+    <div class="quiz"><p class="q">11. What is the recommended minimum feature size for embossed text on a 0.4 mm nozzle?</p><ul class="options">
+      <li>0.1 mm strokes</li>
+      <li data-correct>About 0.8–1.0 mm stroke width and 0.4–0.6 mm height</li>
+      <li>10 mm stroke width</li>
+      <li>Any size works</li></ul>
+      <p class="explain">A stroke should be at least two line widths wide; a sans-serif bold font is easiest. Check <a href="models.html#text-label">text_label_test.scad</a> for a quick test.</p></div>
+
+    <div class="quiz"><p class="q">12. Which orientation gives the strongest bracket that carries a load across its arm?</p><ul class="options">
+      <li>Layers perpendicular to the arm, so that the load pulls layers apart</li>
+      <li data-correct>Layers parallel to the plane in which the arm bends, so that tension runs along the lines</li>
+      <li>Orientation does not matter</li>
+      <li>Standing on its tip, in all cases</li></ul>
+      <p class="explain">Place the layers in the plane of the largest stress. Print one test bracket in each orientation if you are unsure.</p></div>
+
+    <div class="quiz"><p class="q">13. Which thread is easiest to print directly?</p><ul class="options">
+      <li>A very fine M3 thread</li>
+      <li data-correct>A large-diameter, coarse-pitch thread with some clearance</li>
+      <li>A micro thread with 0.5 mm pitch</li>
+      <li>Any thread, since printers have infinite resolution</li></ul>
+      <p class="explain">Pitch must be much larger than the layer height. For small fasteners use metal screws with inserts or taps instead.</p></div>
+
+    <div class="quiz"><p class="q">14. What does a tolerance coupon show?</p><ul class="options">
+      <li>The color accuracy of the filament</li>
+      <li data-correct>Which clearances give a sliding, snug or tight fit on your printer and filament</li>
+      <li>The maximum print speed</li>
+      <li>The weight of the print</li></ul>
+      <p class="explain">Results depend on printer, nozzle, material and orientation. Print one with your usual settings and write the result in your notes (<a href="models.html#tolerance">tolerance_gauge.scad</a>).</p></div>
+
+    <div class="quiz"><p class="q">15. Why is a 45° chamfer on the first-layer edge useful?</p><ul class="options">
+      <li>It increases elephant foot</li>
+      <li data-correct>It hides the squashed first-layer bulge and avoids sharp edges that catch on things</li>
+      <li>It makes the printer go faster</li>
+      <li>It lowers the nozzle temperature</li></ul>
+      <p class="explain">A small chamfer (0.5–1 mm) at the bottom edge makes parts fit together even if the first layer flares slightly.</p></div>
+  </section>
+
+  <!-- SET 5 -->
+  <section class="qz-set" id="set-troubleshooting" data-name="Troubleshooting">
+    <h2 class="qz-head">5 · Troubleshooting <span class="qz-pill">0 / 15</span></h2>
+    <p>Read first: <a href="../techniques/troubleshooting.html">Troubleshooting</a>, <a href="../techniques/first-layer-and-adhesion.html">First layer &amp; adhesion</a>, <a href="../techniques/calibration.html">Calibration</a>.</p>
+
+    <div class="quiz"><p class="q">1. The bottom edge of a part is bulged and wider than the rest. This is called:</p><ul class="options">
+      <li>Ringing</li>
+      <li data-correct>Elephant foot</li>
+      <li>Stringing</li>
+      <li>Z-banding</li></ul>
+      <p class="explain">The first layers are squashed outward by the nozzle and the warm bed. Raise the Z offset slightly, lower the bed temperature or use elephant-foot compensation.</p></div>
+
+    <div class="quiz"><p class="q">2. Thin strands of plastic span the gaps between separate parts of a print. What is the best first fix?</p><ul class="options">
+      <li>Print faster</li>
+      <li data-correct>Dry the filament and tune retraction and temperature</li>
+      <li>Increase the bed temperature</li>
+      <li>Remove the cooling fan</li></ul>
+      <p class="explain">Wet filament and a hot nozzle are the most common causes of stringing. Dry first, then tune.</p></div>
+
+    <div class="quiz"><p class="q">3. The corners of a large flat part lift off the bed. What helps?</p><ul class="options">
+      <li>Open the door of the printer and add a fan</li>
+      <li data-correct>A brim, a clean plate, a suitable bed temperature and a draft-free or enclosed chamber</li>
+      <li>Printing with thicker layers only</li>
+      <li>Turning the bed off</li></ul>
+      <p class="explain">Warping is caused by uneven cooling and shrinkage. Hold the corners down and slow the cooling.</p></div>
+
+    <div class="quiz"><p class="q">4. The first layer will not stick; lines are round and peel off. The most likely cause is:</p><ul class="options">
+      <li>A Z offset that is too low</li>
+      <li data-correct>A Z offset that is too high, or a dirty plate</li>
+      <li>Too many walls</li>
+      <li>Too much infill</li></ul>
+      <p class="explain">Clean the plate with isopropyl alcohol or warm water and soap, then lower the nozzle in small steps (0.02 mm).</p></div>
+
+    <div class="quiz"><p class="q">5. The extruder clicks and the print shows gaps. What is a probable cause?</p><ul class="options">
+      <li>The bed is too cold</li>
+      <li data-correct>A partial clog, wet filament, a temperature that is too low or a speed that is too high for the flow</li>
+      <li>The model is too small</li>
+      <li>The spool is too full</li></ul>
+      <p class="explain">Under-extrusion means the nozzle receives less plastic than the slicer expects. Check the path of the filament and reduce the speed.</p></div>
+
+    <div class="quiz"><p class="q">6. Layers in the upper part of a print are shifted sideways. What do you check first?</p><ul class="options">
+      <li>The filament color</li>
+      <li data-correct>Collisions with curled parts, belt tension, loose pulleys and excessive acceleration</li>
+      <li>The wall count</li>
+      <li>The spool weight</li></ul>
+      <p class="explain">A layer shift means that the toolhead lost position. Curled edges that the nozzle hits are a common cause.</p></div>
+
+    <div class="quiz"><p class="q">7. Ripples that echo sharp features on the surface are called:</p><ul class="options">
+      <li>Elephant foot</li>
+      <li data-correct>Ringing or ghosting</li>
+      <li>Warping</li>
+      <li>Blobbing</li></ul>
+      <p class="explain">Vibration after fast direction changes. Reduce acceleration or enable input shaping, and make sure that the printer stands on a stable surface.</p></div>
+
+    <div class="quiz"><p class="q">8. A regular wave pattern repeating every few millimeters in height is called Z-banding. A typical cause is:</p><ul class="options">
+      <li>Wet filament</li>
+      <li data-correct>A bent or loose lead screw, a wobbling Z axis or inconsistent extrusion</li>
+      <li>A too-large nozzle</li>
+      <li>A cold room</li></ul>
+      <p class="explain">Check the Z motion mechanics first, then temperature stability. Printer type matters: not every machine has a visible lead screw.</p></div>
+
+    <div class="quiz"><p class="q">9. Small blobs and zits appear at the seam. Which fix is typical?</p><ul class="options">
+      <li data-correct>Tune pressure advance (flow dynamics) and the retraction, and choose the seam position</li>
+      <li>Increase the infill</li>
+      <li>Use a bigger nozzle</li>
+      <li>Switch off the fan completely</li></ul>
+      <p class="explain">Blobs at the seam are the result of pressure in the nozzle at the start and end of each loop. Pressure advance reduces this.</p></div>
+
+    <div class="quiz"><p class="q">10. A top surface shows pillowing: bumps and holes. What is the usual remedy?</p><ul class="options">
+      <li>Fewer top layers</li>
+      <li data-correct>More top layers, a denser infill under the top, and better cooling</li>
+      <li>A hotter nozzle</li>
+      <li>A thinner first layer</li></ul>
+      <p class="explain">Pillowing happens when the top skin bridges sparse infill before it has cooled. Add layers and cooling.</p></div>
+
+    <div class="quiz"><p class="q">11. The filament comes out brown and the nozzle clogs often when printing PLA. What is likely?</p><ul class="options">
+      <li>The temperature is too low</li>
+      <li data-correct>Overheating or heat creep, or burnt residue from a previous high-temperature material</li>
+      <li>The print is too slow</li>
+      <li>The bed is too clean</li></ul>
+      <p class="explain">Do a cold pull or replace the nozzle, and check that the cooling of the heatbreak works.</p></div>
+
+    <div class="quiz"><p class="q">12. A print has turned into a tangled “spaghetti” mess halfway. What is the most likely start of the failure?</p><ul class="options">
+      <li data-correct>The part detached from the plate or a layer failed, and printing continued in the air</li>
+      <li>The model had too few triangles</li>
+      <li>The G-code was too short</li>
+      <li>The filament was too long</li></ul>
+      <p class="explain">Improve adhesion first. Printers with camera-based spaghetti detection can pause the print for you.</p></div>
+
+    <div class="quiz"><p class="q">13. Long bridges sag. What do you try first?</p><ul class="options">
+      <li>More heat, less cooling</li>
+      <li data-correct>More cooling, lower bridge speed and flow, and shorter spans or an added support</li>
+      <li>Fewer walls</li>
+      <li>A larger layer height</li></ul>
+      <p class="explain">The strand must solidify before it sags. Print the <a href="models.html#bridge">bridge test</a> to find the longest reliable span.</p></div>
+
+    <div class="quiz"><p class="q">14. The underside of an overhang curls upward. What does that tell you?</p><ul class="options">
+      <li data-correct>The overhang is cooled too little and the edges curl and catch the nozzle</li>
+      <li>The bed is not heated</li>
+      <li>The filament is too thin</li>
+      <li>The nozzle is too clean</li></ul>
+      <p class="explain">Increase cooling, slow down on overhangs, and lower the temperature for PLA. See the <a href="models.html#overhang">overhang ladder</a>.</p></div>
+
+    <div class="quiz"><p class="q">15. There are small gaps between the infill and the inner wall. What helps?</p><ul class="options">
+      <li>A lower infill</li>
+      <li data-correct>A higher infill/wall overlap and a correct flow ratio</li>
+      <li>A shorter nozzle</li>
+      <li>Turning off the walls</li></ul>
+      <p class="explain">The infill must touch the wall to bond to it. A few percent more overlap closes the gap; calibrate flow first.</p></div>
+  </section>
+
+  <!-- SET 6 -->
+  <section class="qz-set" id="set-x2d" data-name="X2D and AMS 2 Pro">
+    <h2 class="qz-head">6 · Bambu X2D &amp; AMS 2 Pro <span class="qz-pill">0 / 15</span></h2>
+    <p>Read first: <a href="../x2d/overview.html">X2D overview</a>, <a href="../x2d/ams-2-pro.html">AMS 2 Pro</a>, <a href="../x2d/dual-nozzle-printing.html">Dual-nozzle printing</a>, <a href="../x2d/filament-compatibility.html">Filament compatibility</a>.</p>
+
+    <div class="quiz"><p class="q">1. What is the build volume of the X2D (single or left nozzle)?</p><ul class="options">
+      <li>180 × 180 × 180 mm</li>
+      <li data-correct>256 × 256 × 260 mm</li>
+      <li>350 × 350 × 350 mm</li>
+      <li>220 × 220 × 250 mm</li></ul>
+      <p class="explain">256 × 256 × 260 mm is the full build volume with the main (left) nozzle.</p></div>
+
+    <div class="quiz"><p class="q">2. Which nozzle is the main nozzle with the direct-drive extruder in the toolhead?</p><ul class="options">
+      <li data-correct>The left nozzle</li>
+      <li>The right nozzle</li>
+      <li>Both are identical in every way</li>
+      <li>Neither: the extruder is behind the printer</li></ul>
+      <p class="explain">The left hotend is the main one with the servo-driven extruder inside the toolhead. The right auxiliary hotend is fed by an extruder at the rear through a PTFE tube.</p></div>
+
+    <div class="quiz"><p class="q">3. What is the maximum temperature of the X2D's actively heated chamber?</p><ul class="options">
+      <li>35 °C</li>
+      <li>45 °C</li>
+      <li data-correct>65 °C</li>
+      <li>120 °C</li></ul>
+      <p class="explain">The chamber heater reaches up to 65 °C, which helps with warping of materials such as ABS, ASA and PC. It is a plus for engineering plastics; for PLA, cooler air is desirable instead.</p></div>
+
+    <div class="quiz"><p class="q">4. What is the maximum nozzle temperature of the X2D?</p><ul class="options">
+      <li>220 °C</li>
+      <li>260 °C</li>
+      <li data-correct>300 °C</li>
+      <li>400 °C</li></ul>
+      <p class="explain">The hotends reach 300 °C, enough for PETG, ABS, ASA, PA, PC and many composites. Check the filament compatibility page for what each nozzle can run.</p></div>
+
+    <div class="quiz"><p class="q">5. What speed and acceleration limits apply to the auxiliary (right) nozzle?</p><ul class="options">
+      <li>No limits: it is identical to the main nozzle</li>
+      <li data-correct>Max about 200 mm/s and about 1000 mm/s² acceleration</li>
+      <li>Max 2000 mm/s</li>
+      <li>It cannot move at all</li></ul>
+      <p class="explain">The auxiliary extruder is a conventional stepper-driven one with a tube to the toolhead, which limits speed and acceleration and demands longer retraction.</p></div>
+
+    <div class="quiz"><p class="q">6. Flow Dynamics Calibration on the X2D applies to:</p><ul class="options">
+      <li>Both nozzles</li>
+      <li data-correct>The main nozzle only</li>
+      <li>The AMS only</li>
+      <li>The camera</li></ul>
+      <p class="explain">The auxiliary nozzle uses a much larger flow-dynamics (K) value because of its long tube path, and you cannot calibrate it with the same automatic procedure.</p></div>
+
+    <div class="quiz"><p class="q">7. How many filament slots does one AMS 2 Pro have?</p><ul class="options">
+      <li>1</li>
+      <li>2</li>
+      <li data-correct>4</li>
+      <li>16</li></ul>
+      <p class="explain">One AMS 2 Pro holds four spools. Several units can be combined for more colors.</p></div>
+
+    <div class="quiz"><p class="q">8. What is the maximum drying temperature of the AMS 2 Pro?</p><ul class="options">
+      <li>45 °C</li>
+      <li data-correct>65 °C</li>
+      <li>100 °C</li>
+      <li>It has no dryer</li></ul>
+      <p class="explain">Two heater and fan modules can dry filament up to 65 °C, suitable for PLA, PETG and similar materials. Use the printer or Bambu Studio to set drying.</p></div>
+
+    <div class="quiz"><p class="q">9. What does the color change of the indicator in the AMS desiccant tell you?</p><ul class="options">
+      <li>The filament type</li>
+      <li data-correct>The desiccant is saturated with moisture and should be replaced or regenerated</li>
+      <li>The nozzle is too hot</li>
+      <li>The firmware is out of date</li></ul>
+      <p class="explain">Saturated desiccant stops protecting the filament, so check the indicator regularly, especially in humid climates.</p></div>
+
+    <div class="quiz"><p class="q">10. To connect more than two AMS units to the X2D you need:</p><ul class="options">
+      <li>A second printer</li>
+      <li data-correct>A 4-in-1 PTFE adapter (FAZ013-N)</li>
+      <li>A longer power cable only</li>
+      <li>No extra part, since the printer has six ports</li></ul>
+      <p class="explain">The buffer has two 6-pin ports; for more units the 4-in-1 PTFE adapter combines the filament paths.</p></div>
+
+    <div class="quiz"><p class="q">11. How does the filament reach the auxiliary nozzle?</p><ul class="options">
+      <li data-correct>From a spool or the AMS, through the auxiliary extruder at the top of the rear panel and a PTFE tube to the toolhead</li>
+      <li>Directly from a spool on the toolhead</li>
+      <li>By hand, one centimeter at a time</li>
+      <li>Through the main extruder</li></ul>
+      <p class="explain">The tube path explains the lower speed limit, the longer retraction and the larger flow-dynamics value.</p></div>
+
+    <div class="quiz"><p class="q">12. How does the X2D switch between nozzles?</p><ul class="options">
+      <li>By swapping hotends by hand during printing</li>
+      <li data-correct>A mechanical gear-and-trigger mechanism in the toolhead, without an additional motor</li>
+      <li>With a magnet that falls off</li>
+      <li>It does not switch</li></ul>
+      <p class="explain">This lets the toolhead stay light and makes color changes faster because less filament is purged.</p></div>
+
+    <div class="quiz"><p class="q">13. Which filtration does the X2D use for chamber air?</p><ul class="options">
+      <li>None</li>
+      <li>A paper filter only</li>
+      <li data-correct>A G3 pre-filter, an H12 HEPA filter and an activated carbon (coconut shell) filter</li>
+      <li>An ozone generator</li></ul>
+      <p class="explain">The three stages catch dust, fine particles and some odors. This is helpful for ABS and ASA, but it does not replace ventilation in a small room.</p></div>
+
+    <div class="quiz"><p class="q">14. What is the print area when only the auxiliary (right) nozzle is used?</p><ul class="options">
+      <li>The same as the main nozzle, 256 × 256 × 260 mm</li>
+      <li data-correct>About 235.5 × 256 mm with a height of 256 mm</li>
+      <li>100 × 100 mm</li>
+      <li>350 × 350 mm</li></ul>
+      <p class="explain">The flow blocker and the lowered auxiliary hotend reduce the area, so check where your model sits when you plan an auxiliary-only print.</p></div>
+
+    <div class="quiz"><p class="q">15. A useful workflow made possible by the second nozzle is:</p><ul class="options">
+      <li>Printing with two spools of the same color only</li>
+      <li data-correct>Printing the model with the main nozzle and a different support material with the auxiliary nozzle, so the interface peels off cleanly</li>
+      <li>Using the printer without a build plate</li>
+      <li>Printing at 1,000 mm/s</li></ul>
+      <p class="explain">The main nozzle prints the model, the auxiliary nozzle can print supports in a suitable material. Check the compatibility tables before you combine two materials.</p></div>
+  </section>
+
+  <!-- FINAL SCOREBOARD -->
+  <section id="scoreboard">
+    <h2>Final scoreboard</h2>
+    <p>The table updates as you answer. “Best” is the highest completed score for each set on this device.</p>
+    <div class="qz-final">
+      <div class="table-wrap"><table class="data compact">
+        <thead><tr><th>Set</th><th>Answered</th><th>Correct</th><th>Progress</th><th>Best</th><th>Verdict</th></tr></thead>
+        <tbody id="qz-rows"></tbody>
+        <tfoot><tr><th>Total</th><th id="qz-t-ans">0 / 90</th><th id="qz-t-right">0</th><th><div class="qz-bar"><i id="qz-t-bar"></i></div></th><th id="qz-t-best">–</th><th id="qz-t-verdict">–</th></tr></tfoot>
+      </table></div>
+    </div>
+    <div class="qz-verdict" id="qz-overall">Answer questions to see your overall result.</div>
+    <div class="qz-actions"><button type="button" id="qz-reset">Start over</button><button type="button" id="qz-clear">Forget best scores</button></div>
+
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 780 160" role="img" aria-label="Next steps flow: weak set, read the chapter, redo the set; strong set, move to the next level exercises">
+        <g class="t-sm t-c t-b">
+          <rect class="f-red" x="20" y="30" width="150" height="50" rx="8"/><text x="95" y="60">Score under 75 %</text>
+          <rect class="f-orange" x="230" y="30" width="150" height="50" rx="8"/><text x="305" y="60">Read the chapter</text>
+          <rect class="f-green" x="440" y="30" width="150" height="50" rx="8"/><text x="515" y="60">Redo the set</text>
+          <rect class="f-blue" x="640" y="30" width="130" height="50" rx="8"/><text x="705" y="60">Try an exercise</text>
+        </g>
+        <path class="d-ink arrow" d="M170 55 H228 M380 55 H438 M590 55 H638"/>
+        <text class="t-sm t-c t-m" x="390" y="120">A set at 75 % or more? Skip the reading and go straight to the exercises.</text>
+      </svg>
+      <figcaption><b>Figure 3.</b> Use quiz results to decide what to read or practice next.</figcaption>
+    </figure>
+
+    <div class="grid cols-3">
+      <a class="card accent-blue" href="index.html"><h3>Exercise overview</h3><p>Pick the right level for your next project.</p></a>
+      <a class="card accent-green" href="level-1-beginner.html"><h3>Level 1 · Beginner</h3><p>First prints and basic measurements.</p></a>
+      <a class="card accent-orange" href="models.html"><h3>Test models</h3><p>Print your own calibration set.</p></a>
+    </div>
+  </section>
+
+<script>
+document.addEventListener("c3d:ready", function () {
+  var sets = C3D.$$(".qz-set");
+  var rows = C3D.$("#qz-rows");
+  var BEST = "quiz:best:";
+  var info = {};
+
+  function verdict(p) {
+    return p >= 90 ? "Expert" : p >= 75 ? "Solid" : p >= 55 ? "Learning" : "Review the chapter";
+  }
+  function bestOf(id) {
+    var v = parseInt(C3D.store.get(BEST + id), 10);
+    return isNaN(v) ? null : v;
+  }
+
+  sets.forEach(function (s) {
+    var tr = document.createElement("tr");
+    tr.innerHTML = '<td><a href="#' + s.id + '">' + s.getAttribute("data-name") + '</a></td><td></td><td></td>' +
+      '<td><div class="qz-bar"><i></i></div></td><td></td><td></td>';
+    rows.appendChild(tr);
+    info[s.id] = tr;
+  });
+
+  function refresh() {
+    var totA = 0, totR = 0, totQ = 0, bests = [];
+    sets.forEach(function (s) {
+      var qs = C3D.$$(".quiz", s);
+      var answered = qs.filter(function (q) { return q.classList.contains("answered"); });
+      var right = answered.filter(function (q) { return !q.querySelector("li.wrong"); }).length;
+      var pct = Math.round(100 * right / qs.length);
+      var complete = answered.length === qs.length;
+      if (complete) {
+        var prev = bestOf(s.id);
+        if (prev === null || pct > prev) C3D.store.set(BEST + s.id, String(pct));
+      }
+      var b = bestOf(s.id);
+      if (b !== null) bests.push(b);
+      var pill = C3D.$(".qz-pill", s);
+      pill.textContent = right + " / " + qs.length;
+      pill.classList.toggle("done", complete);
+      var tds = info[s.id].children;
+      tds[1].textContent = answered.length + " / " + qs.length;
+      tds[2].textContent = right;
+      tds[3].querySelector("i").style.width = Math.round(100 * answered.length / qs.length) + "%";
+      tds[4].textContent = b === null ? "–" : b + " %";
+      tds[5].textContent = answered.length ? (complete ? verdict(pct) : "in progress") : "–";
+      totA += answered.length; totR += right; totQ += qs.length;
+    });
+    C3D.$("#qz-t-ans").textContent = totA + " / " + totQ;
+    C3D.$("#qz-t-right").textContent = totR;
+    C3D.$("#qz-t-bar").style.width = Math.round(100 * totA / totQ) + "%";
+    C3D.$("#qz-t-best").textContent = bests.length ? Math.round(bests.reduce(function (a, c) { return a + c; }, 0) / bests.length) + " % avg" : "–";
+    var overall = C3D.$("#qz-overall");
+    if (!totA) {
+      overall.textContent = "Answer questions to see your overall result.";
+      C3D.$("#qz-t-verdict").textContent = "–";
+    } else {
+      var p = Math.round(100 * totR / totA);
+      var v = verdict(p);
+      C3D.$("#qz-t-verdict").textContent = v;
+      overall.textContent = "Overall: " + totR + " of " + totA + " answered questions correct (" + p + " %), which is " + v.toLowerCase() + ". " +
+        (totA < totQ ? (totQ - totA) + " questions are still open." : "All 90 questions are done.");
+    }
+  }
+
+  document.addEventListener("click", function (e) {
+    if (e.target.closest && e.target.closest(".quiz .options li")) refresh();
+  });
+  C3D.$("#qz-reset").addEventListener("click", function () { location.reload(); });
+  C3D.$("#qz-clear").addEventListener("click", function () {
+    sets.forEach(function (s) { C3D.store.set(BEST + s.id, ""); });
+    refresh();
+  });
+  refresh();
+});
+</script>
+</main>
+</body>
+</html>

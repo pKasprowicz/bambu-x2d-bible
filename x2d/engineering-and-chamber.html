@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Engineering materials &amp; the heated chamber on the X2D · 3D Printing Compendium</title>
+  <meta name="description" content="Why the X2D's actively heated chamber (up to 65 °C) matters, and how to print ABS, ASA, PC, nylon and carbon-fiber blends: soak, airflow, filtration, nozzles, drying, plates, warping control, annealing caveats and failure modes.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="x2d/engineering-and-chamber.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 6 · Bambu X2D + AMS 2 Pro</div>
+    <h1>Engineering materials &amp; the heated chamber</h1>
+    <p class="lead">The X2D can actively heat its chamber to 65 °C. That one number changes what is realistic at home: large ABS and ASA parts without cracks, polycarbonate without layer splits, and nylon or carbon-fiber blends that behave. This page explains the physics, then turns it into material-by-material strategy.</p>
+    <div class="meta"><span class="badge advanced">Advanced</span><span class="badge x2d">X2D + AMS 2 Pro</span><span class="badge time">⏱ 35 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <p>Why plastics shrink and warp, how a warm chamber reduces the stress, how the X2D's heater, fans and filter work in each air mode, how to pre-heat and soak, what to do with the door and lid, which nozzle and plate to use for each engineering material, how to dry and keep it dry, and how to diagnose the typical failures.</p></div>
+
+  <div class="callout x2d"><span class="callout-title">Fact discipline on this page</span>
+    <p>Chamber, airflow, filter, bed and compatibility numbers come from Bambu's X2D documentation. Material-specific temperatures that the documentation does not give are labeled <b>typical</b> and must be checked against your spool label. Charts are schematic illustrations, not measured data.</p></div>
+
+  <h2 id="why">1. Why a hot chamber matters: shrink, stress and warp</h2>
+  <h3>🔰 The simple version</h3>
+  <p>Hot plastic is bigger than cold plastic. As each new layer is laid down at nozzle temperature and cools toward room temperature, it tries to <b>shrink</b>. The layer underneath is already cooler and has already shrunk, so the two fight. The result is internal stress that pulls the part up from the bed (<b>warping</b>) or splits it between layers (<b>delamination</b>). Amorphous plastics such as ABS, ASA and PC mostly shrink by contracting as they pass through their glass-transition temperature; semi-crystalline plastics such as nylon (PA) shrink more, because the crystals pack tighter as they form.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 360" role="img" aria-label="Side by side comparison of a part printed in a cold chamber that curls at the corners versus a warm chamber that stays flat, with a temperature gradient arrow">
+      <rect class="d-surface" x="20" y="14" width="350" height="332" rx="10"/>
+      <text class="t t-b" x="40" y="40">Cold chamber (≈ room)</text>
+      <rect class="f-gray" x="40" y="260" width="310" height="14" rx="3"/>
+      <text class="t-xs t-m" x="48" y="288">heated build plate</text>
+      <path class="s-red" fill="none" d="M70 250 C 80 200 110 190 190 190 C 270 190 300 200 320 235" stroke-width="10" stroke-linecap="round"/>
+      <path class="d-ink arrow" d="M70 240 V210"/>
+      <path class="d-ink arrow" d="M330 240 V210"/>
+      <text class="t-xs" x="40" y="170">corners lift</text>
+      <path class="d-thin" d="M340 80 V230"/>
+      <text class="t-xs t-m" x="40" y="318">Large temperature gradient: top layers cool fast</text>
+      <text class="t-xs t-m" x="40" y="334">and pull the already-cooled lower layers.</text>
+      <rect class="d-surface" x="390" y="14" width="350" height="332" rx="10"/>
+      <text class="t t-b" x="410" y="40">Warm chamber (e.g. 45–65 °C)</text>
+      <rect class="f-gray" x="410" y="260" width="310" height="14" rx="3"/>
+      <text class="t-xs t-m" x="418" y="288">heated build plate</text>
+      <rect class="f-orange" x="440" y="190" width="250" height="68" rx="6"/>
+      <text class="t-sm t-c t-b" x="565" y="228">part stays flat</text>
+      <text class="t-xs t-m" x="410" y="318">Small gradient: layers cool slowly together and</text>
+      <text class="t-xs t-m" x="410" y="334">stress locks in far less.</text>
+      <text class="t-xs" x="410" y="120">Chamber air close to the glass transition</text>
+      <text class="t-xs" x="410" y="136">→ less contraction mismatch per layer.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> A cold chamber lets corners curl up; a warm chamber narrows the temperature difference between layers, so stress locks in far less. Schematic, not to scale.</figcaption>
+  </figure>
+
+  <h3>🔧 The physics, a little deeper</h3>
+  <p>Think of each layer as a stretched rubber band glued down while hot. How hard it pulls depends on three things: the <b>shrinkage coefficient</b> of the material, the <b>temperature drop</b> from the moment it solidifies to the moment the whole part is at ambient, and the <b>stiffness</b> of the part. A warm chamber attacks the second factor. If the air around the part is already, say, 50 °C instead of 22 °C, the layer that solidifies at roughly the glass-transition region has far less to cool, and the temperature <i>difference between neighboring layers</i> stays small throughout the print. Part adhesion matters too: a layer that stays warm bonds better to the one below, so layer lines are stronger.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 340" role="img" aria-label="Qualitative curves showing shrinkage stress rising as the temperature difference between layer and surroundings grows, with warm and cold chamber operating points marked">
+      <path class="d-ink arrow" d="M70 290 V30"/>
+      <path class="d-ink arrow" d="M70 290 H730"/>
+      <text class="t-sm t-b" x="20" y="24">Residual stress</text>
+      <text class="t-sm t-b" x="430" y="318">Temperature drop after solidifying (solidify temp − surroundings)</text>
+      <path class="s-red" fill="none" stroke-width="3" d="M70 280 C 220 270 380 200 700 50"/>
+      <path class="s-blue" fill="none" stroke-width="3" d="M70 285 C 220 278 380 240 700 150"/>
+      <text class="t-xs s-red" x="560" y="56">amorphous / high shrink (e.g. ABS, PC)</text>
+      <text class="t-xs" x="520" y="176">low-shrink (e.g. PLA)</text>
+      <circle class="f-green" cx="290" cy="220" r="10"/>
+      <text class="t-xs t-b" x="306" y="214">warm chamber</text>
+      <circle class="f-red" cx="560" cy="108" r="10"/>
+      <text class="t-xs t-b" x="574" y="130">cold chamber</text>
+      <path class="d-dash d-ink arrow" d="M550 112 C 450 150 360 190 304 214"/>
+      <text class="t-xs t-m" x="90" y="52">Warm air shifts the operating point down and left:</text>
+      <text class="t-xs t-m" x="90" y="68">the same filament leaves far less stress in the part.</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> A qualitative picture: the stress a material can build rises with the temperature drop it experiences. Heating the chamber moves the operating point down the curve.</figcaption>
+  </figure>
+
+  <div class="callout fact"><span class="callout-title">Why PLA and TPU do not want a hot chamber</span>
+    <p>PLA softens at relatively low temperatures; at elevated chamber temperatures the part above the heated bed can become soft, jam in the heatbreak zone or sag. TPU is soft by nature and needs controlled, steady feeding. Bambu's X2D therefore uses the cooling air mode (heater fan off, outside air drawn in, exhaust fan running) for PLA and TPU, and the heating mode for ABS, ASA, PC and PA. Choose the mode that suits the filament rather than "hotter is better".</p></div>
+
+  <h2 id="x2d-chamber">2. How the X2D heats and ventilates the chamber</h2>
+  <p>The X2D has an <b>active chamber heater</b>: a PTC heating element with a circulation fan on the left side. Together with the heatbed (up to 120 °C) it raises the chamber to a setpoint of up to <b>65 °C</b>. Behavior documented by Bambu:</p>
+  <ul>
+    <li>Until the setpoint is reached, the heater runs at full power and the circulation fan at maximum speed. At the setpoint the fan slows to about 40 % and heater power is reduced.</li>
+    <li>After homing, the toolhead is parked at about 160 mm Z (below the chamber vent), so the vent does not leak the hot air out during preheating.</li>
+    <li>In the <b>Heating</b> air mode the right-hand fan acts as a filtration fan and recirculates the air through the filter stack; in <b>Strong Cooling</b> the right fan pulls cool air in from outside and the exhaust fan removes warm air.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 360" role="img" aria-label="Cross-section of the chamber showing heater and circulation fan on the left, filter and filtration fan on the right, exhaust fan on top, in two modes">
+      <rect class="d-surface" x="20" y="12" width="350" height="336" rx="10"/>
+      <text class="t t-b" x="40" y="38">Heating mode · ABS / ASA / PC / PA</text>
+      <rect class="d-surface2 d-ink" x="50" y="60" width="290" height="240" rx="6"/>
+      <rect class="f-red" x="56" y="120" width="28" height="100" rx="4"/>
+      <text class="t-xs t-c" x="70" y="170">PTC</text>
+      <text class="t-xs t-c" x="70" y="184">+ fan</text>
+      <rect class="f-teal" x="306" y="120" width="28" height="100" rx="4"/>
+      <text class="t-xs t-c" x="320" y="164">filter</text>
+      <text class="t-xs t-c" x="320" y="178">fan</text>
+      <rect class="f-orange" x="140" y="200" width="110" height="80" rx="6"/>
+      <text class="t-xs t-c" x="195" y="244">part</text>
+      <rect class="f-gray" x="110" y="280" width="170" height="14" rx="3"/>
+      <path class="d-ink arrow" d="M90 140 C 150 100 250 100 304 140"/>
+      <path class="d-ink arrow" d="M320 232 C 250 270 140 270 84 232"/>
+      <text class="t-xs t-c t-b" x="195" y="92">hot air circulates, closed loop</text>
+      <text class="t-xs t-m" x="50" y="322">Exhaust closed; heater at full power until setpoint,</text>
+      <text class="t-xs t-m" x="50" y="338">then circulation fan about 40 %.</text>
+      <rect class="d-surface" x="390" y="12" width="350" height="336" rx="10"/>
+      <text class="t t-b" x="410" y="38">Strong Cooling · PLA / TPU</text>
+      <rect class="d-surface2 d-ink" x="420" y="60" width="290" height="240" rx="6"/>
+      <rect class="f-gray" x="426" y="120" width="28" height="100" rx="4"/>
+      <text class="t-xs t-c" x="440" y="170">heater</text>
+      <text class="t-xs t-c" x="440" y="184">fan off</text>
+      <rect class="f-blue" x="676" y="120" width="28" height="100" rx="4"/>
+      <text class="t-xs t-c" x="690" y="164">fan</text>
+      <text class="t-xs t-c" x="690" y="178">in</text>
+      <rect class="f-purple" x="520" y="64" width="90" height="22" rx="4"/>
+      <text class="t-xs t-c" x="565" y="79">exhaust</text>
+      <rect class="f-green" x="510" y="200" width="110" height="80" rx="6"/>
+      <text class="t-xs t-c" x="565" y="244">part</text>
+      <path class="d-ink arrow" d="M760 160 H706"/>
+      <path class="d-ink arrow" d="M674 160 C 640 140 600 120 580 90"/>
+      <path class="d-ink arrow" d="M565 62 V30"/>
+      <text class="t-xs t-m" x="420" y="322">Cool outside air enters via the right fan; the</text>
+      <text class="t-xs t-m" x="420" y="338">exhaust fan removes warm air above the part.</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> The two documented air modes. Left: closed loop through the filter with the heater running. Right: strong cooling with fresh air in and exhaust out. Simplified layout.</figcaption>
+  </figure>
+
+  <h3>Pre-heat and heat soak</h3>
+  <p>The chamber is not hot the instant you press Print. Bambu documents a <b>heatbed-assisted pre-heat</b>: if the bed setpoint is 90 °C or below, the printer pre-heats about 5 minutes; if it is above 90 °C (ABS, ASA, PC and many PA grades), pre-heat lasts about 30 minutes because active chamber control is not yet triggered for the first layer and the chamber is slowly lifted above 50 °C by the bed. Treat the pre-heat as part of the print:</p>
+  <ol class="steps">
+    <li><strong>Close everything.</strong>Door shut, lid on (see section 5). Open air paths lose heat faster than the heater can add it.</li>
+    <li><strong>Start high-temperature bed leveling first</strong> for ABS, ASA, PC, PA. Bambu recommends it for these materials, because the cold map is slightly wrong once the frame is hot.</li>
+    <li><strong>Set the chamber target in the filament preset</strong> (or on the screen) rather than hoping the bed alone will do it.</li>
+    <li><strong>Let the soak complete.</strong>If you scale to large parts, consider adding a few extra minutes of soak before the first layer. That is a typical practice, not a documented rule.</li>
+  </ol>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 340" role="img" aria-label="Illustrative temperature curves for bed, chamber and nozzle over time during pre-heat soak, printing and cooldown">
+      <path class="d-ink arrow" d="M70 290 V24"/>
+      <path class="d-ink arrow" d="M70 290 H736"/>
+      <text class="t-sm t-b" x="20" y="22">°C</text>
+      <text class="t-sm t-b" x="620" y="316">time →</text>
+      <g class="d-grid"><path d="M70 250 H730"/><path d="M70 200 H730"/><path d="M70 150 H730"/><path d="M70 100 H730"/><path d="M70 50 H730"/></g>
+      <rect class="f-yellow" x="90" y="30" width="200" height="260" opacity=".25"/>
+      <text class="t-xs t-c" x="190" y="44">pre-heat / soak</text>
+      <rect class="f-green" x="290" y="30" width="330" height="260" opacity=".15"/>
+      <text class="t-xs t-c" x="455" y="44">printing</text>
+      <rect class="f-blue" x="620" y="30" width="100" height="260" opacity=".18"/>
+      <text class="t-xs t-c" x="670" y="44">cooldown</text>
+      <path class="s-red" fill="none" stroke-width="3" d="M90 280 C 120 150 140 100 170 90 H 620 C 650 100 690 180 720 240"/>
+      <text class="t-xs s-red" x="180" y="84">nozzle (e.g. printing temperature)</text>
+      <path class="s-orange" fill="none" stroke-width="3" d="M90 280 C 110 200 140 160 190 152 H 620 C 660 170 700 230 720 260"/>
+      <text class="t-xs" x="180" y="146">bed (documented 100–110 °C for ABS/PC)</text>
+      <path class="s-teal" fill="none" stroke-width="3" d="M90 282 C 150 270 220 250 260 220 C 300 190 340 186 400 182 H 620 C 660 200 700 240 722 262"/>
+      <text class="t-xs" x="330" y="174">chamber (rises slowly; setpoint up to 65 °C)</text>
+      <path class="d-dash d-ink" d="M70 182 H730"/>
+      <text class="t-xs t-m" x="80" y="196">setpoint</text>
+      <text class="t-xs t-m" x="90" y="330">Schematic of the shape only: heights and timings are not measurements.</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> Typical shape of a hot-chamber job. The bed leads, the chamber lags and holds near its setpoint during printing, then both decay slowly at the end. Opening the door early causes sudden stress.</figcaption>
+  </figure>
+
+  <h3>Filtration and fumes</h3>
+  <p>ABS, ASA, PC and PA release volatile compounds as they melt, and ABS and ASA in particular smell strongly. The X2D integrates a <b>filter stack</b>: a <b>G3 pre-filter</b> for dust, an <b>H12 HEPA</b> element for fine particles, and a <b>coconut-shell activated carbon</b> layer for odors and some gases. In Heating mode the air passes through this stack repeatedly. Notes:</p>
+  <ul>
+    <li><b>Purify Air at Print End</b> (a print option) needs the external exhaust fan, and an exhaust pipe can vent outdoors. The external exhaust fan bundle plugs into a 6-pin port on the filament buffer.</li>
+    <li><b>An exhaust-kit filter</b> is also supported by the documentation if you want filtered exhaust rather than room venting.</li>
+    <li><b>Replace the carbon filter</b> when it is heavily contaminated. The cover may be rinsed but must be completely dry before it goes back.</li>
+    <li>HEPA and carbon do not make high-temperature printing "safe" on their own; ventilate the room, and see the <a href="../materials/engineering-plastics.html">engineering plastics</a> page for health notes.</li>
+  </ul>
+
+  <h2 id="door-lid">3. Door and lid handling</h2>
+  <p>With a heated chamber, the door and lid are part of the thermal system. Rules of thumb:</p>
+  <div class="grid cols-2">
+    <div class="card accent-red"><h4>ABS, ASA, PC, PA</h4><p>Keep door closed and lid on. Do not open the door until the chamber has cooled to a handling temperature; this prevents a sudden temperature drop that can crack tall parts. Use the screen's chamber reading, not a guess.</p></div>
+    <div class="card accent-green"><h4>PLA, TPU</h4><p>Use Strong Cooling. For heat-sensitive filaments, a documented air mode is enough; opening the door is a community trick for PLA in hot rooms, but follow Bambu's recommended mode first. Check the printer's open-door detection setting before you do it.</p></div>
+  </div>
+  <div class="callout warn"><span class="callout-title">The chamber is hot and so are the surfaces</span>
+    <p>At 65 °C chamber and a bed up to 120 °C, a quick reach-in for a pause or filament change can burn. The X2D has open-door detection and idle-heating protection (heating is turned off after 5 minutes of idle), but treat both as backup, not as procedure. Wear heat-resistant gloves for hotend work.</p></div>
+
+  <h2 id="nozzle-choice">4. Nozzle choice for engineering materials</h2>
+  <p>The X2D ships with a hardened-steel 0.4 mm hotend and hardened-steel extruder gears on both extruders, so abrasive carbon- and glass-fiber filaments are designed for. Available sizes are standard 0.2, 0.4, 0.6 and 0.8 mm plus high-flow (HF) 0.4, 0.6 and 0.8 mm. Both sides must use the same diameter for now.</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Material (main nozzle)</th><th>0.2</th><th>0.4</th><th>0.6</th><th>0.8</th><th>HF 0.4</th><th>HF 0.6</th><th>HF 0.8</th></tr></thead>
+    <tbody>
+      <tr><td>ABS</td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td></tr>
+      <tr><td>ASA</td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td></tr>
+      <tr><td>PC, PC FR</td><td><span class="chip red">✗</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td></tr>
+      <tr><td>ASA-CF, PETG-CF</td><td><span class="chip red">✗</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td><td><span class="chip yellow">⚠</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td></tr>
+      <tr><td>PAHT-CF, PA6-GF, PET-CF, PA6-CF, PPA-CF</td><td><span class="chip red">✗</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td><td><span class="chip yellow">⚠</span></td><td><span class="chip green">✓</span></td><td><span class="chip green">✓</span></td></tr>
+      <tr><td>PPS-CF</td><td><span class="chip red">✗</span></td><td><span class="chip red">✗</span></td><td><span class="chip red">✗</span></td><td><span class="chip red">✗</span></td><td><span class="chip red">✗</span></td><td><span class="chip red">✗</span></td><td><span class="chip red">✗</span></td></tr>
+    </tbody></table></div>
+  <p class="t-sm">✓ available, ⚠ use with caution, ✗ not available. Summarized from Bambu's X2D filament-compatibility chart; the full matrix, including the auxiliary nozzle's more restrictive ratings, is on the <a href="filament-compatibility.html">filament compatibility</a> page. Note that <b>PPS-CF is rated not available on every standard-kit hotend</b>.</p>
+
+  <div class="callout x2d"><span class="callout-title">Auxiliary nozzle on engineering plastics</span>
+    <p>The right nozzle is rated for ABS, ASA, PC, PA, PET, PAHT-CF and PA6-GF, and with caution for PETG and some others, but it is capped at 200 mm/s and about 1000 mm/s² and needs a manually calibrated K. PA6-CF is rated "not recommended", PPA-CF and PPS-CF are not supported there. Use it for supports or a secondary material, not for the visible surface of an engineering part.</p></div>
+
+  <h2 id="drying">5. Drying before printing</h2>
+  <p>Nylon, PC, PET and PETG are hygroscopic: they absorb moisture from the air. Wet filament steams in the nozzle and prints with bubbles, weak layers, stringing and a rough surface. Dry spools <i>before</i> they go into the AMS or the printer. The AMS 2 Pro can dry spools itself, with up to 65 °C from its two heating modules (when ambient is about 25 °C or higher), but remember the documented rules:</p>
+  <ul>
+    <li>Do not mix high-temperature and low-temperature spools in one AMS during a drying run.</li>
+    <li>Use <b>rotating</b> mode for most spools; <b>static</b> mode is not for low-softening materials.</li>
+    <li>The X2D chamber can also act as a drying space. Firmware 01.02.00.00 allows motors to power off while drying in the chamber.</li>
+    <li>Drying power is reduced during printing unless the AMS has the optional 24 V / 4 A adapter.</li>
+    <li>Replace the AMS desiccant when it is purple, or after roughly 4 to 6 weeks of continuous use.</li>
+  </ul>
+  <div class="callout tip"><span class="callout-title">Typical drying guidance</span>
+    <p>Follow the spool label first. As a typical cross-check, PA and PET family materials need the longest and hottest drying; PETG and PC are in the middle; ABS and ASA are less hygroscopic. Details and storage are on the <a href="../materials/drying-and-storage.html">drying and storage</a> page.</p></div>
+
+  <h2 id="materials">6. Material-by-material strategy</h2>
+  <p>For every material below the common backbone is the same: dry spool → correct plate and glue → high-temperature bed leveling → heating air mode → full pre-heat soak → closed door → cool down in the chamber. The differences are in the details. Temperatures without a "documented" tag are <b>typical starting points</b>; your spool label wins.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 330" role="img" aria-label="Decision chart: choose a material by whether it needs heat, strength and weather resistance, leading to PLA/PETG, ABS/ASA, PC, nylon or carbon fiber blends">
+      <rect class="f-blue" x="20" y="130" width="140" height="60" rx="10"/>
+      <text class="t-sm t-c t-b" x="90" y="156">What does the</text><text class="t-sm t-c t-b" x="90" y="174">part have to do?</text>
+      <path class="d-ink arrow" d="M162 150 C 200 100 230 60 260 56"/>
+      <path class="d-ink arrow" d="M162 160 C 200 140 230 128 260 128"/>
+      <path class="d-ink arrow" d="M162 170 C 200 190 230 205 260 205"/>
+      <path class="d-ink arrow" d="M162 182 C 200 240 230 275 260 278"/>
+      <rect class="f-green" x="262" y="30" width="200" height="52" rx="8"/>
+      <text class="t-sm t-c t-b" x="362" y="52">Look + fit, room temp</text><text class="t-xs t-c" x="362" y="70">PLA / PETG (no chamber)</text>
+      <rect class="f-orange" x="262" y="102" width="200" height="52" rx="8"/>
+      <text class="t-sm t-c t-b" x="362" y="124">Outdoor / UV / warm</text><text class="t-xs t-c" x="362" y="142">ASA, ABS (heating mode)</text>
+      <rect class="f-red" x="262" y="178" width="200" height="52" rx="8"/>
+      <text class="t-sm t-c t-b" x="362" y="200">High heat or toughness</text><text class="t-xs t-c" x="362" y="218">PC / PC blends</text>
+      <rect class="f-purple" x="262" y="252" width="200" height="52" rx="8"/>
+      <text class="t-sm t-c t-b" x="362" y="274">Wear, stiff, fatigue</text><text class="t-xs t-c" x="362" y="292">PA / PAHT / PA-CF / PET-CF</text>
+      <path class="d-ink arrow" d="M464 56 H540"/><path class="d-ink arrow" d="M464 128 H540"/><path class="d-ink arrow" d="M464 204 H540"/><path class="d-ink arrow" d="M464 278 H540"/>
+      <rect class="d-surface2" x="542" y="30" width="198" height="52" rx="8"/><text class="t-xs" x="552" y="52">Cool air mode, 0.4 mm ok,</text><text class="t-xs" x="552" y="68">cool/textured plate</text>
+      <rect class="d-surface2" x="542" y="102" width="198" height="52" rx="8"/><text class="t-xs" x="552" y="124">bed ~100–110 °C (doc),</text><text class="t-xs" x="552" y="140">warm soak, door closed</text>
+      <rect class="d-surface2" x="542" y="178" width="198" height="52" rx="8"/><text class="t-xs" x="552" y="200">bed ~100–110 °C (doc),</text><text class="t-xs" x="552" y="216">dry well, long soak</text>
+      <rect class="d-surface2" x="542" y="252" width="198" height="52" rx="8"/><text class="t-xs" x="552" y="274">dry first, engineering</text><text class="t-xs" x="552" y="290">plate, hardened nozzle (std)</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> A quick chooser from purpose to chamber strategy. The right-hand notes are the primary levers per family.</figcaption>
+  </figure>
+
+  <h3>ABS</h3>
+  <p><b>Strengths:</b> cheap, tough, machinable and smoothable with vapor (see <a href="../techniques/post-processing.html">post-processing</a>). <b>Challenge:</b> high shrinkage, so warping and layer cracks without a warm chamber.</p>
+  <ul>
+    <li><b>Air mode:</b> Heating. Close the exhaust path; use the filter.</li>
+    <li><b>Bed:</b> 100–110 °C is the documented typical range for ABS and PC. High-temperature bed leveling first.</li>
+    <li><b>Soak:</b> do the full pre-heat; add a few minutes for large parts (typical).</li>
+    <li><b>Cooling fan:</b> little or none for large parts; more fan for small overhang-heavy parts (typical). Part-cooling fans cool layers, which is the opposite of what you want for adhesion.</li>
+    <li><b>Plate:</b> textured PEI usually works without glue (typical); use a glue stick on smooth surfaces if the first layer lifts.</li>
+    <li><b>Brim:</b> use a brim for any large, flat footprint.</li>
+  </ul>
+
+  <h3>ASA</h3>
+  <p>ASA behaves like ABS but resists UV and weather, which makes it the default outdoor engineering plastic. Treat it exactly as ABS, with two additions: ASA fumes are also unpleasant (keep the filter in and ventilate), and its best use is exterior, visible parts where UV resistance counts. Bambu lists ASA as available on <b>all</b> main hotends including 0.2 mm. For ASA with carbon fiber (ASA-CF) the chart needs caution on the HF 0.4 hotend, and the auxiliary nozzle is rated "not recommended".</p>
+
+  <h3>PC (polycarbonate) and PC blends</h3>
+  <p>PC is tough, heat-resistant and clear-ish when unfilled, and the hardest of the group to print: it shrinks strongly, absorbs moisture and needs high nozzle temperatures. The X2D's 300 °C nozzle limit and 65 °C chamber are precisely what PC needs.</p>
+  <ul>
+    <li><b>Hotend:</b> 0.4 mm or larger; the 0.2 mm hotend is not recommended for PC in the chart.</li>
+    <li><b>Dry thoroughly</b> and keep it dry: PC bubbles quickly when wet.</li>
+    <li><b>Soak long;</b> do not open the door early. Tall PC parts cool slowly in the chamber.</li>
+    <li><b>Wide, thick brim;</b> avoid sharp corners (round them in CAD, see <a href="../design/design-patterns.html">design patterns</a>).</li>
+    <li><b>Auxiliary nozzle:</b> rated as available for PC, but speed limits still apply.</li>
+  </ul>
+
+  <h3>PA (nylon), PAHT-CF, PA6-GF, PA6-CF</h3>
+  <p>Nylons offer wear resistance, toughness and good fatigue life. They are the most moisture-sensitive materials in this guide and the most important to dry; stored open they can absorb enough water to ruin a print within hours to days (typical).</p>
+  <ul>
+    <li><b>Hotend:</b> hardened steel (standard). Carbon- and glass-filled grades need 0.4 mm or larger. HF 0.4 is rated with caution for fiber blends; HF 0.6 and 0.8 are fine.</li>
+    <li><b>Air mode:</b> Heating, filter on. High-temperature bed leveling first.</li>
+    <li><b>Plate:</b> engineering plate is the typical choice for nylon; textured PEI works for some blends. Add glue if a plate recommends it.</li>
+    <li><b>Run the filament out of a dry source.</b> AMS 2 Pro drying (rotating mode) is the intended route; avoid long idle periods with the spool in a humid room.</li>
+    <li><b>Aux nozzle:</b> PAHT-CF and PA6-GF are rated available; PA6-CF is "not recommended"; PPA-CF is not available.</li>
+  </ul>
+
+  <h3>PET-CF and other carbon-fiber blends</h3>
+  <p>PET-CF, PETG-CF, PLA-CF and ASA-CF trade some toughness for stiffness and a dry, matte surface. Their abrasiveness is handled by the hardened-steel extruder gears and nozzle; the AMS tubes can still wear faster with <i>third-party</i> fiber filament, whereas Bambu's own are tuned for the AMS. Cold pull a nozzle with plain PLA or PETG only; never cold pull with a fiber-reinforced filament.</p>
+
+  <h3>PPS-CF</h3>
+  <div class="callout warn"><span class="callout-title">Not a supported X2D material in the standard kit</span>
+    <p>In Bambu's X2D compatibility chart, PPS-CF is marked as <b>not available</b> on every standard-kit hotend (0.2, 0.4, 0.6, 0.8 mm and the HF hotends) on the main side, and not available on the auxiliary side. This guide therefore does not give a PPS-CF recipe. PPS-CF needs very high nozzle temperatures that the X2D's 300 °C limit and 65 °C chamber were not stated to support. If you want to print it, check Bambu's current compatibility page before buying any filament.</p></div>
+
+  <h2 id="plates-adhesion">7. Build plate and adhesion per material</h2>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 320" role="img" aria-label="Cross-section of a first layer on the plate with brim and mouse ears, showing where stress concentrates at corners">
+      <rect class="f-gray" x="60" y="236" width="640" height="16" rx="3"/>
+      <text class="t-xs t-m" x="68" y="274">build plate (textured PEI / engineering plate)</text>
+      <rect class="f-orange" x="250" y="156" width="260" height="80" rx="4"/>
+      <text class="t-sm t-c t-b" x="380" y="202">part</text>
+      <rect class="f-yellow" x="160" y="226" width="90" height="10" rx="2"/>
+      <rect class="f-yellow" x="510" y="226" width="90" height="10" rx="2"/>
+      <text class="t-xs t-c" x="205" y="218">brim</text>
+      <text class="t-xs t-c" x="555" y="218">brim</text>
+      <path class="d-ink arrow" d="M250 150 L220 118"/>
+      <text class="t-xs" x="120" y="108">stress peaks at</text><text class="t-xs" x="120" y="122">sharp corners</text>
+      <path class="d-ink arrow" d="M510 150 L540 118"/>
+      <circle class="f-yellow" cx="620" cy="228" r="16"/>
+      <text class="t-xs t-c" x="620" y="206">mouse ear</text>
+      <path class="d-dash d-ink" d="M250 236 V250"/>
+      <rect class="f-blue" x="60" y="40" width="270" height="52" rx="8"/>
+      <text class="t-sm t-b" x="72" y="62">Wide brim spreads the pull</text><text class="t-xs" x="72" y="80">over more plate area (typical 8–15 mm)</text>
+      <rect class="f-green" x="430" y="40" width="270" height="52" rx="8"/>
+      <text class="t-sm t-b" x="442" y="62">Rounded corners + ears</text><text class="t-xs" x="442" y="80">remove the stress concentrators</text>
+      <text class="t-xs t-m" x="60" y="304">Brim sizes are typical practice, not documented values.</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> Where adhesion fails. Large brims and rounded corners both reduce the force a corner needs to pull free.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Material</th><th>Plate</th><th>Bed</th><th>Adhesion help</th><th>Watch for</th></tr></thead>
+    <tbody>
+      <tr><td>ABS / ASA</td><td>Textured PEI or engineering plate</td><td>100–110 °C <span class="chip blue">doc</span></td><td>Brim; warm soak; glue stick on smooth plates (typical)</td><td>Corner lift, layer splits when door opened early.</td></tr>
+      <tr><td>PC / blends</td><td>Textured PEI or engineering plate</td><td>100–110 °C <span class="chip blue">doc</span></td><td>Wide brim; glue where the plate recommends it</td><td>Warp, bubbles from moisture, strings.</td></tr>
+      <tr><td>PA / PAHT</td><td>Engineering plate (typical)</td><td>typical 80–100 °C</td><td>Glue; brim; dry filament</td><td>Warp, rough surface from moisture.</td></tr>
+      <tr><td>CF/GF blends (PET-CF, PA-CF, PETG-CF)</td><td>Per filament recommendation; textured PEI typical for PET-based blends</td><td>per spool</td><td>Brim; slower first layers</td><td>Abrasive wear, tube wear on non-tuned third-party filament.</td></tr>
+    </tbody></table></div>
+
+  <div class="callout tip"><span class="callout-title">First-layer troubleshooting reminders</span>
+    <p>If prints refuse to stick: wash the plate with warm water and dish soap, do not touch it with fingers, run first-layer calibration (adjustment steps of 0.02 mm, up to 0.05 mm), and re-run (high-temperature) bed leveling. A pattern in a fixed place usually means oil on the plate. More on <a href="../techniques/first-layer-and-adhesion.html">first layer and adhesion</a>.</p></div>
+
+  <h2 id="large-parts">8. Avoiding warping on large parts</h2>
+  <ol class="steps">
+    <li><strong>Reduce the flat footprint.</strong>Chamfer the base edge, add rounded corners, and cut tall slabs into joined pieces if the design allows.</li>
+    <li><strong>Add a brim or mouse ears.</strong>The wider the first-layer contact, the more pull it can resist.</li>
+    <li><strong>Choose the right plate and keep it clean.</strong>Skipping the soap-and-water wash costs more reprints than any other single habit.</li>
+    <li><strong>Hold the chamber stable.</strong>Do not open the door; do not change fan targets mid-print; avoid drafts from open windows.</li>
+    <li><strong>Reduce internal stress.</strong>Fewer, thicker walls and moderate infill beat dense, thin infill: dense infill adds mass that contracts. Use a gyroid or similar pattern (typical).</li>
+    <li><strong>Orient for strength and stress.</strong>Align the longest axis with the bed's short side; print on edge only if the design survives it. See <a href="../design/strength-and-orientation.html">strength and orientation</a>.</li>
+    <li><strong>Cool down slowly.</strong>Leave the part in the closed chamber until it is comfortably cool.</li>
+  </ol>
+
+  <h2 id="annealing">9. Annealing in the chamber: an idea, with caveats</h2>
+  <p><b>Annealing</b> means holding a finished part at an elevated temperature below its softening point for a period, then cooling slowly, to relieve internal stress and (for semi-crystalline plastics) raise crystallinity and heat resistance. The X2D's chamber and heatbed can reach 65 °C and 120 °C, and its documentation shows the chamber being used for drying.</p>
+  <div class="callout warn"><span class="callout-title">Caveats: this is an idea, not a Bambu procedure</span>
+    <p>Bambu does not document annealing in the X2D chamber. Parts can shrink, deform or sag; unsupported spans and thin walls are most at risk; the result depends on material and geometry. If you try it, work on a sacrificial copy, support the part on a flat, heat-tolerant surface, stay below the heat-deflection temperature of the material (typical practice), and monitor from the live camera. Do not exceed the printer's limits and do not leave it unattended. Many parts do not need it.</p></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 280" role="img" aria-label="Annealing idea as a temperature versus time curve: ramp, hold below softening point, and slow cooldown">
+      <path class="d-ink arrow" d="M70 240 V24"/>
+      <path class="d-ink arrow" d="M70 240 H736"/>
+      <text class="t-sm t-b" x="20" y="22">Part temp</text>
+      <path class="d-dash d-ink" d="M70 60 H730"/>
+      <text class="t-xs t-m" x="540" y="54">softening point (material-specific): stay well below</text>
+      <path class="s-orange" fill="none" stroke-width="3" d="M70 230 C 150 220 180 120 240 112 H 460 C 540 120 620 200 700 230"/>
+      <text class="t-xs t-c" x="140" y="160">slow ramp</text>
+      <text class="t-xs t-c" x="350" y="104">hold (typical: tens of minutes to hours)</text>
+      <text class="t-xs t-c" x="610" y="170">slow cooldown in closed chamber</text>
+      <text class="t-xs t-m" x="70" y="266">Conceptual only. Use sacrificial test prints; not an official Bambu procedure.</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> The shape of an annealing cycle. Heights and hold times are intentionally not numbers.</figcaption>
+  </figure>
+
+  <h2 id="recipes-table">10. Starting recipes table</h2>
+  <p>Treat this table as a <b>checklist of levers</b>, not a settings dump. Values tagged <span class="chip blue">doc</span> come from Bambu's documentation; the rest are typical and need verification on your spool.</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Material</th><th>Nozzle</th><th>Bed</th><th>Chamber / mode</th><th>Part fan</th><th>Dry first?</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>ABS</td><td>0.4–0.8, typical 260 °C</td><td>100–110 <span class="chip blue">doc</span></td><td>Heating, up to 65 °C setpoint <span class="chip blue">doc</span></td><td>low / off</td><td>Often a good idea</td><td>Brim, closed door.</td></tr>
+      <tr><td>ASA</td><td>0.4–0.8, typical 260 °C</td><td>100–110 <span class="chip blue">doc</span></td><td>Heating</td><td>low / off</td><td>Often a good idea</td><td>Outdoor parts; filter in.</td></tr>
+      <tr><td>PC</td><td>0.4–0.8, typical 270–290 °C</td><td>100–110 <span class="chip blue">doc</span></td><td>Heating, long soak</td><td>off</td><td>Yes</td><td>Max nozzle 300 °C <span class="chip blue">doc</span>.</td></tr>
+      <tr><td>PA / PAHT</td><td>0.4–0.8 hardened</td><td>typical 80–100</td><td>Heating</td><td>off / low</td><td>Yes, always</td><td>Engineering plate; glue.</td></tr>
+      <tr><td>PET-CF / PA-CF</td><td>0.4–0.8 hardened</td><td>per spool</td><td>Heating</td><td>low</td><td>Yes</td><td>Aux: PET-CF caution, PA6-CF not recommended.</td></tr>
+      <tr><td>PPS-CF</td><td colspan="6">Not available with the standard kit <span class="chip blue">doc</span>; no recipe.</td></tr>
+    </tbody></table></div>
+
+  <h2 id="failure-modes">11. Failure modes and cures</h2>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 360" role="img" aria-label="Four cards illustrating failure modes: corner warp, layer splitting, bubbles from wet filament, and nozzle clumping">
+      <rect class="d-surface" x="20" y="16" width="170" height="328" rx="10"/>
+      <text class="t-sm t-b t-c" x="105" y="40">Corner warp</text>
+      <rect class="f-gray" x="40" y="180" width="130" height="10"/>
+      <path class="s-orange" fill="none" stroke-width="12" stroke-linecap="round" d="M44 170 C 60 150 90 140 105 140 C 125 140 150 150 166 168"/>
+      <text class="t-xs t-c" x="105" y="226">lift at corners</text>
+      <text class="t-xs" x="34" y="260">Cause: gradient, cold</text><text class="t-xs" x="34" y="274">draft, dirty plate</text>
+      <text class="t-xs t-b" x="34" y="298">Fix: brim, soak,</text><text class="t-xs t-b" x="34" y="312">clean plate, door shut</text>
+      <rect class="d-surface" x="200" y="16" width="170" height="328" rx="10"/>
+      <text class="t-sm t-b t-c" x="285" y="40">Layer split</text>
+      <rect class="f-orange" x="240" y="90" width="90" height="26"/><rect class="f-orange" x="240" y="124" width="90" height="26"/><rect class="f-orange" x="240" y="158" width="90" height="26"/>
+      <path class="s-red" fill="none" stroke-width="3" d="M236 120 L334 120 M236 154 L334 154" stroke-dasharray="6 4"/>
+      <text class="t-xs t-c" x="285" y="226">cracks between layers</text>
+      <text class="t-xs" x="214" y="260">Cause: cold chamber,</text><text class="t-xs" x="214" y="274">fan too strong</text>
+      <text class="t-xs t-b" x="214" y="298">Fix: heating mode,</text><text class="t-xs t-b" x="214" y="312">less fan, hotter nozzle</text>
+      <rect class="d-surface" x="380" y="16" width="170" height="328" rx="10"/>
+      <text class="t-sm t-b t-c" x="465" y="40">Wet filament</text>
+      <circle class="f-blue" cx="440" cy="130" r="8"/><circle class="f-blue" cx="470" cy="108" r="5"/><circle class="f-blue" cx="490" cy="140" r="9"/><circle class="f-blue" cx="458" cy="168" r="6"/>
+      <text class="t-xs t-c" x="465" y="226">bubbles, strings, rough</text>
+      <text class="t-xs" x="394" y="260">Cause: moisture</text><text class="t-xs" x="394" y="274">in nylon/PC/PET</text>
+      <text class="t-xs t-b" x="394" y="298">Fix: dry in AMS 2 Pro,</text><text class="t-xs t-b" x="394" y="312">store sealed</text>
+      <rect class="d-surface" x="560" y="16" width="180" height="328" rx="10"/>
+      <text class="t-sm t-b t-c" x="650" y="40">Nozzle clumping</text>
+      <circle class="f-gray" cx="650" cy="120" r="30"/><path class="d-ink arrow" d="M650 70 V88"/>
+      <text class="t-xs t-c" x="650" y="226">blob on the nozzle</text>
+      <text class="t-xs" x="574" y="260">Cause: heat creep, dirt,</text><text class="t-xs" x="574" y="274">poor start</text>
+      <text class="t-xs t-b" x="574" y="298">Fix: clumping detection,</text><text class="t-xs t-b" x="574" y="312">clean nozzle and sock</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> Four common engineering-material failures with typical causes and fixes.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>First thing to try</th></tr></thead>
+    <tbody>
+      <tr><td>Corner lift in ABS/ASA/PC</td><td>Gradient, drafts, dirty plate</td><td>Wash plate, add brim, keep door closed, run the soak.</td></tr>
+      <tr><td>Layers split mid-height</td><td>Chamber too cold or fan too high</td><td>Heating mode, reduce part fan, raise chamber setpoint.</td></tr>
+      <tr><td>Bubbling, popping, stringing</td><td>Wet filament</td><td>Dry the spool; seal after use.</td></tr>
+      <tr><td>Clicking extruder, underextrusion with CF/PA</td><td>Partial clog, worn nozzle, too fast</td><td>Lower volumetric speed; run the unload test (see <a href="maintenance-and-troubleshooting.html">maintenance</a>).</td></tr>
+      <tr><td>Blob builds on the nozzle</td><td>Residue, heat soak creep, poor purge</td><td>Enable clumping detection (Low for overnight); clean nozzle and sock.</td></tr>
+      <tr><td>Strong smell in the room</td><td>Filter saturated or exhaust opened</td><td>Replace carbon filter; check door seal and exhaust route.</td></tr>
+      <tr><td>Part dimensionally small</td><td>Shrinkage of the material</td><td>Scale test cubes; calibrate per material (see <a href="../techniques/calibration.html">calibration</a>).</td></tr>
+    </tbody></table></div>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul class="checklist">
+    <li>A warm chamber cuts the temperature gap between layers, so less stress locks into ABS, ASA, PC and nylon.</li>
+    <li>The X2D heats the chamber actively up to 65 °C; plan a pre-heat (about 30 minutes when the bed is above 90 °C).</li>
+    <li>Use Heating mode for ABS/ASA/PC/PA and Strong Cooling for PLA/TPU; keep the door and lid shut for the former.</li>
+    <li>High-temperature bed leveling first; clean plate; brim; rounded corners.</li>
+    <li>Dry nylon, PC and PET before printing; the AMS 2 Pro can do it, but follow the mixing rules.</li>
+    <li>PPS-CF is not available on any standard-kit hotend according to Bambu's chart; the 0.2 mm hotend is not for PC or fiber-filled filament.</li>
+    <li>Annealing in the chamber is an unofficial idea; test on sacrificial prints.</li>
+  </ul>
+  <div class="callout goal"><span class="callout-title">Practice</span>
+    <p>Compare a cold and a warm chamber in challenge <a href="../exercises/x2d-challenges.html#X-5">X-5 (chamber warp test)</a>, and use the <a href="recipes.html">recipes</a> for end-to-end jobs. Back to <a href="settings-and-profiles.html">settings and profiles</a> for the slicer side of these controls.</p></div>
+
+</main>
+</body>
+</html>

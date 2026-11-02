@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>X2D setup &amp; first print · 3D Printing Compendium</title>
+  <meta name="description" content="Unboxing, placement, power and network, account binding or LAN mode, first-run calibration, installing the AMS 2 Pro and buffer, loading filament, Bambu Studio setup, a first print, monitoring, removal, a day-1 checklist and the most common beginner mistakes on the Bambu Lab X2D.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="x2d/setup-and-first-print.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 6 · Bambu X2D + AMS 2 Pro</div>
+    <h1>X2D setup &amp; first print</h1>
+    <p class="lead">From closed box to a finished first model: how to unpack and place the machine, power it, connect it, run the first-time routines, install the AMS 2 Pro, load filament, slice in Bambu Studio and watch your first print, with a checklist and the mistakes that trip most beginners.</p>
+    <div class="meta"><span class="badge beginner">Beginner</span><span class="badge x2d">X2D + AMS 2 Pro</span><span class="badge time">⏱ 35 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <ul>
+      <li>What is in the box and how to unpack safely, without guessing at details.</li>
+      <li>Where to put the printer, how to power it and how to connect it to your account or in LAN mode.</li>
+      <li>What the first-run guide and calibrations do.</li>
+      <li>How to install the AMS 2 Pro and buffer and load your first filament.</li>
+      <li>How to prepare Bambu Studio, start a first print and monitor it.</li>
+      <li>How to remove the print and what to check at the end of day one.</li>
+    </ul>
+  </div>
+
+  <div class="callout x2d"><span class="callout-title">Follow the official guide for the packaging details</span>
+    <p>Bambu Lab ships the X2D with packaging that protects moving parts during transport, and the official unboxing guide and quick-start guide in the box show exactly which pieces to remove. This page does not reproduce those instructions from memory: the research behind this compendium does not describe every transport lock and foam piece, so steps in that section are written generically and labeled <b>typical</b>. When our description and the printed guide disagree, the guide wins. Also see <a href="../foundations/first-print.html">Your first print</a> for the general method.</p>
+  </div>
+
+  <h2 id="box">🔰 What is in the box</h2>
+  <p>There are two ways to buy: the <b>X2D</b> alone, or the <b>X2D Combo</b>, which adds an AMS 2 Pro. The printer ships with a textured PEI plate on the bed, anti-vibration feet and a filament buffer. The combo’s AMS 2 Pro comes with its desiccant and the exhaust-fan bundle packed inside it.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 420" role="img" aria-label="Box contents: the printer with plate, buffer and feet; accessory box with spool holder, touchscreen, power cord, auxiliary extruder and 6-pin cable; toolbox with spare hotend, sock, cutters, unclogging pin, wiping pad, scraper, PTFE nut, Allen keys, wrench, flow blocker, oil and grease; two PTFE tubes; printed guides; the combo adds an AMS 2 Pro">
+      <text class="t-lg" x="20" y="28">Unpacking inventory</text>
+      <rect class="f-red" x="20" y="50" width="250" height="170" rx="10"/><text class="t t-b" x="36" y="76">The printer</text>
+      <text class="t-sm" x="36" y="102">• textured PEI plate on the bed</text><text class="t-sm" x="36" y="124">• anti-vibration feet</text><text class="t-sm" x="36" y="146">• filament buffer</text><text class="t-sm" x="36" y="168">• toolhead with two hotends</text><text class="t-xs t-m" x="36" y="200">(foam and packing pieces inside)</text>
+      <rect class="f-blue" x="290" y="50" width="250" height="170" rx="10"/><text class="t t-b" x="306" y="76">Accessory box</text>
+      <text class="t-sm" x="306" y="102">• spool holder(s)</text><text class="t-sm" x="306" y="124">• touchscreen</text><text class="t-sm" x="306" y="146">• power cord</text><text class="t-sm" x="306" y="168">• auxiliary extruder</text><text class="t-sm" x="306" y="190">• 6-pin cable (combo) / exhaust-fan bundle</text>
+      <rect class="f-yellow" x="560" y="50" width="240" height="170" rx="10"/><text class="t t-b" x="576" y="76">Toolbox</text>
+      <text class="t-xs" x="576" y="98">• spare 0.4 mm hardened-steel hotend</text><text class="t-xs" x="576" y="114">• silicone sock, L and R cutters</text><text class="t-xs" x="576" y="130">• unclogging pin, nozzle wiping pad</text><text class="t-xs" x="576" y="146">• scraper blade + screws</text><text class="t-xs" x="576" y="162">• PTFE locking nut, flow blocker</text><text class="t-xs" x="576" y="178">• Allen keys H1.5 / H2.0, 8 mm wrench</text><text class="t-xs" x="576" y="194">• lubricating oil and grease</text>
+      <rect class="f-teal" x="20" y="240" width="250" height="150" rx="10"/><text class="t t-b" x="36" y="266">Combo only</text><text class="t-sm" x="36" y="292">• AMS 2 Pro with desiccant</text><text class="t-sm" x="36" y="314">• exhaust-fan bundle inside it</text><text class="t-sm" x="36" y="336">• 6-pin cable</text>
+      <rect class="f-green" x="290" y="240" width="250" height="150" rx="10"/><text class="t t-b" x="306" y="266">Tubes and paper</text><text class="t-sm" x="306" y="292">• 2 PTFE tubes</text><text class="t-sm" x="306" y="314">• quick start guide</text><text class="t-sm" x="306" y="336">• warranty card, safety guide</text>
+      <rect class="f-gray" x="560" y="240" width="240" height="150" rx="10"/><text class="t t-b" x="576" y="266">Not included</text><text class="t-sm" x="576" y="292">• USB drive (optional)</text><text class="t-sm" x="576" y="314">• filament (unless bundled)</text><text class="t-sm" x="576" y="336">• Vision Encoder, track switch,</text><text class="t-sm" x="576" y="354">  high-flow hotends (sold separately)</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> A mental inventory based on Bambu’s accessory documentation. The exact contents of your region’s box can differ slightly, so tick items off against the paper list that comes with the printer.</figcaption>
+  </figure>
+
+  <h2 id="unbox">📦 Unboxing and transport protection</h2>
+  <p>The X2D weighs 16.25 kg and is 392 × 406 × 478 mm, so lift it with two hands, or with a helper, by the base, not by the door, the lid or the toolhead. Work on the table where it will live, because every move afterwards risks bending a rod or knocking a sensor.</p>
+  <ol class="steps">
+    <li><strong>Open the carton and read the quick start guide.</strong> It shows the package layering and the removal order.</li>
+    <li><strong>Lift the printer out</strong> and set it on the intended table.</li>
+    <li><strong>Remove the packing foam, tape and any transport protection</strong> that the guide marks, inside the chamber and around the toolhead and the bed. Typical places to look are the toolhead, the build plate area and the door; follow the guide for the exact set.</li>
+    <li><strong>Check the chamber</strong> for loose items (the toolbox and spare parts are often inside) and remove them.</li>
+    <li><strong>Mount the touchscreen, the spool holder and the auxiliary extruder</strong> from the accessory box as shown in the guide. The auxiliary extruder goes on the rear panel; its PTFE tube is the 525 mm white one.</li>
+    <li><strong>Set the anti-vibration feet</strong> in place on the table before the final positioning.</li>
+  </ol>
+
+  <div class="callout warn"><span class="callout-title">Do not power on with packing still inside</span>
+    <p>Powering on with transport protection fitted can damage the motion system or cause calibration errors. If you are unsure whether a piece belongs to the packaging, check the guide or the Bambu Lab wiki before turning on the printer.</p>
+  </div>
+
+  <h2 id="placement">📍 Placement</h2>
+  <p>Choose a stable, level, heat-resistant surface. The printer will shake a little at high speed, and a wobbly table amplifies that. Leave about 500 × 700 × 600 mm of free space as published by Bambu, and do not block the rear exhaust fan, the purge chute, the side intakes or the area above the AMS. Ambient conditions: <b>10–30 °C</b> and humidity below <b>85%</b>. Keep it away from direct sunlight and drafts (typical advice), and out of the room where you sleep.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 800 340" role="img" aria-label="Good and poor placement: good shows the printer on a sturdy table with clearance on all sides and the exhaust free; poor shows it pushed against a wall with the exhaust blocked and a shelf above">
+      <text class="t-lg" x="20" y="28">Where to put it</text>
+      <rect class="d-surface" x="20" y="44" width="360" height="270" rx="10"/><text class="t-sm t-b c-green" x="40" y="70">✔ Good</text>
+      <rect class="d-ink" x="40" y="250" width="320" height="14"/>
+      <rect class="f-red" x="130" y="130" width="140" height="120" rx="8" opacity=".6"/>
+      <text class="t-sm t-c t-b" x="200" y="196">X2D</text>
+      <rect class="f-teal" x="140" y="96" width="120" height="30" rx="6"/><text class="t-xs t-c" x="200" y="116">AMS 2 Pro</text>
+      <path class="k-blue arrow" d="M90 200 H128"/>      <path class="k-blue arrow" d="M310 200 H272"/>
+      <text class="t-xs t-c t-m" x="200" y="290">free space around, rear fan open</text>
+      <rect class="d-surface" x="420" y="44" width="360" height="270" rx="10"/><text class="t-sm t-b c-red" x="440" y="70">✘ Poor</text>
+      <rect class="d-ink" x="440" y="250" width="320" height="14"/>
+      <rect class="s-gray" x="740" y="80" width="20" height="170" opacity=".6"/><text class="t-xs" x="690" y="96">wall</text>
+      <rect class="f-gray" x="470" y="86" width="190" height="14" rx="3"/><text class="t-xs" x="476" y="82">shelf above</text>
+      <rect class="f-red" x="560" y="130" width="170" height="120" rx="8" opacity=".6"/>
+      <text class="t-sm t-c t-b" x="645" y="196">X2D</text>
+      <path class="k-red" d="M735 170 L748 170 M735 200 L748 200"/>
+      <text class="t-xs t-c t-m" x="600" y="290">rear exhaust blocked, no clearance</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> Placement. A sturdy table with free space beats any shelf. The exhaust fan at the rear is not decoration; it is part of how the chamber is cooled.</figcaption>
+  </figure>
+
+  <h2 id="power-network">🔌 Power and network</h2>
+  <p>First check the label for the <b>voltage version</b>: 200–240 V (1600 W at 220 V) or 100–120 V (1100 W at 110 V). Use the supplied power cord in a grounded outlet; the printer is not meant for extension reels of unknown quality. Standby draws about 7–8 W, typical steady printing about 250 W for PLA and about 550 W for PC at 25 °C room temperature. If your circuit is weak, the <b>Low Power</b> setting caps power at about 750 W and stretches the bed warm-up.</p>
+  <p>Connectivity is by <b>dual-band Wi-Fi</b> (2.4 GHz and 5 GHz). There is no wired Ethernet port. There are two operating styles:</p>
+  <div class="grid cols-2">
+    <div class="card accent-blue"><span class="ico">☁️</span><h3>Cloud mode</h3><p>Bind the printer to your Bambu account (via a QR code in Bambu Handy or a PIN code in Studio 2.5.3.60 or later). You can then send jobs and watch from anywhere.</p></div>
+    <div class="card accent-orange"><span class="ico">🏠</span><h3>LAN Only mode</h3><p>Keeps traffic in your local network. Enable <i>LAN Only</i> in the printer’s Settings; you connect using the access code shown there. Remote features that need the cloud are not available.</p></div>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 300" role="img" aria-label="Network paths: printer joins Wi-Fi router; in cloud mode it is bound to a Bambu account and reachable from Bambu Studio and Bambu Handy anywhere; in LAN Only mode Studio talks to the printer directly on the local network">
+      <text class="t-lg" x="20" y="28">How the printer talks to your devices</text>
+      <rect class="f-red" x="330" y="110" width="150" height="70" rx="10"/><text class="t t-b t-c" x="405" y="140">X2D</text><text class="t-xs t-c" x="405" y="160">Wi-Fi 2.4 / 5 GHz</text>
+      <rect class="f-gray" x="330" y="220" width="150" height="50" rx="10"/><text class="t-sm t-c" x="405" y="250">Router</text>
+      <path class="d-ink" d="M405 180 V220"/>
+      <rect class="f-blue" x="40" y="50" width="200" height="60" rx="10"/><text class="t-sm t-c t-b" x="140" y="76">Bambu Studio (PC)</text><text class="t-xs t-c" x="140" y="94">slice, send, monitor</text>
+      <rect class="f-blue" x="40" y="150" width="200" height="60" rx="10"/><text class="t-sm t-c t-b" x="140" y="176">Bambu Handy (phone)</text><text class="t-xs t-c" x="140" y="194">bind, monitor, control</text>
+      <rect class="f-green" x="580" y="80" width="220" height="70" rx="10"/><text class="t-sm t-c t-b" x="690" y="108">Bambu cloud account</text><text class="t-xs t-c" x="690" y="128">cloud mode, remote access</text>
+      <rect class="f-yellow" x="580" y="180" width="220" height="70" rx="10"/><text class="t-sm t-c t-b" x="690" y="208">LAN Only</text><text class="t-xs t-c" x="690" y="228">local access code, no cloud</text>
+      <path class="k-green arrow" d="M480 135 H580"/><path class="k-yellow arrow" d="M480 170 L580 205"/>
+      <path class="d-dash arrow" d="M240 80 L330 125"/><path class="d-dash arrow" d="M240 180 L330 150"/>
+    </svg>
+    <figcaption><b>Figure 3.</b> Two ways of reaching the same printer. Choose cloud for convenience, LAN Only for isolation. You can switch later in the printer settings.</figcaption>
+  </figure>
+
+  <h3>Binding to your account</h3>
+  <ol class="steps">
+    <li><strong>Power on</strong> the printer and follow the on-screen guide to select a Wi-Fi network and a language.</li>
+    <li><strong>Open Bambu Handy</strong> and sign in. Scan the QR code shown on the printer screen, or use the PIN-code route in Bambu Studio 2.5.3.60 or later.</li>
+    <li><strong>Name the printer</strong> and confirm the binding.</li>
+    <li><strong>Check the firmware</strong> in Settings. Update before your first print; the firmware has changed many times since launch, and updates include fixes for the AMS 2 Pro and spaghetti detection.</li>
+  </ol>
+
+  <div class="callout x2d"><span class="callout-title">Send without a USB drive</span>
+    <p>Because jobs can be stored on the printer’s own storage, you can <b>Send to built-in storage &amp; print</b> from Studio without any USB stick. A USB-A 2.0 port is still there for FAT32 or exFAT drives (one drive only; 32–64 GB is recommended). Without a drive, video recording and log export are not available, although internal timelapse storage is possible since firmware 01.01.00.00.</p>
+  </div>
+
+  <h2 id="first-run">🚀 First-run guide and calibrations</h2>
+  <p>On first power-on the screen guides you through a short <b>Beginner’s Guide</b>, and later you can reopen it from the Toolbox. The printer runs calibrations that it needs to know the exact geometry of itself. They live under <b>Settings → Calibration</b> and include:</p>
+  <ul>
+    <li><b>Motor noise cancellation</b> and <b>vibration compensation</b>: the printer measures its own resonances.</li>
+    <li><b>Auto bed leveling</b> (and a high-temperature variant): maps the bed.</li>
+    <li><b>Nozzle offset calibration</b>: an eddy-current sensor and the coil behind the bed measure the height difference between the two nozzles.</li>
+    <li><b>High-precision nozzle offset</b>: the toolhead camera uses a dark and a light filament on the two nozzles to refine the X/Y offset. It is not possible with a filament track switch installed.</li>
+    <li><b>Live-view camera calibration</b>: no longer needed since firmware 01.02.00.00.</li>
+    <li><b>First-layer calibration</b> (advanced): fine-tune in steps of ±0.02–0.05 mm.</li>
+    <li><b>Motion accuracy calibration</b>: needs the optional Vision Encoder.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 260" role="img" aria-label="First-run sequence from power on to first print: power on, connect network, bind account, update firmware, calibrate, install AMS and load filament, print">
+      <text class="t-lg" x="20" y="28">Day-1 sequence</text>
+      <rect class="f-gray" x="20" y="60" width="100" height="90" rx="10"/><text class="t-sm t-c t-b" x="70" y="96">1 Power on</text><text class="t-xs t-c" x="70" y="116">check voltage</text>
+      <rect class="f-blue" x="136" y="60" width="100" height="90" rx="10"/><text class="t-sm t-c t-b" x="186" y="96">2 Wi-Fi</text><text class="t-xs t-c" x="186" y="116">select network</text>
+      <rect class="f-blue" x="252" y="60" width="100" height="90" rx="10"/><text class="t-sm t-c t-b" x="302" y="96">3 Bind</text><text class="t-xs t-c" x="302" y="116">QR / PIN / LAN</text>
+      <rect class="f-orange" x="368" y="60" width="100" height="90" rx="10"/><text class="t-sm t-c t-b" x="418" y="96">4 Update</text><text class="t-xs t-c" x="418" y="116">firmware</text>
+      <rect class="f-purple" x="484" y="60" width="100" height="90" rx="10"/><text class="t-sm t-c t-b" x="534" y="96">5 Calibrate</text><text class="t-xs t-c" x="534" y="116">guided</text>
+      <rect class="f-teal" x="600" y="60" width="100" height="90" rx="10"/><text class="t-sm t-c t-b" x="650" y="96">6 AMS</text><text class="t-xs t-c" x="650" y="116">load filament</text>
+      <rect class="f-green" x="716" y="60" width="90" height="90" rx="10"/><text class="t-sm t-c t-b" x="761" y="96">7 Print</text><text class="t-xs t-c" x="761" y="116">first model</text>
+      <path class="d-ink arrow" d="M120 105 H134"/><path class="d-ink arrow" d="M236 105 H250"/><path class="d-ink arrow" d="M352 105 H366"/><path class="d-ink arrow" d="M468 105 H482"/><path class="d-ink arrow" d="M584 105 H598"/><path class="d-ink arrow" d="M700 105 H714"/>
+      <text class="t-xs t-m" x="20" y="200">Typical time for a careful first day: 60–120 minutes from the box to a finished first model.</text>
+      <text class="t-xs t-m" x="20" y="218">Calibration and heat-up add waiting time but need little attention.</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> The path of day one. The time estimate is a typical expectation, not a Bambu figure.</figcaption>
+  </figure>
+
+  <h2 id="install-ams">🧵 Install the AMS 2 Pro and the buffer</h2>
+  <p>The buffer comes installed on the printer. The AMS 2 Pro stands on top. The path is: AMS → PTFE tube → buffer → printer, and the AMS needs the <b>6-pin cable</b> for data and power. Use the <b>new</b> cable that comes with the combo; the older cable gives unstable connections.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 380" role="img" aria-label="Installation steps for the AMS 2 Pro: place on top of the printer, connect the 6-pin cable to a buffer port, connect the PTFE tube to the upper buffer inlet, optionally connect the exhaust fan cable to the other port, remove desiccant from the bag and install it, power on and run AMS setup">
+      <text class="t-lg" x="20" y="28">Connecting the AMS 2 Pro</text>
+      <rect class="d-surface" x="40" y="50" width="330" height="300" rx="10"/>
+      <rect class="f-teal" x="80" y="70" width="250" height="60" rx="8"/><text class="t-sm t-c t-b" x="205" y="104">AMS 2 Pro</text>
+      <rect class="f-purple" x="140" y="180" width="130" height="50" rx="8"/><text class="t-sm t-c t-b" x="205" y="210">Buffer</text>
+      <rect class="f-red" x="110" y="270" width="190" height="60" rx="8"/><text class="t-sm t-c t-b" x="205" y="304">X2D (rear)</text>
+      <path class="k-teal arrow" d="M205 130 V180"/><text class="t-xs c-teal" x="214" y="158">PTFE → upper inlet</text>
+      <path class="k-orange" d="M300 100 C350 140 330 200 272 200"/><text class="t-xs c-orange" x="296" y="170">6-pin</text>
+      <path class="k-blue arrow" d="M205 230 V270"/>
+      <rect class="d-surface" x="400" y="50" width="390" height="300" rx="10"/>
+      <circle class="s-teal" cx="426" cy="84" r="12"/><text class="t-xs t-w t-c t-b" x="426" y="88">1</text><text class="t-sm" x="448" y="88">Stand the AMS on the printer top.</text>
+      <circle class="s-teal" cx="426" cy="124" r="12"/><text class="t-xs t-w t-c t-b" x="426" y="128">2</text><text class="t-sm" x="448" y="128">Remove desiccant from its bag; fit it.</text>
+      <circle class="s-teal" cx="426" cy="164" r="12"/><text class="t-xs t-w t-c t-b" x="426" y="168">3</text><text class="t-sm" x="448" y="168">Connect PTFE: AMS outlet → buffer upper inlet.</text>
+      <circle class="s-teal" cx="426" cy="204" r="12"/><text class="t-xs t-w t-c t-b" x="426" y="208">4</text><text class="t-sm" x="448" y="208">Plug the 6-pin cable into a buffer port.</text>
+      <circle class="s-teal" cx="426" cy="244" r="12"/><text class="t-xs t-w t-c t-b" x="426" y="248">5</text><text class="t-sm" x="448" y="248">Exhaust fan (if used): other buffer port.</text>
+      <circle class="s-teal" cx="426" cy="284" r="12"/><text class="t-xs t-w t-c t-b" x="426" y="288">6</text><text class="t-sm" x="448" y="288">Power on; run the AMS Setup on the screen.</text>
+      <text class="t-xs t-m" x="420" y="330">Port assignment follows Bambu’s FAQ; if you do not use the exhaust fan, either port works.</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> Order of connection. A second AMS is daisy-chained from the first AMS’s own rear 6-pin ports, and then goes to the lower buffer inlet (or through the 4-in-1 adapter if you have more than two).</figcaption>
+  </figure>
+
+  <h3>AMS Setup: assigning the unit to a nozzle</h3>
+  <p>When the AMS is first detected, the screen opens <b>AMS Setup</b>. Choose <b>Auto Mode-Detect</b> (the Hall sensors determine which inlet you used; this requires filament in the AMS, nothing loaded in the printer and an empty buffer) or <b>Manual</b>, where you assign the AMS to Left or Right. Once filament has been sent through, the choice is locked. The recommended first combination is the AMS 2 Pro on the <b>upper (left/main)</b> inlet, because the main nozzle handles the widest range of materials.</p>
+
+  <h2 id="load">📥 Load your first filament</h2>
+  <h3>Into the AMS</h3>
+  <p>Seat the spool in a slot, with the end of the filament pointing to the slot’s inlet. Insert about 2 cm of filament; the feeder grabs it and the AMS reads the RFID tag. Bambu spools appear in the screen with the correct material and color. Add a third-party spool by setting its type and color manually. You do not need to push the filament all the way to the toolhead; the AMS loads it when a print calls for it.</p>
+  <h3>Into the external spool holder</h3>
+  <p>For a spool outside the AMS (for example TPU), edit the type and color on the screen, push the filament into the PTFE tube until it stops, tap <b>Load</b> and confirm when plastic leaves the nozzle. Check the extrusion: it should be a smooth, uniform line, not a clicking, curling or bubbling one.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 280" role="img" aria-label="Filament loading checklist in four panels: cut end, insert 2 cm into slot, RFID read, check or edit type and color">
+      <text class="t-lg" x="20" y="28">Loading in four moves</text>
+      <rect class="d-surface" x="20" y="50" width="185" height="190" rx="10"/><text class="t-sm t-b t-c" x="112" y="76">1 · Cut the end</text>
+      <path class="d-metal" d="M60 150 H160 L172 140 L172 160 L160 150 Z"/><text class="t-xs t-c" x="112" y="190">cut at an angle,</text><text class="t-xs t-c" x="112" y="204">remove bent tip</text>
+      <rect class="d-surface" x="225" y="50" width="185" height="190" rx="10"/><text class="t-sm t-b t-c" x="317" y="76">2 · Insert ≈ 2 cm</text>
+      <rect class="f-teal" x="265" y="120" width="40" height="60" rx="6"/><path class="k-orange arrow" d="M345 150 H310"/><text class="t-xs t-c" x="317" y="204">feeder grabs it,</text><text class="t-xs t-c" x="317" y="218">pulls back slightly</text>
+      <rect class="d-surface" x="430" y="50" width="185" height="190" rx="10"/><text class="t-sm t-b t-c" x="522" y="76">3 · RFID read</text>
+      <circle class="f-pink" cx="522" cy="140" r="30"/><circle class="f-pink" cx="522" cy="140" r="14" opacity=".6"/><text class="t-xs t-c" x="522" y="204">tag read at insertion,</text><text class="t-xs t-c" x="522" y="218">or tap Re-Read</text>
+      <rect class="d-surface" x="635" y="50" width="165" height="190" rx="10"/><text class="t-sm t-b t-c" x="717" y="76">4 · Check type</text>
+      <rect class="f-green" x="665" y="110" width="105" height="40" rx="6"/><text class="t-xs t-c" x="717" y="134">PLA · color</text><text class="t-xs t-c" x="717" y="204">third party? set it</text><text class="t-xs t-c" x="717" y="218">manually</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> The four moves of loading a slot. Spending ten seconds on the filament end saves many minutes of feed failures later.</figcaption>
+  </figure>
+
+  <h2 id="studio">💻 Bambu Studio on your computer</h2>
+  <p>Bambu Studio is Bambu’s slicer (see the <a href="../software/slicers.html">slicers overview</a> for the concepts). Install it from Bambu’s site, make sure it is at least version <b>2.5.3.60</b> if you want PIN-code binding or the high-flow hotends, and sign in with the same account as the printer. In the printer selection, pick the X2D and the nozzle diameter that is installed (0.4 mm hardened steel to start). Open the <b>Device</b> tab to see the printer, camera and AMS status, and sync the AMS filaments so the slicer’s filament list matches your slots.</p>
+  <ol class="steps">
+    <li><strong>Choose the printer and nozzle</strong> (left and right nozzle diameters are the same; mixed sizes are not yet supported for dual-nozzle printing).</li>
+    <li><strong>Sync the filaments</strong> from the AMS. Colors and types of RFID spools appear automatically.</li>
+    <li><strong>Choose a plate</strong>: the textured PEI plate matches the printer; Studio warns about a mismatch.</li>
+    <li><strong>Pick a profile</strong> for the material, usually the Bambu profile for the filament you loaded.</li>
+  </ol>
+
+  <h2 id="first-print">🖨️ Your first print</h2>
+  <p>The simplest first print is one that is already on the printer. The built-in models are pre-sliced for the <b>left (primary) hotend only</b>, so they do not need either Studio or the AMS to be perfect. Bambu’s own guide has you print a scraper this way. It tests the plate, the heater, the extrusion and the camera at the same time, and the scraper is useful afterwards.</p>
+
+  <h3>Option 1 · From the touchscreen</h3>
+  <ol class="steps">
+    <li><strong>Prepare the plate.</strong> Check that the bed and plate are clean and free of debris. If you touched the surface, wash the plate with warm water and dish soap and let it dry.</li>
+    <li><strong>Open Print Files</strong> and choose a built-in model.</li>
+    <li><strong>Confirm</strong> the plate type, the nozzle, the timelapse and other options, and match the filament to the left hotend.</li>
+    <li><strong>Start.</strong> The printer heats, runs its automatic leveling and calibration moves, purges a line and starts printing.</li>
+  </ol>
+
+  <h3>Option 2 · From Bambu Studio</h3>
+  <ol class="steps">
+    <li><strong>Add a model</strong> (a calibration cube from MakerWorld or one from your own files) and place it near the middle front of the plate.</li>
+    <li><strong>Slice the plate</strong>, review the preview and the filament assignment (a single material goes to the left nozzle by default).</li>
+    <li><strong>Print Plate</strong> or <b>Send</b>, then confirm on the printer.</li>
+  </ol>
+
+  <h3>Option 3 · From Bambu Handy</h3>
+  <p>Browse MakerWorld or your library, tap <b>Print</b>, choose the plate and filament, and start. Handy is also the tool you use afterwards to watch from the sofa.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 340" role="img" aria-label="Timeline of a first print from heating through leveling and calibration moves, purge line, first layer, body layers, cooling and removal, with checkpoints marked">
+      <text class="t-lg" x="20" y="28">What the printer does after you press Start</text>
+      <path class="d-ink" d="M40 150 H780"/>
+      <circle class="s-red" cx="80" cy="150" r="9"/><text class="t-sm t-c t-b" x="80" y="120">Heat</text><text class="t-xs t-c" x="80" y="180">bed + nozzle</text>
+      <circle class="s-orange" cx="200" cy="150" r="9"/><text class="t-sm t-c t-b" x="200" y="120">Level</text><text class="t-xs t-c" x="200" y="180">bed map,</text><text class="t-xs t-c" x="200" y="194">calibration moves</text>
+      <circle class="s-yellow" cx="320" cy="150" r="9"/><text class="t-sm t-c t-b" x="320" y="120">Purge</text><text class="t-xs t-c" x="320" y="180">clear nozzle,</text><text class="t-xs t-c" x="320" y="194">extruded line</text>
+      <circle class="s-green" cx="440" cy="150" r="9"/><text class="t-sm t-c t-b" x="440" y="120">First layer</text><text class="t-xs t-c" x="440" y="180">watch closely</text>
+      <circle class="s-blue" cx="570" cy="150" r="9"/><text class="t-sm t-c t-b" x="570" y="120">Layers</text><text class="t-xs t-c" x="570" y="180">AI watches</text><text class="t-xs t-c" x="570" y="194">for failures</text>
+      <circle class="s-purple" cx="700" cy="150" r="9"/><text class="t-sm t-c t-b" x="700" y="120">Finish</text><text class="t-xs t-c" x="700" y="180">cool, unload</text><text class="t-xs t-c" x="700" y="194">(AMS retracts)</text>
+      <rect class="f-yellow" x="400" y="230" width="280" height="70" rx="8"/><text class="t-sm t-b" x="414" y="254">Most failures show up in the first layer</text><text class="t-xs" x="414" y="274">Stay for the first layer; see</text><text class="t-xs" x="414" y="288">the First-layer and adhesion page.</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> The sequence after Start. Exact durations depend on the material and mode, and calibration can be skipped by settings in some cases.</figcaption>
+  </figure>
+
+  <h2 id="screen">📱 Reading the touchscreen</h2>
+  <p>The 5-inch screen has a left-hand menu with five items: <b>Homepage</b>, <b>Controls</b>, <b>Filaments</b>, <b>Settings</b> and <b>HMS</b> (Health Management System, the place where warnings and errors appear). The <i>Files</i> tab lists Internal, History and External storage. Under <i>Controls</i> you find Air Condition, Speed, Motion (including Free Move), Nozzle &amp; Extruder, temperatures, and the chamber light.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 800 380" role="img" aria-label="Schematic of the touchscreen with a left menu of Homepage, Controls, Filaments, Settings and HMS and a main area with job progress, temperatures, speed and AMS slots">
+      <text class="t-lg" x="20" y="28">Touchscreen map (schematic)</text>
+      <rect class="d-surface" x="60" y="50" width="520" height="300" rx="14"/>
+      <rect class="f-gray" x="60" y="50" width="110" height="300" rx="14"/>
+      <text class="t-sm t-b" x="76" y="90">Homepage</text><text class="t-sm" x="76" y="130">Controls</text><text class="t-sm" x="76" y="170">Filaments</text><text class="t-sm" x="76" y="210">Settings</text><text class="t-sm" x="76" y="250">HMS</text>
+      <rect class="f-blue" x="190" y="70" width="370" height="70" rx="8"/><text class="t-sm t-b" x="204" y="96">Job progress</text><rect class="d-plastic" x="204" y="108" width="300" height="12" rx="6"/><text class="t-xs" x="204" y="132">layer, time left, file name</text>
+      <rect class="f-red" x="190" y="154" width="180" height="70" rx="8"/><text class="t-sm t-b" x="204" y="180">Temperatures</text><text class="t-xs" x="204" y="200">left and right nozzle, bed, chamber</text>
+      <rect class="f-orange" x="380" y="154" width="180" height="70" rx="8"/><text class="t-sm t-b" x="394" y="180">Speed + light</text><text class="t-xs" x="394" y="200">Silent · Standard · Sport · Ludicrous</text>
+      <rect class="f-teal" x="190" y="238" width="370" height="90" rx="8"/><text class="t-sm t-b" x="204" y="264">AMS slots</text><text class="t-xs" x="204" y="284">four colored circles per unit; tap to edit, unload or re-read</text>
+      <rect class="f-yellow" x="610" y="70" width="170" height="270" rx="10"/><text class="t-sm t-b t-c" x="695" y="98">Where to look</text>
+      <text class="t-xs" x="622" y="124">Warning? → HMS</text><text class="t-xs" x="622" y="146">Wrong nozzle? → Controls</text><text class="t-xs" x="622" y="168">Change speed → Controls</text><text class="t-xs" x="622" y="190">Calibrate → Settings</text><text class="t-xs" x="622" y="212">Spool data → Filaments</text><text class="t-xs" x="622" y="234">Old jobs → Files → History</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> A conceptual map of the screen. Menu names are from Bambu’s screen guide; the arrangement of tiles on the home page may differ by firmware.</figcaption>
+  </figure>
+
+  <h2 id="monitor">👀 Monitoring: app, camera and AI</h2>
+  <p>The live-view camera (1080p, 30 fps) is in a corner of the chamber. Turn the chamber light on, because spaghetti detection needs it. You can see the picture in Bambu Handy or in Studio’s Device tab. Detections you will meet include spaghetti, purge-chute pile-up, nozzle clumping, part displacement, foreign objects on the plate and a wrong plate. Each can be set to High, Medium or Low sensitivity; Low is common for long overnight prints. The camera lens must be clean: a dirty lens triggers a hygiene warning.</p>
+
+  <div class="callout tip"><span class="callout-title">Timelapse</span>
+    <p>Internal timelapse storage is supported since firmware 01.01.00.00, so a USB drive is not required. A drive is still useful for exporting logs when you need help.</p>
+  </div>
+
+  <h2 id="finish">🧹 Finishing and removal</h2>
+  <ol class="steps">
+    <li><strong>Let the bed cool to room temperature.</strong> Parts release more easily and are less likely to bend.</li>
+    <li><strong>Remove the plate</strong> and flex it gently; the part comes off. Do not pry with a sharp blade against the plate.</li>
+    <li><strong>Scrape the pre-extruded purge line</strong> from the plate edge and put it in the bin.</li>
+    <li><strong>Check the AMS:</strong> after a finished job it retracts the filament automatically; after a canceled job, unload manually from the screen.</li>
+    <li><strong>Peel off the rest</strong> (brim, supports), and clean the plate if needed.</li>
+  </ol>
+
+  <h2 id="habits">🔰 Good habits from the first week</h2>
+  <p>Most of the long-term reliability of a printer comes from a few routines that are easy to start on day one. None of them take more than a minute.</p>
+  <ul>
+    <li><b>Look at the first layer every time you change material or plate.</b> The first layer is where adhesion, nozzle offset and plate cleanliness show up; a quick look saves a failed overnight job.</li>
+    <li><b>Keep spools sealed or in the AMS.</b> Moisture is the most common hidden cause of poor surfaces. The AMS 2 Pro’s sealed design and humidity sensor help, and the desiccant color tells you when it is saturated (see the <a href="ams-2-pro.html">AMS 2 Pro page</a>).</li>
+    <li><b>Do not block the printer’s air paths.</b> Bambu asks for free space around the machine (a 500 × 700 × 600 mm envelope in the guide) and warns against covering the rear exhaust fan, the purge chute, the side intakes and the area above the AMS.</li>
+    <li><b>Mind the hot parts.</b> The nozzle reaches up to 300 °C, the bed up to 120 °C and the chamber up to 65 °C. Wait for the bed to cool before you touch the plate, and open the door only when you must during a hot-chamber print; the printer has Open Door Detection and will react.</li>
+    <li><b>Let the printer run its calibrations.</b> Motor-noise cancellation, vibration compensation and automatic bed leveling exist for a reason. Re-run them after maintenance that touches the motion system, as described on the <a href="maintenance-and-troubleshooting.html">maintenance page</a>.</li>
+    <li><b>Keep the firmware current.</b> Bambu’s release notes show real changes between versions (for example internal timelapse storage and print-while-drying arrived in 01.01.00.00), so check the version before you ask for help.</li>
+  </ul>
+  <div class="callout x2d"><span class="callout-title">If something looks wrong on day one</span>
+    <p>Stop the print, open the HMS page on the screen and read the message; it normally names the problem and a fix. Photograph the screen before you power-cycle, and note the firmware version. If the cause is unclear, Bambu’s wiki and support channels are the authoritative sources, and the <a href="../techniques/troubleshooting.html">troubleshooting chapter</a> gives a general method.</p>
+  </div>
+
+  <h2 id="checklist">✅ Day-1 checklist</h2>
+  <ul class="checklist">
+    <li>Voltage version matches my outlet; power cord is seated.</li>
+    <li>All packing foam, tape and transport protection removed (as per the guide).</li>
+    <li>Printer stands on a stable table with free space and a clear rear exhaust.</li>
+    <li>Wi-Fi connected, printer bound to my account (or LAN Only set up).</li>
+    <li>Firmware updated and Bambu Studio is up to date.</li>
+    <li>Touchscreen, spool holder and auxiliary extruder mounted.</li>
+    <li>AMS 2 Pro placed, 6-pin cable plugged in, PTFE from AMS to buffer upper inlet.</li>
+    <li>Desiccant removed from its bag and installed.</li>
+    <li>AMS Setup completed; spools loaded and recognized.</li>
+    <li>Plate clean; first print from the built-in model finished.</li>
+    <li>I know where the HMS menu is and how to unload filament.</li>
+    <li>Spare hotend, cutters and tools located in the toolbox.</li>
+  </ul>
+
+  <h2 id="mistakes">🚫 Most common beginner mistakes</h2>
+  <div class="grid cols-2">
+    <div class="card accent-red"><h3>Forgetting the packaging</h3><p>Powering on with a piece of foam or transport protection still fitted. Always check against the guide.</p></div>
+    <div class="card accent-orange"><h3>Using a dirty plate</h3><p>Fingerprints and dust make adhesion poor. Wash the plate with warm water and dish soap when it gets greasy.</p></div>
+    <div class="card accent-yellow"><h3>Old 6-pin cable</h3><p>The older cable is unstable with the AMS 2 Pro. Use the new one, and plug it into the buffer’s port.</p></div>
+    <div class="card accent-purple"><h3>Wrong filament type</h3><p>Choosing PLA in the slicer for a PETG spool. The profile selects temperatures, cooling and flow.</p></div>
+    <div class="card accent-blue"><h3>Mixing nozzle sizes</h3><p>Dual-nozzle printing needs the same diameter on both sides, which also applies after you swap one hotend.</p></div>
+    <div class="card accent-teal"><h3>Blocking the exhaust</h3><p>Pushing the printer against a wall or shelf. The chamber cannot breathe and the fan noise rises.</p></div>
+    <div class="card accent-green"><h3>Skipping the first layer</h3><p>Leaving the room during the first layer of a new material. Almost all early failures start there.</p></div>
+    <div class="card accent-pink"><h3>TPU through the AMS</h3><p>Putting flexible filament in an AMS slot. Use the external spool path; see <a href="tpu-and-flexibles.html">TPU &amp; flexibles</a>.</p></div>
+  </div>
+
+  <div class="callout x2d"><span class="callout-title">Where next</span>
+    <p>You have printed. Now learn how to use both nozzles in <a href="dual-nozzle-printing.html">dual-nozzle printing</a>, check which plastics fit where in <a href="filament-compatibility.html">filament compatibility</a>, and try the tasks in the <a href="../exercises/x2d-challenges.html">X2D challenges</a>. For adhesion problems, see <a href="../techniques/first-layer-and-adhesion.html">First layer &amp; bed adhesion</a>.</p>
+  </div>
+
+  <h2 id="takeaways">✅ Key takeaways</h2>
+  <ul>
+    <li>Follow the guide in the box for unpacking; this compendium only gives the general method.</li>
+    <li>Check the voltage version, leave free space, keep the exhaust clear and use 10–30 °C ambient conditions.</li>
+    <li>Bind the printer through Bambu Handy (QR) or Studio (PIN) for cloud use, or choose LAN Only.</li>
+    <li>Install the AMS 2 Pro with the new 6-pin cable and the PTFE to the buffer’s upper inlet, then run AMS Setup.</li>
+    <li>The easiest first print is a built-in, pre-sliced model for the left nozzle.</li>
+    <li>Watch the first layer; let the plate cool; flex it to release the part.</li>
+  </ul>
+
+</main>
+</body>
+</html>

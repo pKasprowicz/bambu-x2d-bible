@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calibration playbook · 3D Printing Compendium</title>
+  <meta name="description" content="A step-by-step 3D printer calibration order of operations: mechanical checks, bed leveling, Z-offset, temperature, flow, pressure advance, retraction, max volumetric speed, cooling, dimensional accuracy and input shaping, with test models, SVG examples and a printable log.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="techniques/calibration.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 4 · Techniques</div>
+    <h1>Calibration playbook</h1>
+    <p class="lead">Calibration turns a printer that merely works into one that is predictable. Follow the order of operations, use the right test model for each step, learn what good and bad results look like, and record the numbers so you never repeat work.</p>
+    <div class="meta"><span class="badge intermediate">Intermediate</span><span class="badge time">⏱ 45 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <p>Why order matters, how to check the machine itself, how to tune bed, Z-offset, temperature, flow, pressure advance, retraction, volumetric speed, cooling, dimensions and input shaping, how to apply each result, how to manage per-filament profiles and when to repeat tests. A printable calibration log is at the end.</p></div>
+
+  <h2 id="order">🔰 Order of operations</h2>
+  <p>Calibration steps depend on each other. If you tune flow before the temperature is right, the flow number is wrong after you change temperature. If you tune pressure advance on a loose belt, the pattern is smeared by mechanics, not by plastic. The rule is simple: <strong>fix the physical machine first, then first layer, then plastic behavior, then speed and motion.</strong></p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 500" role="img" aria-label="Flowchart of twelve calibration steps in order from mechanical check at the top to input shaping at the bottom, arranged in three columns with arrows">
+      <g class="t-sm">
+        <rect class="f-gray" x="20" y="30" width="220" height="64" rx="10"/><text class="t-b" x="34" y="54">1 · Mechanical check</text><text x="34" y="74">frame, screws, rails</text>
+        <rect class="f-gray" x="20" y="130" width="220" height="64" rx="10"/><text class="t-b" x="34" y="154">2 · Belts &amp; motion</text><text x="34" y="174">tension, squareness</text>
+        <rect class="f-blue" x="20" y="230" width="220" height="64" rx="10"/><text class="t-b" x="34" y="254">3 · Bed leveling / mesh</text><text x="34" y="274">tram, probe, flat</text>
+        <rect class="f-blue" x="20" y="330" width="220" height="64" rx="10"/><text class="t-b" x="34" y="354">4 · Z-offset</text><text x="34" y="374">first-layer squish</text>
+
+        <rect class="f-orange" x="280" y="30" width="220" height="64" rx="10"/><text class="t-b" x="294" y="54">5 · Temperature tower</text><text x="294" y="74">best nozzle temp</text>
+        <rect class="f-orange" x="280" y="130" width="220" height="64" rx="10"/><text class="t-b" x="294" y="154">6 · Flow rate</text><text x="294" y="174">extrusion multiplier</text>
+        <rect class="f-orange" x="280" y="230" width="220" height="64" rx="10"/><text class="t-b" x="294" y="254">7 · Pressure advance</text><text x="294" y="274">corner sharpness</text>
+        <rect class="f-orange" x="280" y="330" width="220" height="64" rx="10"/><text class="t-b" x="294" y="354">8 · Retraction</text><text x="294" y="374">stringing, blobs</text>
+
+        <rect class="f-green" x="540" y="30" width="220" height="64" rx="10"/><text class="t-b" x="554" y="54">9 · Max volumetric speed</text><text x="554" y="74">flow ceiling</text>
+        <rect class="f-green" x="540" y="130" width="220" height="64" rx="10"/><text class="t-b" x="554" y="154">10 · Cooling / fan</text><text x="554" y="174">overhang vs bonding</text>
+        <rect class="f-green" x="540" y="230" width="220" height="64" rx="10"/><text class="t-b" x="554" y="254">11 · Dimensional accuracy</text><text x="554" y="274">XY and shrinkage</text>
+        <rect class="f-green" x="540" y="330" width="220" height="64" rx="10"/><text class="t-b" x="554" y="354">12 · Input shaping</text><text x="554" y="374">ringing</text>
+      </g>
+      <path class="d-ink arrow" d="M130 94 V130"/><path class="d-ink arrow" d="M130 194 V230"/><path class="d-ink arrow" d="M130 294 V330"/>
+      <path class="d-ink arrow" d="M130 394 V414 H260 V12 H390 V30"/>
+      <path class="d-ink arrow" d="M390 94 V130"/><path class="d-ink arrow" d="M390 194 V230"/><path class="d-ink arrow" d="M390 294 V330"/>
+      <path class="d-ink arrow" d="M390 394 V434 H520 V12 H650 V30"/>
+      <path class="d-ink arrow" d="M650 94 V130"/><path class="d-ink arrow" d="M650 194 V230"/><path class="d-ink arrow" d="M650 294 V330"/>
+      <text class="t-sm t-c" x="390" y="478">Hardware → first layer → material behavior → speed and motion. Revisit earlier steps if something big changes.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> The calibration order. Left column: machine and first layer. Middle: material behavior. Right: speed, cooling, accuracy and motion.</figcaption>
+  </figure>
+
+  <div class="callout info"><span class="callout-title">Not every printer needs every step</span>
+    <p>Bambu printers (and other enclosed, self-calibrating machines) perform steps 3, 4, 7 and 12 automatically; you should still understand them and know when to trigger a manual run. See <a href="#bambu-auto">Bambu automatic calibration</a>. Other machines may need you to do them by hand.</p></div>
+
+  <h2 id="mechanical">1–2 · Mechanical check, belts and frame</h2>
+  <h3>🔰 Do this before touching the slicer</h3>
+  <p>No software setting repairs a loose machine. Spend ten minutes on the hardware:</p>
+  <ul class="checklist">
+    <li><strong>Frame:</strong> All visible screws snug, no wobble when you push the frame gently. The printer stands on a solid, level surface.</li>
+    <li><strong>Axes move smoothly:</strong> Power off, move the toolhead and bed by hand (where safe). There should be no gritty spots, binding or loud knocks.</li>
+    <li><strong>Belts:</strong> Equal tension, no frayed edges, teeth meshing with the pulleys. A plucked belt gives a clear tone (see <a href="speed-cooling-quality.html#belts">belts &amp; vibrations</a>).</li>
+    <li><strong>Nozzle and hotend:</strong> Nozzle seated and tight (when hot, per the manufacturer's procedure), no filament leaking around it, fan ducts attached.</li>
+    <li><strong>Extruder:</strong> Gears clean, no filament dust build-up, tension correct, filament path free of kinks.</li>
+    <li><strong>Bed and plate:</strong> Plate clean, flat and seated properly, with no debris beneath.</li>
+    <li><strong>Squareness:</strong> If your printer allows, check that X and Y are square with a printed square or by measuring diagonals (they should be equal within a few tenths of a millimeter).</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 300" role="img" aria-label="Three outlines: a square with equal diagonals (good), a parallelogram with unequal diagonals (skew), and a rectangle where X and Y dimensions differ (scale error)">
+      <text class="t t-c t-b" x="140" y="22">Square</text>
+      <rect class="d-plastic" x="60" y="50" width="160" height="160"/>
+      <path class="d-dash" d="M60 50 L220 210 M220 50 L60 210"/>
+      <text class="t-sm t-c c-green" x="140" y="236">diagonals equal</text>
+      <text class="t t-c t-b" x="390" y="22">Skew (frame out of square)</text>
+      <path class="d-plastic" d="M330 50 H490 L470 210 H310 Z"/>
+      <path class="d-dash" d="M330 50 L470 210 M490 50 L310 210"/>
+      <text class="t-sm t-c c-red" x="400" y="236">diagonals differ</text>
+      <text class="t t-c t-b" x="640" y="22">Scale error</text>
+      <rect class="d-plastic" x="560" y="50" width="160" height="130"/>
+      <text class="t-sm t-c c-orange" x="640" y="206">X ≠ Y though meant equal</text>
+      <text class="t-sm t-c" x="390" y="272">Measure a printed square with calipers: width, height and both diagonals.</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> Simple geometry tests reveal frame skew and axis scale errors before you tune anything else.</figcaption>
+  </figure>
+
+  <h3>🚀 Steps per millimeter, e-steps and rotation distance</h3>
+  <p>Firmware needs to know how far each motor moves per command. For axes this is set by belt pitch, pulley teeth and microstepping, and is almost always right by default. For the <strong>extruder</strong> it depends on the gear, so a wrong value means every flow calculation is off.</p>
+  <ul>
+    <li><strong>E-steps (Marlin)</strong> = steps per mm of filament. <strong>Rotation distance (Klipper)</strong> = mm of filament per motor revolution.</li>
+    <li><strong>Test:</strong> Mark the filament 120 mm above the extruder entrance, command a 100 mm extrusion (hot, slowly, e.g. 50 mm/min), and measure what remains. If 100 mm was requested but only 97 mm moved, the new value is: <code>new e-steps = old × 100 / 97</code>. In Klipper: <code>new rotation distance = old × actual / requested</code>.</li>
+    <li><strong>Do it once</strong> per extruder (and after replacing the gears), not for each filament. Differences between filaments belong to <em>flow rate</em>.</li>
+    <li>Printers with firmware and extruders from the manufacturer (including sealed, enclosed models) usually do not expose or need this step.</li>
+  </ul>
+  <p>The same idea applies to motor current and thermal safety: do not raise motor current beyond what the driver and motor allow just to hide a mechanical issue.</p>
+
+  <h3>🚀 PID tuning concept</h3>
+  <p>The hotend and bed heaters are controlled by a loop that decides how much power to apply based on the difference between the target and the measured temperature. <strong>PID</strong> stands for proportional, integral and derivative: P reacts to the current error, I corrects accumulated error, D anticipates change. Badly tuned PID causes temperature to oscillate by several degrees, which shows up as periodic changes in surface gloss or flow, and sometimes as thermal-runaway errors.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 260" role="img" aria-label="Three temperature versus time curves approaching a target: oscillating poorly tuned, slow overdamped and well tuned fast and stable">
+      <path class="d-ink" d="M50 220 H740 M50 220 V30"/>
+      <text class="t-sm" x="54" y="26">temperature</text><text class="t-sm t-r" x="742" y="240">time</text>
+      <path class="d-dash" d="M50 80 H740"/><text class="t-xs" x="700" y="72">target</text>
+      <path class="k-red" d="M50 218 C120 120 160 30 200 50 C230 80 260 110 300 70 C330 50 360 90 400 78 C430 72 450 84 480 80 C520 76 560 82 740 80"/>
+      <path class="k-blue" d="M50 218 C200 190 330 130 480 100 C580 90 680 84 740 82" opacity="0.9"/>
+      <path class="k-green" d="M50 218 C100 150 150 90 190 78 C210 74 230 80 250 80 H740"/>
+      <text class="t-sm c-red" x="560" y="126">poorly tuned: overshoot, oscillation</text>
+      <text class="t-sm c-blue" x="470" y="170">overdamped: very slow</text>
+      <text class="t-sm c-green" x="560" y="198">well tuned: quick and stable</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> PID tuning aims for a quick rise with little overshoot. Most firmware has an auto-tune command that runs heating cycles at a set temperature and stores new constants.</figcaption>
+  </figure>
+  <p>Run auto-tune at the temperature you use most (nozzle at a typical print temperature, bed at your usual bed temperature) with the part-cooling fan at its usual speed. Repeat it after replacing a heater, thermistor or hotend, or when the temperature graph wiggles visibly.</p>
+
+  <h2 id="bed">3 · Bed leveling and mesh</h2>
+  <p>The goal is a constant distance from nozzle to bed everywhere. Two things matter: the bed's <em>tram</em> (is the gantry parallel to the bed?) and its <em>flatness</em> (is the plate itself warped?).</p>
+  <ul>
+    <li><strong>Manual tramming:</strong> Adjust screws with a paper or feeler gauge at the four corners and center; repeat once since screws interact. Use the same bed temperature as printing; the bed bends when hot.</li>
+    <li><strong>Automatic mesh:</strong> A probe measures a grid of points (for example 7×7), and firmware compensates by raising or lowering Z during the first layers. Make sure the mesh is made hot and with a clean nozzle.</li>
+    <li><strong>Mesh cannot hide a tilt.</strong> A tilted gantry or bed should be corrected mechanically first: otherwise the mesh has to correct large errors that fade with height and distort the first layers.</li>
+  </ul>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 300" role="img" aria-label="Two bed mesh heat maps: a healthy mesh with variation of under 0.1 mm and a bad mesh with a large tilt and a bowl, with a color scale">
+      <text class="t t-c t-b" x="200" y="22">Healthy: ±0.08 mm</text>
+      <g>
+        <rect x="60" y="40" width="280" height="200" class="d-surface"/>
+        <g style="stroke:none">
+          <rect x="60" y="40" width="70" height="50" style="fill:var(--green);opacity:.5"/><rect x="130" y="40" width="70" height="50" style="fill:var(--green);opacity:.4"/><rect x="200" y="40" width="70" height="50" style="fill:var(--green);opacity:.4"/><rect x="270" y="40" width="70" height="50" style="fill:var(--green);opacity:.5"/>
+          <rect x="60" y="90" width="70" height="50" style="fill:var(--green);opacity:.4"/><rect x="130" y="90" width="70" height="50" style="fill:var(--green);opacity:.3"/><rect x="200" y="90" width="70" height="50" style="fill:var(--green);opacity:.3"/><rect x="270" y="90" width="70" height="50" style="fill:var(--green);opacity:.4"/>
+          <rect x="60" y="140" width="70" height="50" style="fill:var(--green);opacity:.4"/><rect x="130" y="140" width="70" height="50" style="fill:var(--green);opacity:.3"/><rect x="200" y="140" width="70" height="50" style="fill:var(--yellow);opacity:.4"/><rect x="270" y="140" width="70" height="50" style="fill:var(--green);opacity:.4"/>
+          <rect x="60" y="190" width="70" height="50" style="fill:var(--green);opacity:.5"/><rect x="130" y="190" width="70" height="50" style="fill:var(--green);opacity:.4"/><rect x="200" y="190" width="70" height="50" style="fill:var(--green);opacity:.4"/><rect x="270" y="190" width="70" height="50" style="fill:var(--green);opacity:.5"/>
+        </g>
+      </g>
+      <text class="t-sm t-c" x="200" y="262">Smooth, low contrast: a mesh adds little correction</text>
+      <text class="t t-c t-b" x="580" y="22">Problem: tilt and bowl</text>
+      <rect x="440" y="40" width="280" height="200" class="d-surface"/>
+      <g style="stroke:none">
+        <rect x="440" y="40" width="70" height="50" style="fill:var(--red);opacity:.8"/><rect x="510" y="40" width="70" height="50" style="fill:var(--orange);opacity:.7"/><rect x="580" y="40" width="70" height="50" style="fill:var(--yellow);opacity:.6"/><rect x="650" y="40" width="70" height="50" style="fill:var(--green);opacity:.5"/>
+        <rect x="440" y="90" width="70" height="50" style="fill:var(--orange);opacity:.7"/><rect x="510" y="90" width="70" height="50" style="fill:var(--yellow);opacity:.5"/><rect x="580" y="90" width="70" height="50" style="fill:var(--green);opacity:.4"/><rect x="650" y="90" width="70" height="50" style="fill:var(--teal);opacity:.4"/>
+        <rect x="440" y="140" width="70" height="50" style="fill:var(--yellow);opacity:.6"/><rect x="510" y="140" width="70" height="50" style="fill:var(--green);opacity:.4"/><rect x="580" y="140" width="70" height="50" style="fill:var(--teal);opacity:.5"/><rect x="650" y="140" width="70" height="50" style="fill:var(--blue);opacity:.5"/>
+        <rect x="440" y="190" width="70" height="50" style="fill:var(--green);opacity:.5"/><rect x="510" y="190" width="70" height="50" style="fill:var(--teal);opacity:.5"/><rect x="580" y="190" width="70" height="50" style="fill:var(--blue);opacity:.6"/><rect x="650" y="190" width="70" height="50" style="fill:var(--blue);opacity:.8"/>
+      </g>
+      <text class="t-sm t-c" x="580" y="262">Large range (≥0.3 mm): fix mechanically first</text>
+      <text class="t-sm t-c" x="390" y="288">Red/orange = high, blue = low relative to the center (illustrative color scale)</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> Mesh heat maps. A flat plate shows a pale, uniform map; a bowl or tilted plate shows strong color gradients.</figcaption>
+  </figure>
+
+  <h2 id="z-offset">4 · Z-offset</h2>
+  <p>Z-offset sets the nozzle's height above the bed at the first layer. Too high and lines do not stick; too low and they are squashed, and the nozzle may scratch the plate. Detailed squish diagrams are in <a href="first-layer-and-adhesion.html">First layer &amp; bed adhesion</a>; the short version:</p>
+  <ol class="steps">
+    <li><strong>Test model</strong>Print a single-layer large square (for example 150×150 mm) or a grid of 5 patches, one layer high (0.2 mm).</li>
+    <li><strong>What to look for</strong>Lines slightly flattened and merged with no gaps, no ridges and no glossy transparent look. Rounded lines with gaps between = too high; ridges and a rough surface = too low.</li>
+    <li><strong>Apply</strong>Adjust in 0.02 mm steps, with live adjustment during the print if available. Save per build plate.</li>
+    <li><strong>Re-check</strong>After changing the nozzle, plate or filament type.</li>
+  </ol>
+
+  <h2 id="temperature">5 · Temperature tower</h2>
+  <p>The nozzle temperature controls how easily plastic flows and how well layers bond. Procedure and figure are in <a href="speed-cooling-quality.html#temp-tower">temperature towers</a>. Calibrate first for each new brand or color of filament, since pigments and additives change the optimum by 5–10 °C.</p>
+  <ul>
+    <li><strong>Pick</strong> the lowest temperature that gives strong layer bonding and clean bridges.</li>
+    <li><strong>Apply</strong> to the filament profile as the default nozzle temperature (some profiles keep separate first-layer values).</li>
+    <li><strong>Not a replacement for drying.</strong> Wet filament mimics bad temperature behavior. Dry first.</li>
+  </ul>
+
+  <h2 id="flow-rate">6 · Flow rate (extrusion multiplier)</h2>
+  <h3>🔧 Why it matters</h3>
+  <p>The slicer assumes a perfectly round 1.75 mm filament and a particular density. Real filament varies in diameter by a few hundredths of a millimeter and in how it compresses when melted. A flow-ratio (extrusion multiplier) of 1.00 means "trust the numbers"; real filaments usually land between about 0.94 and 1.02. A 2 % error is invisible in walls but shows on top surfaces as ridges (too much) or gaps (too little), and changes dimensions.</p>
+  <h3>Test and read it</h3>
+  <p>Two common test models:</p>
+  <ul>
+    <li><strong>Single-wall cube / hollow box:</strong> print one perimeter, no infill, no top. Measure the wall thickness with calipers at several points (average them). Expected thickness = line width (for example 0.45 mm). New flow ratio = old × expected / measured.</li>
+    <li><strong>Top-surface patch tests (coarse and fine):</strong> a set of flat squares, each at a slightly different flow ratio (for example −10 % to +10 % in 5 % steps and then ±2 % in 1 % steps). Pick the square with a smooth, closed top without ridges or gaps.</li>
+  </ul>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 300" role="img" aria-label="Five top-surface patches with flow ratios from too low to too high: gaps between lines, slightly open, smooth, slightly ridged, rough with blobs">
+      <g>
+        <rect class="d-plastic" x="30" y="50" width="120" height="120"/>
+        <path class="d-surface" d="M30 62 H150 M30 82 H150 M30 102 H150 M30 122 H150 M30 142 H150 M30 162 H150" style="stroke-width:3"/>
+        <text class="t t-c t-b" x="90" y="30">−6 %</text><text class="t-sm t-c c-red" x="90" y="194">gaps, matte</text>
+        <rect class="d-plastic" x="170" y="50" width="120" height="120"/>
+        <path class="d-surface" d="M170 62 H290 M170 82 H290 M170 102 H290 M170 122 H290 M170 142 H290 M170 162 H290" style="stroke-width:1"/>
+        <text class="t t-c t-b" x="230" y="30">−3 %</text><text class="t-sm t-c c-orange" x="230" y="194">faint lines</text>
+        <rect class="d-plastic" x="310" y="50" width="120" height="120"/>
+        <text class="t t-c t-b" x="370" y="30">0 %</text><text class="t-sm t-c c-green" x="370" y="194">smooth, closed</text>
+        <rect class="d-plastic" x="450" y="50" width="120" height="120"/>
+        <path class="d-mute" d="M450 62 H570 M450 82 H570 M450 102 H570 M450 122 H570 M450 142 H570 M450 162 H570" style="stroke-width:2"/>
+        <text class="t t-c t-b" x="510" y="30">+3 %</text><text class="t-sm t-c c-orange" x="510" y="194">slight ridges</text>
+        <rect class="d-plastic" x="590" y="50" width="120" height="120"/>
+        <path class="d-mute" d="M590 62 H710 M590 82 H710 M590 102 H710 M590 122 H710 M590 142 H710 M590 162 H710" style="stroke-width:4;stroke-dasharray:14 4"/>
+        <text class="t t-c t-b" x="650" y="30">+6 %</text><text class="t-sm t-c c-red" x="650" y="194">rough, scarred</text>
+      </g>
+      <text class="t-sm t-c" x="390" y="240">Look with a raking light at a low angle. Choose the smoothest patch, then enter the ratio.</text>
+      <text class="t-sm t-c" x="390" y="262">Values shown are illustrative offsets around the patch you consider "center".</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> Flow ratio patches. Too little leaves gaps; too much creates ridges and a rough surface.</figcaption>
+  </figure>
+  <p><strong>Apply:</strong> store the ratio per filament in its profile. Re-test when you change brand, color family (especially silk, matte or glitter), nozzle temperature by more than 10 °C, or nozzle diameter.</p>
+
+  <h2 id="pressure-advance">7 · Pressure advance / flow dynamics</h2>
+  <p>This step fixes the lag between extruder motion and plastic flow (see <a href="speed-cooling-quality.html#pressure-advance">pressure advance</a> for the theory and Figure 5 there). It needs flow ratio set first, and a decent temperature.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 340" role="img" aria-label="Side view of a pressure advance test tower where K increases with height; the corner at the bottom bulges, the middle is sharp, and the top has dents, with the best height marked">
+      <rect class="d-metal2" x="80" y="296" width="200" height="12"/>
+      <rect class="d-plastic" x="100" y="40" width="160" height="256"/>
+      <g>
+        <path class="d-ink" d="M260 60 H280 M260 100 H280 M260 140 H280 M260 180 H280 M260 220 H280 M260 260 H280"/>
+        <text class="t-xs" x="288" y="64">K 0.060</text><text class="t-xs" x="288" y="104">K 0.050</text><text class="t-xs" x="288" y="144">K 0.040</text>
+        <text class="t-xs" x="288" y="184">K 0.030</text><text class="t-xs" x="288" y="224">K 0.020</text><text class="t-xs" x="288" y="264">K 0.010</text>
+      </g>
+      <path class="k-orange" style="stroke-width:3" d="M100 270 Q88 266 100 258 M100 230 Q90 226 100 218"/>
+      <path class="k-red" style="stroke-width:3" d="M100 60 L108 66 L100 72 M100 80 L108 86 L100 92"/>
+      <rect x="92" y="130" width="176" height="60" style="fill:none;stroke:var(--green);stroke-width:2;stroke-dasharray:5 3"/>
+      <text class="t-sm c-green" x="400" y="165">← cleanest corner: choose K here</text>
+      <text class="t-sm c-orange" x="400" y="262">← bulging corners: K too low</text>
+      <text class="t-sm c-red" x="400" y="82">← dents or gaps: K too high</text>
+      <text class="t-sm" x="400" y="310">Example K values are placeholders: the useful range depends on printer, nozzle and filament.</text>
+      <text class="t t-b" x="400" y="28">Test tower: K rises with height</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> A pressure advance tower. Measure the height of the cleanest corner and convert it to K using the step in the slicer or macro.</figcaption>
+  </figure>
+  <ol class="steps">
+    <li><strong>Test model</strong>A tower or a pattern of lines with rising K (built into most slicers and firmware as a calibration command). Print at the speed and acceleration of your real profile.</li>
+    <li><strong>What to look for</strong>Sharp, even corners, with uniform line width from start to end of each line. Bulges at the corners mean K is too low; thin or gapped corners mean K is too high.</li>
+    <li><strong>Apply</strong>Compute K = start + height × step (as defined by the test), enter it in the filament profile and print the test again with it to confirm.</li>
+    <li><strong>Per filament</strong>Silk, TPU and carbon-filled filaments differ widely.</li>
+  </ol>
+  <p>On Bambu printers the <strong>Flow Dynamics Calibration</strong> does this for you, and in "auto" mode the printer can also run it at the start of a job (see <a href="#bambu-auto">below</a>).</p>
+
+  <h2 id="retraction">8 · Retraction tuning</h2>
+  <p>When the toolhead travels between islands, the nozzle can leave strings, blobs and wisps because pressure keeps pushing plastic out. Retraction pulls the filament back a short distance before the move and pushes it forward after, so the melt pool recedes.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 300" role="img" aria-label="Retraction test towers: too little retraction leaves strings between the two towers, correct retraction has none, too much retraction leaves gaps and blobs after travel">
+      <g>
+        <text class="t t-c t-b" x="140" y="22">Too little</text>
+        <rect class="d-plastic" x="60" y="60" width="30" height="160"/><rect class="d-plastic" x="190" y="60" width="30" height="160"/>
+        <path class="d-mute" d="M90 70 Q140 110 190 70 M90 100 Q140 130 190 100 M90 130 Q140 160 190 130 M90 160 Q140 190 190 160" style="stroke-width:1"/>
+        <text class="t-sm t-c c-red" x="140" y="248">strings between towers</text>
+        <text class="t t-c t-b" x="390" y="22">Good</text>
+        <rect class="d-plastic" x="310" y="60" width="30" height="160"/><rect class="d-plastic" x="440" y="60" width="30" height="160"/>
+        <text class="t-sm t-c c-green" x="390" y="248">clean, no strings</text>
+        <text class="t t-c t-b" x="640" y="22">Too much</text>
+        <rect class="d-plastic" x="560" y="60" width="30" height="160"/><rect class="d-plastic" x="690" y="60" width="30" height="160"/>
+        <circle class="s-orange" cx="575" cy="120" r="8" style="fill:none"/><circle class="s-orange" cx="705" cy="180" r="8" style="fill:none"/>
+        <text class="t-sm t-c c-orange" x="640" y="248">gaps, under-extrusion, grinding</text>
+      </g>
+      <text class="t-sm t-c" x="390" y="282">Typical: direct drive 0.4–1.5 mm, long Bowden 3–6 mm; adjust in 0.2–0.5 mm steps.</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> Retraction towers. Increase distance gradually until strings vanish, then stop: more retraction risks clogs and wear.</figcaption>
+  </figure>
+  <ul>
+    <li><strong>Test model:</strong> two or more thin towers spaced 30–60 mm apart (a retraction tower or a stringing test).</li>
+    <li><strong>Order:</strong> Tune temperature first (hot plastic strings more), then retraction <em>distance</em>, then <em>speed</em> (30–60 mm/s is typical), and last "wipe" or "z-hop" if you still see scars.</li>
+    <li><strong>Dry filament matters:</strong> Wet filament strings regardless of retraction.</li>
+    <li><strong>Material hints:</strong> PETG strings easily and prefers slightly lower temperature and a little more retraction; TPU needs little or no retraction at slow speed.</li>
+    <li><strong>X2D note:</strong> The auxiliary extruder with its longer path needs a much longer retraction than the main one; use the dedicated profile (see <a href="../x2d/dual-nozzle-printing.html">dual-nozzle printing</a>).</li>
+  </ul>
+
+  <h2 id="max-flow">9 · Max volumetric speed</h2>
+  <p>Find the highest flow the hotend can melt cleanly with this filament. See the flow equation in <a href="speed-cooling-quality.html#flow">volumetric flow</a>.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 320" role="img" aria-label="A max volumetric speed test: a tall tower or ribbon printed with increasing flow rate; at low flow the surface is smooth and glossy, then rough, then gaps and clicks; the failure point and a safety margin are marked">
+      <text class="t t-b" x="20" y="24">Test ribbon: flow increases from bottom to top</text>
+      <rect class="d-plastic" x="100" y="50" width="160" height="230"/>
+      <g class="d-surface" style="stroke-width:2">
+        <path d="M100 250 H260 M100 230 H260 M100 210 H260 M100 190 H260" opacity="0.4"/>
+        <path d="M100 160 H260 M100 140 H260" style="stroke-width:3"/>
+        <path d="M100 110 H260 M100 92 H260 M100 74 H260" style="stroke-width:5;stroke-dasharray:10 6"/>
+      </g>
+      <path class="d-ink arrow" d="M70 280 V50"/>
+      <text class="t-sm" x="290" y="262">8 mm³/s: smooth, glossy</text>
+      <text class="t-sm" x="290" y="212">12 mm³/s: still clean</text>
+      <text class="t-sm c-orange" x="290" y="150">16 mm³/s: matte, rough starts</text>
+      <text class="t-sm c-red" x="290" y="92">20 mm³/s: gaps, clicking</text>
+      <rect x="92" y="176" width="176" height="22" style="fill:none;stroke:var(--green);stroke-width:2;stroke-dasharray:5 3"/>
+      <text class="t-sm c-green" x="480" y="190">last clean zone × 0.8–0.85 = usable limit</text>
+      <path class="d-dash" d="M270 187 H476"/>
+      <text class="t-sm t-c" x="390" y="306">Example values only. Use your filament's measured limit and keep a safety margin.</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> The ribbon test: find where the surface degrades, then back off 15–20 % for the profile limit.</figcaption>
+  </figure>
+  <ol class="steps">
+    <li><strong>Test model</strong>A tall, thin-walled ribbon or tower (slicer built-in or external) with the flow limit raised high, so the ramp is controlled by the test, printed in vase mode or one wall at the speed ramp from slow to fast.</li>
+    <li><strong>What to look for</strong>The height where the surface changes from smooth to matte, then gappy; or where the extruder starts clicking.</li>
+    <li><strong>Apply</strong>Compute flow (mm³/s) at that height from the ramp, multiply by 0.8–0.85, and set it as the filament's maximum volumetric speed.</li>
+    <li><strong>Dry filament first.</strong></li>
+  </ol>
+
+  <h2 id="cooling-cal">10 · Cooling and fan</h2>
+  <p>Use an <strong>overhang test</strong> (a ladder of angles) and a <strong>bridge test</strong>; see <a href="supports-bridges-overhangs.html">supports, bridges &amp; overhangs</a> for the models and <a href="speed-cooling-quality.html#cooling">cooling</a> for the strategy. Adjust fan in 10 % steps, and confirm layer bonding with a snap test. Record the settings for overhang and bridge fan separately.</p>
+
+  <h2 id="dimensional">11 · Dimensional accuracy</h2>
+  <h3>🔧 XY compensation, holes and shrinkage</h3>
+  <p>Printed parts are rarely exactly the size you design. Three sources of error are separate and need separate fixes:</p>
+  <ol class="steps">
+    <li><strong>Axis scale</strong>Motors and belts moving a slightly wrong distance. Checked with a long printed rectangle (150–200 mm). Usually right in factory-calibrated printers.</li>
+    <li><strong>Shrinkage</strong>Plastic contracts as it cools. A percent of the whole part, mostly material dependent (below).</li>
+    <li><strong>Horizontal expansion / hole compensation</strong>The extruded line is rounded and flows outward; outer dimensions grow a bit and holes shrink. Typically 0.05–0.2 mm, fixed per profile.</li>
+  </ol>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 300" role="img" aria-label="Top view of an ideal hole and a printed hole: the printed hole is smaller because the lines bulge inward, and with horizontal expansion compensation the final hole is round at the correct size">
+      <text class="t t-c t-b" x="140" y="22">Designed</text>
+      <rect class="d-plastic" x="60" y="50" width="160" height="160"/>
+      <circle class="d-surface" cx="140" cy="130" r="40"/>
+      <text class="t-sm t-c" x="140" y="236">Ø 10.00 mm</text>
+      <text class="t t-c t-b" x="390" y="22">Printed, no compensation</text>
+      <rect class="d-plastic" x="310" y="50" width="160" height="160"/>
+      <circle class="d-surface" cx="390" cy="130" r="35"/>
+      <circle class="d-dash" cx="390" cy="130" r="40"/>
+      <text class="t-sm t-c" x="390" y="236">Ø 9.80 mm (smaller)</text>
+      <text class="t t-c t-b" x="640" y="22">With hole compensation</text>
+      <rect class="d-plastic" x="560" y="50" width="160" height="160"/>
+      <circle class="d-surface" cx="640" cy="130" r="40"/>
+      <text class="t-sm t-c" x="640" y="236">Ø 10.00 mm</text>
+      <text class="t-sm t-c" x="390" y="276">Measure printed holes and outer dimensions, then enter the difference in the slicer.</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> Holes print smaller than designed. A per-profile compensation fixes the size without editing every model.</figcaption>
+  </figure>
+  <div class="table-wrap"><table class="data"><thead><tr><th>Material</th><th>Typical shrinkage</th><th>Remark</th></tr></thead><tbody>
+    <tr><td>PLA</td><td>~0.2–0.5 %</td><td>Small; usually ignored.</td></tr>
+    <tr><td>PETG</td><td>~0.3–0.8 %</td><td>Low to moderate.</td></tr>
+    <tr><td>ABS / ASA</td><td>~0.7–1.5 %</td><td>Compensate for large or tight-fit parts.</td></tr>
+    <tr><td>PA (nylon)</td><td>~1–2 %, more with moisture</td><td>Dry, hot chamber; compensate per brand.</td></tr>
+    <tr><td>PC</td><td>~0.6–1 %</td><td>Plus warp tendency.</td></tr>
+    <tr><td>TPU</td><td>~0.5–1 %</td><td>Soft parts: hard to measure.</td></tr>
+    <tr><td>CF/GF-filled</td><td>Often half of the base material</td><td>Fibers reduce shrinkage and warping.</td></tr>
+  </tbody></table></div>
+  <p class="t-sm">Values vary strongly between brands, geometry and chamber temperature; measure your own. Most slicers have a per-filament <em>shrinkage compensation</em> percentage: set it as <code>100 × (designed − measured) / measured</code> by testing a long dimension.</p>
+  <ul>
+    <li><strong>Test model:</strong> A calibration cube or a stepped block with holes and pegs of known dimensions, printed with your usual profile. Measure with calipers at three places each and average. Measure after cooling to room temperature.</li>
+    <li><strong>Apply:</strong> Use <em>shrinkage compensation</em> for overall scale (affecting X, Y and Z), <em>XY hole compensation</em> and <em>contour compensation</em> for small shifts, and an offset for tight-fit parts.</li>
+    <li><strong>Elephant foot:</strong> a separate first-layer effect; see <a href="first-layer-and-adhesion.html">first layer</a>.</li>
+  </ul>
+
+  <h2 id="input-shaping">12 · Input shaping and ringing</h2>
+  <p>Once the machine is mechanically tight, input shaping cancels the dominant vibration of the frame so that you can use higher accelerations. Theory is in <a href="speed-cooling-quality.html#ringing">ringing &amp; input shaping</a>. Calibration identifies the resonance frequencies of each axis using an accelerometer, microphone or a printed pattern.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 320" role="img" aria-label="Ringing test: a printed block shows ripples after a corner; before input shaping the ripples are strong, after input shaping they are almost gone; with a resonance frequency chart showing a peak at the identified frequency">
+      <text class="t t-c t-b" x="130" y="22">Before</text>
+      <rect class="d-plastic" x="40" y="50" width="180" height="160"/>
+      <path class="d-mute" d="M52 50 V210 M60 50 V210 M70 50 V210 M82 50 V210 M96 50 V210" style="stroke-width:2;opacity:.8"/>
+      <text class="t-sm t-c c-red" x="130" y="236">ripples after the corner</text>
+      <text class="t t-c t-b" x="380" y="22">After</text>
+      <rect class="d-plastic" x="290" y="50" width="180" height="160"/>
+      <path class="d-mute" d="M302 50 V210" style="stroke-width:1;opacity:.4"/>
+      <text class="t-sm t-c c-green" x="380" y="236">clean edge</text>
+      <text class="t t-b" x="520" y="22">Resonance peak</text>
+      <path class="d-ink" d="M530 210 H750 M530 210 V40"/>
+      <path class="k-orange" d="M532 205 C560 205 580 195 600 150 C610 90 620 60 632 56 C645 60 655 100 665 160 C680 195 700 205 748 206"/>
+      <path class="d-dash" d="M632 56 V210"/>
+      <text class="t-sm t-c" x="632" y="232">~50 Hz (example)</text>
+      <text class="t-sm t-c" x="390" y="290">Typical frame resonances for desktop printers are tens of hertz; yours is measured, not assumed.</text>
+    </svg>
+    <figcaption><b>Figure 10.</b> Ringing before and after shaping, and a resonance spectrum with its peak. Settings come from a measurement, then you verify with a print.</figcaption>
+  </figure>
+  <ol class="steps">
+    <li><strong>Test model</strong>A tall block with sharp corners and text or an arrowed ringing tower, printed with high acceleration.</li>
+    <li><strong>What to look for</strong>Echo-like ripples after corners and text. Measure the spacing of ripples and the print speed to estimate the frequency: f = speed / ripple distance.</li>
+    <li><strong>Apply</strong>Enter the shaper type and frequency per axis (or run the automatic measurement), then raise acceleration gradually and recheck.</li>
+    <li><strong>Re-do</strong>after changing the toolhead mass, belt tension or when ringing returns.</li>
+  </ol>
+
+  <h2 id="reference">Quick reference: tests, signs and fixes</h2>
+  <div class="table-wrap"><table class="data"><thead><tr><th>Step</th><th>Test model</th><th>Good result</th><th>Bad result</th><th>Where the number goes</th></tr></thead><tbody>
+    <tr><td>Bed mesh</td><td>Mesh heat map, first-layer grid</td><td>Range under about 0.1–0.15 mm</td><td>Strong tilt or bowl</td><td>Mechanical fix, then re-mesh</td></tr>
+    <tr><td>Z-offset</td><td>One-layer square</td><td>Merged, slightly flattened lines</td><td>Gaps or ridges</td><td>Z-offset (per plate)</td></tr>
+    <tr><td>Temperature</td><td>Temperature tower</td><td>Clean bridge, strong layers</td><td>Strings or weak layers</td><td>Filament nozzle temperature</td></tr>
+    <tr><td>Flow rate</td><td>Single-wall box, top patches</td><td>Wall = line width, smooth top</td><td>Ridges or gaps</td><td>Filament flow ratio</td></tr>
+    <tr><td>Pressure advance</td><td>K tower or line pattern</td><td>Sharp corners, even lines</td><td>Bulges or dents</td><td>Filament K value</td></tr>
+    <tr><td>Retraction</td><td>Two-tower stringing test</td><td>No strings, no gaps</td><td>Strings or under-extrusion</td><td>Retraction distance and speed</td></tr>
+    <tr><td>Max volumetric speed</td><td>Flow ramp ribbon</td><td>Smooth surface up to the limit</td><td>Matte, gaps, clicking</td><td>Filament max flow</td></tr>
+    <tr><td>Cooling</td><td>Overhang ladder, bridge test</td><td>Clean overhangs, strong layers</td><td>Droop or delamination</td><td>Fan and bridge-fan values</td></tr>
+    <tr><td>Dimensions</td><td>Calibration cube, hole and peg block</td><td>Within about ±0.1 mm</td><td>Small holes, oversize parts</td><td>Shrinkage and hole compensation</td></tr>
+    <tr><td>Input shaping</td><td>Ringing tower</td><td>Clean sharp corners at speed</td><td>Echoes after corners</td><td>Shaper frequency and acceleration</td></tr>
+  </tbody></table></div>
+
+  <h2 id="worked-example">A worked example</h2>
+  <p>Suppose you open a new roll of a matte PLA from a brand you have not used before, on a printer whose frame you already checked last month. A sensible session takes about two hours of mostly unattended printing:</p>
+  <ol class="steps">
+    <li><strong>Dry and load</strong>Dry the spool as the manufacturer suggests and load it. Clean the plate with isopropyl alcohol or the manufacturer's recommended method.</li>
+    <li><strong>Temperature tower</strong>Print a tower from 190 to 230 °C in 5 °C steps. The bridges are cleanest at 205–210 °C and the layers are strongest at 210 °C, so you pick 210 °C.</li>
+    <li><strong>Flow rate</strong>Print a single-wall box at that temperature. The walls measure 0.43 mm where the line width should be 0.45 mm. The new flow ratio is 0.98 × 0.45 / 0.43, about 1.03.</li>
+    <li><strong>Pressure advance</strong>Run the K tower at your normal wall speed and pick the cleanest corner, then confirm with a small cube.</li>
+    <li><strong>Max volumetric speed</strong>Print the flow ribbon; the surface turns matte at about 18 mm³/s, so you set 15 mm³/s with a margin.</li>
+    <li><strong>Verify and log</strong>Print one real part with the new profile, compare the surface with the pictures in this page and write all values into the log.</li>
+  </ol>
+  <p>Numbers here are only an example to show the arithmetic. Your values will be different; what matters is the method: change one variable, measure, apply, and write it down.</p>
+  <div class="callout warn"><span class="callout-title">Common mistakes</span>
+    <p>Tuning with wet filament; calibrating at a speed you never use; changing temperature after flow and pressure advance; relying on a single measurement instead of an average of three; and forgetting that a dirty nozzle or plate can ruin any test. If a result looks strange, repeat the test once before changing a setting.</p></div>
+
+  <h2 id="bambu-auto">Bambu automatic calibration overview</h2>
+  <p>Bambu Lab printers automate the repetitive parts of this playbook. Exact options vary by model and software version, so treat this list as a map and check the on-screen menus.</p>
+  <div class="table-wrap"><table class="data"><thead><tr><th>Playbook step</th><th>What the printer or slicer does</th><th>When to run it manually</th></tr></thead><tbody>
+    <tr><td>Bed leveling / mesh (3)</td><td>Auto bed leveling measures the plate before prints and applies a compensation mesh.</td><td>After moving the printer, swapping plates, or when the first layer varies across the plate.</td></tr>
+    <tr><td>Z-offset (4)</td><td>Handled with nozzle-height and first-layer routines during start-up calibration.</td><td>After a nozzle change, or if a clean plate still shows a consistent squish problem.</td></tr>
+    <tr><td>Temperature (5)</td><td>The slicer includes a temperature calibration model in its Calibration menu.</td><td>For every new filament brand that has no known profile.</td></tr>
+    <tr><td>Flow rate (6)</td><td>Flow Ratio calibration prints patches (a coarse pass, then a fine pass).</td><td>New filament, or visible top-surface ridges or gaps.</td></tr>
+    <tr><td>Pressure advance (7)</td><td><strong>Flow Dynamics Calibration</strong>: automatic, using the machine's sensors where available, or manual with a pattern.</td><td>Each new filament; after changing temperature a lot, or nozzle size. On the X2D it applies to the main nozzle; the auxiliary nozzle uses its own, much larger value.</td></tr>
+    <tr><td>Max volumetric speed (9)</td><td>A built-in test model prints a ramp.</td><td>New filament that you plan to print fast.</td></tr>
+    <tr><td>Input shaping (12)</td><td>Vibration compensation (resonance measurement) runs as part of calibration; some models also have active vibration compensation.</td><td>After moving, transport, or when ringing returns.</td></tr>
+    <tr><td>Retraction (8)</td><td>Slicer test tower.</td><td>If stringing persists with dry filament.</td></tr>
+  </tbody></table></div>
+  <div class="callout x2d"><span class="callout-title">Bambu X2D</span>
+    <p>With two nozzles, calibration data is kept per nozzle and filament. Calibrate flow dynamics for the filaments you use on each side, name your profiles clearly and keep the calibration results with the filament profile. Process settings, calibration, flush and presets are described in <a href="../x2d/settings-and-profiles.html">Bambu Studio settings &amp; profiles</a>, and the nozzle roles in <a href="../x2d/dual-nozzle-printing.html">Dual-nozzle printing</a>.</p></div>
+  <div class="callout tip"><span class="callout-title">Let it calibrate, then verify</span>
+    <p>Automatic calibration does not replace judgment. After any auto routine, print one real part and compare it with the images in this playbook: smooth top, sharp corners, correct dimensions.</p></div>
+
+  <h2 id="profiles">Per-filament profile management</h2>
+  <p>Every result in this playbook belongs to a specific <em>filament + nozzle + printer</em> combination. Treat the profile as the "database record" for that spool type.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 300" role="img" aria-label="Diagram of a profile hierarchy: printer profile, filament profile with temperature, flow ratio, pressure advance and max volumetric speed, and process profile with speeds and layer height, combining into a print job">
+      <rect class="f-blue" x="30" y="30" width="200" height="90" rx="10"/>
+      <text class="t t-b" x="44" y="54">Printer profile</text>
+      <text class="t-sm" x="44" y="74">acceleration, input shaping,</text><text class="t-sm" x="44" y="90">bed size, nozzle size</text>
+      <rect class="f-orange" x="290" y="30" width="220" height="150" rx="10"/>
+      <text class="t t-b" x="304" y="54">Filament profile</text>
+      <text class="t-sm" x="304" y="74">nozzle / bed temperature</text><text class="t-sm" x="304" y="92">flow ratio</text><text class="t-sm" x="304" y="110">pressure advance / K</text>
+      <text class="t-sm" x="304" y="128">max volumetric speed</text><text class="t-sm" x="304" y="146">fan, retraction, shrinkage</text>
+      <rect class="f-green" x="570" y="30" width="180" height="90" rx="10"/>
+      <text class="t t-b" x="584" y="54">Process profile</text>
+      <text class="t-sm" x="584" y="74">layer height, walls,</text><text class="t-sm" x="584" y="90">speeds, supports</text>
+      <path class="d-ink arrow" d="M130 120 V210 H300"/><path class="d-ink arrow" d="M400 180 V210"/><path class="d-ink arrow" d="M660 120 V210 H500"/>
+      <rect class="d-surface" x="300" y="210" width="200" height="50" rx="10"/>
+      <text class="t t-c t-b" x="400" y="240">A print job</text>
+      <text class="t-sm t-c" x="390" y="288">Name profiles clearly: brand, material, color family, nozzle, plate.</text>
+    </svg>
+    <figcaption><b>Figure 11.</b> Calibration results live in the filament profile; the printer profile holds machine-level values.</figcaption>
+  </figure>
+  <ul>
+    <li><strong>Name with context.</strong> For example "Brand PLA Matte 0.4 nozzle" rather than "Generic PLA copy 3".</li>
+    <li><strong>Store one result per variable.</strong> A different color of the same brand may need a re-check of flow and temperature, especially silk, matte, glitter and translucent.</li>
+    <li><strong>Back up</strong> exported profiles and keep the calibration log with them.</li>
+    <li><strong>Do not stack fixes.</strong> If a profile has retraction, flow and pressure advance all adjusted to hide the same problem (for example wet filament), start again from a clean profile with dry filament.</li>
+  </ul>
+
+  <h2 id="when">When to re-calibrate</h2>
+  <div class="table-wrap"><table class="data"><thead><tr><th>Event</th><th>Repeat these steps</th></tr></thead><tbody>
+    <tr><td>New spool, same brand and color</td><td>Nothing, or a quick flow check if the surface looks off</td></tr>
+    <tr><td>New brand or a different color family</td><td>Temperature, flow rate, pressure advance, max volumetric speed, retraction</td></tr>
+    <tr><td>New nozzle (type, size or after a clog)</td><td>Z-offset, flow, pressure advance, max volumetric speed</td></tr>
+    <tr><td>New build plate or surface</td><td>Z-offset, first layer</td></tr>
+    <tr><td>Printer moved or shipped</td><td>Mechanical check, bed mesh, input shaping</td></tr>
+    <tr><td>Belt retensioned or toolhead modified</td><td>Input shaping, squareness check</td></tr>
+    <tr><td>Changes in humidity or filament dried vs wet</td><td>Dry first; then re-check only if issues continue</td></tr>
+    <tr><td>Firmware or slicer update</td><td>Quick test print; re-run steps only if results change</td></tr>
+    <tr><td>Every few months</td><td>Mechanical check, PID if temperature is unstable</td></tr>
+  </tbody></table></div>
+
+  <h2 id="log">Calibration log template</h2>
+  <p>Photocopy, print or copy this table into a spreadsheet. One row per filament and nozzle. Fill in the date, the measured values and the tests you ran. Keep one page per printer.</p>
+  <div class="table-wrap"><table class="data"><thead><tr><th>Date</th><th>Filament (brand / material / color)</th><th>Nozzle (size, type)</th><th>Plate</th><th>Nozzle temp (°C)</th><th>Bed temp (°C)</th><th>Z-offset</th><th>Flow ratio</th><th>PA / K</th><th>Retraction (mm, mm/s)</th><th>Max flow (mm³/s)</th><th>Fan %</th><th>Shrinkage / XY comp</th><th>Notes</th></tr></thead><tbody>
+    <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+    <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+    <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+    <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+    <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+  </tbody></table></div>
+  <p class="t-sm">Printer-level record: input shaping frequency X ____ Hz, Y ____ Hz; PID values nozzle ____ / bed ____; mesh range ____ mm; last mechanical check ____.</p>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul class="checklist">
+    <li>Order matters: hardware, first layer, plastic behavior, then speed and motion.</li>
+    <li>A loose or out-of-square machine cannot be tuned in software; check it first.</li>
+    <li>Change one variable at a time, and record every result in the log.</li>
+    <li>Dry filament before any test; moisture mimics many calibration problems.</li>
+    <li>Flow ratio, pressure advance and max volumetric speed are filament-specific; temperature changes affect all three.</li>
+    <li>Holes print small and parts shrink: use per-profile compensation instead of editing every model.</li>
+    <li>Automatic calibration saves time, but verify with a real print.</li>
+  </ul>
+
+  <h2 id="related">Related pages</h2>
+  <div class="grid cols-3">
+    <a class="card" href="first-layer-and-adhesion.html"><h3>First layer &amp; adhesion</h3><p>Squish, plates and Z-offset in depth.</p></a>
+    <a class="card" href="speed-cooling-quality.html"><h3>Speed, cooling &amp; quality</h3><p>The theory behind flow, pressure advance and shaping.</p></a>
+    <a class="card" href="../exercises/models.html"><h3>Downloadable test models</h3><p>Parametric calibration models.</p></a>
+  </div>
+</main>
+</body>
+</html>

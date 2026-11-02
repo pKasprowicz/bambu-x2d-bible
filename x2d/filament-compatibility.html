@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Filament Compatibility on the X2D — 3D Printing Compendium</title>
+<meta name="description" content="Which filaments work on which nozzle of the Bambu Lab X2D, in the AMS 2 Pro and in the chamber: matrices, nozzle materials, abrasive filaments, TPU paths, drying and profiles.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<style>.k-ink{stroke:var(--ink);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}</style>
+<script src="../assets/js/nav.js" defer></script>
+<script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="x2d/filament-compatibility.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 6 · Bambu X2D + AMS 2 Pro</div>
+    <h1>Filament Compatibility: What Runs Where</h1>
+    <p class="lead">The X2D has two nozzles with different feed paths, an AMS 2 Pro with its own rules and a heated chamber with two airflow modes. This page turns Bambu’s compatibility tables into something you can scan, and adds the reasoning behind them so you can make sensible calls for filaments the tables don’t list.</p>
+    <div class="meta"><span class="badge x2d">Bambu X2D</span><span class="badge intermediate">Intermediate</span><span class="badge time">⏱ 24 min read</span></div>
+  </header>
+
+  <div class="callout x2d"><span class="callout-title">Read this before trusting any table</span>
+    <p>Compatibility is a moving target: Bambu adds materials, changes ratings between firmware and slicer versions, and publishes the authoritative list on its <a href="https://wiki.bambulab.com">wiki</a>. The ratings below are condensed from the Bambu wiki’s filament compatibility pages as available when this compendium was written. Cells where the source was unclear are marked <b>Check</b>. If a rating here disagrees with the wiki, the wiki wins. Items labeled “typical” are general 3D-printing practice, not Bambu specifications.</p>
+  </div>
+
+  <h2 id="legend">🔰 How to read the ratings</h2>
+  <p>Bambu uses four symbols in its tables: <span class="chip green">available</span> <span class="chip yellow">not recommended</span> <span class="chip red">highly not recommended</span> <span class="chip">unavailable</span>. “Not recommended” means it may work but quality or reliability suffers; “highly not recommended” means the combination is likely to cause failures or damage; “unavailable” means the filament (or the nozzle size for it) isn’t offered or isn’t supported. This page uses the same four levels plus <span class="chip blue">check</span> for uncertainty.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 190" role="img" aria-label="Legend for compatibility ratings with colors: available green, not recommended yellow, highly not recommended red, unavailable gray, check wiki blue">
+      <text class="t-lg" x="20" y="28">Legend used in every figure on this page</text>
+      <rect class="f-green" x="20" y="50" width="140" height="50" rx="8"/><text class="t-sm t-b t-c" x="90" y="80">OK</text>
+      <rect class="f-yellow" x="175" y="50" width="140" height="50" rx="8"/><text class="t-sm t-b t-c" x="245" y="80">Caution</text>
+      <rect class="f-red" x="330" y="50" width="140" height="50" rx="8"/><text class="t-sm t-b t-c" x="400" y="80">Avoid</text>
+      <rect class="f-gray" x="485" y="50" width="140" height="50" rx="8"/><text class="t-sm t-b t-c" x="555" y="80">N/A</text>
+      <rect class="f-blue" x="640" y="50" width="140" height="50" rx="8"/><text class="t-sm t-b t-c" x="710" y="80">Check wiki</text>
+      <text class="t-xs t-c" x="90" y="124">available</text><text class="t-xs t-c" x="245" y="124">not recommended</text><text class="t-xs t-c" x="400" y="124">highly not recommended</text><text class="t-xs t-c" x="555" y="124">unavailable</text><text class="t-xs t-c" x="710" y="124">uncertain here</text>
+      <text class="t-xs t-m" x="20" y="165">Colors are never the only cue: every cell also carries a word.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> Rating legend. These map directly to Bambu’s four-symbol system.</figcaption>
+  </figure>
+
+  <h2 id="nozzles">🔰 Nozzles: sizes and materials</h2>
+  <p>The X2D ships with a <b>0.4 mm hardened-steel</b> hotend installed and a spare in the toolbox. Because both nozzles can be swapped, the hotends are identical (300 °C maximum, quick-release lever, ceramic base with heater and thermistor, no terminals). Bambu lists these nozzle options:</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Family</th><th>Diameters</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><b>Standard</b></td><td>0.2 · 0.4 · 0.6 · 0.8 mm</td><td>0.4 mm hardened steel is pre-installed.</td></tr>
+      <tr><td><b>High-flow (HF)</b></td><td>0.4 · 0.6 · 0.8 mm</td><td>Sold separately. Needs firmware 01.01.00.00 or later and Bambu Studio 2.5.3.60 or later. Bambu says it can cut print time by up to 30%.</td></tr>
+    </tbody></table></div>
+  <div class="callout warn"><span class="callout-title">Both nozzles, same diameter</span>
+    <p>Dual-nozzle printing requires the same diameter on both sides. If you want 0.6 mm, plan to buy two. The compatibility matrix below is therefore read per diameter: a filament that works at 0.4 mm may be unavailable at 0.2 mm (typically the fiber-filled and special-effect ones), and a few filaments are better at larger diameters.</p>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 260" role="img" aria-label="Nozzle options shown as scaled tip circles: standard 0.2, 0.4, 0.6, 0.8 and high-flow 0.4, 0.6, 0.8 millimeters">
+      <text class="t-lg" x="20" y="28">Nozzle options (tip diameters drawn proportionally, enlarged 40×)</text>
+      <text class="t-sm t-b" x="20" y="64">Standard</text>
+      <circle class="f-blue" cx="150" cy="100" r="4"/><text class="t-xs t-c" x="150" y="140">0.2</text>
+      <circle class="f-blue" cx="250" cy="100" r="8"/><text class="t-xs t-c" x="250" y="140">0.4 (pre-installed)</text>
+      <circle class="f-blue" cx="360" cy="100" r="12"/><text class="t-xs t-c" x="360" y="140">0.6</text>
+      <circle class="f-blue" cx="470" cy="100" r="16"/><text class="t-xs t-c" x="470" y="140">0.8</text>
+      <text class="t-sm t-b" x="20" y="190">High-flow</text>
+      <circle class="f-orange" cx="250" cy="200" r="8"/><text class="t-xs t-c" x="250" y="240">HF 0.4</text>
+      <circle class="f-orange" cx="360" cy="200" r="12"/><text class="t-xs t-c" x="360" y="240">HF 0.6</text>
+      <circle class="f-orange" cx="470" cy="200" r="16"/><text class="t-xs t-c" x="470" y="240">HF 0.8</text>
+      <rect class="f-yellow" x="560" y="70" width="230" height="150" rx="8"/><text class="t-sm t-b" x="574" y="96">Pick by job</text>
+      <text class="t-xs" x="574" y="120">0.2: fine detail (fewer filaments)</text><text class="t-xs" x="574" y="140">0.4: general purpose</text><text class="t-xs" x="574" y="160">0.6/0.8: strong, fast, drafts</text><text class="t-xs" x="574" y="180">HF: higher volumetric flow</text>
+      <text class="t-xs t-m" x="574" y="206">(role descriptions are typical)</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> The tip circles are drawn at 40 times the real size, proportional to the diameter. Use-cases are typical practice.</figcaption>
+  </figure>
+
+  <h3>Why hardened steel matters</h3>
+  <p>Carbon-fiber and glass-fiber filaments act like fine sandpaper on a brass nozzle; they wear the orifice, so the line gets wider and detail degrades. The X2D’s pre-installed nozzle is hardened steel, which is why Bambu lists fiber-filled filaments as available on it. Hardened steel conducts heat a little less well than brass, which is why high-temperature and flow limits matter, but you do not need to swap nozzles to print most abrasive materials. Even so, nozzles are consumables: when the printed line gets visibly wider than expected, or a part loses its edges, replace the hotend.</p>
+  <ul>
+    <li><b>Abrasive:</b> carbon-fiber (CF) and glass-fiber (GF) filled filaments, glow-in-the-dark and some metal- or stone-filled filaments (typical).</li>
+    <li><b>Non-abrasive:</b> plain PLA, PETG, ABS, ASA, TPU, most unfilled nylons and polycarbonates.</li>
+    <li><b>Check cutters:</b> Bambu advises checking the filament cutter blades more often with CF/GF: every 6–10 rolls compared with 8–12 for ordinary filament.</li>
+    <li><b>Check the AMS path:</b> avoid third-party hard, brittle fiber filaments in the AMS; they can break in the feeder.</li>
+  </ul>
+
+  <h2 id="main-matrix">🔧 The matrix: main (left) nozzle</h2>
+  <p>The main nozzle with its direct-drive servo extruder accepts the broadest range. For the PLA family everything is available at 0.4 mm and above. The 0.2 mm diameter is unavailable for Marble, Sparkle, Wood, Glow, PLA-CF and PLA Aero. PLA Silk and PLA Aero are not recommended at the larger diameters (Silk at 0.6 and 0.8 mm; Aero at 0.6 and 0.8 mm). PETG is available, and PETG-CF is unavailable at 0.2 mm. ABS, ASA, ABS-GF and PC are available from 0.4 mm. TPU for AMS is available; the softer TPU 85A is unavailable at 0.4 mm and available at 0.6 and 0.8 mm, while TPU 90A and 95A are available. Support materials are available. The fiber-reinforced nylons and polyesters (PAHT-CF, PA6-GF, PET-CF, PA6-CF, PPA-CF) are available from 0.4 mm; PPS-CF is unavailable on all sizes.</p>
+
+  <h2 id="aux-matrix">🔧 The matrix: auxiliary (right) nozzle</h2>
+  <p>The auxiliary nozzle is more restricted, because of the longer path, the stepper extruder and its slower motion limits. As Bambu documents it: PLA basic-type filaments are available from 0.4 mm; PLA Silk is highly not recommended at every size, though Silk+ is available at 0.4 mm; PLA-CF is mostly available; PLA Aero is unavailable. PETG Basic and PETG HF are not recommended and PETG-CF is highly not recommended. ABS is not recommended, ABS-GF is available, ASA is not recommended and ASA-CF is highly not recommended. PC is available from 0.4 mm. TPU for AMS is highly not recommended and all other TPU is unavailable. Support for ABS, PLA/PETG, PLA and PVA are available while Support for PA/PET is highly not recommended. PAHT-CF and PA6-GF are available, PET-CF is not recommended, PA6-CF is highly not recommended, and PPA-CF and PPS-CF are unavailable.</p>
+
+  <div class="callout fact"><span class="callout-title">Bambu’s “recommended on aux” shortlist</span>
+    <p>Bambu’s own guidance for the auxiliary nozzle is to prefer official PLA (not Aero), ABS, ASA, supports, PC, PET and PA, and to be careful with PLA Silk, PETG, PETG-CF, ASA-CF, PA6-CF and Support for PA/PET. You may notice it overlaps imperfectly with the matrix cells above: ABS and ASA appear in the shortlist but are flagged “not recommended” in some matrix columns. This is exactly why you should check the wiki’s current table and the filament’s own page before committing a long job.</p>
+  </div>
+
+  <h2 id="heatmap">🔧 The heat map</h2>
+  <p>The figure below merges the nozzle ratings, the AMS 2 Pro and the track-switch accessory into one view for a 0.4 mm nozzle. The AMS and Chamber columns are summarized from Bambu’s AMS and chamber pages; for the track switch the ratings follow Bambu’s track-switch table. Where a family contains several members with different ratings, the cell shows the cautious value.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 660" role="img" aria-label="Heat map of filament classes against main nozzle, aux nozzle, AMS 2 Pro, track switch and chamber mode, using words OK, Caution, Avoid, N/A and Check in each cell">
+      <text class="t-lg" x="20" y="26">Heat map — filament class × path (0.4 mm, condensed)</text>
+      <g class="t-sm t-b">
+        <text x="24" y="58">Filament class</text><text class="t-c" x="290" y="58">Main (L)</text><text class="t-c" x="386" y="58">Aux (R)</text><text class="t-c" x="482" y="58">AMS 2 Pro</text><text class="t-c" x="578" y="58">Track switch</text><text x="650" y="58">Chamber (typical)</text>
+      </g>
+      <g class="t-xs">
+        <text x="24" y="90">PLA basic / matte / tough</text>
+        <rect class="f-green" x="244" y="72" width="92" height="26" rx="4"/><text class="t-c t-b" x="290" y="90">OK</text>
+        <rect class="f-green" x="340" y="72" width="92" height="26" rx="4"/><text class="t-c t-b" x="386" y="90">OK</text>
+        <rect class="f-green" x="436" y="72" width="92" height="26" rx="4"/><text class="t-c t-b" x="482" y="90">OK</text>
+        <rect class="f-green" x="532" y="72" width="92" height="26" rx="4"/><text class="t-c t-b" x="578" y="90">OK</text>
+        <text x="650" y="90">cooling mode</text>
+
+        <text x="24" y="120">PLA Silk / Silk+</text>
+        <rect class="f-green" x="244" y="102" width="92" height="26" rx="4"/><text class="t-c t-b" x="290" y="120">OK</text>
+        <rect class="f-red" x="340" y="102" width="92" height="26" rx="4"/><text class="t-c t-b" x="386" y="120">Avoid*</text>
+        <rect class="f-green" x="436" y="102" width="92" height="26" rx="4"/><text class="t-c t-b" x="482" y="120">OK</text>
+        <rect class="f-yellow" x="532" y="102" width="92" height="26" rx="4"/><text class="t-c t-b" x="578" y="120">Caution</text>
+        <text x="650" y="120">cooling mode</text>
+
+        <text x="24" y="150">PLA Aero</text>
+        <rect class="f-green" x="244" y="132" width="92" height="26" rx="4"/><text class="t-c t-b" x="290" y="150">OK 0.4</text>
+        <rect class="f-gray" x="340" y="132" width="92" height="26" rx="4"/><text class="t-c t-b" x="386" y="150">N/A</text>
+        <rect class="f-blue" x="436" y="132" width="92" height="26" rx="4"/><text class="t-c t-b" x="482" y="150">Check</text>
+        <rect class="f-red" x="532" y="132" width="92" height="26" rx="4"/><text class="t-c t-b" x="578" y="150">Avoid</text>
+        <text x="650" y="150">cooling mode</text>
+
+        <text x="24" y="180">PLA-CF</text>
+        <rect class="f-green" x="244" y="162" width="92" height="26" rx="4"/><text class="t-c t-b" x="290" y="180">OK</text>
+        <rect class="f-green" x="340" y="162" width="92" height="26" rx="4"/><text class="t-c t-b" x="386" y="180">OK</text>
+        <rect class="f-yellow" x="436" y="162" width="92" height="26" rx="4"/><text class="t-c t-b" x="482" y="180">Caution</text>
+        <rect class="f-yellow" x="532" y="162" width="92" height="26" rx="4"/><text class="t-c t-b" x="578" y="180">Caution</text>
+        <text x="650" y="180">cooling mode</text>
+
+        <text x="24" y="210">PETG (Basic / HF)</text>
+        <rect class="f-green" x="244" y="192" width="92" height="26" rx="4"/><text class="t-c t-b" x="290" y="210">OK</text>
+        <rect class="f-yellow" x="340" y="192" width="92" height="26" rx="4"/><text class="t-c t-b" x="386" y="210">Caution</text>
+        <rect class="f-green" x="436" y="192" width="92" height="26" rx="4"/><text class="t-c t-b" x="482" y="210">OK</text>
+        <rect class="f-green" x="532" y="192" width="92" height="26" rx="4"/><text class="t-c t-b" x="578" y="210">OK</text>
+        <text x="650" y="210">cooling or open</text>
+
+        <text x="24" y="240">PETG-CF</text>
+        <rect class="f-green" x="244" y="222" width="92" height="26" rx="4"/><text class="t-c t-b" x="290" y="240">OK</text>
+        <rect class="f-red" x="340" y="222" width="92" height="26" rx="4"/><text class="t-c t-b" x="386" y="240">Avoid</text>
+        <rect class="f-yellow" x="436" y="222" width="92" height="26" rx="4"/><text class="t-c t-b" x="482" y="240">Caution</text>
+        <rect class="f-green" x="532" y="222" width="92" height="26" rx="4"/><text class="t-c t-b" x="578" y="240">OK</text>
+        <text x="650" y="240">cooling or open</text>
+
+        <text x="24" y="270">ABS</text>
+        <rect class="f-green" x="244" y="252" width="92" height="26" rx="4"/><text class="t-c t-b" x="290" y="270">OK</text>
+        <rect class="f-yellow" x="340" y="252" width="92" height="26" rx="4"/><text class="t-c t-b" x="386" y="270">Caution</text>
+        <rect class="f-green" x="436" y="252" width="92" height="26" rx="4"/><text class="t-c t-b" x="482" y="270">OK</text>
+        <rect class="f-green" x="532" y="252" width="92" height="26" rx="4"/><text class="t-c t-b" x="578" y="270">OK</text>
+        <text x="650" y="270">heating mode</text>
+
+        <text x="24" y="300">ASA</text>
+        <rect class="f-green" x="244" y="282" width="92" height="26" rx="4"/><text class="t-c t-b" x="290" y="300">OK</text>
+        <rect class="f-yellow" x="340" y="282" width="92" height="26" rx="4"/><text class="t-c t-b" x="386" y="300">Caution</text>
+        <rect class="f-green" x="436" y="282" width="92" height="26" rx="4"/><text class="t-c t-b" x="482" y="300">OK</text>
+        <rect class="f-green" x="532" y="282" width="92" height="26" rx="4"/><text class="t-c t-b" x="578" y="300">OK</text>
+        <text x="650" y="300">heating mode</text>
+
+        <text x="24" y="330">ABS-GF</text>
+        <rect class="f-green" x="244" y="312" width="92" height="26" rx="4"/><text class="t-c t-b" x="290" y="330">OK</text>
+        <rect class="f-green" x="340" y="312" width="92" height="26" rx="4"/><text class="t-c t-b" x="386" y="330">OK</text>
+        <rect class="f-yellow" x="436" y="312" width="92" height="26" rx="4"/><text class="t-c t-b" x="482" y="330">Caution</text>
+        <rect class="f-red" x="532" y="312" width="92" height="26" rx="4"/><text class="t-c t-b" x="578" y="330">Avoid</text>
+        <text x="650" y="330">heating mode</text>
+
+        <text x="24" y="360">ASA-CF</text>
+        <rect class="f-blue" x="244" y="342" width="92" height="26" rx="4"/><text class="t-c t-b" x="290" y="360">Check</text>
+        <rect class="f-red" x="340" y="342" width="92" height="26" rx="4"/><text class="t-c t-b" x="386" y="360">Avoid</text>
+        <rect class="f-yellow" x="436" y="342" width="92" height="26" rx="4"/><text class="t-c t-b" x="482" y="360">Caution</text>
+        <rect class="f-red" x="532" y="342" width="92" height="26" rx="4"/><text class="t-c t-b" x="578" y="360">Avoid</text>
+        <text x="650" y="360">heating mode</text>
+
+        <text x="24" y="390">PC (incl. FR on track switch)</text>
+        <rect class="f-green" x="244" y="372" width="92" height="26" rx="4"/><text class="t-c t-b" x="290" y="390">OK</text>
+        <rect class="f-green" x="340" y="372" width="92" height="26" rx="4"/><text class="t-c t-b" x="386" y="390">OK</text>
+        <rect class="f-green" x="436" y="372" width="92" height="26" rx="4"/><text class="t-c t-b" x="482" y="390">OK</text>
+        <rect class="f-red" x="532" y="372" width="92" height="26" rx="4"/><text class="t-c t-b" x="578" y="390">Avoid</text>
+        <text x="650" y="390">heating mode</text>
+
+        <text x="24" y="420">TPU for AMS</text>
+        <rect class="f-green" x="244" y="402" width="92" height="26" rx="4"/><text class="t-c t-b" x="290" y="420">OK</text>
+        <rect class="f-red" x="340" y="402" width="92" height="26" rx="4"/><text class="t-c t-b" x="386" y="420">Avoid</text>
+        <rect class="f-blue" x="436" y="402" width="92" height="26" rx="4"/><text class="t-c t-b" x="482" y="420">Check</text>
+        <rect class="f-red" x="532" y="402" width="92" height="26" rx="4"/><text class="t-c t-b" x="578" y="420">Avoid</text>
+        <text x="650" y="420">no heating</text>
+
+        <text x="24" y="450">Other TPU (85A/90A/95A…)</text>
+        <rect class="f-green" x="244" y="432" width="92" height="26" rx="4"/><text class="t-c t-b" x="290" y="450">OK**</text>
+        <rect class="f-gray" x="340" y="432" width="92" height="26" rx="4"/><text class="t-c t-b" x="386" y="450">N/A</text>
+        <rect class="f-red" x="436" y="432" width="92" height="26" rx="4"/><text class="t-c t-b" x="482" y="450">Avoid</text>
+        <rect class="f-gray" x="532" y="432" width="92" height="26" rx="4"/><text class="t-c t-b" x="578" y="450">N/A</text>
+        <text x="650" y="450">no heating</text>
+
+        <text x="24" y="480">Supports (PLA/PETG/ABS/PVA)</text>
+        <rect class="f-green" x="244" y="462" width="92" height="26" rx="4"/><text class="t-c t-b" x="290" y="480">OK</text>
+        <rect class="f-green" x="340" y="462" width="92" height="26" rx="4"/><text class="t-c t-b" x="386" y="480">OK</text>
+        <rect class="f-yellow" x="436" y="462" width="92" height="26" rx="4"/><text class="t-c t-b" x="482" y="480">PVA: caution</text>
+        <rect class="f-green" x="532" y="462" width="92" height="26" rx="4"/><text class="t-c t-b" x="578" y="480">OK</text>
+        <text x="650" y="480">match the model</text>
+
+        <text x="24" y="510">Support for PA/PET</text>
+        <rect class="f-green" x="244" y="492" width="92" height="26" rx="4"/><text class="t-c t-b" x="290" y="510">OK</text>
+        <rect class="f-red" x="340" y="492" width="92" height="26" rx="4"/><text class="t-c t-b" x="386" y="510">Avoid</text>
+        <rect class="f-green" x="436" y="492" width="92" height="26" rx="4"/><text class="t-c t-b" x="482" y="510">OK</text>
+        <rect class="f-green" x="532" y="492" width="92" height="26" rx="4"/><text class="t-c t-b" x="578" y="510">OK</text>
+        <text x="650" y="510">heating mode</text>
+
+        <text x="24" y="540">PAHT-CF / PA6-GF</text>
+        <rect class="f-green" x="244" y="522" width="92" height="26" rx="4"/><text class="t-c t-b" x="290" y="540">OK</text>
+        <rect class="f-green" x="340" y="522" width="92" height="26" rx="4"/><text class="t-c t-b" x="386" y="540">OK</text>
+        <rect class="f-yellow" x="436" y="522" width="92" height="26" rx="4"/><text class="t-c t-b" x="482" y="540">Caution</text>
+        <rect class="f-green" x="532" y="522" width="92" height="26" rx="4"/><text class="t-c t-b" x="578" y="540">OK</text>
+        <text x="650" y="540">heating mode</text>
+
+        <text x="24" y="570">PA6-CF / PET-CF</text>
+        <rect class="f-green" x="244" y="552" width="92" height="26" rx="4"/><text class="t-c t-b" x="290" y="570">OK</text>
+        <rect class="f-red" x="340" y="552" width="92" height="26" rx="4"/><text class="t-c t-b" x="386" y="570">Avoid</text>
+        <rect class="f-yellow" x="436" y="552" width="92" height="26" rx="4"/><text class="t-c t-b" x="482" y="570">Caution</text>
+        <rect class="f-gray" x="532" y="552" width="92" height="26" rx="4"/><text class="t-c t-b" x="578" y="570">N/A</text>
+        <text x="650" y="570">heating mode</text>
+
+        <text x="24" y="600">PPA-CF / PPS-CF</text>
+        <rect class="f-blue" x="244" y="582" width="92" height="26" rx="4"/><text class="t-c t-b" x="290" y="600">PPS: N/A</text>
+        <rect class="f-gray" x="340" y="582" width="92" height="26" rx="4"/><text class="t-c t-b" x="386" y="600">N/A</text>
+        <rect class="f-yellow" x="436" y="582" width="92" height="26" rx="4"/><text class="t-c t-b" x="482" y="600">Caution</text>
+        <rect class="f-gray" x="532" y="582" width="92" height="26" rx="4"/><text class="t-c t-b" x="578" y="600">N/A</text>
+        <text x="650" y="600">heating mode</text>
+      </g>
+      <text class="t-xs t-m" x="24" y="640">* Silk+ is available on aux at 0.4 mm.  ** TPU 85A is unavailable at 0.4 mm on the main nozzle. AMS/chamber columns are summaries; check the wiki.</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> One-glance compatibility heat map for a 0.4 mm nozzle. The main, aux and track-switch columns come from Bambu’s tables; AMS and chamber columns are condensed from the AMS and chamber guidance and from typical practice. “PPA-CF/PPS-CF” on the main nozzle: PPA-CF is available from 0.4 mm, PPS-CF is unavailable.</figcaption>
+  </figure>
+
+  <h2 id="track-switch">🔧 What the track switch changes</h2>
+  <p>The optional Filament Track Switch (sold separately; firmware 01.01.00.00 or later, Studio 2.5.3 or later, Handy 3.18.0 or later) lets a single AMS feed either nozzle and enables dynamic mapping. It has its own compatibility rating because filament must travel through an extra junction and the PTFE path is longer. Per Bambu’s table, it is rated available for PLA basics, Matte, Lite, Gradient, Metal, Translucent, Tough+, Marble, Sparkle, Wood and Galaxy; PETG including PETG-CF; ABS; ASA; PC FR; Support for PLA, PETG, PA/PET; PVA; PAHT-CF; PA6-GF. It is rated not recommended for PLA Glow, Silk/Silk+, PLA-CF and Support for ABS; highly not recommended for PLA Aero, ABS-GF, ASA Aero, ASA-CF, PC and TPU for AMS; and unavailable for other TPU, PET-CF, PA6-CF, PPA-CF and PPS-CF. If your multi-material plan relies on the track switch, check that every filament in the plan is rated for it.</p>
+
+  <h2 id="chamber">🔧 Chamber behavior by material class</h2>
+  <p>The chamber has two airflow modes. In <b>cooling mode</b> (for PLA and TPU) the auxiliary part-cooling fans run, the right fan draws outside air and the rear fan exhausts. In <b>heating mode</b> (ABS, ASA, PC, PA) the left heating fan and right filtration fan recirculate air through the filter, and the chamber can be actively heated up to 65 °C. In heating mode the bed lowers to about Z160 to make room. Preheating tip from Bambu: set the bed to at least 90 °C and wait about 30 minutes to get the chamber over 50 °C.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 300" role="img" aria-label="Two airflow mode schematics: cooling mode draws outside air in and exhausts out the back; heating mode recirculates air through the filter and heater">
+      <text class="t-lg" x="20" y="28">Which chamber mode for which material class</text>
+      <rect class="d-surface" x="20" y="48" width="380" height="230" rx="10"/><text class="t-sm t-b" x="36" y="74">Cooling mode</text>
+      <rect class="f-blue" x="60" y="100" width="300" height="120" rx="8"/>
+      <path class="k-blue arrow" d="M30 130 H100"/><text class="t-xs" x="34" y="122">outside air in</text>
+      <path class="k-blue arrow" d="M320 160 H395"/><text class="t-xs" x="320" y="152">rear exhaust</text>
+      <text class="t-xs t-c" x="210" y="165">PLA · TPU · PETG (typical)</text>
+      <text class="t-xs" x="36" y="250">Part-cooling fans on; chamber stays cool.</text>
+      <rect class="d-surface" x="420" y="48" width="380" height="230" rx="10"/><text class="t-sm t-b" x="436" y="74">Heating mode</text>
+      <rect class="f-red" x="460" y="100" width="300" height="120" rx="8"/>
+      <path class="k-orange" d="M500 130 H720 V190 H500 Z"/><text class="t-xs t-c" x="610" y="165">recirculate + filter</text>
+      <text class="t-xs" x="436" y="250">ABS · ASA · PC · PA — active heat up to 65 °C.</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> The two airflow modes. The material list in each box is typical practice, consistent with Bambu’s PLA/TPU = cooling and ABS/ASA/PC/PA = heating guidance.</figcaption>
+  </figure>
+
+  <div class="callout warn"><span class="callout-title">Open the lid for low-temperature materials?</span>
+    <p>For PLA and TPU, Bambu’s guidance is to run in cooling mode and not to heat the chamber. Heating the chamber for such filaments can soften them and cause feed problems. Do not use heating mode for TPU.</p>
+  </div>
+
+  <h2 id="tpu">🔧 TPU and other flexibles: the path limits</h2>
+  <p>TPU is the compatibility exception that surprises people most. On the X2D, TPU is supported on the <b>main (left) nozzle only</b>. In the AMS 2 Pro, the guidance is not to run TPU/TPE through the unit (the AMS page explains why). Instead:</p>
+  <ul>
+    <li><b>External spool.</b> Mount the spool on the top holder and feed it through a short PTFE tube (about 175 mm) into the left inlet. This is the direct path Bambu describes.</li>
+    <li><b>TPU Feed Assist Module.</b> An accessory path in which an AMS HT is used as dryer/feeder and a TPU bypass port leads filament to the main nozzle.</li>
+    <li><b>Settings.</b> Bambu suggests about 225 °C nozzle for TPU 85A/90A, bed 30–35 °C, no chamber heating, keep the default volumetric speed limit, flow dynamics set to Auto or Off, and put the model mid-front on the plate. Do not use glue on the textured PEI plate with TPU.</li>
+    <li><b>Storage.</b> Keep TPU under 20% relative humidity. Dry it for 8 hours at 70 °C in an oven, or at 75–85 °C on the heatbed.</li>
+    <li><b>Cold pull.</b> Perform a cold pull before TPU to clear residue, but never when the previous filament was fiber-filled.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 300" role="img" aria-label="TPU path diagram: external spool on the top holder with a short PTFE tube into the left inlet of the main nozzle; the AMS and aux nozzle are crossed out for TPU">
+      <text class="t-lg" x="20" y="28">TPU paths on the X2D</text>
+      <rect class="f-teal" x="30" y="60" width="160" height="60" rx="8"/><text class="t-sm t-b t-c" x="110" y="86">AMS 2 Pro</text><text class="t-xs t-c" x="110" y="104">not for TPU/TPE</text>
+      <path class="k-red" d="M30 60 L190 120 M190 60 L30 120"/>
+      <rect class="f-green" x="30" y="180" width="160" height="70" rx="8"/><text class="t-sm t-b t-c" x="110" y="208">External spool</text><text class="t-xs t-c" x="110" y="226">top holder</text>
+      <path class="k-green arrow" d="M190 215 H420"/><text class="t-xs c-green t-b" x="260" y="206">≈ 175 mm PTFE</text>
+      <rect class="f-blue" x="420" y="150" width="190" height="90" rx="8"/><text class="t-sm t-b t-c" x="515" y="188">Left (main) nozzle</text><text class="t-xs t-c" x="515" y="208">TPU supported</text>
+      <rect class="f-gray" x="640" y="150" width="150" height="90" rx="8"/><text class="t-sm t-b t-c" x="715" y="188">Right (aux)</text><text class="t-xs t-c" x="715" y="208">TPU not supported</text>
+      <path class="k-red" d="M640 150 L790 240 M790 150 L640 240"/>
+      <rect class="f-yellow" x="420" y="60" width="370" height="60" rx="8"/><text class="t-xs" x="434" y="84">Alternative: TPU Feed Assist Module (AMS HT as</text><text class="t-xs" x="434" y="102">dryer/feeder + TPU bypass port) → main nozzle.</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> Allowed and forbidden TPU routes. See also <a href="tpu-and-flexibles.html">TPU &amp; flexibles on the X2D</a>.</figcaption>
+  </figure>
+
+  <h2 id="supports">🔧 PVA, supports and dissolvables</h2>
+  <p>Support filaments are available on both nozzles in Bambu’s tables, with the exception of Support for PA/PET on the aux nozzle (highly not recommended). Plain PVA is hygroscopic: it absorbs moisture quickly, becomes brittle and bubbles. Bambu’s AMS guidance is to avoid absorbent PVA in the AMS; dry it thoroughly, store it sealed and use an external spool or a drying-capable feeder when you need it. Pair the support with the model material: Support for ABS with ABS, Support for PLA/PETG with those materials, and Support for PA/PET with nylon or PET-based filaments. A mismatched support may bond too strongly or not at all. When you place the support on the auxiliary nozzle, remember its speed limit; it is good for interface layers but slower for bulk.</p>
+
+  <h2 id="drying">🔧 Drying guidance per class</h2>
+  <p>Wet filament pops, strings, bubbles and loses strength. The AMS 2 Pro has two drying modules with a maximum of 65 °C (only if ambient is 25 °C or higher), and you should never dry high-temperature filament together with low-temperature spools. The numbers in the figure below are <b>typical</b> values used widely in the hobby; Bambu does not publish one master per-material table in the sources used here, and the spool label or the wiki always overrides them. Only the TPU values are from Bambu’s TPU guide.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 360" role="img" aria-label="Bar chart of typical drying temperatures by material class with a vertical line at 65 degrees Celsius showing the AMS 2 Pro maximum">
+      <text class="t-lg" x="20" y="28">Typical drying temperatures vs the AMS 2 Pro limit</text>
+      <path class="d-grid" d="M200 50 V320 M280 50 V320 M360 50 V320 M440 50 V320 M520 50 V320 M600 50 V320 M680 50 V320"/>
+      <text class="t-xs t-c" x="200" y="338">40 °C</text><text class="t-xs t-c" x="280" y="338">50</text><text class="t-xs t-c" x="360" y="338">60</text><text class="t-xs t-c" x="440" y="338">70</text><text class="t-xs t-c" x="520" y="338">80</text><text class="t-xs t-c" x="600" y="338">90</text><text class="t-xs t-c" x="680" y="338">100</text>
+      <text class="t-sm" x="20" y="76">PLA</text><rect class="f-green" x="200" y="62" width="100" height="22" rx="4"/><text class="t-xs" x="308" y="78">≈ 45–55</text>
+      <text class="t-sm" x="20" y="110">PETG</text><rect class="f-green" x="200" y="96" width="180" height="22" rx="4"/><text class="t-xs" x="388" y="112">≈ 55–65</text>
+      <text class="t-sm" x="20" y="144">ABS / ASA</text><rect class="f-yellow" x="200" y="130" width="260" height="22" rx="4"/><text class="t-xs" x="468" y="146">≈ 65–80</text>
+      <text class="t-sm" x="20" y="178">PC</text><rect class="f-yellow" x="200" y="164" width="300" height="22" rx="4"/><text class="t-xs" x="508" y="180">≈ 70–80</text>
+      <text class="t-sm" x="20" y="212">TPU (Bambu)</text><rect class="f-orange" x="200" y="198" width="240" height="22" rx="4"/><text class="t-xs" x="448" y="214">70 °C oven (75–85 °C heatbed)</text>
+      <text class="t-sm" x="20" y="246">PA / PAHT (CF/GF)</text><rect class="f-red" x="200" y="232" width="360" height="22" rx="4"/><text class="t-xs" x="568" y="248">≈ 80–90</text>
+      <path class="k-red" d="M360 44 V324" stroke-dasharray="6 4"/><text class="t-xs c-red t-b" x="366" y="46">65 °C — AMS 2 Pro maximum</text>
+      <text class="t-xs t-m" x="20" y="300">Bars are typical ranges (left edge 40 °C); bars past the red line cannot be fully dried in the AMS: use a dedicated dryer or the oven.</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> Typical drying values by class. Except for TPU, they are generic hobby guidance, not Bambu specifications.</figcaption>
+  </figure>
+
+  <ul>
+    <li>Rotating drying (the AMS turns the spool 30° every 5 minutes) is the preferred mode. Static drying is not suitable for PLA, PVA, Support for PLA/PETG and TPU.</li>
+    <li>The yellow-to-purple color-changing desiccant (replace or regenerate about every 4–6 weeks) shows when the AMS interior is humid.</li>
+    <li>Fiber-filled nylons and PC dry best in an external dryer; they exceed the AMS’s 65 °C ceiling.</li>
+  </ul>
+
+  <h2 id="rfid">🔧 Bambu RFID spools vs third-party spools</h2>
+  <p>Bambu spools carry an RFID tag. When you insert a spool into an AMS slot, the two RFID coils read it and the printer fills in the material, color and often the recommended settings. Third-party spools have no tag; you set the type and color on the screen (or in the slicer), and choose a matching profile. Third-party spools must also physically fit: width 50–68 mm, outer diameter 197–202 mm.</p>
+  <p>Automatic refill (when a spool runs out and another takes over) only works with an identical brand, type and color on the same nozzle side.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 300" role="img" aria-label="Flow showing Bambu RFID spool is read automatically while third-party spool needs manual type and color entry and a matching profile">
+      <text class="t-lg" x="20" y="28">From spool to settings</text>
+      <rect class="f-pink" x="30" y="60" width="200" height="60" rx="8"/><text class="t-sm t-b t-c" x="130" y="95">Bambu spool (RFID)</text>
+      <path class="k-ink arrow" d="M230 90 H300"/>
+      <rect class="f-green" x="300" y="60" width="220" height="60" rx="8"/><text class="t-sm t-c" x="410" y="87">Coils read the tag:</text><text class="t-sm t-c" x="410" y="105">type, color, preset</text>
+      <path class="k-ink arrow" d="M520 90 H590"/>
+      <rect class="f-blue" x="590" y="60" width="200" height="60" rx="8"/><text class="t-sm t-c" x="690" y="95">Ready to print</text>
+      <rect class="f-gray" x="30" y="170" width="200" height="60" rx="8"/><text class="t-sm t-b t-c" x="130" y="205">Third-party spool</text>
+      <path class="k-ink arrow" d="M230 200 H300"/>
+      <rect class="f-yellow" x="300" y="170" width="220" height="60" rx="8"/><text class="t-sm t-c" x="410" y="197">You set type + color,</text><text class="t-sm t-c" x="410" y="215">pick or create a profile</text>
+      <path class="k-ink arrow" d="M520 200 H590"/>
+      <rect class="f-blue" x="590" y="170" width="200" height="60" rx="8"/><text class="t-sm t-c" x="690" y="205">Ready (after test)</text>
+      <text class="t-xs t-m" x="30" y="270">Always run a short test print with an unfamiliar third-party filament before a long job.</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> RFID spools skip the manual steps; third-party spools need you to describe them.</figcaption>
+  </figure>
+
+  <h2 id="custom-profile">🔧 Creating a custom filament profile</h2>
+  <p>A profile in Bambu Studio is a named set of filament parameters: nozzle temperature, bed temperature, flow ratio, cooling, retraction, flow dynamics and so on. For unfamiliar filaments, start from the closest Bambu profile, then tune it deliberately. For the general method, see <a href="settings-and-profiles.html">settings and profiles</a> and the <a href="../techniques/calibration.html">calibration</a> chapter.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 260" role="img" aria-label="Seven-step process for creating a custom filament profile: choose base, copy, set vendor and type, set temps, calibrate flow dynamics, test print, save and name">
+      <text class="t-lg" x="20" y="28">Custom filament profile in seven steps</text>
+      <g class="t-xs t-c">
+        <rect class="f-blue" x="20" y="60" width="100" height="90" rx="8"/><text class="t-b" x="70" y="86">1 Base</text><text x="70" y="108">closest</text><text x="70" y="122">material</text>
+        <rect class="f-teal" x="130" y="60" width="100" height="90" rx="8"/><text class="t-b" x="180" y="86">2 Copy</text><text x="180" y="108">create new,</text><text x="180" y="122">name it</text>
+        <rect class="f-green" x="240" y="60" width="100" height="90" rx="8"/><text class="t-b" x="290" y="86">3 Temps</text><text x="290" y="108">from the spool</text><text x="290" y="122">label</text>
+        <rect class="f-yellow" x="350" y="60" width="100" height="90" rx="8"/><text class="t-b" x="400" y="86">4 Flow</text><text x="400" y="108">dynamics +</text><text x="400" y="122">flow ratio</text>
+        <rect class="f-orange" x="460" y="60" width="100" height="90" rx="8"/><text class="t-b" x="510" y="86">5 Volume</text><text x="510" y="108">max volumetric</text><text x="510" y="122">speed</text>
+        <rect class="f-pink" x="570" y="60" width="100" height="90" rx="8"/><text class="t-b" x="620" y="86">6 Test</text><text x="620" y="108">small prints</text><text x="620" y="122">both nozzles</text>
+        <rect class="f-purple" x="680" y="60" width="120" height="90" rx="8"/><text class="t-b" x="740" y="86">7 Save</text><text x="740" y="108">per-nozzle</text><text x="740" y="122">variants</text>
+      </g>
+      <text class="t-xs t-m" x="20" y="190">If the filament will be used on the right nozzle, keep a separate preset: the aux extruder needs its own manual flow-dynamics value.</text>
+      <text class="t-xs t-m" x="20" y="210">Never set temperatures above what the nozzle supports (300 °C maximum).</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> A sensible way to build a profile. Always take temperature windows from the manufacturer’s label.</figcaption>
+  </figure>
+
+  <h2 id="settings">🔧 Typical settings per class</h2>
+  <p>The values below are starting points and are <b>typical</b> for these classes, not Bambu specifications (except where the research gives a value: PLA cool plate bed 35–45 °C, ABS/PC 100–110 °C, TPU about 225 °C with bed 30–35 °C). Your spool label overrides them.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 400" role="img" aria-label="Settings table drawn as a graphic: material class, typical nozzle temperature range, typical bed temperature range, chamber mode, drying and nozzle recommendation">
+      <text class="t-lg" x="20" y="26">Starting-point settings (typical)</text>
+      <g class="t-xs t-b"><text x="24" y="56">Class</text><text x="170" y="56">Nozzle °C</text><text x="270" y="56">Bed °C</text><text x="360" y="56">Chamber</text><text x="470" y="56">Nozzle kind</text><text x="640" y="56">Notes</text></g>
+      <g class="t-xs">
+        <rect class="f-green" x="20" y="64" width="780" height="36" rx="4" opacity=".5"/><text x="24" y="86">PLA</text><text x="170" y="86">190–230</text><text x="270" y="86">35–45</text><text x="360" y="86">cooling</text><text x="470" y="86">any / HS</text><text x="640" y="86">fast cooling needed</text>
+        <rect class="f-blue" x="20" y="104" width="780" height="36" rx="4" opacity=".5"/><text x="24" y="126">PETG</text><text x="170" y="126">230–260</text><text x="270" y="126">65–80</text><text x="360" y="126">cooling</text><text x="470" y="126">main preferred</text><text x="640" y="126">strings if wet</text>
+        <rect class="f-orange" x="20" y="144" width="780" height="36" rx="4" opacity=".5"/><text x="24" y="166">ABS / ASA</text><text x="170" y="166">240–270</text><text x="270" y="166">100–110</text><text x="360" y="166">heating</text><text x="470" y="166">main (aux caution)</text><text x="640" y="166">fumes: filtration</text>
+        <rect class="f-red" x="20" y="184" width="780" height="36" rx="4" opacity=".5"/><text x="24" y="206">PC</text><text x="170" y="206">260–290</text><text x="270" y="206">100–110</text><text x="360" y="206">heating</text><text x="470" y="206">main / aux ok</text><text x="640" y="206">dry thoroughly</text>
+        <rect class="f-purple" x="20" y="224" width="780" height="36" rx="4" opacity=".5"/><text x="24" y="246">PA / PAHT</text><text x="170" y="246">260–290</text><text x="270" y="246">90–110</text><text x="360" y="246">heating</text><text x="470" y="246">hardened steel (CF/GF)</text><text x="640" y="246">very hygroscopic</text>
+        <rect class="f-yellow" x="20" y="264" width="780" height="36" rx="4" opacity=".5"/><text x="24" y="286">TPU</text><text x="170" y="286">≈ 225 (Bambu)</text><text x="270" y="286">30–35 (Bambu)</text><text x="360" y="286">no heat</text><text x="470" y="286">main only</text><text x="640" y="286">external spool</text>
+        <rect class="f-teal" x="20" y="304" width="780" height="36" rx="4" opacity=".5"/><text x="24" y="326">CF / GF fillers</text><text x="170" y="326">per base resin</text><text x="270" y="326">per base resin</text><text x="360" y="326">per base</text><text x="470" y="326">hardened steel</text><text x="640" y="326">check cutters often</text>
+      </g>
+      <text class="t-xs t-m" x="24" y="372">Values labeled “Bambu” come from Bambu’s TPU guide; all else is typical. Max nozzle 300 °C; max bed 120 °C; chamber up to 65 °C.</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> Starting settings. Treat as a prompt to look up your spool’s datasheet, not as a recipe.</figcaption>
+  </figure>
+
+  <h2 id="decision">🚀 Decision flowchart: which nozzle and AMS for my filament?</h2>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 440" role="img" aria-label="Decision flowchart: TPU goes to the main nozzle via external spool; abrasive filament requires hardened steel; high-temperature filaments use heating mode; AMS path considered last">
+      <text class="t-lg" x="20" y="28">Which nozzle + feed path?</text>
+      <rect class="f-gray" x="300" y="46" width="220" height="36" rx="8"/><text class="t-sm t-b t-c" x="410" y="70">New filament</text>
+      <path class="k-ink arrow" d="M410 82 V104"/>
+      <rect class="f-yellow" x="280" y="104" width="260" height="40" rx="8"/><text class="t-sm t-c" x="410" y="129">Flexible (TPU/TPE)?</text>
+      <path class="k-red arrow" d="M280 124 H190"/><text class="t-xs c-red t-b" x="226" y="116">yes</text>
+      <rect class="f-blue" x="20" y="100" width="170" height="48" rx="8"/><text class="t-sm t-b t-c" x="105" y="122">Main nozzle</text><text class="t-xs t-c" x="105" y="138">external spool / TPU path</text>
+      <path class="k-ink arrow" d="M410 144 V170"/><text class="t-xs t-b" x="420" y="162">no</text>
+      <rect class="f-yellow" x="280" y="170" width="260" height="40" rx="8"/><text class="t-sm t-c" x="410" y="195">Wet / absorbent (PVA, nylon)?</text>
+      <path class="k-red arrow" d="M280 190 H190"/><text class="t-xs c-red t-b" x="226" y="182">yes</text>
+      <rect class="f-teal" x="20" y="166" width="170" height="48" rx="8"/><text class="t-sm t-b t-c" x="105" y="188">Dry first</text><text class="t-xs t-c" x="105" y="204">dryer, then sealed</text>
+      <path class="k-ink arrow" d="M410 210 V236"/><text class="t-xs t-b" x="420" y="228">no</text>
+      <rect class="f-yellow" x="280" y="236" width="260" height="40" rx="8"/><text class="t-sm t-c" x="410" y="261">Fiber-filled (CF/GF)?</text>
+      <path class="k-red arrow" d="M540 256 H620"/><text class="t-xs c-red t-b" x="568" y="248">yes</text>
+      <rect class="f-orange" x="620" y="232" width="180" height="48" rx="8"/><text class="t-sm t-b t-c" x="710" y="254">Hardened steel</text><text class="t-xs t-c" x="710" y="270">main; aux per matrix</text>
+      <path class="k-ink arrow" d="M410 276 V302"/><text class="t-xs t-b" x="420" y="294">no</text>
+      <rect class="f-yellow" x="280" y="302" width="260" height="40" rx="8"/><text class="t-sm t-c" x="410" y="327">Needs a hot chamber (ABS/ASA/PC/PA)?</text>
+      <path class="k-red arrow" d="M540 322 H620"/><text class="t-xs c-red t-b" x="568" y="314">yes</text>
+      <rect class="f-red" x="620" y="298" width="180" height="48" rx="8"/><text class="t-sm t-b t-c" x="710" y="320">Heating mode</text><text class="t-xs t-c" x="710" y="336">preheat; filter on</text>
+      <path class="k-ink arrow" d="M410 342 V368"/><text class="t-xs t-b" x="420" y="360">no</text>
+      <rect class="f-green" x="230" y="368" width="360" height="52" rx="8"/><text class="t-sm t-b t-c" x="410" y="390">Either nozzle; AMS 2 Pro is fine</text><text class="t-xs t-c" x="410" y="408">Then check the wiki row for that exact filament</text>
+    </svg>
+    <figcaption><b>Figure 10.</b> A cautious routing guide. Always confirm the exact filament in Bambu’s current table, particularly for the auxiliary nozzle and the track switch.</figcaption>
+  </figure>
+
+  <h2 id="process">🚀 A repeatable checking routine</h2>
+  <p>Because the tables change, a short routine beats memorizing them. Before any job that uses an unfamiliar filament, nozzle or accessory, run through this list:</p>
+  <ol class="steps">
+    <li><strong>Identify the exact filament.</strong> Brand, product line and variant matter: “PLA Silk” and “PLA Silk+” are rated differently, and “PETG” differs from “PETG-CF”.</li>
+    <li><strong>Find its row on the wiki.</strong> Read the columns for your nozzle diameter on the main nozzle, the aux nozzle and, if you use it, the track switch.</li>
+    <li><strong>Check the path.</strong> Is it going through the AMS (avoid TPU/TPE, absorbent PVA and brittle third-party fibers) or from the external spool?</li>
+    <li><strong>Check the nozzle.</strong> Abrasive fillers need hardened steel, which the pre-installed hotend is; the diameter must match on both sides for dual-nozzle jobs.</li>
+    <li><strong>Check the chamber.</strong> Cooling mode for PLA/TPU; heating mode for ABS/ASA/PC/PA, and preheat with the bed at 90 °C or more for about 30 minutes to get the chamber past 50 °C.</li>
+    <li><strong>Dry it.</strong> If the spool is old, opened or from a humid room, dry it as the label says before you assume the profile is at fault.</li>
+    <li><strong>Test small.</strong> A 20-minute test print tells you more than an hour of reading.</li>
+  </ol>
+  <p>This is also the logic behind the “Check” cells in the heat map: they are not failures of the table, but reminders that some combinations depend on details that only the current wiki entry can settle.</p>
+
+  <h2 id="worked">🚀 Worked examples</h2>
+  <div class="grid cols-2">
+    <div class="card accent-blue"><h3>PLA + PLA, two colors</h3><p>Simplest case. Both nozzles accept basic-type PLA from 0.4 mm. Assign one color per nozzle, keep the model in the common area, use Filament-Saving grouping.</p></div>
+    <div class="card accent-orange"><h3>ABS part with ABS support</h3><p>ABS on the left in heating mode; a matching Support for ABS on the right. The matrix lists the ABS support as available on the aux nozzle.</p></div>
+    <div class="card accent-purple"><h3>PETG-CF gripper with TPU pads</h3><p>PETG-CF is available on the main nozzle but highly not recommended on aux; TPU is main-only too. Both want the main nozzle, so print separately and assemble, or choose a different pairing.</p></div>
+    <div class="card accent-teal"><h3>PA6-GF structure with PLA mock-up</h3><p>PA6-GF is available on both nozzles at 0.4 mm. Put it on the left in heating mode; PLA on the right needs cooling mode. The two modes conflict, so print them separately.</p></div>
+  </div>
+
+  <h2 id="takeaways">✅ Key takeaways</h2>
+  <ul>
+    <li>Check Bambu’s wiki for the exact filament, nozzle size, nozzle side and accessory (AMS, track switch) before a long job.</li>
+    <li>The main nozzle accepts the widest list; the aux nozzle is more restrictive, and TPU is main-only.</li>
+    <li>The X2D ships with a hardened-steel 0.4 mm hotend; dual-nozzle jobs need the same diameter on both sides.</li>
+    <li>Cooling mode for PLA/TPU; heating mode for ABS/ASA/PC/PA; the chamber reaches up to 65 °C.</li>
+    <li>The AMS 2 Pro dries to 65 °C at most; use a separate dryer for hotter-drying materials; keep TPU out of the AMS.</li>
+    <li>RFID presets save time; third-party spools need manual type, color and a tested profile.</li>
+    <li>Keep separate presets for the aux nozzle because its flow dynamics are calibrated manually.</li>
+    <li>When Bambu says “not recommended”, treat it as a real constraint, not a suggestion to override.</li>
+  </ul>
+
+</main>
+</body>
+</html>

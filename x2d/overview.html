@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bambu Lab X2D overview &amp; specs · 3D Printing Compendium</title>
+  <meta name="description" content="What the Bambu Lab X2D dual-nozzle enclosed CoreXY printer is, its key numbers, build volume, heated chamber, filtration, cameras, the AMS 2 Pro ecosystem, what is new versus earlier Bambu printers and who should buy it.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="x2d/overview.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 6 · Bambu X2D + AMS 2 Pro</div>
+    <h1>Bambu Lab X2D overview &amp; specs</h1>
+    <p class="lead">One page that explains what the X2D is, what makes its two nozzles different from everything before it, which numbers matter, how the AMS 2 Pro and the software fit around it, and whether it is the right machine for you.</p>
+    <div class="meta"><span class="badge x2d">X2D + AMS 2 Pro</span><span class="badge beginner">All levels</span><span class="badge time">⏱ 30 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <ul>
+      <li>What an enclosed, dual-nozzle CoreXY printer is, in plain language, and why Bambu Lab built the X2D this way.</li>
+      <li>The specification numbers worth remembering: build volume, temperatures, speeds, sensors, power and size.</li>
+      <li>How the left (main) and right (auxiliary) nozzles differ, and what that does to your build area.</li>
+      <li>How the heated chamber, the filtration and the camera system work together.</li>
+      <li>How the AMS 2 Pro, the filament buffer, Bambu Studio, Bambu Handy and MakerWorld form one ecosystem.</li>
+      <li>A capability matrix by material class and a learning path through the rest of this section.</li>
+    </ul>
+  </div>
+
+  <div class="callout x2d"><span class="callout-title">How facts are handled in this section</span>
+    <p>Everything marked as a specification comes from Bambu Lab’s public documentation and the product wiki. Firmware changes quickly (major updates roughly every three months), so anything that is a judgment call is labeled <b>typical</b> or <b>expected</b>, and anything that may have changed points you to the <a href="https://wiki.bambulab.com">Bambu Lab wiki</a>. No prices appear in this compendium, because they change by region and week.</p>
+  </div>
+
+  <h2 id="what-is-it">🔰 What the X2D is, in plain language</h2>
+  <p>The <b>Bambu Lab X2D</b> is an <b>enclosed</b> desktop 3D printer: the build area sits inside a closed cabinet with a front door and a top lid, so the air around the print can be kept warm and the fumes can be filtered. It uses the <b>CoreXY</b> motion layout, in which two fixed motors drive two belts that together move the toolhead in X and Y while the bed moves up and down for Z. That keeps the moving mass low, which is why such machines can accelerate hard without shaking themselves apart (see <a href="../foundations/printer-anatomy.html">Anatomy of an FDM printer</a> for the fundamentals).</p>
+  <p>What sets it apart is that it carries <b>two nozzles</b>. A <b>nozzle</b> is the small hole at the tip of the <b>hotend</b>, the heated block where plastic melts. An <b>extruder</b> is the gear mechanism that grips the filament and pushes it into the hotend. Most printers have one of each. The X2D has two hotends side by side on one toolhead, so two different filaments can be “ready” at all times, and the printer changes between them by swapping which nozzle is lowered into the work rather than by pulling one filament out and pushing another in.</p>
+  <p>Bambu Lab positions it as the next chapter after the X1 Carbon: the same family idea of a fast, closed, camera-equipped, multi-color machine, now with active chamber heating, two nozzles, more sensors and a larger multi-color ceiling. It is designed to run together with the <b>AMS 2 Pro</b>, Bambu’s second-generation Automatic Material System, a four-slot spool cabinet that feeds filament automatically and can also dry it.</p>
+
+  <div class="callout x2d"><span class="callout-title">The three ideas to hold on to</span>
+    <p><b>1.</b> Two hotends: left is the <i>main</i> one with a direct-drive extruder inside the toolhead; right is the <i>auxiliary</i> one fed by a separate extruder on the rear panel. <b>2.</b> An actively heated chamber (up to 65 °C) lets warp-prone plastics print in a warm cabinet. <b>3.</b> The AMS 2 Pro and a filament buffer keep many colors and materials available, dry and automatically loaded.</p>
+  </div>
+
+  <h2 id="in-one-page">🧭 The X2D in one page</h2>
+  <p>Before the details, here is the whole machine on a single poster. Come back to it whenever a later page throws a number at you.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 800 560" role="img" aria-label="Infographic of the Bambu Lab X2D with ten key facts around a stylized machine: build volume, two nozzles, 300 degree nozzle, 120 degree bed, 65 degree chamber, up to 25 colors, 31 sensors, two cameras, three-stage filtration and under 50 decibels">
+      <text class="t-xl t-c" x="400" y="30">Bambu Lab X2D at a glance</text>
+      <rect class="f-teal" x="305" y="46" width="190" height="34" rx="8"/>
+      <text class="t-sm t-c t-b" x="400" y="67">AMS 2 Pro (4 slots, dryers)</text>
+      <rect class="d-surface" x="260" y="92" width="280" height="370" rx="16"/>
+      <rect class="f-blue" x="278" y="110" width="244" height="268" rx="10" opacity=".35"/>
+      <text class="t-sm t-c t-m" x="400" y="132">enclosed chamber · up to 65 °C</text>
+      <rect class="d-surface2" x="285" y="172" width="230" height="12" rx="4"/>
+      <rect class="d-surface2" x="352" y="184" width="96" height="40" rx="6"/>
+      <path class="d-metal" d="M370 224 l10 22 l10 -22 z"/>
+      <path class="d-metal" d="M410 224 l10 22 l10 -22 z"/>
+      <text class="t-xs c-blue t-c" x="380" y="262">LEFT · main</text>
+      <text class="t-xs c-orange t-c" x="420" y="276">RIGHT · aux</text>
+      <rect class="d-surface2" x="300" y="330" width="200" height="14" rx="4"/>
+      <rect class="d-plastic" x="340" y="316" width="120" height="14" rx="3"/>
+      <text class="t-xs t-c t-m" x="400" y="364">heated bed up to 120 °C</text>
+      <rect class="f-green" x="278" y="392" width="244" height="56" rx="8"/>
+      <text class="t-sm t-c t-b" x="400" y="414">G3 + H12 HEPA + carbon filtration</text>
+      <text class="t-xs t-c t-m" x="400" y="432">adaptive airflow · exhaust fan on rear</text>
+      <text class="t-sm t-c t-m" x="400" y="486">392 × 406 × 478 mm · 16.25 kg</text>
+
+      <rect class="f-orange" x="20" y="90" width="200" height="64" rx="10"/>
+      <text class="t t-b" x="34" y="116">256 × 256 × 260 mm</text><text class="t-sm" x="34" y="138">build volume (left nozzle)</text>
+      <rect class="f-blue" x="20" y="170" width="200" height="64" rx="10"/>
+      <text class="t t-b" x="34" y="196">2 hotends, 1 toolhead</text><text class="t-sm" x="34" y="218">main + auxiliary, swap by lever</text>
+      <rect class="f-red" x="20" y="250" width="200" height="64" rx="10"/>
+      <text class="t t-b" x="34" y="276">300 °C nozzle</text><text class="t-sm" x="34" y="298">hardened-steel nozzle fitted</text>
+      <rect class="f-red" x="20" y="330" width="200" height="64" rx="10"/>
+      <text class="t t-b" x="34" y="356">120 °C heatbed</text><text class="t-sm" x="34" y="378">textured PEI plate included</text>
+      <rect class="f-gray" x="20" y="410" width="200" height="64" rx="10"/>
+      <text class="t t-b" x="34" y="436">&lt; 50 dB in Silent mode</text><text class="t-sm" x="34" y="458">measured at 1 m distance</text>
+
+      <rect class="f-purple" x="580" y="90" width="200" height="64" rx="10"/>
+      <text class="t t-b" x="594" y="116">up to 25 colors</text><text class="t-sm" x="594" y="138">dual nozzle + max AMS setup</text>
+      <rect class="f-teal" x="580" y="170" width="200" height="64" rx="10"/>
+      <text class="t t-b" x="594" y="196">65 °C active chamber</text><text class="t-sm" x="594" y="218">PTC heater + circulation fan</text>
+      <rect class="f-pink" x="580" y="250" width="200" height="64" rx="10"/>
+      <text class="t t-b" x="594" y="276">2 cameras + 31 sensors</text><text class="t-sm" x="594" y="298">live view and toolhead camera</text>
+      <rect class="f-green" x="580" y="330" width="200" height="64" rx="10"/>
+      <text class="t t-b" x="594" y="356">3-stage filtration</text><text class="t-sm" x="594" y="378">particles, VOCs, odors</text>
+      <rect class="f-yellow" x="580" y="410" width="200" height="64" rx="10"/>
+      <text class="t t-b" x="594" y="436">1000 mm/s · 20 000 mm/s²</text><text class="t-sm" x="594" y="458">toolhead travel limits</text>
+
+      <path class="d-thin" d="M220 122 H262"/><path class="d-thin" d="M220 202 H262 L352 205"/><path class="d-thin" d="M220 282 H300 L372 240"/>
+      <path class="d-thin" d="M220 362 H300"/><path class="d-thin" d="M220 442 H262"/>
+      <path class="d-thin" d="M580 122 H540"/><path class="d-thin" d="M580 202 H540"/><path class="d-thin" d="M580 282 H540 L452 260"/>
+      <path class="d-thin" d="M580 362 H540 L522 420"/><path class="d-thin" d="M580 442 H540"/>
+    </svg>
+    <figcaption><b>Figure 1.</b> The X2D on one page. The machine in the middle is schematic, not to scale; the numbers around it are the ones this section keeps referring to.</figcaption>
+  </figure>
+
+  <div class="stats">
+    <div class="stat"><b>256 × 256 × 260</b><span>mm, full build volume</span></div>
+    <div class="stat"><b>300 °C</b><span>maximum nozzle temperature</span></div>
+    <div class="stat"><b>65 °C</b><span>maximum controlled chamber temperature</span></div>
+    <div class="stat"><b>120 °C</b><span>maximum heatbed temperature</span></div>
+    <div class="stat"><b>25</b><span>colors with dual nozzle and max AMS setup</span></div>
+    <div class="stat"><b>5″ · 1280×720</b><span>touchscreen</span></div>
+  </div>
+
+  <h2 id="specs">📋 Key specifications</h2>
+  <p>The table below collects the figures that Bambu Lab publishes. Where a figure depends on the nozzle you are using, the notes column says so.</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Item</th><th>Value</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Architecture</td><td>Enclosed CoreXY, dual hotend</td><td>Left = main hotend, right = auxiliary hotend</td></tr>
+      <tr><td>Build volume, left nozzle</td><td>256 × 256 × 260 mm</td><td>The full area of the printer</td></tr>
+      <tr><td>Build volume, right nozzle only</td><td>235.5 × 256 × 256 mm</td><td>Common area for both nozzles is the same 235.5 × 256 × 256 mm</td></tr>
+      <tr><td>Machine size / weight</td><td>392 × 406 × 478 mm · 16.25 kg net</td><td>Reserve about 500 × 700 × 600 mm of space around it</td></tr>
+      <tr><td>Max nozzle temperature</td><td>300 °C</td><td>Both hotends are identical in structure and can be swapped left to right</td></tr>
+      <tr><td>Max heatbed temperature</td><td>120 °C</td><td>Heating time is long at full power; a low-power mode exists for weak mains supplies</td></tr>
+      <tr><td>Chamber</td><td>Active heating, up to 65 °C</td><td>Strong-cooling mode for PLA-type plastics, heating mode for ABS/ASA/PC/PA</td></tr>
+      <tr><td>Toolhead travel limits</td><td>1000 mm/s, 20 000 mm/s²</td><td>The auxiliary extruder must stay below 200 mm/s and about 1000 mm/s²</td></tr>
+      <tr><td>Speed modes</td><td>Silent 50% · Standard 100% · Sport 124% · Ludicrous 166%</td><td>Percentages of normal speed and acceleration</td></tr>
+      <tr><td>Extruders</td><td>Main: servo (PMSM) direct drive · Aux: stepper, rear panel</td><td>Hardened-steel gears in both</td></tr>
+      <tr><td>Pre-installed nozzle</td><td>0.4 mm hardened steel</td><td>Other sizes and high-flow hotends are sold separately</td></tr>
+      <tr><td>Cameras</td><td>Live view 1920×1080 @30 fps · toolhead 1600×1200 @30 fps</td><td>Used for monitoring, timelapse, AI detection and calibration</td></tr>
+      <tr><td>Display / storage</td><td>5″ 1280×720 touchscreen · USB-A 2.0 port</td><td>No USB drive in the box; internal storage covers timelapse and printing</td></tr>
+      <tr><td>Connectivity</td><td>Wi-Fi 2.4 GHz and 5 GHz · no wired Ethernet</td><td>Cloud mode or LAN-only mode</td></tr>
+      <tr><td>Power</td><td>200–240 V version: 1600 W max · 100–120 V version: 1100 W max</td><td>Typical steady printing about 250 W (PLA) to 550 W (PC) at 25 °C ambient</td></tr>
+      <tr><td>Ambient conditions</td><td>10–30 °C, below 85% humidity</td><td>Do not push the machine against a wall</td></tr>
+      <tr><td>Included build plate</td><td>Bambu Textured PEI plate (both sides usable)</td><td>Accepts current Bambu 256 × 256 mm plates; first-generation plates are not recognized</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout info"><span class="callout-title">Two power versions, one rule</span>
+    <p>The printer is sold in a high-voltage (200–240 V) and a low-voltage (100–120 V) version, so check the label before you plug it in. If your outlet is weak, the <b>Low Power</b> setting lowers the maximum power draw by stretching the heatbed warm-up time.</p>
+  </div>
+
+  <h2 id="dual-nozzle">🔧 The dual-nozzle idea</h2>
+  <p>Think about what a normal multi-color printer must do each time the color changes: heat the nozzle, retract the old filament all the way out, feed the new one in, then <b>purge</b> (squirt out) enough plastic to wash the old color out of the melt chamber. Those purged blobs become waste, and the whole dance takes time. With two nozzles, the next color is already sitting in the second hotend. Changing color becomes “lift one nozzle, lower the other”, and the purge needed is far smaller, because the other filament was never in the nozzle you are about to use.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 340" role="img" aria-label="Schematic of the X2D toolhead with a left main hotend fed by a direct drive extruder inside the toolhead and a right auxiliary hotend fed by a stepper extruder on the rear panel through a PTFE tube; a flow blocker covers the idle nozzle">
+      <rect class="d-surface" x="20" y="20" width="720" height="300" rx="14" opacity=".5"/>
+      <text class="t-sm t-m" x="34" y="42">Rear panel (top)</text>
+      <rect class="f-orange" x="500" y="52" width="150" height="62" rx="8"/>
+      <text class="t t-c t-b" x="575" y="78">Auxiliary extruder</text>
+      <text class="t-sm t-c" x="575" y="98">stepper, strong thrust</text>
+      <path class="k-orange" d="M520 114 C520 190 440 150 420 196"/>
+      <text class="t-xs c-orange" x="548" y="150">PTFE tube (locking nut)</text>
+      <text class="t-xs c-orange" x="548" y="164">filament pushed from far away</text>
+      <rect class="d-surface2" x="250" y="170" width="220" height="86" rx="12"/>
+      <text class="t-sm t-c t-b" x="360" y="188">Toolhead</text>
+      <rect class="f-blue" x="262" y="196" width="76" height="46" rx="8"/>
+      <text class="t-xs t-c" x="300" y="215">servo</text><text class="t-xs t-c" x="300" y="229">extruder</text>
+      <path class="d-metal2" d="M285 256 l15 34 l15 -34 z"/>
+      <path class="d-metal2" d="M385 256 l15 34 l15 -34 z"/>
+      <rect class="s-gray" x="371" y="294" width="58" height="6" rx="2" opacity=".6"/>
+      <text class="t t-b c-blue t-c" x="300" y="318">LEFT · main</text>
+      <text class="t t-b c-orange t-c" x="400" y="318">RIGHT · aux</text>
+      <path class="k-blue" d="M110 120 C150 120 230 160 285 200"/>
+      <rect class="f-teal" x="34" y="92" width="150" height="56" rx="8"/>
+      <text class="t-sm t-c t-b" x="109" y="114">Filament buffer</text>
+      <text class="t-xs t-c" x="109" y="130">two channels: upper = left,</text><text class="t-xs t-c" x="109" y="142">lower = right</text>
+      <path class="k-orange" d="M184 128 C300 128 380 90 500 84"/>
+      <text class="t-xs t-m" x="34" y="190">Direct drive: extruder sits next to the hotend,</text>
+      <text class="t-xs t-m" x="34" y="204">short path, precise flow control, best detail.</text>
+      <text class="t-xs t-m" x="34" y="240">Auxiliary: long path from the rear panel keeps the</text>
+      <text class="t-xs t-m" x="34" y="254">toolhead light and the build area large; slightly</text>
+      <text class="t-xs t-m" x="34" y="268">weaker flow response, so it has speed limits.</text>
+      <rect class="f-yellow" x="560" y="200" width="170" height="100" rx="8"/>
+      <text class="t-sm t-b" x="572" y="220">Flow blocker</text>
+      <text class="t-xs" x="572" y="238">A plate under the toolhead that</text><text class="t-xs" x="572" y="251">covers the idle nozzle so it does</text><text class="t-xs" x="572" y="264">not ooze onto the print. A lever</text><text class="t-xs" x="572" y="277">and gears move it when nozzles</text><text class="t-xs" x="572" y="290">switch.</text>
+      <path class="d-thin" d="M560 262 H432"/>
+    </svg>
+    <figcaption><b>Figure 2.</b> Near and far feeding. The left hotend has its extruder inside the toolhead; the right hotend is fed by a separate extruder on the rear panel. The flow blocker shields whichever nozzle is not printing.</figcaption>
+  </figure>
+
+  <div class="callout fact"><span class="callout-title">Why not simply give each nozzle its own extruder in the toolhead?</span>
+    <p>Mass and space. Every motor in the toolhead must be accelerated with it, and every centimeter of toolhead width costs build area. By moving the second extruder’s motor to the rear panel, Bambu keeps a 256 × 256 mm plate without growing the machine footprint. The price is a longer feed path: the right nozzle needs much longer retractions, a much larger flow-dynamics K value and is limited to 200 mm/s and about 1000 mm/s². The <a href="dual-nozzle-printing.html">dual-nozzle page</a> explains the consequences in practice.</p>
+  </div>
+
+  <h3>How the nozzles switch</h3>
+  <p>There is no extra motor for it. A lever at the bottom of the toolhead taps a push block fixed to the printer’s lining; that motion is converted by a small gear train into the swing of the flow blocker and the raising or lowering of the hotends. Bambu describes this “gear-and-trigger” mechanism as tool-free, lighter than a motorized swap, and tested for more than one million switch cycles. The <a href="hardware-tour.html">hardware tour</a> shows it step by step.</p>
+
+  <h2 id="build-volume">📐 Build volume, with dimensions</h2>
+  <p>With the left (main) nozzle you can use the whole 256 × 256 × 260 mm. The right (auxiliary) nozzle cannot reach all of that. When it works, the flow blocker slides under the main hotend and the auxiliary hotend lowers, which costs 4 mm of height, and its reach in X is shorter. The result is a <b>235.5 × 256 × 256 mm</b> area that Bambu lists for the right nozzle alone and also as the area <i>common</i> to both nozzles. Any model that uses the right nozzle even once must fit inside that smaller box.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 360" role="img" aria-label="Top view of the 256 by 256 millimeter build plate with the 235.5 millimeter area reachable by the auxiliary nozzle, and a side view comparing 260 millimeter height for the left nozzle with 256 millimeter for the right nozzle">
+      <text class="t t-b" x="40" y="26">Top view (plate, mm)</text>
+      <rect class="f-blue" x="60" y="50" width="240" height="240" rx="4" opacity=".35"/>
+      <rect class="f-orange" x="79" y="50" width="221" height="240" rx="4" opacity=".55"/>
+      <rect class="d-ink" x="60" y="50" width="240" height="240" rx="4"/>
+      <path class="d-dash" d="M79 50 V290"/>
+      <path class="d-ink arrow arrow-start" d="M60 318 H300"/>
+      <text class="t t-c t-b" x="180" y="340">256 mm (left nozzle)</text>
+      <path class="d-ink arrow arrow-start" d="M79 304 H300"/>
+      <text class="t-xs t-c" x="190" y="300">235.5 mm (right nozzle)</text>
+      <path class="d-ink arrow arrow-start" d="M38 50 V290"/>
+      <text class="t t-b" x="14" y="175" transform="rotate(-90 14 175)">256 mm</text>
+      <text class="t-xs c-blue t-c" x="69" y="172" transform="rotate(-90 69 172)">~20.5 mm: left nozzle only</text>
+      <text class="t-sm t-c t-b" x="190" y="170">common area</text>
+      <text class="t-xs t-c" x="190" y="188">235.5 × 256 mm</text>
+      <text class="t-xs t-c t-m" x="180" y="268">front</text>
+
+      <text class="t t-b" x="430" y="26">Side view (height, mm)</text>
+      <rect class="f-blue" x="450" y="56" width="120" height="234" rx="4" opacity=".4"/>
+      <rect class="f-orange" x="610" y="60" width="120" height="230" rx="4" opacity=".5"/>
+      <path class="d-ink" d="M440 290 H740"/>
+      <path class="d-ink arrow arrow-start" d="M436 56 V290"/>
+      <text class="t t-b" x="420" y="176" transform="rotate(-90 420 176)">260 mm</text>
+      <path class="d-ink arrow arrow-start" d="M744 60 V290"/>
+      <text class="t t-b" x="768" y="176" transform="rotate(-90 768 176)">256 mm</text>
+      <text class="t-sm t-c t-b" x="510" y="170">LEFT · main</text>
+      <text class="t-sm t-c t-b" x="670" y="170">RIGHT · aux</text>
+      <text class="t-xs t-c" x="510" y="188">full height</text>
+      <text class="t-xs t-c" x="670" y="188">4 mm lower</text>
+      <text class="t-xs t-c t-m" x="590" y="318">flow blocker moves below the main hotend</text>
+      <text class="t-xs t-c t-m" x="590" y="334">and the aux hotend lowers → 4 mm less height</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> Build volume by nozzle. The 20.5 mm difference in width (256 − 235.5) is derived from Bambu’s figures; the strip it removes is expected to be on the left side of the plate for the right nozzle, so confirm the shaded area in Bambu Studio’s plate preview before you place parts near an edge.</figcaption>
+  </figure>
+
+  <div class="callout tip"><span class="callout-title">Planning rule</span>
+    <p>If a model needs both nozzles, keep it inside 235.5 × 256 × 256 mm. If it is a single-material part, let the left nozzle have the whole plate. Large single-color parts on the left nozzle are never penalized by the second hotend.</p>
+  </div>
+
+  <h2 id="motion">🚀 Motion, speed and the toolhead</h2>
+  <p>The X2D moves its toolhead on a CoreXY gantry driven by two stepper motors. The X axis is a hollow steel rod rather than a carbon rod. The bed is raised and lowered by <b>three lead screws</b> (front left, front right, rear middle) that a single Z motor turns through a belt, supported by linear rods. A spring-loaded, semi-automatic belt tensioner at the upper rear helps keep belt tension right. Two circuit boards share the work: an <b>AP board</b> with a quad-core processor handles the AI features, flow calibration, vibration compensation and connectivity, and an <b>MC board</b> with a dual-MCU design drives the motors, reads the bed temperature and door sensor and controls airflow.</p>
+  <p>The printer offers four <b>speed modes</b>: Silent (50%), Standard (100%), Sport (124%) and Ludicrous (166%). These scale the whole motion profile; they do not change what the plastic can physically do. The toolhead itself can travel at up to 1000 mm/s and accelerate at up to 20 000 mm/s², but the melting rate of the hotend is the real limit for most prints. Silent mode is the one for which Bambu quotes a noise level below 50 dB at one meter.</p>
+
+  <div class="callout warn"><span class="callout-title">Speed is not a quality setting</span>
+    <p>High acceleration does not make a print better. It is a headroom number. Faster modes can also reduce quality on small, detailed parts and raise power draw. Treat Sport and Ludicrous as tools for prototypes, not as the default for everything. See <a href="../techniques/speed-cooling-quality.html">Speed, cooling &amp; quality</a> for the principles.</p>
+  </div>
+
+  <h2 id="chamber">🌡️ The heated chamber</h2>
+  <p>Many strong plastics (ABS, ASA, PC, nylon) shrink as they cool. If the part cools unevenly, the lower layers pull on the upper ones and the part <b>warps</b> or cracks between layers. A warm, steady chamber reduces the temperature difference. Earlier closed printers only <i>trapped</i> heat from the bed; the X2D <b>actively heats</b> the chamber up to <b>65 °C</b> with a PTC heating wire and a circulation fan on the left side. When the target is reached the fan drops to about 40% to hold the temperature. To get the bed out of the way of the vent during chamber heating, the printer lowers the bed (to about Z160) while it warms up.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 340" role="img" aria-label="Two panels showing the airflow in cooling mode for PLA and in heating mode for ABS, ASA, PC and nylon: in cooling mode outside air is drawn in by the right fan and exhausted at the rear; in heating mode the left heating fan and the right filtration fan recirculate air inside the chamber through the filter">
+      <rect class="d-surface" x="20" y="40" width="350" height="260" rx="12"/>
+      <text class="t-lg t-c" x="195" y="30">Strong cooling mode</text>
+      <rect class="f-blue" x="40" y="64" width="310" height="190" rx="8" opacity=".25"/>
+      <rect class="d-plastic" x="140" y="200" width="110" height="40" rx="4"/>
+      <rect class="d-surface2" x="150" y="150" width="90" height="26" rx="6"/>
+      <path class="k-blue arrow" d="M370 120 H300 L252 168"/>
+      <text class="t-xs c-blue" x="278" y="112">outside air in</text>
+      <path class="k-blue arrow" d="M120 170 H60 V60"/>
+      <path class="k-orange arrow" d="M195 76 V52"/>
+      <text class="t-xs t-c" x="195" y="274">PLA, TPU: part-cooling fans left and right,</text>
+      <text class="t-xs t-c" x="195" y="288">right fan draws external air, rear fan exhausts</text>
+      <text class="t-xs c-orange" x="205" y="62">exhaust</text>
+
+      <rect class="d-surface" x="410" y="40" width="350" height="260" rx="12"/>
+      <text class="t-lg t-c" x="585" y="30">Heating mode</text>
+      <rect class="f-orange" x="430" y="64" width="310" height="190" rx="8" opacity=".3"/>
+      <rect class="d-plastic" x="530" y="200" width="110" height="40" rx="4"/>
+      <rect class="d-surface2" x="540" y="150" width="90" height="26" rx="6"/>
+      <rect class="s-red" x="436" y="100" width="14" height="70" rx="3" opacity=".8"/>
+      <text class="t-xs t-w" x="443" y="140" transform="rotate(-90 443 140)">PTC</text>
+      <rect class="f-green" x="716" y="100" width="18" height="70" rx="3"/>
+      <path class="k-red arrow" d="M458 110 C500 80 600 80 700 118"/>
+      <path class="k-orange arrow" d="M700 150 C640 190 520 190 462 156"/>
+      <text class="t-xs t-c" x="585" y="274">ABS, ASA, PC, PA: left heating fan + right fan</text>
+      <text class="t-xs t-c" x="585" y="288">recirculate chamber air through the filter</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> The adaptive airflow system has two personalities. Cooling mode favors fresh air on the part; heating mode keeps the air circulating and warm. The printer chooses by material, and the chamber heater is only needed for the second mode.</figcaption>
+  </figure>
+
+  <div class="callout x2d"><span class="callout-title">How warm should the chamber really be?</span>
+    <p>65 °C is the ceiling, not the recommendation for every plastic. Bambu’s own guidance for fast-softening materials such as PLA and TPU is to <b>not</b> use chamber heating. Typically the chamber is only needed for materials prone to warping and the actual target depends on the material profile. Pre-heating the chamber has a time cost: with the bed at 90 °C or higher, Bambu’s troubleshooting guide suggests about 30 minutes of preheat to bring the chamber above 50 °C before printing a first-layer-sensitive material.</p>
+  </div>
+
+  <h3>The chamber also protects</h3>
+  <ul>
+    <li><b>Idle Heating Protection</b> turns heaters off after 5 minutes if the printer is left idle while hot.</li>
+    <li><b>Open Door Detection</b> notices if the door is opened during a print.</li>
+    <li>A chamber thermistor and the door sensor feed the same safety logic that decides fan speeds and warnings.</li>
+  </ul>
+
+  <h2 id="filtration">🌬️ Filtration and air handling</h2>
+  <p>Printing releases tiny particles and volatile gases, especially from ABS, ASA, PC and nylon. Bambu’s specification for the X2D lists a three-stage filter: a <b>G3</b> coarse filter, an <b>H12 HEPA</b> fine-particle filter and a <b>coconut-shell activated carbon</b> layer that adsorbs odors and gases. In heating mode the right-hand filtration fan pulls chamber air through that filter and back into the chamber. After a print, the <b>Purify Air at Print End</b> option can run the exhaust fan to clear the chamber, and an optional vent pipe can lead exhaust outdoors.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 260" role="img" aria-label="Three-stage filter stack: G3 pre-filter for coarse dust, H12 HEPA filter for fine particles and activated carbon for odors and VOCs, with air flowing through left to right">
+      <text class="t-lg" x="30" y="30">Three layers, three jobs</text>
+      <rect class="f-gray" x="60" y="60" width="110" height="140" rx="8"/>
+      <text class="t t-b t-c" x="115" y="116">G3</text><text class="t-xs t-c" x="115" y="136">coarse dust</text><text class="t-xs t-c" x="115" y="150">pre-filter</text>
+      <rect class="f-blue" x="230" y="60" width="110" height="140" rx="8"/>
+      <text class="t t-b t-c" x="285" y="116">H12 HEPA</text><text class="t-xs t-c" x="285" y="136">ultrafine</text><text class="t-xs t-c" x="285" y="150">particles</text>
+      <rect class="f-teal" x="400" y="60" width="110" height="140" rx="8"/>
+      <text class="t t-b t-c" x="455" y="116">Carbon</text><text class="t-xs t-c" x="455" y="136">odors, VOCs</text><text class="t-xs t-c" x="455" y="150">coconut shell</text>
+      <path class="k-orange arrow" d="M20 130 H56"/><path class="k-orange arrow" d="M170 130 H226"/><path class="k-orange arrow" d="M340 130 H396"/><path class="k-green arrow" d="M510 130 H560"/>
+      <text class="t-sm c-orange" x="20" y="116">dirty air</text>
+      <text class="t-sm c-green" x="566" y="134">cleaner air</text>
+      <rect class="d-surface2" x="60" y="216" width="450" height="24" rx="6"/>
+      <text class="t-xs t-c" x="285" y="232">replace the carbon element when heavily contaminated (side locking tab)</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> The filter stack as Bambu describes it. A filter reduces what escapes into the room; it does not make fume-heavy materials safe in a closed bedroom. Ventilation guidance is in <a href="../foundations/safety-and-workspace.html">Safety &amp; workspace</a>.</figcaption>
+  </figure>
+
+  <div class="callout danger"><span class="callout-title">Do not skip ventilation reality</span>
+    <p>Filtration lowers exposure; it does not remove it. Place the printer in a ventilated room, away from where you sleep, and never block the rear exhaust fan, the purge chute or the side intakes. Bambu’s placement guide asks for roughly 500 × 700 × 600 mm of free space.</p>
+  </div>
+
+  <h2 id="cameras">📷 Cameras, AI detection and sensors</h2>
+  <p>The X2D has two cameras. The <b>live-view camera</b> (1920 × 1080 at 30 fps) sits in a chamber corner and feeds the app, timelapse and AI detection. The <b>toolhead camera</b> (1600 × 1200 at 30 fps) looks at the work area from the toolhead and is used for nozzle offset calibration, motion-accuracy checks and plate alignment. The brief for this compendium counts <b>31 sensors</b> in total, among them filament runout and tangle sensors, a door sensor, chamber and bed temperature sensing, the eddy-current sensor for leveling and the foreign-object detection under the bed.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 360" role="img" aria-label="Map of what the camera system and sensors watch: spaghetti detection, purge chute pile-up, nozzle clumping, part displacement, foreign objects, plate type and alignment, camera dirt, filament runout, tangle, door, chamber temperature">
+      <rect class="d-surface" x="250" y="110" width="280" height="140" rx="14"/>
+      <text class="t-lg t-c" x="390" y="150">X2D chamber</text>
+      <rect class="f-pink" x="270" y="170" width="110" height="64" rx="8"/><text class="t-sm t-c t-b" x="325" y="196">Live-view</text><text class="t-sm t-c t-b" x="325" y="212">camera</text><text class="t-xs t-c" x="325" y="226">1080p · 30 fps</text>
+      <rect class="f-purple" x="400" y="170" width="110" height="64" rx="8"/><text class="t-sm t-c t-b" x="455" y="196">Toolhead</text><text class="t-sm t-c t-b" x="455" y="212">camera</text><text class="t-xs t-c" x="455" y="226">1600×1200 · 30 fps</text>
+      <rect class="f-red" x="20" y="30" width="200" height="40" rx="8"/><text class="t-sm t-c" x="120" y="55">Spaghetti detection</text>
+      <rect class="f-red" x="20" y="90" width="200" height="40" rx="8"/><text class="t-sm t-c" x="120" y="115">Purge-chute pile-up</text>
+      <rect class="f-red" x="20" y="150" width="200" height="40" rx="8"/><text class="t-sm t-c" x="120" y="175">Nozzle clumping</text>
+      <rect class="f-red" x="20" y="210" width="200" height="40" rx="8"/><text class="t-sm t-c" x="120" y="235">Part displacement</text>
+      <rect class="f-red" x="20" y="270" width="200" height="40" rx="8"/><text class="t-sm t-c" x="120" y="295">Foreign object on bed</text>
+      <rect class="f-blue" x="560" y="30" width="200" height="40" rx="8"/><text class="t-sm t-c" x="660" y="55">Plate type and alignment</text>
+      <rect class="f-blue" x="560" y="90" width="200" height="40" rx="8"/><text class="t-sm t-c" x="660" y="115">Camera dirt / obstruction</text>
+      <rect class="f-green" x="560" y="150" width="200" height="40" rx="8"/><text class="t-sm t-c" x="660" y="175">Filament runout + tangle</text>
+      <rect class="f-green" x="560" y="210" width="200" height="40" rx="8"/><text class="t-sm t-c" x="660" y="235">Door open · chamber temp</text>
+      <rect class="f-green" x="560" y="270" width="200" height="40" rx="8"/><text class="t-sm t-c" x="660" y="295">Nozzle offset calibration</text>
+      <path class="d-thin" d="M220 50 L280 170"/><path class="d-thin" d="M220 110 L290 172"/><path class="d-thin" d="M220 170 H270"/><path class="d-thin" d="M220 230 L270 215"/><path class="d-thin" d="M220 290 L300 232"/>
+      <path class="d-thin" d="M560 50 L480 170"/><path class="d-thin" d="M560 110 L500 172"/><path class="d-thin" d="M560 290 L500 230"/>
+      <text class="t-xs t-m t-c" x="390" y="340">Red = AI detections · blue = alignment and hygiene · green = sensing and calibration</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> What the cameras and sensors look for. Detection runs on a dedicated on-device AI processor; sensitivity (High, Medium, Low) can be set, and Low is typically used for long unattended runs.</figcaption>
+  </figure>
+
+  <div class="callout x2d"><span class="callout-title">Details worth knowing</span>
+    <ul>
+      <li>Nozzle clumping (a blob building on the tip) is checked every 60–120 seconds and flagged after two consecutive hits.</li>
+      <li>Foreign-object detection looks for items larger than about 5 × 3 × 0.1 cm and has a blind spot of about 6 × 6 cm near the camera.</li>
+      <li>Spaghetti detection needs the chamber light on, because the camera cannot see well in the dark.</li>
+      <li>The Vision Encoder accessory, sold separately, enables the motion-accuracy calibration.</li>
+    </ul>
+  </div>
+
+  <h2 id="ecosystem">🧩 The ecosystem map</h2>
+  <p>The printer is the hub of a small system. Each part has a distinct job: the <b>AMS 2 Pro</b> stores and dries spools; the <b>filament buffer</b> sits between the AMS and the machine and absorbs the tug of loading; <b>Bambu Studio</b> (desktop slicer) prepares the plate; <b>Bambu Handy</b> (mobile app) watches and controls the print; and <b>MakerWorld</b> is Bambu’s model-sharing site, from which plates open directly in the slicer. Details of every piece follow in their own pages.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 800 400" role="img" aria-label="Ecosystem map: X2D printer in the center, connected to the filament buffer, AMS 2 Pro units, an external spool holder, optional filament track switch, Bambu Studio, Bambu Handy and MakerWorld">
+      <rect class="f-red" x="310" y="150" width="180" height="100" rx="14"/>
+      <text class="t-lg t-c" x="400" y="190">X2D</text><text class="t-sm t-c" x="400" y="212">dual-nozzle printer</text><text class="t-xs t-c" x="400" y="228">touchscreen · cameras</text>
+      <rect class="f-teal" x="30" y="40" width="180" height="70" rx="10"/><text class="t t-b t-c" x="120" y="70">AMS 2 Pro (A)</text><text class="t-xs t-c" x="120" y="90">4 slots · dryers</text>
+      <rect class="f-teal" x="30" y="130" width="180" height="70" rx="10" opacity=".7"/><text class="t t-b t-c" x="120" y="160">AMS 2 Pro / HT (B…)</text><text class="t-xs t-c" x="120" y="180">daisy-chained via 6-pin</text>
+      <rect class="f-yellow" x="30" y="240" width="180" height="60" rx="10"/><text class="t t-b t-c" x="120" y="266">External spool</text><text class="t-xs t-c" x="120" y="284">flexibles, specials</text>
+      <rect class="f-purple" x="250" y="300" width="130" height="64" rx="10"/><text class="t-sm t-b t-c" x="315" y="326">Filament buffer</text><text class="t-xs t-c" x="315" y="344">2 inlets · 2 ports</text>
+      <rect class="f-gray" x="420" y="300" width="150" height="64" rx="10"/><text class="t-sm t-b t-c" x="495" y="326">Track switch</text><text class="t-xs t-c" x="495" y="344">optional · sold separately</text>
+      <rect class="f-blue" x="590" y="40" width="180" height="70" rx="10"/><text class="t t-b t-c" x="680" y="70">Bambu Studio</text><text class="t-xs t-c" x="680" y="90">slice · assign nozzles</text>
+      <rect class="f-blue" x="590" y="130" width="180" height="70" rx="10"/><text class="t t-b t-c" x="680" y="160">Bambu Handy</text><text class="t-xs t-c" x="680" y="180">monitor · bind · control</text>
+      <rect class="f-green" x="590" y="240" width="180" height="70" rx="10"/><text class="t t-b t-c" x="680" y="270">MakerWorld</text><text class="t-xs t-c" x="680" y="290">models and profiles</text>
+      <path class="k-teal" d="M210 75 C260 75 280 290 300 300"/><path class="k-teal" d="M210 165 C250 200 280 270 290 300"/><path class="k-yellow" d="M210 270 L310 230"/>
+      <path class="k-purple arrow" d="M345 300 L360 250"/><path class="k-purple arrow" d="M370 300 L400 250"/>
+      <path class="d-dash" d="M380 332 H420"/>
+      <path class="d-dash arrow" d="M590 75 L490 170"/><path class="d-dash arrow" d="M590 165 L490 200"/><path class="d-dash" d="M680 240 V110"/>
+      <text class="t-xs t-m" x="500" y="120">Wi-Fi / LAN</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> The X2D ecosystem. Solid lines are filament paths and cables; dashed lines are data and control links. A track switch (optional) lets any AMS feed either nozzle; without it each AMS is tied to one side.</figcaption>
+  </figure>
+
+  <h2 id="ams">🧵 The AMS 2 Pro and what it adds</h2>
+  <p>The <b>AMS 2 Pro</b> is a four-slot spool cabinet. Each slot has its own feeder motor and gears, and the filaments merge in a rear hub. What makes it a “Pro” is <b>drying</b>: two heater-and-fan modules can warm the spools up to <b>65 °C</b> (reached only if the room is at least 25 °C), with a humidity sensor, active vents and a color-changing desiccant for storage. RFID coils read Bambu’s tagged spools so the machine knows the material and an estimate of what remains. The full guide is on the <a href="ams-2-pro.html">AMS 2 Pro page</a>.</p>
+  <div class="grid cols-3">
+    <div class="card accent-teal"><span class="ico">📦</span><h3>Four slots per unit</h3><p>Up to four AMS 2 Pro and eight AMS HT can be combined, for 12 units and 24 slots. With one external spool, that gives the “up to 25 colors” in the specification.</p></div>
+    <div class="card accent-orange"><span class="ico">♨️</span><h3>Built-in drying</h3><p>Dry filament in place, up to 65 °C. Drying needs the 6-pin connection; it cannot run standalone.</p></div>
+    <div class="card accent-purple"><span class="ico">🏷️</span><h3>RFID and sensors</h3><p>Two RFID coils, a humidity sensor and hall sensors tell the printer which spool is where and when something jams.</p></div>
+  </div>
+
+  <h2 id="whats-new">🆕 What is new versus earlier Bambu printers</h2>
+  <p>Bambu’s own comparison is with the X1 series, so that is what we can state with confidence. The X1 family can be considered the reference “closed, camera-equipped, multi-color” machine; the X2D adds the following.</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Area</th><th>X1 Carbon (reference)</th><th>X2D</th></tr></thead>
+    <tbody>
+      <tr><td>Nozzles</td><td>One</td><td>Two (main + auxiliary), swap-by-lever</td></tr>
+      <tr><td>Max colors</td><td>16 with AMS units</td><td>Up to 25 with dual-nozzle and a maximum AMS setup</td></tr>
+      <tr><td>Chamber</td><td>Passive heat from the bed</td><td>Active heating up to 65 °C</td></tr>
+      <tr><td>Tangle detection</td><td>Not featured</td><td>Servo extruder + buffer detect filament tangles</td></tr>
+      <tr><td>Cameras and AI</td><td>Chamber camera</td><td>Live-view and toolhead cameras, extended AI detections</td></tr>
+      <tr><td>Calibration</td><td>Standard set</td><td>Adds motion-accuracy calibration with the optional Vision Encoder</td></tr>
+      <tr><td>Drying</td><td>External dryer or AMS-style tricks</td><td>AMS 2 Pro with built-in drying</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout warn"><span class="callout-title">Upgrade path</span>
+    <p>The X1 series cannot be converted into an X2D. Some small parts are compatible with the P2S, such as the top glass cover, the nozzle wiping pad, extruder gears, and the hotend with its silicone sock, according to Bambu’s FAQ. Whether other Bambu printers share parts is not stated here, so check the wiki.</p>
+  </div>
+
+  <h3>What changed through firmware</h3>
+  <p>The X2D has already been through several firmware releases. Release 01.01.00.00 (April 2026) introduced the filament track switch, “print while drying”, remote drying, the high-flow hotend, local timelapse, curve planning, first-layer calibration, PIN-code binding and a low-power mode, among others. 01.01.01.00 (May 2026) refined Z noise and AMS 2 Pro drying, and 01.02.00.00 (July 2026) added motors-off while drying in the chamber, better spaghetti detection and removed the need for live-view camera calibration. Treat this as a hint that features may still be arriving; always update before you start diagnosing odd behavior.</p>
+
+  <h2 id="capability">📊 Capability matrix by material class</h2>
+  <p>This is the 30-second view. It rolls the detailed compatibility tables into material families, so exceptions exist inside each row. The <a href="filament-compatibility.html">filament compatibility page</a> shows the detail and the caveats.</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Material class</th><th>Main (left)</th><th>Aux (right)</th><th>AMS 2 Pro</th><th>Chamber heating</th></tr></thead>
+    <tbody>
+      <tr><td>PLA (basic, matte, tough…)</td><td><span class="chip green">Yes</span></td><td><span class="chip green">Yes</span></td><td><span class="chip green">Yes</span></td><td><span class="chip">Not wanted</span></td></tr>
+      <tr><td>PLA Silk · PLA Aero</td><td><span class="chip yellow">Check size</span></td><td><span class="chip red">Silk: avoid · Aero: no</span></td><td><span class="chip yellow">Check</span></td><td><span class="chip">Not wanted</span></td></tr>
+      <tr><td>PETG</td><td><span class="chip green">Yes</span></td><td><span class="chip yellow">Caution</span></td><td><span class="chip green">Yes</span></td><td><span class="chip">Optional</span></td></tr>
+      <tr><td>ABS / ASA</td><td><span class="chip green">Yes</span></td><td><span class="chip yellow">Caution</span></td><td><span class="chip green">Yes</span></td><td><span class="chip teal">Typical use</span></td></tr>
+      <tr><td>PC</td><td><span class="chip green">Yes (≥0.4 mm)</span></td><td><span class="chip green">Yes (≥0.4 mm)</span></td><td><span class="chip yellow">Check</span></td><td><span class="chip teal">Typical use</span></td></tr>
+      <tr><td>Nylon (PA) and CF/GF nylons</td><td><span class="chip green">Yes</span></td><td><span class="chip yellow">Varies</span></td><td><span class="chip yellow">Check</span></td><td><span class="chip teal">Typical use</span></td></tr>
+      <tr><td>Carbon- and glass-fiber blends</td><td><span class="chip green">Hardened nozzle fitted</span></td><td><span class="chip yellow">Varies</span></td><td><span class="chip yellow">Official only advised</span></td><td><span class="chip">Per material</span></td></tr>
+      <tr><td>TPU (flexibles)</td><td><span class="chip green">Yes</span></td><td><span class="chip red">No</span></td><td><span class="chip yellow">“TPU for AMS” only</span></td><td><span class="chip">Off</span></td></tr>
+      <tr><td>Support materials (PVA, PLA/PETG, ABS, PA/PET)</td><td><span class="chip green">Yes</span></td><td><span class="chip yellow">Mostly yes</span></td><td><span class="chip yellow">PVA: avoid moisture</span></td><td><span class="chip">Per material</span></td></tr>
+      <tr><td>PPS-CF</td><td><span class="chip red">Unavailable</span></td><td><span class="chip red">Unavailable</span></td><td><span class="chip red">–</span></td><td><span class="chip red">–</span></td></tr>
+    </tbody>
+  </table></div>
+  <p>The chips follow a simple rule: green means Bambu lists it as available, yellow means a restriction or a nozzle-size dependency, red means not supported or not available. Treat the “typical” words as practical guidance rather than an official rating, and verify exact rows on the <a href="https://wiki.bambulab.com">Bambu Lab wiki</a>.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 780 330" role="img" aria-label="Bar-style comparison of what each nozzle is best used for: main nozzle for detail, flexibles and fiber blends; auxiliary nozzle for supports, second color and lower-demand features">
+      <text class="t-lg" x="30" y="30">Which nozzle for which job</text>
+      <rect class="f-blue" x="30" y="50" width="340" height="250" rx="12"/>
+      <text class="t-lg c-blue t-c" x="200" y="82">LEFT · main</text>
+      <text class="t-sm" x="50" y="112">• Visible surfaces and fine detail</text>
+      <text class="t-sm" x="50" y="134">• Flexibles (TPU is main-only)</text>
+      <text class="t-sm" x="50" y="156">• Fiber-filled engineering plastics</text>
+      <text class="t-sm" x="50" y="178">• Full 256 × 256 × 260 mm area</text>
+      <text class="t-sm" x="50" y="200">• Automatic flow-dynamics calibration</text>
+      <text class="t-sm" x="50" y="222">• Speeds beyond 200 mm/s</text>
+      <text class="t-xs t-m" x="50" y="262">Built-in models are pre-sliced for this nozzle only.</text>
+      <rect class="f-orange" x="410" y="50" width="340" height="250" rx="12"/>
+      <text class="t-lg c-orange t-c" x="580" y="82">RIGHT · auxiliary</text>
+      <text class="t-sm" x="430" y="112">• Support structures and interfaces</text>
+      <text class="t-sm" x="430" y="134">• A second color or material</text>
+      <text class="t-sm" x="430" y="156">• Parts where fine detail is secondary</text>
+      <text class="t-sm" x="430" y="178">• Within 235.5 × 256 × 256 mm</text>
+      <text class="t-sm" x="430" y="200">• Max 200 mm/s, about 1000 mm/s²</text>
+      <text class="t-sm" x="430" y="222">• Flow dynamics set manually</text>
+      <text class="t-xs t-m" x="430" y="262">Remote extrusion gives slightly weaker detail.</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> A starter rule of thumb. The slicer can assign nozzles automatically, but knowing the logic helps you override it sensibly.</figcaption>
+  </figure>
+
+  <h2 id="who">🎯 Who should buy it, and who should skip it</h2>
+  <div class="pros-cons">
+    <div class="pros"><h4>The X2D suits you if…</h4><ul>
+      <li>You print multi-color or multi-material parts often and want less purge waste than a single-nozzle system.</li>
+      <li>You print engineering plastics (ABS, ASA, PC, nylon, fiber blends) and want an actively heated chamber.</li>
+      <li>You want supports in a different material that peel away cleanly, without swapping filaments.</li>
+      <li>You value cameras, AI failure detection and long unattended prints.</li>
+      <li>You print TPU on the main nozzle with an external spool or the Feed Assist solution.</li>
+    </ul></div>
+    <div class="cons"><h4>Think twice if…</h4><ul>
+      <li>You mostly print single-color PLA; a simpler printer will do the same job.</li>
+      <li>You need a large build plate; the plate is 256 × 256 mm and the right nozzle gives less.</li>
+      <li>You cannot give the machine ventilation and the 500 × 700 × 600 mm of clearance.</li>
+      <li>You want to print TPU or very soft materials through the second nozzle; this is not supported.</li>
+      <li>You dislike a heavy, networked product: Wi-Fi only, no wired network, and cloud or LAN mode.</li>
+    </ul></div>
+  </div>
+
+  <h2 id="learning-path">🗺️ Learning path through this section</h2>
+  <p>The X2D section follows the order in which you will meet things. Read the first four pages before you unbox, and the rest as soon as you have printed a few models.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 800 330" role="img" aria-label="Learning path: overview, hardware tour, AMS 2 Pro, setup and first print, dual-nozzle printing, filament compatibility, then settings and profiles, engineering and chamber, TPU, maintenance and recipes">
+      <path class="d-grid" d="M40 165 H760"/>
+      <circle class="s-red" cx="70" cy="110" r="22"/><text class="t-sm t-w t-c t-b" x="70" y="115">1</text><text class="t-sm t-c t-b" x="70" y="156">Overview</text><text class="t-xs t-c t-m" x="70" y="172">you are here</text>
+      <circle class="s-blue" cx="190" cy="110" r="22"/><text class="t-sm t-w t-c t-b" x="190" y="115">2</text><text class="t-sm t-c t-b" x="190" y="156">Hardware</text><text class="t-xs t-c t-m" x="190" y="172">tour</text>
+      <circle class="s-teal" cx="310" cy="110" r="22"/><text class="t-sm t-w t-c t-b" x="310" y="115">3</text><text class="t-sm t-c t-b" x="310" y="156">AMS 2 Pro</text>
+      <circle class="s-green" cx="430" cy="110" r="22"/><text class="t-sm t-w t-c t-b" x="430" y="115">4</text><text class="t-sm t-c t-b" x="430" y="156">Setup &amp;</text><text class="t-xs t-c t-m" x="430" y="172">first print</text>
+      <circle class="s-orange" cx="550" cy="110" r="22"/><text class="t-sm t-w t-c t-b" x="550" y="115">5</text><text class="t-sm t-c t-b" x="550" y="156">Dual-nozzle</text><text class="t-xs t-c t-m" x="550" y="172">printing</text>
+      <circle class="s-purple" cx="670" cy="110" r="22"/><text class="t-sm t-w t-c t-b" x="670" y="115">6</text><text class="t-sm t-c t-b" x="670" y="156">Filament</text><text class="t-xs t-c t-m" x="670" y="172">compatibility</text>
+      <path class="d-ink arrow" d="M94 110 H164"/><path class="d-ink arrow" d="M214 110 H284"/><path class="d-ink arrow" d="M334 110 H404"/><path class="d-ink arrow" d="M454 110 H524"/><path class="d-ink arrow" d="M574 110 H644"/>
+      <text class="t-sm t-b" x="40" y="214">Then, as you gain experience:</text>
+      <rect class="f-gray" x="40" y="230" width="140" height="50" rx="8"/><text class="t-xs t-c" x="110" y="260">Settings &amp; profiles</text>
+      <rect class="f-gray" x="195" y="230" width="140" height="50" rx="8"/><text class="t-xs t-c" x="265" y="260">Engineering &amp; chamber</text>
+      <rect class="f-gray" x="350" y="230" width="140" height="50" rx="8"/><text class="t-xs t-c" x="420" y="260">TPU &amp; flexibles</text>
+      <rect class="f-gray" x="505" y="230" width="140" height="50" rx="8"/><text class="t-xs t-c" x="575" y="260">Maintenance</text>
+      <rect class="f-gray" x="660" y="230" width="100" height="50" rx="8"/><text class="t-xs t-c" x="710" y="260">Recipes</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> The suggested reading order. The bottom row is reference material to open when you need it.</figcaption>
+  </figure>
+
+  <div class="grid cols-3">
+    <a class="card accent-blue" href="hardware-tour.html"><span class="ico">🔩</span><h3>Hardware tour</h3><p>Annotated drawings of every major part and the nozzle-swap mechanism.</p></a>
+    <a class="card accent-teal" href="ams-2-pro.html"><span class="ico">🧵</span><h3>AMS 2 Pro</h3><p>Slots, drying, routing, errors and capacity planning.</p></a>
+    <a class="card accent-green" href="setup-and-first-print.html"><span class="ico">🚀</span><h3>Setup &amp; first print</h3><p>From the box to your first successful model, with a day-1 checklist.</p></a>
+    <a class="card accent-orange" href="dual-nozzle-printing.html"><span class="ico">🎛️</span><h3>Dual-nozzle printing</h3><p>Assignment, switching, strategies and failure modes.</p></a>
+    <a class="card accent-purple" href="filament-compatibility.html"><span class="ico">🧪</span><h3>Filament compatibility</h3><p>Which plastics run on which nozzle, with a decision flowchart.</p></a>
+    <a class="card accent-red" href="settings-and-profiles.html"><span class="ico">⚙️</span><h3>Settings &amp; profiles</h3><p>Tuning the machine and the slicer for the X2D.</p></a>
+  </div>
+
+  <div class="callout x2d"><span class="callout-title">Next steps</span>
+    <p>If the printer is already on your desk, jump to <a href="setup-and-first-print.html">Setup &amp; first print</a>. If you are still deciding, read the <a href="filament-compatibility.html">compatibility page</a> next, because the materials you want to print are the best test of whether this machine fits. Practice tasks are in the <a href="../exercises/x2d-challenges.html">X2D challenges</a>.</p>
+  </div>
+
+  <h2 id="takeaways">✅ Key takeaways</h2>
+  <ul>
+    <li>The X2D is an enclosed CoreXY printer with <b>two hotends</b>: left is the main, direct-drive nozzle; right is the auxiliary, remote-fed nozzle.</li>
+    <li>The <b>build volume is 256 × 256 × 260 mm</b> for the left nozzle; anything using the right nozzle must fit inside <b>235.5 × 256 × 256 mm</b>.</li>
+    <li>The auxiliary nozzle runs at up to <b>200 mm/s and about 1000 mm/s²</b>, needs more retraction and its own manual flow-dynamics calibration, and <b>cannot print TPU</b>.</li>
+    <li>The chamber heats actively to <b>65 °C</b>; use it for warp-prone engineering plastics, not for PLA or TPU.</li>
+    <li>The <b>AMS 2 Pro</b> adds feeding, RFID, a humidity sensor and drying up to 65 °C; up to 25 colors are possible with the maximum set-up.</li>
+    <li>Cameras and sensors provide AI failure detection, but they are a safety net, not a substitute for good first layers and a sensible location for the printer.</li>
+    <li>Firmware moves quickly: update, read the release notes and consult the Bambu wiki when a limit matters.</li>
+  </ul>
+
+</main>
+</body>
+</html>

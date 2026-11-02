@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Printing processes compared · 3D Printing Compendium</title>
+  <meta name="description" content="FDM/FFF, resin (SLA, MSLA, DLP), SLS, MJF, PolyJet, binder jetting, metal processes, CLIP, volumetric, pellet and concrete printing compared with schematics, a decision tree, cost and safety notes.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+</head>
+<body data-page="foundations/printing-processes.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 1 · Foundations</div>
+    <h1>Printing processes compared</h1>
+    <p class="lead">Melting plastic through a nozzle is only one way to build in layers. This page tours every major process, shows how each one works, compares them on detail, strength, cost, safety and post-processing, and helps you choose the right one for a given part.</p>
+    <div class="meta"><span class="badge beginner">Beginner</span><span class="badge intermediate">Intermediate depth</span><span class="badge time">⏱ 40 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <ul>
+      <li>How FDM, resin, powder-bed, jetting, binder and metal processes actually create a layer.</li>
+      <li>Which process delivers fine detail, which delivers strength, and which delivers low cost.</li>
+      <li>What post-processing and safety each process demands in practice.</li>
+      <li>How to choose a process for a given part with a simple decision tree.</li>
+      <li>How hybrid workflows combine processes (for example, print a master, then cast it).</li>
+    </ul>
+  </div>
+
+  <h2 id="tour">🔰 The tour at a glance</h2>
+  <p>Before the detail, here is the map. If you read the <a href="what-is-3d-printing.html">previous page</a>, you know that the standards body groups additive manufacturing into seven families. In daily life those families split into many commercial names. The cards below link each name to its family and to the audience that usually buys it.</p>
+
+  <div class="grid cols-3">
+    <div class="card accent-orange"><span class="ico">🧵</span><h3>FDM / FFF</h3><p>Melted filament extruded from a nozzle. The default for hobby, education and functional prototyping.</p></div>
+    <div class="card accent-purple"><span class="ico">💧</span><h3>Resin: SLA · MSLA · DLP</h3><p>Light cures liquid photopolymer. Best fine detail on small parts; messier workflow.</p></div>
+    <div class="card accent-blue"><span class="ico">🏜️</span><h3>SLS · MJF</h3><p>Fusing nylon powder. No supports, strong parts, mostly ordered from services or run in small workshops.</p></div>
+    <div class="card accent-teal"><span class="ico">🎨</span><h3>PolyJet / material jetting</h3><p>Inkjet-style droplets of resin: multi-color, multi-material, very smooth. Costly.</p></div>
+    <div class="card accent-pink"><span class="ico">🪨</span><h3>Binder jetting</h3><p>Glue printed into powder. Full-color models, sand cores for casting, metal via sintering.</p></div>
+    <div class="card accent-red"><span class="ico">⚙️</span><h3>Metal: LPBF · DMLS · EBM · DED</h3><p>Lasers or electron beams fuse metal powder or wire. Industrial, expensive, and remarkable.</p></div>
+    <div class="card accent-gray"><span class="ico">🔩</span><h3>Bound-metal filament</h3><p>Metal powder in plastic is printed on an FDM machine, then debound and sintered in a furnace.</p></div>
+    <div class="card accent-green"><span class="ico">🚀</span><h3>CLIP · volumetric</h3><p>Continuous or all-at-once resin processes that avoid visible layers. Mostly industrial or research.</p></div>
+    <div class="card accent-yellow"><span class="ico">🏗️</span><h3>Pellet · concrete · bio</h3><p>Large-format plastic from pellets, building-scale concrete and cell-laden bioinks.</p></div>
+  </div>
+
+  <h2 id="fdm">🔰 FDM / FFF: extrusion of thermoplastic</h2>
+  <p><strong>Fused deposition modeling (FDM)</strong>, also called <strong>fused filament fabrication (FFF)</strong>, is the process behind almost every consumer printer you will meet. A thermoplastic strand (filament) is pushed into a heated nozzle, melts, and is laid down as a thin bead that fuses to the layer below and solidifies within a fraction of a second. The toolhead traces each layer's outline and fills the interior; then the nozzle rises one layer height and repeats.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 310" role="img" aria-label="Schematic of FDM: filament spool, extruder gears, heat sink, heat break, heater block, nozzle, deposited layers and heated bed.">
+      <circle class="d-plastic" cx="90" cy="100" r="56"/>
+      <circle class="d-surface2" cx="90" cy="100" r="16"/>
+      <text class="t-sm t-c" x="90" y="184" style="text-anchor:middle">Spool</text>
+      <path d="M140 74 C190 38 250 34 300 50 V140" style="fill:none;stroke:var(--plastic);stroke-width:5;stroke-linecap:round"/>
+      <circle class="d-metal" cx="278" cy="110" r="17"/><circle class="d-metal" cx="322" cy="110" r="17"/>
+      <rect class="d-metal" x="284" y="134" width="32" height="36"/>
+      <path class="d-thin" d="M284 142 H316 M284 150 H316 M284 158 H316"/>
+      <rect class="d-metal2" x="292" y="170" width="16" height="8"/>
+      <rect class="d-hot" x="278" y="178" width="44" height="34"/>
+      <rect class="d-plastic" x="295" y="178" width="10" height="34"/>
+      <path class="d-metal2" d="M286 212 H314 L306 232 H294 Z"/>
+      <rect class="d-plastic" x="230" y="236" width="140" height="9"/>
+      <rect class="d-plastic" x="230" y="245" width="140" height="9"/>
+      <rect class="d-plastic" x="230" y="254" width="140" height="8"/>
+      <rect class="d-metal2" x="170" y="262" width="260" height="14"/>
+      <path class="d-ink arrow" d="M330 244 H400"/><text class="t-xs" x="404" y="248">toolhead moves in X/Y</text>
+      <path class="d-ink arrow" d="M150 262 V222"/><text class="t-xs" x="120" y="216">Z steps</text>
+      <path class="d-mute" d="M339 110 H444"/><text class="t-sm" x="450" y="114">Extruder gears push the filament</text>
+      <path class="d-mute" d="M316 152 H444"/><text class="t-sm" x="450" y="156">Heat sink (+ fan) keeps the top cold</text>
+      <path class="d-mute" d="M308 174 H444"/><text class="t-sm" x="450" y="178">Heat break: thermal barrier</text>
+      <path class="d-mute" d="M322 196 H444"/><text class="t-sm" x="450" y="200">Heater block + sensor, 190–300 °C</text>
+      <path class="d-mute" d="M312 224 H444"/><text class="t-sm" x="450" y="228">Nozzle, 0.4 mm typical</text>
+      <path class="d-mute" d="M430 269 H444"/><text class="t-sm" x="450" y="273">Heated build plate</text>
+      <text class="t-sm t-c t-m" x="380" y="304" style="text-anchor:middle">Melt, extrude, fuse, cool. Repeat for hundreds or thousands of layers.</text>
+    </svg>
+    <figcaption><b>Figure 1.</b> The FDM chain from spool to part. The "cold end" (extruder, heat sink) must stay cool so filament stays rigid until it reaches the "hot end". More in <a href="printer-anatomy.html">Anatomy of an FDM printer</a>.</figcaption>
+  </figure>
+
+  <h3>🔰 Why FDM dominates hobby printing</h3>
+  <ul>
+    <li><strong>Cost:</strong> capable machines are available from a few hundred dollars; filament is roughly US$15–30 per kilogram for common types.</li>
+    <li><strong>Material range:</strong> PLA, PETG, ABS, ASA, nylon, polycarbonate, TPU, composites with carbon or glass fiber, and many specialty types (see <a href="../materials/overview.html">Materials overview</a>).</li>
+    <li><strong>Simple workflow:</strong> there is no liquid, no powder and no curing station. Remove the part, remove supports and you are done.</li>
+    <li><strong>Size:</strong> build volumes of 200–350 mm per side are standard and much larger machines exist.</li>
+    <li><strong>Strength:</strong> functional parts in engineering plastics are realistic.</li>
+  </ul>
+
+  <h3>🔧 Limits you should know</h3>
+  <ul>
+    <li><strong>Resolution:</strong> the nozzle diameter sets the smallest feature; with a 0.4 mm nozzle, features thinner than roughly 0.4–0.8 mm are unreliable.</li>
+    <li><strong>Layer lines</strong> are visible and the surface is textured unless you finish it.</li>
+    <li><strong>Anisotropy:</strong> parts are weaker across layers than along them.</li>
+    <li><strong>Overhangs</strong> need supports or careful design; see <a href="../techniques/supports-bridges-overhangs.html">Supports, bridges &amp; overhangs</a>.</li>
+  </ul>
+
+  <div class="callout info"><span class="callout-title">FDM versus FFF</span>
+    <p>"FDM" is a trademark of Stratasys. "FFF" is the generic, community-created term with the same meaning. In practice, people use them interchangeably, and so does this compendium.</p>
+  </div>
+
+  <h2 id="resin">🔰 Resin printing: SLA, MSLA and DLP</h2>
+  <p>In <strong>vat photopolymerization</strong>, the "ink" is a liquid photopolymer: a resin whose molecules link into a solid when exposed to the right wavelength of light (typically UV around 365–405 nm). The build plate dips into a vat of resin, light cures one layer, the plate lifts, fresh resin flows in, and the next layer is exposed. Three light-delivery methods exist:</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Method</th><th>How the layer is drawn</th><th>Strengths</th><th>Weaknesses</th></tr></thead>
+    <tbody>
+      <tr><td>SLA (laser)</td><td>A UV laser and scanning mirrors trace the layer point by point</td><td>Very smooth, accurate large parts, mature industrial machines</td><td>Slower for filling large areas; more expensive optics</td></tr>
+      <tr><td>DLP</td><td>A projector flashes the entire layer image at once</td><td>Fast; pixel size is fixed by the projector</td><td>Detail drops as the build area grows; projector lamp or LED aging</td></tr>
+      <tr><td>MSLA (LCD)</td><td>A UV LED array shines through a monochrome LCD that masks the layer</td><td>Low-cost, high resolution on small areas, the common desktop type</td><td>LCD screens wear out and are consumables; light uniformity varies</td></tr>
+    </tbody>
+  </table></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 360" role="img" aria-label="Cross-section of an MSLA resin printer: Z arm and build plate hanging in a vat of resin, the cured part growing downward, an FEP release film at the bottom, an LCD mask and a UV LED array below.">
+      <rect class="f-yellow" x="125" y="40" width="270" height="218" style="fill-opacity:.45"/>
+      <path class="d-ink" d="M120 30 V286 M400 30 V286"/>
+      <rect class="d-metal2" x="235" y="12" width="50" height="54"/>
+      <path class="d-ink arrow arrow-start" d="M360 20 V60"/><text class="t-xs" x="368" y="44">Z lift</text>
+      <rect class="d-metal" x="180" y="66" width="160" height="14"/>
+      <path class="d-plastic" d="M210 80 H310 V170 H290 V250 H230 V170 H210 Z"/>
+      <rect class="s-orange" x="230" y="244" width="60" height="6"/>
+      <path class="k-teal" d="M125 258 H395"/>
+      <rect class="d-surface2" x="120" y="262" width="280" height="22"/>
+      <rect class="d-solid" x="124" y="266" width="102" height="14"/><rect class="d-solid" x="294" y="266" width="102" height="14"/>
+      <rect class="f-purple" x="120" y="300" width="280" height="24" rx="3"/>
+      <text class="t-xs t-c t-b" x="260" y="316" style="text-anchor:middle">UV LED array (about 405 nm)</text>
+      <path class="k-purple arrow" d="M245 298 V252" style="stroke-width:1.8"/><path class="k-purple arrow" d="M260 298 V252" style="stroke-width:1.8"/><path class="k-purple arrow" d="M275 298 V252" style="stroke-width:1.8"/>
+      <path class="d-mute" d="M285 36 H414"/><text class="t-sm" x="420" y="40">Z axis lifts the plate between layers</text>
+      <path class="d-mute" d="M340 73 H414"/><text class="t-sm" x="420" y="77">Build plate: the part hangs upside down</text>
+      <path class="d-mute" d="M380 120 H414"/><text class="t-sm" x="420" y="124">Liquid resin in the vat</text>
+      <path class="d-mute" d="M310 150 H414"/><text class="t-sm" x="420" y="154">Cured part grows downward</text>
+      <path class="d-mute" d="M290 247 H414"/><text class="t-sm" x="420" y="251">New layer: 0.025–0.1 mm thick</text>
+      <path class="d-mute" d="M395 258 H414"/><text class="t-sm" x="420" y="262">FEP / nFEP film (release liner)</text>
+      <path class="d-mute" d="M400 273 H414"/><text class="t-sm" x="420" y="277">LCD mask: pixels pass or block light</text>
+      <path class="d-mute" d="M400 312 H414"/><text class="t-sm" x="420" y="316">Light source behind the screen</text>
+      <text class="t-xs t-m" x="120" y="346">Not to scale: the gap between the part and the film is a fraction of a millimeter during exposure.</text>
+    </svg>
+    <figcaption><b>Figure 2.</b> Cross-section of an MSLA vat. Light only passes where the LCD is transparent (the white gap under the part); everywhere else the black pixels block it. After each exposure the plate lifts, peeling the new layer off the film, and resin flows back under the part.</figcaption>
+  </figure>
+
+  <h3>🔰 What the layer cycle looks like</h3>
+  <ol class="steps">
+    <li><strong>Lower the plate</strong>The plate descends until the part sits one layer height above the film.</li>
+    <li><strong>Expose</strong>The LCD shows the slice and the LEDs flash for a few seconds (bottom layers get much longer exposures so the part sticks to the plate).</li>
+    <li><strong>Peel</strong>The plate lifts; the freshly cured layer has to separate from the film. Peeling creates suction and force that can pull parts off the plate or tear thin features.</li>
+    <li><strong>Rest and refill</strong>Resin flows back under the part. Viscous resins need a short pause.</li>
+    <li><strong>Repeat</strong>Often several hundred to several thousand layers at 0.03–0.1 mm each.</li>
+  </ol>
+
+  <h3>🔧 Resolution and accuracy</h3>
+  <p>On an MSLA printer the XY resolution is set by the <strong>pixel pitch</strong> of the screen (commonly around 20–50 µm on consumer machines; the same screen size with more pixels gives finer detail). Z resolution is the layer height. In practice you can print faces and fine text that would be impossible on a 0.4 mm FDM nozzle. Accuracy still depends on exposure calibration, resin shrinkage and orientation.</p>
+
+  <h3>🔧 Resin families</h3>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Resin type</th><th>Character</th><th>Typical use</th></tr></thead>
+    <tbody>
+      <tr><td>Standard</td><td>Rigid, brittle, excellent detail</td><td>Miniatures, display pieces, concept models</td></tr>
+      <tr><td>Tough / ABS-like</td><td>More impact resistant, less detail</td><td>Functional prototypes, snap-fit tests</td></tr>
+      <tr><td>Flexible</td><td>Rubber-like or soft-touch</td><td>Gaskets, grips, soft features</td></tr>
+      <tr><td>Water-washable</td><td>Can be washed with water instead of alcohol; still needs gloves</td><td>Convenience; still hazardous uncured</td></tr>
+      <tr><td>Castable</td><td>Burns out cleanly</td><td>Jewelry: print the pattern, cast the metal</td></tr>
+      <tr><td>High-temperature / engineering</td><td>Heat-resistant after proper post-cure</td><td>Molds, fixtures, test parts</td></tr>
+      <tr><td>Dental / biocompatible</td><td>Certified for specific uses</td><td>Dental models, guides (only with certified workflow and resin)</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>🔰 Design rules specific to resin</h3>
+  <ul>
+    <li><strong>Tilt the part</strong> 30–45° rather than printing it flat. Smaller cross-section per layer means less peel force and fewer failures.</li>
+    <li><strong>Avoid suction cups:</strong> a hollow shape with a closed bottom traps resin, causing blow-outs. Add drain holes (at least 2 mm, typically 3–5 mm, two of them so air can enter).</li>
+    <li><strong>Hollow large solids</strong> to save resin and reduce stress, but only with drain holes.</li>
+    <li><strong>Supports are dense:</strong> thin tips leave small marks, so aim supports at hidden faces.</li>
+  </ul>
+
+  <div class="callout danger"><span class="callout-title">Liquid resin is a chemical hazard</span>
+    <p>Uncured resin can cause skin sensitization (an allergy that can develop after repeated contact and then stay for life). Always wear nitrile gloves, avoid touching your face, work with ventilation, and never pour resin or its wash liquid down the drain. See <a href="safety-and-workspace.html#resin">Safety &amp; workspace</a>.</p>
+  </div>
+
+  <h3>🔰 The wash-and-cure workflow</h3>
+  <p>A resin print is not finished when the machine stops: it is coated in uncured liquid and only partly polymerized. Three more steps complete the part.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 900 260" role="img" aria-label="Six-step resin post-processing flow: print, drain and remove, wash, dry, remove supports, UV cure, with a bar marking where gloves are required.">
+      <rect class="f-purple" x="10" y="30" width="130" height="130" rx="12"/>
+      <text class="t t-b" x="22" y="56">1 Print</text><text class="t-sm" x="22" y="82">Let the plate drip</text><text class="t-sm" x="22" y="100">for 5–10 min</text><text class="t-sm" x="22" y="124">Gloves on from</text><text class="t-sm" x="22" y="142">here onward</text>
+      <rect class="f-purple" x="158" y="30" width="130" height="130" rx="12"/>
+      <text class="t t-b" x="170" y="56">2 Remove</text><text class="t-sm" x="170" y="82">Take the part off</text><text class="t-sm" x="170" y="100">with a scraper;</text><text class="t-sm" x="170" y="124">wipe the plate</text><text class="t-sm" x="170" y="142">with paper</text>
+      <rect class="f-blue" x="306" y="30" width="130" height="130" rx="12"/>
+      <text class="t t-b" x="318" y="56">3 Wash</text><text class="t-sm" x="318" y="82">Two baths of IPA</text><text class="t-sm" x="318" y="100">(or a washing</text><text class="t-sm" x="318" y="118">station), 2–5 min</text><text class="t-sm" x="318" y="142">each, dirty first</text>
+      <rect class="f-blue" x="454" y="30" width="130" height="130" rx="12"/>
+      <text class="t t-b" x="466" y="56">4 Dry</text><text class="t-sm" x="466" y="82">Air-dry or blow</text><text class="t-sm" x="466" y="100">off alcohol; the</text><text class="t-sm" x="466" y="118">surface should</text><text class="t-sm" x="466" y="136">not look wet</text>
+      <rect class="f-teal" x="602" y="30" width="130" height="130" rx="12"/>
+      <text class="t t-b" x="614" y="56">5 Supports</text><text class="t-sm" x="614" y="82">Snip supports</text><text class="t-sm" x="614" y="100">while the part is</text><text class="t-sm" x="614" y="118">still a little soft;</text><text class="t-sm" x="614" y="136">clean easily</text>
+      <rect class="f-orange" x="750" y="30" width="140" height="130" rx="12"/>
+      <text class="t t-b" x="762" y="56">6 UV cure</text><text class="t-sm" x="762" y="82">Follow the resin</text><text class="t-sm" x="762" y="100">datasheet, often</text><text class="t-sm" x="762" y="118">2–15 min; rotate</text><text class="t-sm" x="762" y="136">for even exposure</text>
+      <path class="d-ink arrow" d="M142 95 H156"/><path class="d-ink arrow" d="M290 95 H304"/><path class="d-ink arrow" d="M438 95 H452"/><path class="d-ink arrow" d="M586 95 H600"/><path class="d-ink arrow" d="M734 95 H748"/>
+      <rect class="s-red" x="10" y="184" width="574" height="8" rx="4"/>
+      <text class="t-sm t-b c-red" x="10" y="212">Uncured resin on the surface: nitrile gloves, ventilation, no bare skin</text>
+      <rect class="s-yellow" x="602" y="184" width="288" height="8" rx="4"/>
+      <text class="t-sm t-b" x="602" y="212">Cured: lower risk; still gloves/mask when sanding</text>
+      <text class="t-xs t-m" x="10" y="244">Always follow the specific resin manufacturer's instructions for wash time, solvent and cure time.</text>
+    </svg>
+    <figcaption><b>Figure 3.</b> The resin finishing workflow. Under-washing leaves a sticky, hazy surface; over-washing in strong solvent can crack some resins or make them cloudy, so follow the datasheet.</figcaption>
+  </figure>
+
+  <div class="callout tip"><span class="callout-title">Waste handling in a hobby setting</span>
+    <p>Leave used wash alcohol in a clear sealed jar in sunlight for a day: dissolved resin cures into a sludge that settles, and you can pour the clear alcohol off for reuse. Cure liquid leftovers fully in the sun or in a UV chamber before disposing of them as solid waste according to your local rules. Wipe paper towels and gloves that contain resin, then cure them before binning.</p>
+  </div>
+
+  <div class="pros-cons">
+    <div class="pros"><h4>Resin: strengths</h4><ul>
+      <li>Excellent surface finish and small-feature detail</li>
+      <li>Isotropic-looking parts with no visible beads</li>
+      <li>Fast for small batches of miniatures or jewelry patterns</li>
+      <li>Low-cost machines for what they do</li>
+    </ul></div>
+    <div class="cons"><h4>Resin: trade-offs</h4><ul>
+      <li>Messy: gloves, solvents, curing station</li>
+      <li>Parts are usually brittle and degrade in sunlight</li>
+      <li>Small build volumes</li>
+      <li>Liquid waste and odor; needs a ventilated space</li>
+    </ul></div>
+  </div>
+
+  <h2 id="powder">🔧 Powder bed fusion: SLS and MJF</h2>
+  <p>In <strong>powder bed fusion</strong>, a thin layer of fine polymer powder (most often nylon, PA12 or PA11) is spread across a heated bed and selectively fused. The part grows inside a block of loose powder that acts as built-in support, so overhangs, interlocking assemblies and hollow structures are easy. When the job ends, you dig the parts out ("depowdering") and the unfused powder is partly recycled.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 320" role="img" aria-label="Left: selective laser sintering with a laser, scanning mirror, powder bed, recoater and build platform. Right: multi jet fusion with a carriage carrying a fusing-agent printhead and an infrared lamp over a powder bed.">
+      <rect class="d-surface" x="10" y="10" width="360" height="300" rx="12"/>
+      <text class="t t-b" x="26" y="34">SLS · selective laser sintering</text>
+      <rect class="f-red" x="30" y="50" width="50" height="26" rx="4"/><text class="t-xs t-c t-b" x="55" y="67" style="text-anchor:middle">Laser</text>
+      <path class="k-red" d="M80 63 H190 V198" style="stroke-width:1.8"/>
+      <path class="d-metal2" d="M182 70 L198 54 L202 58 L186 74 Z"/>
+      <text class="t-xs" x="206" y="58">Scanning mirror</text>
+      <path class="d-ink" d="M50 150 V270 H300 V150"/>
+      <rect class="d-surface2" x="52" y="150" width="246" height="118" style="stroke:none"/>
+      <rect class="d-plastic" x="130" y="198" width="100" height="36"/>
+      <rect class="d-metal2" x="52" y="268" width="246" height="8"/>
+      <rect class="d-metal2" x="70" y="134" width="14" height="14"/>
+      <path class="d-ink arrow" d="M92 141 H150"/><text class="t-xs" x="60" y="124">Recoater spreads fresh powder</text>
+      <path class="d-ink arrow" d="M330 200 V250"/><text class="t-xs" x="308" y="266">bed lowers</text>
+      <text class="t-xs" x="238" y="220">fused part</text>
+      <text class="t-xs" x="62" y="256">loose powder supports the part</text>
+      <text class="t-sm t-c t-m" x="190" y="298" style="text-anchor:middle">No support structures needed</text>
+
+      <rect class="d-surface" x="390" y="10" width="360" height="300" rx="12"/>
+      <text class="t t-b" x="406" y="34">MJF · multi jet fusion</text>
+      <rect class="f-teal" x="440" y="52" width="170" height="52" rx="6"/>
+      <text class="t-xs t-c t-b" x="525" y="68" style="text-anchor:middle">Carriage sweeps across the bed</text>
+      <rect class="f-blue" x="446" y="76" width="74" height="22" rx="3"/><text class="t-xs t-c" x="483" y="91" style="text-anchor:middle">agent head</text>
+      <rect class="f-red" x="530" y="76" width="74" height="22" rx="3"/><text class="t-xs t-c" x="567" y="91" style="text-anchor:middle">IR lamp</text>
+      <circle class="s-blue" cx="466" cy="112" r="2.5"/><circle class="s-blue" cx="484" cy="118" r="2.5"/><circle class="s-blue" cx="502" cy="112" r="2.5"/>
+      <path class="k-red" d="M548 108 v14 M567 108 v14 M586 108 v14" style="stroke-width:1.6"/>
+      <path class="d-ink arrow arrow-start" d="M625 78 H680"/>
+      <path class="d-ink" d="M420 150 V270 H690 V150"/>
+      <rect class="d-surface2" x="422" y="150" width="266" height="118" style="stroke:none"/>
+      <rect class="d-plastic" x="500" y="198" width="110" height="36"/>
+      <rect class="d-metal2" x="422" y="268" width="266" height="8"/>
+      <text class="t-xs" x="620" y="220">part</text>
+      <text class="t-sm t-c t-m" x="570" y="292" style="text-anchor:middle">Agent printed on the part, lamp heats those dark areas</text>
+    </svg>
+    <figcaption><b>Figure 4.</b> SLS fuses powder with a laser spot; MJF prints a heat-absorbing agent over the whole slice and fuses it with a lamp, which is why MJF is typically faster for dense batches.</figcaption>
+  </figure>
+
+  <h3>What makes powder-bed parts special</h3>
+  <ul>
+    <li><strong>Strength and isotropy:</strong> nylon SLS/MJF parts are tough and are closer to uniform strength in all directions than FDM parts. They are commonly used for hinges, clips, ducts and end-use components.</li>
+    <li><strong>Nesting:</strong> parts can be packed in 3D throughout the build volume, which makes batches of dozens or hundreds economical.</li>
+    <li><strong>Surface:</strong> slightly grainy matte finish. Bead blasting, tumbling, dyeing and vapor smoothing improve it.</li>
+    <li><strong>Powder logistics:</strong> powder is reused, usually mixed with a proportion of fresh powder to maintain quality, and fine powder must be handled with dust protection.</li>
+  </ul>
+  <p>Desktop-sized SLS machines exist, but the cost of the equipment, powder handling and depowdering stations puts most users in the "order from a service bureau" category. Prices for the machine class typically run from the low five digits upward. See the cost section below.</p>
+
+  <h2 id="jetting">🔧 Material jetting and binder jetting</h2>
+  <p>Both processes borrow the inkjet idea: a printhead with many tiny nozzles sweeps across the build area and deposits droplets.</p>
+  <ul>
+    <li><strong>Material jetting (for example PolyJet):</strong> the droplets <em>are</em> the build material: liquid photopolymer cured immediately by a UV lamp. Because different nozzles can jet different resins, a single part can mix colors and hardness (rigid to rubber-like) with extremely fine layers (around 16–30 µm). A gel-like support material is washed away with water. Excellent for realistic prototypes, medical anatomy models and overmolded-look parts; costly in both machine and materials.</li>
+    <li><strong>Binder jetting:</strong> the droplets are a <em>glue</em> printed into a powder bed. The result is a fragile "green" part that is cured and then either infiltrated, sintered (metal and ceramic) or dyed (full-color gypsum models). Sand binder jetting produces foundry molds and cores. There are no thermal stresses during printing, so large parts and dense nesting are possible.</li>
+  </ul>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 300" role="img" aria-label="Left: material jetting with a multi-nozzle printhead depositing droplets cured by a UV lamp, with support gel beside the part. Right: binder jetting with a printhead printing binder into a powder bed.">
+      <rect class="d-surface" x="10" y="10" width="360" height="280" rx="12"/>
+      <text class="t t-b" x="26" y="34">Material jetting (PolyJet type)</text>
+      <rect class="f-teal" x="60" y="52" width="130" height="30" rx="5"/><text class="t-xs t-c t-b" x="125" y="71" style="text-anchor:middle">printhead</text>
+      <circle class="s-teal" cx="78" cy="96" r="2.5"/><circle class="s-orange" cx="98" cy="102" r="2.5"/><circle class="s-teal" cx="118" cy="96" r="2.5"/><circle class="s-orange" cx="138" cy="102" r="2.5"/><circle class="s-teal" cx="158" cy="96" r="2.5"/><circle class="s-orange" cx="178" cy="102" r="2.5"/>
+      <rect class="f-purple" x="204" y="52" width="46" height="30" rx="5"/><text class="t-xs t-c t-b" x="227" y="71" style="text-anchor:middle">UV</text>
+      <path class="k-purple" d="M214 88 L204 118 M227 88 V120 M240 88 L250 118" style="stroke-width:1.6"/>
+      <rect class="d-plastic" x="100" y="132" width="120" height="52"/>
+      <rect class="f-blue" x="160" y="132" width="60" height="52" style="fill-opacity:.6"/>
+      <rect class="f-gray" x="64" y="150" width="36" height="34" style="stroke-dasharray:4 3"/><rect class="f-gray" x="220" y="150" width="36" height="34" style="stroke-dasharray:4 3"/>
+      <rect class="d-metal2" x="40" y="184" width="240" height="10"/>
+      <text class="t-xs" x="64" y="214">support gel</text><text class="t-xs" x="170" y="214">two materials</text>
+      <text class="t-sm t-m" x="26" y="246">Droplets cure instantly under UV; the gel support</text><text class="t-sm t-m" x="26" y="262">is washed off with water or a waterjet.</text>
+
+      <rect class="d-surface" x="390" y="10" width="360" height="280" rx="12"/>
+      <text class="t t-b" x="406" y="34">Binder jetting</text>
+      <rect class="f-pink" x="450" y="52" width="130" height="30" rx="5"/><text class="t-xs t-c t-b" x="515" y="71" style="text-anchor:middle">binder printhead</text>
+      <circle class="s-pink" cx="468" cy="96" r="2.5"/><circle class="s-pink" cx="488" cy="102" r="2.5"/><circle class="s-pink" cx="508" cy="96" r="2.5"/><circle class="s-pink" cx="528" cy="102" r="2.5"/><circle class="s-pink" cx="548" cy="96" r="2.5"/>
+      <path class="d-ink arrow arrow-start" d="M610 66 H690"/>
+      <path class="d-ink" d="M410 130 V230 H710 V130"/>
+      <rect class="d-surface2" x="412" y="130" width="296" height="98" style="stroke:none"/>
+      <rect class="d-plastic" x="500" y="150" width="130" height="50" style="stroke-dasharray:5 3"/>
+      <rect class="d-metal2" x="412" y="228" width="296" height="8"/>
+      <text class="t-xs" x="640" y="180">green part</text>
+      <text class="t-sm t-m" x="406" y="256">Part = powder glued together. Then cure, infiltrate</text><text class="t-sm t-m" x="406" y="272">or sinter it (metal, ceramic).</text>
+    </svg>
+    <figcaption><b>Figure 5.</b> Both processes use inkjet-style heads, but jetting deposits the final material while binder jetting deposits glue into a bed of loose powder.</figcaption>
+  </figure>
+
+  <h2 id="metal">🚀 Metal additive manufacturing</h2>
+  <p>Metal printing covers several distinct technologies. All of them produce real metal parts, but with very different costs, sizes and post-processing.</p>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Process</th><th>How it works</th><th>Typical materials</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>LPBF / DMLS / SLM</td><td>A laser melts thin layers of metal powder in an inert-gas chamber</td><td>Stainless steels, aluminum alloys, titanium, nickel superalloys, tool steel</td><td>"DMLS" is a trademarked name for essentially the same family as LPBF (laser powder bed fusion). Needs supports for heat conduction, stress relief and removal from the plate.</td></tr>
+      <tr><td>EBM</td><td>An electron beam melts powder in a vacuum, in a hot (preheated) powder bed</td><td>Titanium alloys, some cobalt-chrome</td><td>Lower residual stress, rougher surface; used in medical implants and aerospace.</td></tr>
+      <tr><td>DED / WAAM</td><td>A laser, arc or plasma melts powder or wire as it is deposited from a moving head</td><td>Many weldable metals</td><td>Large parts and repair; much coarser accuracy; usually machined after.</td></tr>
+      <tr><td>Metal binder jetting</td><td>Binder printed into metal powder, then debound and sintered</td><td>Stainless steels and others</td><td>Fast and nests densely; shrinks about 15–20 % during sintering.</td></tr>
+      <tr><td>Bound-metal filament</td><td>Metal powder in a polymer binder printed on an FDM machine, then debound and sintered</td><td>Stainless steels, others</td><td>Lowest entry cost; needs a debinding and sintering service or furnace.</td></tr>
+    </tbody>
+  </table></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 330" role="img" aria-label="Left: directed energy deposition with a laser head, powder jets, melt pool and deposited track. Right: bound-metal workflow showing a print, debinding, and sintering that shrinks the part.">
+      <rect class="d-surface" x="10" y="10" width="360" height="310" rx="12"/>
+      <text class="t t-b" x="26" y="34">DED · directed energy deposition</text>
+      <rect class="f-red" x="140" y="52" width="80" height="34" rx="5"/><text class="t-xs t-c t-b" x="180" y="73" style="text-anchor:middle">laser head</text>
+      <path class="d-metal2" d="M150 86 H210 L192 120 H168 Z"/>
+      <path class="k-red" d="M180 86 V152" style="stroke-width:2"/>
+      <path class="k-orange" d="M160 104 L176 150 M200 104 L184 150" style="stroke-width:1.8"/>
+      <ellipse class="d-hot" cx="180" cy="156" rx="20" ry="7"/>
+      <rect class="d-metal" x="70" y="160" width="110" height="14"/>
+      <rect class="d-metal" x="50" y="174" width="240" height="18"/>
+      <rect class="d-metal2" x="40" y="192" width="260" height="22"/>
+      <path class="d-mute" d="M220 62 H252"/><text class="t-xs" x="256" y="66">laser</text>
+      <path class="d-mute" d="M204 106 H252"/><text class="t-xs" x="256" y="110">powder (or wire)</text>
+      <path class="d-mute" d="M198 156 H252"/><text class="t-xs" x="256" y="160">melt pool</text>
+      <path class="d-mute" d="M150 167 H120"/><text class="t-xs" x="54" y="152">new track</text>
+      <path class="d-mute" d="M60 152 L90 166"/>
+      <text class="t-xs" x="60" y="232">inert gas shields the weld pool</text>
+      <text class="t-sm t-m" x="26" y="262">The head (or the part) is moved by a robot arm</text><text class="t-sm t-m" x="26" y="278">or gantry. Large builds, rough surfaces, then</text><text class="t-sm t-m" x="26" y="294">machining.</text>
+
+      <rect class="d-surface" x="390" y="10" width="360" height="310" rx="12"/>
+      <text class="t t-b" x="406" y="34">Bound-metal filament workflow</text>
+      <rect class="d-plastic" x="415" y="52" width="76" height="76" rx="4"/>
+      <text class="t-sm t-b" x="510" y="76">1 · Print</text><text class="t-xs" x="510" y="94">Ordinary FDM, with the part</text><text class="t-xs" x="510" y="108">scaled up about 15–20 %</text>
+      <path class="d-ink arrow" d="M453 134 V158"/>
+      <rect class="d-surface2" x="415" y="162" width="76" height="76" rx="4" style="stroke-dasharray:5 3"/>
+      <text class="t-sm t-b" x="510" y="186">2 · Debind</text><text class="t-xs" x="510" y="204">Binder removed by solvent,</text><text class="t-xs" x="510" y="218">catalyst or heat; fragile part</text>
+      <path class="d-ink arrow" d="M453 244 V262"/>
+      <rect class="d-dash" x="415" y="264" width="76" height="52"/>
+      <rect class="d-metal" x="425" y="270" width="56" height="40" rx="3"/>
+      <text class="t-sm t-b" x="510" y="284">3 · Sinter</text><text class="t-xs" x="510" y="300">Furnace near the metal's melting</text><text class="t-xs" x="510" y="313">range; shrinks to final size</text>
+    </svg>
+    <figcaption><b>Figure 6.</b> Left: DED builds up weld-like tracks, good for large parts and repair. Right: bound-metal printing is a three-stage chain in which the printed part is deliberately oversized because sintering shrinks it.</figcaption>
+  </figure>
+
+  <div class="callout fact"><span class="callout-title">Why bound-metal parts shrink so much</span>
+    <p>The green part is part metal powder and part plastic binder by volume, with air gaps between the powder grains. Debinding removes the plastic and sintering fuses the touching grains by diffusion, closing the gaps. Volume drops, so every dimension shrinks, often by roughly 15–20 %. Software predicts and compensates, but dimensional accuracy still depends heavily on part geometry and furnace profile. Plan for flat, well-supported shapes and generous machining allowances on critical features.</p>
+  </div>
+
+  <div class="callout warn"><span class="callout-title">Metal powder is not a hobby material</span>
+    <p>Fine metal powders (especially aluminum and titanium) are flammable or explosive as dust clouds, and require inert gas, grounding and trained handling. Do not attempt LPBF at home. If you want metal parts, order them from a service or use bound-metal workflows where the furnace step is done by a specialist.</p>
+  </div>
+
+  <h2 id="other">🚀 CLIP, volumetric, pellet, concrete and bio printing</h2>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 300" role="img" aria-label="Left: CLIP continuous liquid interface production with an oxygen-permeable window and a dead zone where resin stays liquid while the part is pulled upward. Right: volumetric printing with a rotating resin vial lit by a projector from one side.">
+      <rect class="d-surface" x="10" y="10" width="360" height="280" rx="12"/>
+      <text class="t t-b" x="26" y="34">CLIP · continuous liquid interface</text>
+      <rect class="d-metal" x="120" y="52" width="120" height="12"/>
+      <rect class="f-yellow" x="60" y="64" width="240" height="146" style="fill-opacity:.4"/>
+      <rect class="d-plastic" x="140" y="64" width="80" height="130"/>
+      <rect class="f-blue" x="60" y="196" width="240" height="14" style="fill-opacity:.5"/>
+      <rect class="d-surface2" x="60" y="210" width="240" height="12"/>
+      <rect class="f-purple" x="120" y="238" width="120" height="28" rx="4"/><text class="t-xs t-c t-b" x="180" y="256" style="text-anchor:middle">UV image projector</text>
+      <path class="k-purple arrow" d="M150 236 V204" style="stroke-width:1.6"/><path class="k-purple arrow" d="M180 236 V204" style="stroke-width:1.6"/><path class="k-purple arrow" d="M210 236 V204" style="stroke-width:1.6"/>
+      <path class="d-ink arrow" d="M270 160 V100"/><text class="t-xs" x="276" y="130">part rises</text><text class="t-xs" x="276" y="144">continuously</text>
+      <text class="t-xs" x="64" y="190">dead zone: oxygen keeps resin liquid</text>
+      <text class="t-xs" x="64" y="236">oxygen-permeable window</text>
+
+      <rect class="d-surface" x="390" y="10" width="360" height="280" rx="12"/>
+      <text class="t t-b" x="406" y="34">Volumetric printing (top view)</text>
+      <rect class="f-purple" x="410" y="120" width="70" height="60" rx="5"/><text class="t-xs t-c t-b" x="445" y="154" style="text-anchor:middle">projector</text>
+      <path class="k-purple" d="M480 126 L520 100 M480 150 H515 M480 174 L520 200" style="stroke-width:1.6"/>
+      <circle class="f-yellow" cx="580" cy="150" r="64" style="fill-opacity:.45"/>
+      <rect class="d-plastic" x="560" y="130" width="40" height="40"/>
+      <path class="d-ink arrow" d="M640 96 A84 84 0 0 1 656 168"/><text class="t-xs" x="660" y="136">rotates</text>
+      <text class="t-sm t-m" x="406" y="244">Light patterns from many angles add up in a spinning</text><text class="t-sm t-m" x="406" y="260">vial of resin; the shape solidifies all at once.</text>
+    </svg>
+    <figcaption><b>Figure 7.</b> Two ideas that avoid layer-by-layer peeling. CLIP keeps a thin liquid "dead zone" above the window so the part never sticks; volumetric printing cures a whole object at once with tomographic light patterns.</figcaption>
+  </figure>
+
+  <div class="grid cols-2">
+    <div class="card accent-green"><h3>CLIP and other continuous resin processes</h3><p>Developed to make resin printing fast and layerless. Part surfaces look smooth because there are no peel steps. Primarily industrial machines with specialized resins (elastomers, engineering plastics); used for production runs of lattices, midsoles, dental parts and consumer products.</p></div>
+    <div class="card accent-teal"><h3>Volumetric printing</h3><p>A research-stage and early-commercial technique: a vial of photoresin is rotated while light patterns are projected from many angles. Whole parts form in tens of seconds and need no supports. Resolution, material choice and size are still limited.</p></div>
+    <div class="card accent-orange"><h3>Pellet and large-format extrusion</h3><p>Instead of filament, plastic pellets are melted by a screw extruder, giving a far higher throughput (kilograms per hour) and much cheaper material. Used for furniture, molds, boat tooling and architectural pieces. Bead sizes of 3–10 mm or more; surface is coarse.</p></div>
+    <div class="card accent-gray"><h3>Concrete and construction printing</h3><p>Pumped cementitious mortar is extruded in wide beads to build walls on site. Used for houses, small buildings and landscape elements. It is a materials and civil-engineering challenge as much as a printing one, with reinforcement and codes to consider.</p></div>
+    <div class="card accent-pink"><h3>Bioprinting</h3><p>Cells in a hydrogel "bioink" are deposited into tissue-like structures. A research field for tissue models, drug testing and long-term organ goals. Not a hobby area and not something to attempt with desktop printers.</p></div>
+    <div class="card accent-purple"><h3>Sheet lamination (LOM, UAM)</h3><p>Paper, plastic or metal foils are bonded and cut layer by layer. Ultrasonic metal lamination can embed sensors; paper lamination is a low-cost niche for full-color models.</p></div>
+  </div>
+
+  <h2 id="comparison">🔧 The big comparison table</h2>
+  <p>Values below are typical for mainstream machines and materials. Individual products vary widely, so treat each number as a starting point for your own research. "Detail" refers to the smallest features you can rely on.</p>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Process</th><th>Detail</th><th>Materials</th><th>Machine cost*</th><th>Strength</th><th>Post-processing</th><th>Safety</th><th>Typical uses</th></tr></thead>
+    <tbody>
+      <tr><td>FDM / FFF</td><td>0.4–0.8 mm features; 0.05–0.3 mm layers</td><td>PLA, PETG, ABS/ASA, PA, PC, TPU, composites</td><td><span class="chip green">$</span></td><td>Good, anisotropic</td><td>Remove supports; optional sanding</td><td>Hot parts; fumes for some plastics</td><td>Hobby, fixtures, prototypes, enclosures</td></tr>
+      <tr><td>MSLA (resin)</td><td>0.05–0.1 mm; layers 0.025–0.1 mm</td><td>Standard, tough, flexible, castable resins</td><td><span class="chip green">$</span></td><td>Brittle to moderate</td><td>Wash, cure, support removal</td><td><span class="chip red">Chemical</span></td><td>Miniatures, jewelry, dental models</td></tr>
+      <tr><td>SLA (laser resin)</td><td>~0.1 mm; very smooth</td><td>Broad resin range</td><td><span class="chip yellow">$$</span></td><td>Moderate</td><td>Wash, cure</td><td><span class="chip red">Chemical</span></td><td>Large detailed prototypes, patterns</td></tr>
+      <tr><td>DLP</td><td>Pixel-limited, 0.03–0.1 mm</td><td>Broad resin range</td><td><span class="chip yellow">$–$$</span></td><td>Moderate</td><td>Wash, cure</td><td><span class="chip red">Chemical</span></td><td>Dental, jewelry, small parts</td></tr>
+      <tr><td>SLS</td><td>~0.3 mm</td><td>PA12, PA11, TPU powders</td><td><span class="chip red">$$$</span></td><td>High, near-isotropic</td><td>Depowder, media blast</td><td><span class="chip yellow">Dust</span></td><td>End-use parts, hinges, ducting</td></tr>
+      <tr><td>MJF</td><td>~0.3 mm</td><td>PA12, PA11, PP, TPU</td><td><span class="chip red">$$$</span></td><td>High, near-isotropic</td><td>Depowder, blast, dye</td><td><span class="chip yellow">Dust</span></td><td>Production batches</td></tr>
+      <tr><td>PolyJet</td><td>~0.1 mm; 16–30 µm layers</td><td>Rigid to rubber-like photopolymers</td><td><span class="chip red">$$$</span></td><td>Low–moderate</td><td>Remove gel support</td><td><span class="chip yellow">Resin handling</span></td><td>Realistic multi-material prototypes</td></tr>
+      <tr><td>Binder jetting</td><td>0.1–0.3 mm</td><td>Sand, metal, ceramic, full-color gypsum</td><td><span class="chip red">$$$</span></td><td>Varies; high after sintering</td><td>Cure, sinter or infiltrate</td><td><span class="chip yellow">Dust</span></td><td>Sand cores, color models, metal parts</td></tr>
+      <tr><td>LPBF / DMLS</td><td>0.2–0.4 mm</td><td>Stainless, Al, Ti, Ni alloys</td><td><span class="chip red">$$$$</span></td><td>Very high</td><td>Stress relief, cut from plate, machine</td><td><span class="chip red">Powder, inert gas</span></td><td>Aerospace, medical, tooling</td></tr>
+      <tr><td>EBM</td><td>0.3–0.5 mm</td><td>Titanium, CoCr</td><td><span class="chip red">$$$$</span></td><td>Very high</td><td>Powder removal, machine</td><td><span class="chip red">Powder, vacuum</span></td><td>Implants, aerospace</td></tr>
+      <tr><td>DED / WAAM</td><td>1 mm or coarser</td><td>Weldable metals</td><td><span class="chip red">$$$–$$$$</span></td><td>High</td><td>Machining required</td><td><span class="chip red">Weld hazards</span></td><td>Large structures, repair</td></tr>
+      <tr><td>Bound-metal (FDM-based)</td><td>0.4–0.8 mm</td><td>Stainless and others</td><td><span class="chip yellow">$$–$$$</span></td><td>High after sintering</td><td>Debind, sinter (shrinks)</td><td><span class="chip yellow">Furnace, solvents</span></td><td>Tooling, small functional metal parts</td></tr>
+      <tr><td>Pellet / large format</td><td>2–10 mm beads</td><td>Many thermoplastics</td><td><span class="chip red">$$$</span></td><td>Good</td><td>Often CNC trimmed</td><td><span class="chip yellow">Hot, large</span></td><td>Furniture, molds, structures</td></tr>
+    </tbody>
+  </table></div>
+  <p><small>* Machine cost classes, very roughly: $ = up to about US$2,500; $$ = US$2,500–10,000; $$$ = US$10,000–150,000; $$$$ = above that. Prices change; check current figures.</small></p>
+
+  <h3>Detail at a glance</h3>
+  <div class="bars"><div class="bars-title">Smallest reliable feature in mm (shorter bar = finer detail; typical values)</div>
+    <div class="bar purple"><span>MSLA / DLP resin</span><i style="--v:12%"></i><em>~0.05–0.1</em></div>
+    <div class="bar purple"><span>SLA (laser)</span><i style="--v:14%"></i><em>~0.1</em></div>
+    <div class="bar teal"><span>PolyJet</span><i style="--v:14%"></i><em>~0.1</em></div>
+    <div class="bar blue"><span>SLS / MJF</span><i style="--v:38%"></i><em>~0.3</em></div>
+    <div class="bar red"><span>Metal LPBF</span><i style="--v:42%"></i><em>~0.2–0.4</em></div>
+    <div class="bar"><span>FDM 0.4 mm nozzle</span><i style="--v:70%"></i><em>~0.4–0.8</em></div>
+    <div class="bar yellow"><span>Pellet / large-format</span><i style="--v:100%"></i><em>2+</em></div>
+  </div>
+
+  <h3>Strengths on one chart</h3>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 340" role="img" aria-label="Radar chart comparing FDM, MSLA resin and SLS or MJF across six qualities: detail, strength, low cost, ease of use, material choice and build size.">
+      <g transform="translate(-100 0)">
+        <polygon class="d-grid" points="380,45 492.6,110 492.6,240 380,305 267.4,240 267.4,110"/>
+        <polygon class="d-grid" points="380,110 436.3,142.5 436.3,207.5 380,240 323.7,207.5 323.7,142.5"/>
+        <path class="d-grid" d="M380 175 V45 M380 175 L492.6 110 M380 175 L492.6 240 M380 175 V305 M380 175 L267.4 240 M380 175 L267.4 110"/>
+        <polygon class="k-orange" style="fill:var(--orange);fill-opacity:.18" points="380,110 458.8,129.5 487,236.8 380,279 278.7,233.5 290,123"/>
+        <polygon class="k-purple" style="fill:var(--purple);fill-opacity:.15" points="380,51.5 425,149 470,227 380,240 323.7,207.5 346,155.5"/>
+        <polygon class="k-blue" style="fill:var(--blue);fill-opacity:.15" points="380,84 481,116.5 402.5,188 380,214 323.7,207.5 312.5,136"/>
+        <text class="t-sm t-b t-c" x="380" y="30" style="text-anchor:middle">Detail</text>
+        <text class="t-sm t-b" x="505" y="106">Strength</text>
+        <text class="t-sm t-b" x="505" y="262">Low cost</text>
+        <text class="t-sm t-b t-c" x="380" y="326" style="text-anchor:middle">Ease of use</text>
+        <text class="t-sm t-b t-r" x="255" y="262" style="text-anchor:end">Material choice</text>
+        <text class="t-sm t-b t-r" x="255" y="106" style="text-anchor:end">Build size</text>
+      </g>
+      <rect class="s-orange" x="560" y="110" width="18" height="6"/><text class="t-sm" x="586" y="117">FDM / FFF</text>
+      <rect class="s-purple" x="560" y="140" width="18" height="6"/><text class="t-sm" x="586" y="147">MSLA resin</text>
+      <rect class="s-blue" x="560" y="170" width="18" height="6"/><text class="t-sm" x="586" y="177">SLS / MJF</text>
+      <text class="t-xs t-m" x="560" y="214">Qualitative ratings for typical</text><text class="t-xs t-m" x="560" y="228">desktop-to-industrial use.</text><text class="t-xs t-m" x="560" y="242">Outer ring = best.</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> FDM is the all-rounder (cheap, easy, many materials). Resin wins on detail; powder fusion wins on strength and batch production but sits at the cost end of the scale. The shapes are illustrative judgments, not measurements.</figcaption>
+  </figure>
+
+  <h2 id="decision">🔰 Decision tree: which process for my part?</h2>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 490" role="img" aria-label="Decision tree for choosing a process: metal parts lead to metal AM routes, fine detail or smooth small parts lead to resin, many strong parts without supports lead to SLS or MJF, full-color or multi-material leads to jetting or multi-color FDM, otherwise FDM.">
+      <rect class="f-blue" x="20" y="10" width="340" height="62" rx="10"/>
+      <text class="t-sm t-b t-c" x="190" y="36" style="text-anchor:middle">Must the part be metal</text><text class="t-sm t-b t-c" x="190" y="54" style="text-anchor:middle">(steel, aluminum, titanium)?</text>
+      <path class="d-ink arrow" d="M360 41 H410"/><text class="t-sm t-b c-red" x="372" y="34">Yes</text>
+      <rect class="f-red" x="410" y="10" width="340" height="62" rx="10"/>
+      <text class="t-sm" x="424" y="32">LPBF/DMLS service (complex), DED (large),</text><text class="t-sm" x="424" y="50">bound-metal or print-and-cast (budget).</text>
+      <path class="d-ink arrow" d="M190 72 V108"/><text class="t-sm t-b c-green" x="198" y="94">No</text>
+
+      <rect class="f-blue" x="20" y="108" width="340" height="62" rx="10"/>
+      <text class="t-sm t-b t-c" x="190" y="134" style="text-anchor:middle">Tiny details or a very smooth surface</text><text class="t-sm t-b t-c" x="190" y="152" style="text-anchor:middle">on a small part (under about 100 mm)?</text>
+      <path class="d-ink arrow" d="M360 139 H410"/><text class="t-sm t-b c-red" x="372" y="132">Yes</text>
+      <rect class="f-purple" x="410" y="108" width="340" height="62" rx="10"/>
+      <text class="t-sm" x="424" y="130">Resin (MSLA or SLA). Plan gloves, wash,</text><text class="t-sm" x="424" y="148">cure and a ventilated workspace.</text>
+      <path class="d-ink arrow" d="M190 170 V206"/><text class="t-sm t-b c-green" x="198" y="192">No</text>
+
+      <rect class="f-blue" x="20" y="206" width="340" height="62" rx="10"/>
+      <text class="t-sm t-b t-c" x="190" y="232" style="text-anchor:middle">Many strong, tough parts, or complex</text><text class="t-sm t-b t-c" x="190" y="250" style="text-anchor:middle">assemblies that must print without supports?</text>
+      <path class="d-ink arrow" d="M360 237 H410"/><text class="t-sm t-b c-red" x="372" y="230">Yes</text>
+      <rect class="f-teal" x="410" y="206" width="340" height="62" rx="10"/>
+      <text class="t-sm" x="424" y="228">SLS or MJF nylon from a service bureau</text><text class="t-sm" x="424" y="246">(or a small in-house powder machine).</text>
+      <path class="d-ink arrow" d="M190 268 V304"/><text class="t-sm t-b c-green" x="198" y="290">No</text>
+
+      <rect class="f-blue" x="20" y="304" width="340" height="62" rx="10"/>
+      <text class="t-sm t-b t-c" x="190" y="330" style="text-anchor:middle">Photo-real color or soft/hard blends</text><text class="t-sm t-b t-c" x="190" y="348" style="text-anchor:middle">within a single part?</text>
+      <path class="d-ink arrow" d="M360 335 H410"/><text class="t-sm t-b c-red" x="372" y="328">Yes</text>
+      <rect class="f-pink" x="410" y="304" width="340" height="62" rx="10"/>
+      <text class="t-sm" x="424" y="326">PolyJet or full-color binder jetting service;</text><text class="t-sm" x="424" y="344">for simpler needs, multi-color FDM.</text>
+      <path class="d-ink arrow" d="M190 366 V404"/><text class="t-sm t-b c-green" x="198" y="388">No</text>
+
+      <rect class="f-orange" x="20" y="404" width="340" height="70" rx="12"/>
+      <text class="t t-b t-c" x="190" y="430" style="text-anchor:middle">FDM / FFF</text><text class="t-sm t-c" x="190" y="450" style="text-anchor:middle">The best all-round starting point:</text><text class="t-sm t-c" x="190" y="466" style="text-anchor:middle">PLA, then PETG, ASA or nylon as needed</text>
+      <text class="t-sm t-m" x="410" y="430">Not sure? Print a small version in FDM first.</text><text class="t-sm t-m" x="410" y="448">The cheapest failure teaches you the most.</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> A five-question filter. Many readers will end at the bottom, which is why the rest of this compendium is mostly about FDM and the <a href="../x2d/overview.html">Bambu X2D</a>.</figcaption>
+  </figure>
+
+  <h2 id="cost">🔧 Cost comparisons</h2>
+  <p>There are three cost layers: the machine, the consumables and the "hidden" accessories (washing station, furnace, ventilation, PPE). The chart shows the rough machine price bands on a logarithmic scale, so each bar step is about a tenfold change.</p>
+  <div class="bars"><div class="bars-title">Typical machine price bands (log scale, rough US$)</div>
+    <div class="bar"><span>FDM entry</span><i style="--v:12%"></i><em>$150–500</em></div>
+    <div class="bar"><span>FDM enclosed, fast</span><i style="--v:27%"></i><em>$0.5–2.5k</em></div>
+    <div class="bar purple"><span>MSLA + wash/cure</span><i style="--v:20%"></i><em>$250–1k</em></div>
+    <div class="bar blue"><span>Desktop SLS</span><i style="--v:58%"></i><em>$10–30k</em></div>
+    <div class="bar teal"><span>PolyJet</span><i style="--v:69%"></i><em>$20–150k</em></div>
+    <div class="bar red"><span>Metal LPBF</span><i style="--v:90%"></i><em>$100k–1M+</em></div>
+  </div>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Cost item</th><th>FDM</th><th>Resin (MSLA)</th><th>Powder / service</th></tr></thead>
+    <tbody>
+      <tr><td>Material per cm³ of part</td><td>PLA ≈ US$0.03 at US$25/kg</td><td>Roughly US$0.04–0.08 including supports and waste</td><td>Usually paid through the service quote per part</td></tr>
+      <tr><td>Wear parts</td><td>Nozzles, belts, build plates</td><td>FEP/nFEP film, LCD screens, vat</td><td>Filters, powder refresh (service handles it)</td></tr>
+      <tr><td>Extra equipment</td><td>Dryer, tools</td><td>Wash &amp; cure station, IPA, gloves, ventilation</td><td>Depowdering and blasting (service handles it)</td></tr>
+      <tr><td>Time cost</td><td>Often hours per part</td><td>Hours print + 20–30 min handling</td><td>Days (shipping) but little of your time</td></tr>
+      <tr><td>Best economy at</td><td>1–100 parts</td><td>Small, detailed parts</td><td>Batches of dozens to thousands</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout tip"><span class="callout-title">Rule of thumb for ordering services</span>
+    <p>For a one-off part, FDM at home is almost always cheapest in money. For a batch of 50–500 functional nylon parts, MJF/SLS from a service often beats printing them yourself in both cost and strength. Compare a service quote with your own cost (machine time + filament) and the cost of failures.</p>
+  </div>
+
+  <h2 id="hybrid">🔧 Hybrid workflows: combining processes</h2>
+  <p>Real projects often chain several processes, each doing what it is best at. These are four combinations that experienced makers use regularly.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 760 360" role="img" aria-label="Four hybrid workflows shown as four-step chains: resin master to cast copies, FDM print to painted show piece, castable pattern to metal part, and FDM body with inserts and machined faces.">
+      <text class="t-sm t-b" x="10" y="16">A · Replicate a master in small batches</text>
+      <rect class="f-purple" x="10" y="24" width="160" height="50" rx="8"/><text class="t-sm t-c" x="90" y="55" style="text-anchor:middle">Resin master (SLA)</text>
+      <rect class="f-gray" x="200" y="24" width="160" height="50" rx="8"/><text class="t-sm t-c" x="280" y="55" style="text-anchor:middle">Silicone mold</text>
+      <rect class="f-teal" x="390" y="24" width="160" height="50" rx="8"/><text class="t-sm t-c" x="470" y="55" style="text-anchor:middle">Cast polyurethane</text>
+      <rect class="f-green" x="580" y="24" width="160" height="50" rx="8"/><text class="t-sm t-c" x="660" y="55" style="text-anchor:middle">Trim and finish</text>
+      <path class="d-ink arrow" d="M172 49 H198"/><path class="d-ink arrow" d="M362 49 H388"/><path class="d-ink arrow" d="M552 49 H578"/>
+
+      <text class="t-sm t-b" x="10" y="106">B · Show-quality FDM</text>
+      <rect class="f-orange" x="10" y="114" width="160" height="50" rx="8"/><text class="t-sm t-c" x="90" y="145" style="text-anchor:middle">FDM print, 0.12 mm</text>
+      <rect class="f-yellow" x="200" y="114" width="160" height="50" rx="8"/><text class="t-sm t-c" x="280" y="145" style="text-anchor:middle">Fill and sand</text>
+      <rect class="f-blue" x="390" y="114" width="160" height="50" rx="8"/><text class="t-sm t-c" x="470" y="145" style="text-anchor:middle">Primer, re-sand</text>
+      <rect class="f-pink" x="580" y="114" width="160" height="50" rx="8"/><text class="t-sm t-c" x="660" y="145" style="text-anchor:middle">Paint and clear coat</text>
+      <path class="d-ink arrow" d="M172 139 H198"/><path class="d-ink arrow" d="M362 139 H388"/><path class="d-ink arrow" d="M552 139 H578"/>
+
+      <text class="t-sm t-b" x="10" y="196">C · Metal from a printed pattern (lost-wax style)</text>
+      <rect class="f-purple" x="10" y="204" width="160" height="50" rx="8"/><text class="t-sm t-c" x="90" y="235" style="text-anchor:middle">Castable resin pattern</text>
+      <rect class="f-gray" x="200" y="204" width="160" height="50" rx="8"/><text class="t-sm t-c" x="280" y="235" style="text-anchor:middle">Investment mold</text>
+      <rect class="f-red" x="390" y="204" width="160" height="50" rx="8"/><text class="t-sm t-c" x="470" y="235" style="text-anchor:middle">Burnout and pour metal</text>
+      <rect class="f-green" x="580" y="204" width="160" height="50" rx="8"/><text class="t-sm t-c" x="660" y="235" style="text-anchor:middle">Cut, polish, machine</text>
+      <path class="d-ink arrow" d="M172 229 H198"/><path class="d-ink arrow" d="M362 229 H388"/><path class="d-ink arrow" d="M552 229 H578"/>
+
+      <text class="t-sm t-b" x="10" y="286">D · Functional assembly</text>
+      <rect class="f-orange" x="10" y="294" width="160" height="50" rx="8"/><text class="t-sm t-c" x="90" y="325" style="text-anchor:middle">FDM body (PETG/PA)</text>
+      <rect class="f-yellow" x="200" y="294" width="160" height="50" rx="8"/><text class="t-sm t-c" x="280" y="325" style="text-anchor:middle">Heat-set inserts</text>
+      <rect class="f-blue" x="390" y="294" width="160" height="50" rx="8"/><text class="t-sm t-c" x="470" y="325" style="text-anchor:middle">Ream or machine fits</text>
+      <rect class="f-green" x="580" y="294" width="160" height="50" rx="8"/><text class="t-sm t-c" x="660" y="325" style="text-anchor:middle">Assemble and test</text>
+      <path class="d-ink arrow" d="M172 319 H198"/><path class="d-ink arrow" d="M362 319 H388"/><path class="d-ink arrow" d="M552 319 H578"/>
+    </svg>
+    <figcaption><b>Figure 10.</b> Hybrid chains. The common pattern is to let additive manufacturing create the complex shape and a conventional step (casting, machining, painting) deliver the surface or the material you need.</figcaption>
+  </figure>
+
+  <h2 id="safety">🔰 Safety by process in one table</h2>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Process</th><th>Main hazards</th><th>Minimum precautions</th></tr></thead>
+    <tbody>
+      <tr><td>FDM</td><td>Hot nozzle and bed; fumes and ultrafine particles when heating some plastics; moving parts</td><td>Ventilation or filtered enclosure; never leave unattended without detection; see <a href="safety-and-workspace.html">Safety &amp; workspace</a></td></tr>
+      <tr><td>Resin</td><td>Skin sensitization, irritants, solvent vapors, UV light</td><td>Nitrile gloves, eye protection, ventilation, covered vats, UV-blocking lids, careful waste handling</td></tr>
+      <tr><td>SLS / MJF</td><td>Fine powder inhalation, dust ignition risk</td><td>Dust control and PPE; typically handled by trained operators</td></tr>
+      <tr><td>Metal powder processes</td><td>Reactive or explosive powders, lasers, inert gases, heavy machinery</td><td>Industrial safety systems and trained staff</td></tr>
+      <tr><td>Sintering furnace</td><td>High temperatures, flammable binder vapors, reducing gases</td><td>Specialist-operated equipment</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul>
+    <li>FDM is the best all-round starting point; resin is the detail specialist; powder fusion is the strong-batch specialist; metal is industrial.</li>
+    <li>Resin gives fine detail, but the workflow (gloves, wash, cure, waste) is part of the price.</li>
+    <li>Powder-bed parts print without supports and are strong, but powder handling and machine cost make them a service-bureau choice for most people.</li>
+    <li>Bound-metal and binder-jetted parts shrink during sintering; plan the design and tolerances accordingly.</li>
+    <li>Hybrid workflows (print then cast, print then machine, print then paint) combine strengths and are the norm in professional work.</li>
+    <li>Pick a process by asking about material, detail, strength, volume and budget, in that order.</li>
+  </ul>
+  <p><strong>Next:</strong> open the hood of an FDM printer in <a href="printer-anatomy.html">Anatomy of an FDM printer</a>, or practice choosing a process with the <a href="../exercises/level-1-beginner.html">Level 1 exercises</a>.</p>
+
+</main>
+</body>
+</html>

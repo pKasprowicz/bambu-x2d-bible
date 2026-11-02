@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Visual lab · 3D Printing Compendium</title>
+  <meta name="description" content="Thirteen live, animated visualizations that build intuition for 3D printing: staircase effect, overhangs, infill, walls, retraction, cooling, bridges, warping, CoreXY motion, pressure advance, tolerances, multi-color flushing and input shaping.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+  <style>
+    .vl-bar { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 10px 14px; margin: 1em 0; }
+    .vl-bar label { display: inline-flex; gap: 8px; align-items: center; font-weight: 650; font-size: 14px; cursor: pointer; }
+    .vl-bar .vl-status { color: var(--muted); font-size: 13px; }
+    .vl-jump { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 6px 14px; list-style: none; margin: .8em 0 1.4em; padding: 0; }
+    .vl-jump li { margin: 0; }
+    .vl-jump a { display: block; padding: 5px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); font-size: 13.5px; text-decoration: none; }
+    .vl-jump a:hover { border-color: var(--brand); }
+    .vl-viz { margin: 2em 0; padding-top: .4em; border-top: 1px solid var(--line); }
+    .vl-viz > h3 { margin-top: .6em; }
+    .vl-grid { display: grid; grid-template-columns: minmax(250px, 330px) minmax(0, 1fr); gap: 16px; align-items: start; margin: 1em 0; }
+    @media (max-width: 900px) { .vl-grid { grid-template-columns: minmax(0, 1fr); } }
+    .vl-side { display: grid; gap: 10px; min-width: 0; }
+    .vl-ctl { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; box-shadow: var(--shadow); }
+    .vl-field { margin: 0 0 .65em; }
+    .vl-field label { display: flex; justify-content: space-between; gap: 8px; font-size: 13.5px; font-weight: 650; }
+    .vl-field output { font-family: var(--mono); font-size: 12.5px; color: var(--brand); white-space: nowrap; }
+    .vl-field input[type=range] { width: 100%; accent-color: var(--brand); }
+    .vl-field select { width: 100%; font: inherit; font-size: 14px; padding: 4px 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2); color: var(--ink); }
+    .vl-field.chk label { justify-content: flex-start; align-items: center; cursor: pointer; font-weight: 600; }
+    .vl-btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: .4em; }
+    .vl-btns button { font: inherit; font-size: 13px; cursor: pointer; border-radius: 999px; padding: 4px 12px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); }
+    .vl-btns button:hover, .vl-btns button:focus-visible { border-color: var(--brand); }
+    .vl-btns button[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: #fff; }
+    .vl-read { background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 9px 12px; font-size: 13.5px; line-height: 1.5; }
+    .vl-read b { font-family: var(--mono); font-weight: 700; }
+    .vl-read .vl-v { margin-top: 4px; font-weight: 700; }
+    .vl-viz figure.fig { margin: 0; }
+    .vl-viz figure.fig svg { max-height: 460px; }
+    .vl-viz figure.fig svg[data-clickable] { cursor: crosshair; }
+    .vl-viz svg:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+    .vl-note { margin: .8em 0 0; }
+    .vl-viz svg .t { font-size: 15px; } .vl-viz svg .t-sm { font-size: 13.5px; } .vl-viz svg .t-xs { font-size: 12px; } .vl-viz svg .t-lg { font-size: 19px; }
+    .vl-viz svg .vl-box { fill: var(--surface-2); stroke: var(--line); stroke-width: 1; }
+    .vl-viz svg .vl-box0 { fill: var(--surface); stroke: var(--line); stroke-width: 1.2; }
+  </style>
+</head>
+<body data-page="tools/visual-lab.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 8 · Interactive tools</div>
+    <h1>Visual lab</h1>
+    <p class="lead">Thirteen small experiments you can drag, click and watch. Each one isolates a single idea (a staircase on a curve, a string between two posts, a belt moving two motors) and lets you feel how the numbers change the picture.</p>
+    <div class="meta"><span class="badge beginner">All levels</span><span class="badge x2d">X2D examples</span><span class="badge time">⏱ 20 min to explore</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">How to use the lab</span>
+    <p>Every lab has controls on the left, a live picture on the right, a short <em>what is happening</em> explanation above it and a <em>what to notice</em> box below. Move one slider at a time and watch which part of the picture reacts. The numbers beside each picture are simple textbook models: they show the <em>direction and rough size</em> of an effect, not an exact prediction for your printer.</p></div>
+
+  <div class="callout warn"><span class="callout-title">Models, not measurements</span>
+    <p>The simulations are deliberately simplified (first-order lags, beam formulas, exponential cooling). Material constants are typical, approximate values. Use the lab to build intuition, then confirm with a calibration print and the <a href="calculators.html">calculators</a>. Where a number is a conceptual placeholder (for example the flush volume per color change) it is labeled as such.</p></div>
+
+  <div class="vl-bar" role="group" aria-label="Animation controls">
+    <label><input type="checkbox" id="vl-pause-all"> Pause all animations</label>
+    <button type="button" class="btn ghost" id="vl-reset-all">Reset all labs</button>
+    <span class="vl-status" id="vl-motion-note"></span>
+  </div>
+
+  <h2>Jump to a lab</h2>
+  <ul class="vl-jump">
+    <li><a href="#v-a">(a) Layer height &amp; staircase</a></li>
+    <li><a href="#v-b">(b) Overhang angle</a></li>
+    <li><a href="#v-c">(c) Infill explorer</a></li>
+    <li><a href="#v-d">(d) Wall cross-section</a></li>
+    <li><a href="#v-e">(e) Retraction &amp; stringing</a></li>
+    <li><a href="#v-f">(f) Cooling &amp; layer time</a></li>
+    <li><a href="#v-g">(g) Bridge sag</a></li>
+    <li><a href="#v-h">(h) Thermal expansion &amp; warp</a></li>
+    <li><a href="#v-i">(i) CoreXY motion</a></li>
+    <li><a href="#v-j">(j) Pressure advance</a></li>
+    <li><a href="#v-k">(k) Tolerance fit</a></li>
+    <li><a href="#v-l">(l) Flush &amp; prime tower</a></li>
+    <li><a href="#v-m">(m) Input shaping</a></li>
+  </ul>
+
+  <h2>Shape and structure</h2>
+
+  <section class="vl-viz" id="v-a" aria-labelledby="a-h">
+    <h3 id="a-h">(a) Layer height vs the staircase effect</h3>
+    <p>A printer builds a smooth surface out of flat layers, so every sloped surface is really a staircase. For a surface tilted by an angle θ from horizontal, each layer of height <i>h</i> leaves a step that is <b>h / tan θ</b> wide, and the stair corners sit about <b>h · cos θ</b> away from the ideal surface. Steps are tiny on steep walls (θ near 90°) and huge near the top of a dome (θ near 0°). The picture shows a quarter dome of 20 mm radius; the yellow marker is the point where the surface has the angle you choose.</p>
+    <div class="vl-grid">
+      <div class="vl-side"><div class="vl-ctl" id="a-ctl"></div><div class="vl-read" id="a-read" aria-live="polite"></div></div>
+      <figure class="fig no-zoom"><svg id="a-svg" class="diagram" viewBox="0 0 640 320" role="img" aria-labelledby="a-t"><title id="a-t">Stair-stepped layers approximating a quarter dome</title><g id="a-dyn"></g></svg>
+        <figcaption><b>Fig. 1</b> Layers (blue) approximating a dome (white line). Zoom to see the steps; turn on adaptive layers to see thin layers appear only where the surface is shallow.</figcaption></figure>
+    </div>
+    <div class="callout tip vl-note"><span class="callout-title">What to notice</span>
+      <p>Halving the layer height halves the step run at every angle, but the stairs near the top stay visibly wider than on the flanks. Adaptive layer height spends thin layers only where they pay off, which is why it can cut print time compared with using a thin layer everywhere. Related reading: <a href="../techniques/speed-cooling-quality.html">speed, cooling and quality</a>.</p></div>
+  </section>
+
+  <section class="vl-viz" id="v-b" aria-labelledby="b-h">
+    <h3 id="b-h">(b) Overhang angle vs the under-layer offset</h3>
+    <p>When a wall leans outward by an angle α measured from vertical, every new layer sits <b>d = h · tan α</b> further out than the one below. The new line (width <i>w</i>) is only supported where it overlaps the previous layer, so the supported fraction is <b>1 − d / w</b>. At 45° with <i>h</i> = 0.2 mm and <i>w</i> = 0.42 mm, about half of every line is in the air; past roughly 60° the overlap collapses and you need cooling, a slower speed or support.</p>
+    <div class="vl-grid">
+      <div class="vl-side"><div class="vl-ctl" id="b-ctl"></div><div class="vl-read" id="b-read" aria-live="polite"></div></div>
+      <figure class="fig no-zoom"><svg id="b-svg" class="diagram" viewBox="0 0 640 320" role="img" aria-labelledby="b-t"><title id="b-t">Stack of layers leaning outward with growing under-layer offset</title><g id="b-dyn"></g></svg>
+        <figcaption><b>Fig. 2</b> A leaning wall drawn at true proportions (magnified). Green layers are well supported, orange droop, red hang in the air.</figcaption></figure>
+    </div>
+    <div class="callout tip vl-note"><span class="callout-title">What to notice</span>
+      <p>The offset depends on <i>h</i> as well as the angle: thicker layers step out further, so the same 55° wall prints better at 0.12 mm than at 0.28 mm. A wider line also helps because more of it still lands on the layer below. Support strategy is covered in <a href="../techniques/supports-bridges-overhangs.html">supports, bridges and overhangs</a>.</p></div>
+  </section>
+
+  <section class="vl-viz" id="v-c" aria-labelledby="c-h">
+    <h3 id="c-h">(c) Infill pattern and density explorer</h3>
+    <p>Infill is a lattice of single lines inside the part. For one set of parallel lines the plastic fraction is <b>ρ = w / s</b> (line width over spacing); a grid has two sets, triangles three. A honeycomb with edge <i>a</i> has ρ = 2w / (√3 · a). The gyroid is a true slice of the standard sine-sum gyroid function, traced with marching squares; its wave pattern morphs smoothly from layer to layer, which is why gyroid walls behave alike in every direction. The estimate counts the length of every drawn line times the line width and ignores the small overlaps at crossings.</p>
+    <div class="vl-grid">
+      <div class="vl-side"><div class="vl-ctl" id="c-ctl"></div><div class="vl-read" id="c-read" aria-live="polite"></div></div>
+      <figure class="fig no-zoom"><svg id="c-svg" class="diagram" viewBox="0 0 640 340" role="img" aria-labelledby="c-t"><title id="c-t">Top view of an infill pattern in a 100 millimetre square</title><g id="c-dyn"></g></svg>
+        <figcaption><b>Fig. 3</b> A 100 × 100 mm slice. Lines are drawn at least 1.6 px wide so they stay visible; the material estimate always uses the real line width.</figcaption></figure>
+    </div>
+    <div class="callout tip vl-note"><span class="callout-title">What to notice</span>
+      <p>Doubling the density roughly halves the spacing but does not double strength: shells carry most of the load in bending, as the next lab shows. Triangles resist shear in every direction at a higher material cost than a grid, and the line pattern flips direction every layer, which is why it is fast but weak across its lines.</p></div>
+  </section>
+
+  <section class="vl-viz" id="v-d" aria-labelledby="d-h">
+    <h3 id="d-h">(d) Wall and perimeter cross-section builder</h3>
+    <p>Cut a printed bar across and you find an outer ring of solid wall loops, solid top and bottom skin, and a sparse infill core. The solid fraction is <b>f = (A<sub>total</sub> − A<sub>core</sub> · (1 − ρ)) / A<sub>total</sub></b>, where the core is what remains after <i>n</i> loops of width <i>w</i> on each side and the top/bottom layers. Bending stiffness depends on the second moment of area, <b>I = (W·H³ − W<sub>c</sub>·H<sub>c</sub>³) / 12</b> for the shell, so material far from the middle counts much more than material near it.</p>
+    <div class="vl-grid">
+      <div class="vl-side"><div class="vl-ctl" id="d-ctl"></div><div class="vl-read" id="d-read" aria-live="polite"></div></div>
+      <figure class="fig no-zoom"><svg id="d-svg" class="diagram" viewBox="0 0 640 320" role="img" aria-labelledby="d-t"><title id="d-t">Cross-section of a printed bar showing wall loops, skin and infill core</title><g id="d-dyn"></g></svg>
+        <figcaption><b>Fig. 4</b> Cross-section of a printed bar. Dark rings are wall loops, hatched area is the infill core at the chosen density.</figcaption></figure>
+    </div>
+    <div class="callout tip vl-note"><span class="callout-title">What to notice</span>
+      <p>Adding one wall loop adds more bending stiffness than adding twenty percentage points of infill, because the loop is at the outer edge where stress is highest. Strength at the core only matters for crushing loads or for supporting the top skin. More in <a href="../design/strength-and-orientation.html">strength and orientation</a>.</p></div>
+  </section>
+
+  <h2>Heat and plastic</h2>
+
+  <section class="vl-viz" id="v-e" aria-labelledby="e-h">
+    <h3 id="e-h">(e) Retraction and stringing animation</h3>
+    <p>Molten plastic is under pressure in the hot end. When the nozzle travels without printing, that pressure keeps pushing plastic out as a string. Retraction pulls the filament back and relieves the pressure; the required distance is small on a direct-drive extruder (about 0.5–1 mm) and large on a Bowden tube (4–6 mm). Hotter plastic is runnier, so strings grow with temperature. The model uses <b>effectiveness = 1 − e<sup>−d / d₀</sup></b> and a string strength that grows with travel time and temperature.</p>
+    <div class="vl-grid">
+      <div class="vl-side"><div class="vl-ctl" id="e-ctl"></div><div class="vl-read" id="e-read" aria-live="polite"></div></div>
+      <figure class="fig no-zoom"><svg id="e-svg" class="diagram" viewBox="0 0 640 320" role="img" aria-labelledby="e-t"><title id="e-t">Nozzle travelling between two posts, with strings forming when retraction is too small</title><g id="e-dyn"></g></svg>
+        <figcaption><b>Fig. 5</b> The nozzle prints one post, retracts, travels and primes the next. The bar at the right is the pressure left in the melt zone.</figcaption></figure>
+    </div>
+    <div class="callout tip vl-note"><span class="callout-title">What to notice</span>
+      <p>Retraction helps with sharply diminishing returns: the first millimetre removes most of the pressure and extra distance mainly risks heat creep and clogs. Cooling the melt (lower temperature) or shortening the travel are often better cures than a larger retraction. Tune with a stringing tower, see <a href="../techniques/calibration.html">calibration</a>.</p></div>
+  </section>
+
+  <section class="vl-viz" id="v-f" aria-labelledby="f-h">
+    <h3 id="f-h">(f) Cooling and layer-time animation</h3>
+    <p>A freshly laid line starts near nozzle temperature and cools toward the air temperature: <b>T(t) = T<sub>air</sub> + (T<sub>nozzle</sub> − T<sub>air</sub>) · e<sup>−t/τ</sup></b>. The time constant τ is shorter with part-cooling fan airflow. If the layer time is shorter than the cooling time, the next layer lands on plastic that is still soft; if it is much longer, the interface has cooled and bonds weakly. The colors show the temperature of each layer as the stack grows.</p>
+    <div class="vl-grid">
+      <div class="vl-side"><div class="vl-ctl" id="f-ctl"></div><div class="vl-read" id="f-read" aria-live="polite"></div></div>
+      <figure class="fig no-zoom"><svg id="f-svg" class="diagram" viewBox="0 0 640 320" role="img" aria-labelledby="f-t"><title id="f-t">Stack of layers coloured by temperature next to a cooling curve</title><g id="f-dyn"></g></svg>
+        <figcaption><b>Fig. 6</b> Left: layer stack colored by temperature. Right: cooling curve of the newest layer with the glass-transition line and the moment the next layer arrives.</figcaption></figure>
+    </div>
+    <div class="callout tip vl-note"><span class="callout-title">What to notice</span>
+      <p>Tiny parts print hot because each layer takes only a few seconds, which is why slicers add a <em>minimum layer time</em> slow-down. A closed, warm chamber raises the air temperature and lengthens τ, which helps ABS and ASA layer adhesion but can make PLA sag. Details in <a href="../techniques/speed-cooling-quality.html">speed, cooling and quality</a>.</p></div>
+  </section>
+
+  <section class="vl-viz" id="v-g" aria-labelledby="g-h">
+    <h3 id="g-h">(g) Bridge sag simulation vs span</h3>
+    <p>A bridge is plastic stretched through the air between two supports. Until it cools below its glass transition it behaves like a soft beam under its own weight, and beam theory says sag grows steeply with span (roughly with the square or more). The animation draws the strand behind the nozzle; every point sags for a short time <b>τ<sub>freeze</sub></b> after it is laid and then locks. Fan airflow shortens τ<sub>freeze</sub>, a hotter nozzle lengthens it, and a faster bridge stretches the strand tighter. The curve shape used is the fixed-fixed beam shape <b>δ(x) = δ<sub>max</sub> · 16 s²(1 − s)²</b>.</p>
+    <div class="vl-grid">
+      <div class="vl-side"><div class="vl-ctl" id="g-ctl"></div><div class="vl-read" id="g-read" aria-live="polite"></div></div>
+      <figure class="fig no-zoom"><svg id="g-svg" class="diagram" viewBox="0 0 640 320" role="img" aria-labelledby="g-t"><title id="g-t">Side view of a nozzle laying a bridging strand between two pillars with the strand sagging</title><g id="g-dyn"></g></svg>
+        <figcaption><b>Fig. 7</b> Side view, sag exaggerated 3×. The dashed line is the ideal flat bridge.</figcaption></figure>
+    </div>
+    <div class="callout tip vl-note"><span class="callout-title">What to notice</span>
+      <p>Doubling the span roughly quadruples the sag, so a 60 mm bridge is much harder than two 30 mm ones with a pillar between. Full fan and a lower temperature are the cheapest improvements, and a thin first bridge layer on top of which denser layers are printed is the classic trick. See <a href="../techniques/supports-bridges-overhangs.html">supports, bridges and overhangs</a>.</p></div>
+  </section>
+
+  <section class="vl-viz" id="v-h" aria-labelledby="h-h">
+    <h3 id="h-h">(h) Thermal expansion and warp visualizer</h3>
+    <p>Plastic shrinks as it cools through its glass transition: <b>ΔL = α · L · ΔT</b>, with α in µm/(m·K). The bottom layers are held by the hot bed while upper layers keep shrinking, which curls the part like a bimetal strip. Treating the strip as two halves with a strain mismatch Δε = α · ΔT, the curvature is about <b>κ ≈ 3 Δε / (2 t)</b> and a free strip of length L lifts its ends by <b>κ L² / 8</b>. A warm chamber reduces the effective ΔT (it is measured from the glass transition down to the chamber temperature).</p>
+    <div class="vl-grid">
+      <div class="vl-side"><div class="vl-ctl" id="h-ctl"></div><div class="vl-read" id="h-read" aria-live="polite"></div></div>
+      <figure class="fig no-zoom"><svg id="h-svg" class="diagram" viewBox="0 0 640 320" role="img" aria-labelledby="h-t"><title id="h-t">Flat plate shrinking and curling upward at its ends as it cools</title><g id="h-dyn"></g></svg>
+        <figcaption><b>Fig. 8</b> A plate cooling from the glass transition to the chamber temperature. The vertical lift and the shrink are exaggerated for visibility (factors are printed in the figure); the dashed outline is the hot size.</figcaption></figure>
+    </div>
+    <div class="callout tip vl-note"><span class="callout-title">What to notice</span>
+      <p>Warp scales with length squared but falls with thickness, so long thin parts curl worst. Material matters through both α and the glass-transition temperature: PLA (low Tg) warps little even with a high α, while ABS and nylon need a warm chamber, a brim or a bed adhesive. Materials guides: <a href="../materials/overview.html">materials overview</a>.</p></div>
+  </section>
+
+  <h2>Motion and flow</h2>
+
+  <section class="vl-viz" id="v-i" aria-labelledby="i-h">
+    <h3 id="i-h">(i) Belt and CoreXY motion visualizer</h3>
+    <p>In a CoreXY gantry the toolhead is moved by two motors (A and B) that both drive the same belt loop. Neither motor owns an axis: <b>A = X + Y</b> and <b>B = X − Y</b> (belt travel in mm; sign conventions differ between printers). A pure X move turns both motors the same way, a pure Y move turns them in opposite directions, and a diagonal move needs only one motor. Belt travel converts to rotation with a GT2 belt (2 mm pitch) and a 20-tooth pulley: 40 mm of belt per revolution. The X2D is a CoreXY machine with a 256 × 256 mm bed.</p>
+    <div class="vl-grid">
+      <div class="vl-side"><div class="vl-ctl" id="i-ctl"></div><div class="vl-read" id="i-read" aria-live="polite"></div></div>
+      <figure class="fig no-zoom"><svg id="i-svg" class="diagram" viewBox="0 0 640 340" role="img" aria-labelledby="i-t" tabindex="0" data-clickable="1"><title id="i-t">Top view of a CoreXY machine; click the bed to move the toolhead and see motor A and B rotation</title><g id="i-dyn"></g></svg>
+        <figcaption><b>Fig. 9</b> Click the bed (or focus it and use the arrow keys) to send the toolhead there. The dials show how far each motor has turned.</figcaption></figure>
+    </div>
+    <div class="callout tip vl-note"><span class="callout-title">What to notice</span>
+      <p>Diagonals at exactly 45° move with only one motor turning while the other stays still, so the toolhead gets almost twice the speed for the same motor speed. Pure X and pure Y moves need both motors at once, which is why CoreXY accelerations are limited by both steppers together.</p></div>
+  </section>
+
+  <section class="vl-viz" id="v-j" aria-labelledby="j-h">
+    <h3 id="j-h">(j) Flow and pressure-advance corner bulge</h3>
+    <p>Plastic in the nozzle is compressible and its flow lags the extruder motor with a time constant τ. At a corner the toolhead slows, the motor slows, but the stored pressure keeps pushing: the line bulges. After the corner the head speeds up before the pressure rebuilds and the line thins. Pressure advance (PA) sends extra feed during acceleration and less during deceleration: <b>q<sub>sent</sub> = q + K · dq/dt</b>. The best K cancels the lag (K ≈ τ). The bead width below is exaggerated so you can see it.</p>
+    <div class="vl-grid">
+      <div class="vl-side"><div class="vl-ctl" id="j-ctl"></div><div class="vl-read" id="j-read" aria-live="polite"></div></div>
+      <figure class="fig no-zoom"><svg id="j-svg" class="diagram" viewBox="0 0 640 340" role="img" aria-labelledby="j-t"><title id="j-t">A square path printed with variable bead width at the corners, plus a flow-versus-time plot</title><g id="j-dyn"></g></svg>
+        <figcaption><b>Fig. 10</b> Square path (clockwise from the bottom-left). Bottom: commanded flow (dashed) vs the flow that actually leaves the nozzle.</figcaption></figure>
+    </div>
+    <div class="callout tip vl-note"><span class="callout-title">What to notice</span>
+      <p>With K = 0 the corner is fat and the start of the next side is thin; with K close to the system lag the bead is uniform. Too large a K starves the corner instead. The right value depends on material and nozzle, so calibrate per filament, see <a href="../techniques/calibration.html">calibration</a>.</p></div>
+  </section>
+
+  <h2>Fits, colors and vibration</h2>
+
+  <section class="vl-viz" id="v-k" aria-labelledby="k-h">
+    <h3 id="k-h">(k) Tolerance fit visualizer</h3>
+    <p>A peg and a hole that match on paper rarely match on the printer: printed holes come out smaller than modeled (the nozzle path rounds inward and plastic bulges), pegs come out slightly larger. The real clearance is <b>c = (D<sub>hole</sub> − e<sub>hole</sub>) − (D<sub>peg</sub> + e<sub>peg</sub>)</b>. Positive means a gap, negative means interference. As a rule of thumb for FDM: 0 to 0.1 mm is a press fit, 0.1 to 0.25 mm slides, 0.25 to 0.5 mm is loose.</p>
+    <div class="vl-grid">
+      <div class="vl-side"><div class="vl-ctl" id="k-ctl"></div><div class="vl-read" id="k-read" aria-live="polite"></div></div>
+      <figure class="fig no-zoom"><svg id="k-svg" class="diagram" viewBox="0 0 640 320" role="img" aria-labelledby="k-t"><title id="k-t">Peg inside a hole with a visible clearance gap or an interference overlap</title><g id="k-dyn"></g></svg>
+        <figcaption><b>Fig. 11</b> The peg rests on the bottom of the hole under gravity, so the gap appears as a crescent. Red overlap means interference.</figcaption></figure>
+    </div>
+    <div class="callout tip vl-note"><span class="callout-title">What to notice</span>
+      <p>A 0.1 mm gap is only 2–3 pixels here even though the peg is 8 mm wide: that is why parts that look "perfect" in CAD jam. Always print a small test coupon first and add the measured error to your design. See <a href="../design/tolerances-and-fits.html">tolerances and fits</a> and the tolerance recommender in the <a href="calculators.html">calculators</a>.</p></div>
+  </section>
+
+  <section class="vl-viz" id="v-l" aria-labelledby="l-h">
+    <h3 id="l-h">(l) Multi-color flush and prime-tower visualizer</h3>
+    <p>When a nozzle changes color it must push the old color out before the new one prints cleanly. The purge goes into a prime tower (or a flush into infill or a waste bin). The conceptual estimate is <b>waste = layers · share · changes · V<sub>flush</sub> · ρ<sub>plastic</sub></b>. On a dual-nozzle printer such as the X2D, a change between colors that sit on different nozzles is a nozzle swap and needs far less flushing; the slider below lets you choose what share of changes become swaps.</p>
+    <div class="callout warn"><span class="callout-title">Conceptual only</span><p>Flush volume per change here is a placeholder you set yourself. Bambu Studio computes exact values from its flush matrix (color-to-color volumes) and the tool-change preferences, so use its numbers for real jobs.</p></div>
+    <div class="vl-grid">
+      <div class="vl-side"><div class="vl-ctl" id="l-ctl"></div><div class="vl-read" id="l-read" aria-live="polite"></div></div>
+      <figure class="fig no-zoom"><svg id="l-svg" class="diagram" viewBox="0 0 640 340" role="img" aria-labelledby="l-t"><title id="l-t">A striped multi-color part next to a prime tower whose bands show color changes</title><g id="l-dyn"></g></svg>
+        <figcaption><b>Fig. 12</b> Left: the part (each layer uses its own color). Right: the prime tower, with a flush band for every color change.</figcaption></figure>
+    </div>
+    <div class="callout tip vl-note"><span class="callout-title">What to notice</span>
+      <p>Waste grows with <em>every</em> factor: more colors, more layers that switch color, larger flush volume. Dark-to-light changes cost the most in real prints, and grouping colors by layer (the same color on many consecutive layers) removes changes entirely. Concepts in <a href="../techniques/multi-color-and-multi-material.html">multi-color and multi-material</a> and <a href="../x2d/dual-nozzle-printing.html">dual-nozzle printing</a>.</p></div>
+  </section>
+
+  <section class="vl-viz" id="v-m" aria-labelledby="m-h">
+    <h3 id="m-h">(m) Input-shaping ringing animation</h3>
+    <p>When a toolhead stops abruptly, the frame rings at its resonant frequency <i>f</i> with damping ζ, leaving ripples on the surface behind a corner (ghosting). The unit step response overshoots by <b>K = e<sup>−ζπ / √(1−ζ²)</sup></b>. An input shaper splits the move into impulses timed to cancel the vibration: <b>ZV</b> uses two impulses (amplitudes 1, K over 1 + K) half a period apart and <b>ZVD</b> three (1, 2K, K² over (1 + K)²) one half period apart. Ripples are spaced <b>λ = v / f</b> along the wall.</p>
+    <div class="vl-grid">
+      <div class="vl-side"><div class="vl-ctl" id="m-ctl"></div><div class="vl-read" id="m-read" aria-live="polite"></div></div>
+      <figure class="fig no-zoom"><svg id="m-svg" class="diagram" viewBox="0 0 640 340" role="img" aria-labelledby="m-t"><title id="m-t">Printed corner with ringing ripples next to a plot of the tool position after a step</title><g id="m-dyn"></g></svg>
+        <figcaption><b>Fig. 13</b> Left: a wall printed around a corner, ripples exaggerated. Right: tool position after the move (green = shaped).</figcaption></figure>
+    </div>
+    <div class="callout tip vl-note"><span class="callout-title">What to notice</span>
+      <p>ZV removes the ringing at the exact resonance but is sensitive to a wrong frequency; ZVD tolerates errors better but delays the move a little longer. Higher speeds stretch the ripples (bigger λ), higher frequencies shrink them. Measure your real resonance with the accelerometer calibration, see <a href="../techniques/calibration.html">calibration</a>.</p></div>
+  </section>
+
+  <h2>Key takeaways</h2>
+  <ul>
+    <li>Layer height sets the step run on every slope: <b>h / tan θ</b>. Shallow surfaces suffer most.</li>
+    <li>Overhang support is a ratio: <b>1 − h·tan α / w</b>. Thinner layers and wider lines overhang better.</li>
+    <li>Shells (walls, top and bottom) give most of a part's stiffness; infill mostly keeps the skin apart.</li>
+    <li>Strings, bulges and ringing are all lags: pressure, heat and vibration need time to settle, and the cures (retraction, pressure advance, input shaping) work by timing.</li>
+    <li>Cooling and warp trade off: fans help bridges and overhangs, a warm chamber helps adhesion and warp.</li>
+    <li>Dimensions are always a printed result, not a CAD result: measure, then compensate.</li>
+    <li>Multi-color cost is proportional to the number of color changes; plan colors by layer to save plastic.</li>
+  </ul>
+
+  <p>Continue with the <a href="calculators.html">calculators</a> for the numbers behind these pictures or the <a href="material-picker.html">material picker</a> to choose a filament.</p>
+
+<script>
+document.addEventListener("c3d:ready", function () {
+  "use strict";
+  var $ = C3D.$, store = C3D.store;
+  var reduce = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  var labs = {}, anims = [];
+  var pauseBox = $("#vl-pause-all");
+  pauseBox.checked = reduce || store.get("vl:pauseall") === "1";
+
+  function r(n) { return Math.round(n * 100) / 100; }
+  function r1(n) { return Math.round(n * 10) / 10; }
+  function fx(n, d) { return (+n).toFixed(d == null ? 2 : d); }
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function decs(step) { var s = String(step), i = s.indexOf("."); return i < 0 ? 0 : s.length - i - 1; }
+  function dyn(id, html) { $("#" + id + "-dyn").innerHTML = html; }
+  function readout(id, html) { $("#" + id + "-read").innerHTML = html; }
+
+  /* Builds labeled controls from definitions, persists them, and calls onChange(S) on every change. */
+  function controls(id, defs, onChange) {
+    var host = $("#" + id + "-ctl"), S = {}, saved = {}, els = {};
+    try { saved = JSON.parse(store.get("vl:" + id) || "{}") || {}; } catch (e) { saved = {}; }
+    function coerce(d, v) {
+      if (d.t === "check") return v === true || v === "true";
+      if (d.t === "select") {
+        for (var i = 0; i < d.o.length; i++) { if (String(d.o[i][0]) === String(v)) return d.o[i][0]; }
+        return d.v;
+      }
+      v = parseFloat(v);
+      return isFinite(v) ? clamp(v, d.min, d.max) : d.v;
+    }
+    function show(d) {
+      if (d.t !== "range") return;
+      $("#" + id + "-" + d.k + "-o").textContent = fx(S[d.k], d.d != null ? d.d : decs(d.step)) + (d.u ? " " + d.u : "");
+    }
+    function save() { store.set("vl:" + id, JSON.stringify(S)); }
+    defs.forEach(function (d) {
+      var uid = id + "-" + d.k, w = document.createElement("div"), h = "";
+      w.className = "vl-field" + (d.t === "check" ? " chk" : "");
+      if (d.t === "select") {
+        h = '<label for="' + uid + '">' + d.l + '</label><select id="' + uid + '">' + d.o.map(function (o) { return '<option value="' + o[0] + '">' + o[1] + "</option>"; }).join("") + "</select>";
+      } else if (d.t === "check") {
+        h = '<label><input type="checkbox" id="' + uid + '"> ' + d.l + "</label>";
+      } else {
+        h = '<label for="' + uid + '">' + d.l + ' <output id="' + uid + '-o" for="' + uid + '"></output></label><input type="range" id="' + uid + '" min="' + d.min + '" max="' + d.max + '" step="' + d.step + '">';
+      }
+      w.innerHTML = h; host.appendChild(w);
+      els[d.k] = $("#" + uid);
+      S[d.k] = coerce(d, saved[d.k] != null ? saved[d.k] : d.v);
+      if (d.t === "check") els[d.k].checked = S[d.k]; else els[d.k].value = S[d.k];
+      show(d);
+      els[d.k].addEventListener(d.t === "range" ? "input" : "change", function () {
+        S[d.k] = coerce(d, d.t === "check" ? els[d.k].checked : els[d.k].value);
+        show(d); save(); onChange(S);
+      });
+    });
+    var row = document.createElement("div"); row.className = "vl-btns"; host.appendChild(row);
+    var rb = document.createElement("button"); rb.type = "button"; rb.textContent = "Reset"; row.appendChild(rb);
+    function reset() {
+      defs.forEach(function (d) { S[d.k] = d.v; if (d.t === "check") els[d.k].checked = d.v; else els[d.k].value = d.v; show(d); });
+      store.del("vl:" + id); onChange(S);
+    }
+    rb.addEventListener("click", reset);
+    labs[id] = { reset: reset, row: row, S: S };
+    onChange(S);
+    return S;
+  }
+
+  /* Registers an animation with Play/Pause/Step buttons. draw(t, dt) paints one frame; t is in seconds. */
+  function animate(id, draw, o) {
+    o = o || {};
+    var a = { id: id, draw: draw, t: o.t0 || 0, playing: !reduce, vis: true, speed: o.speed || 1 };
+    var row = labs[id].row;
+    function mk(label) { var b = document.createElement("button"); b.type = "button"; b.textContent = label; row.insertBefore(b, row.lastChild); return b; }
+    var play = mk(""), step = mk("Step ›"), rest = mk("↺ Restart");
+    function paint() { play.textContent = a.playing ? "⏸ Pause" : "▶ Play"; play.setAttribute("aria-pressed", a.playing ? "true" : "false"); }
+    play.addEventListener("click", function () {
+      a.playing = !a.playing;
+      if (a.playing && pauseBox.checked) { pauseBox.checked = false; store.set("vl:pauseall", "0"); }
+      paint();
+    });
+    step.addEventListener("click", function () { a.t += o.step || 0.05; draw(a.t, 0); });
+    rest.addEventListener("click", function () { a.t = o.t0 || 0; draw(a.t, 0); });
+    a.redraw = function () { draw(a.t, 0); };
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (es) { a.vis = es[es.length - 1].isIntersecting; }).observe($("#" + id + "-svg"));
+    }
+    paint(); anims.push(a); labs[id].anim = a;
+    draw(a.t, 0);
+    return a;
+  }
+  function redraw(id) { if (labs[id] && labs[id].anim) labs[id].anim.redraw(); }
+
+  var last = 0;
+  function loop(ts) {
+    var dt = Math.min(0.05, Math.max(0, (ts - last) / 1000)); last = ts;
+    if (!document.hidden && !pauseBox.checked) {
+      anims.forEach(function (a) { if (a.playing && a.vis) { a.t += dt * a.speed; a.draw(a.t, dt); } });
+    }
+    window.requestAnimationFrame(loop);
+  }
+  window.requestAnimationFrame(loop);
+
+  pauseBox.addEventListener("change", function () { store.set("vl:pauseall", pauseBox.checked ? "1" : "0"); });
+  $("#vl-reset-all").addEventListener("click", function () {
+    Object.keys(labs).forEach(function (k) { labs[k].reset(); });
+    store.del("vl:pauseall"); pauseBox.checked = reduce;
+  });
+  $("#vl-motion-note").textContent = reduce
+    ? "Your system asks for reduced motion, so animations start paused. Use Play or Step on any lab."
+    : "Animations pause automatically when scrolled out of view.";
+
+  /* ---------- (a) Layer height vs staircase ---------- */
+  controls("a", [
+    { k: "h", l: "Layer height", t: "range", min: 0.04, max: 0.4, step: 0.01, v: 0.2, u: "mm" },
+    { k: "th", l: "Surface angle θ at marker", t: "range", min: 5, max: 85, step: 1, v: 25, u: "°" },
+    { k: "zoom", l: "Zoom", t: "select", o: [[1, "1× (whole dome)"], [4, "4×"], [12, "12×"], [40, "40×"]], v: 12 },
+    { k: "ad", l: "Adaptive layer height (thin where shallow)", t: "check", v: false }
+  ], function (S) {
+    var R = 20, z = 0, n = 0, d = "M0 0", hAt = S.h, i;
+    var thr = S.th * Math.PI / 180, Px = R * Math.sin(thr), Pz = R * Math.cos(thr);
+    while (z < R - 1e-6 && n < 3000) {
+      var hl = S.ad ? clamp(Math.min(S.h, 0.25 * S.h * R / Math.max(z + S.h / 2, 0.001)), 0.04, S.h) : S.h;
+      var zt = Math.min(z + hl, R), zm = (z + zt) / 2;
+      if (Pz >= z && Pz <= zt + 1e-9) hAt = hl;
+      d += " H" + r(Math.sqrt(Math.max(0, R * R - zm * zm)) * 1000 / 1000) + " V" + r(zt);
+      z = zt; n++;
+    }
+    d += " H0 Z";
+    var s = 14 * S.zoom, ox, oy;
+    if (S.zoom === 1) { ox = 170; oy = 300; } else { ox = 320 - Px * s; oy = 160 + Pz * s; }
+    var arc = "";
+    for (i = 0; i <= 90; i++) { var q = i / 90 * Math.PI / 2; arc += (i ? "L" : "M") + r(R * Math.cos(q)) + " " + r(R * Math.sin(q)); }
+    var sx = ox + Px * s, sy = oy - Pz * s, tx = Math.cos(thr) * 90, ty = Math.sin(thr) * 90;
+    var bars = [0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10], bm = bars[bars.length - 1];
+    for (i = 0; i < bars.length; i++) { if (bars[i] * s >= 60) { bm = bars[i]; break; } }
+    var h = '<g transform="translate(' + r(ox) + " " + r(oy) + ") scale(" + r(s) + " " + r(-s) + ')">' +
+      '<path d="' + d + '" fill="var(--blue)" fill-opacity=".3" stroke="var(--blue)" stroke-width="1" vector-effect="non-scaling-stroke"/>' +
+      '<path d="' + arc + '" fill="none" stroke="var(--ink)" stroke-width="1.6" vector-effect="non-scaling-stroke"/></g>' +
+      '<line x1="' + r(sx - tx) + '" y1="' + r(sy - ty) + '" x2="' + r(sx + tx) + '" y2="' + r(sy + ty) + '" stroke="var(--yellow)" stroke-width="2" stroke-dasharray="6 4"/>' +
+      '<circle cx="' + r(sx) + '" cy="' + r(sy) + '" r="6" fill="var(--yellow)" stroke="var(--ink)"/>' +
+      '<text class="t-sm t-b" x="' + r(clamp(sx + 14, 10, 560)) + '" y="' + r(clamp(sy - 12, 20, 300)) + '">θ = ' + S.th + '°</text>' +
+      '<rect x="28" y="304" width="' + r(bm * s) + '" height="6" class="d-solid"/><text class="t-xs" x="' + r(28 + bm * s + 6) + '" y="311">' + bm + ' mm</text>';
+    dyn("a", h);
+    var run = hAt / Math.tan(thr), dev = hAt * Math.cos(thr);
+    readout("a", "Layers: <b>" + n + "</b> · local layer height at marker: <b>" + fx(hAt) + " mm</b><br>Step run h / tan θ = <b>" + fx(run) + " mm</b><br>Corner deviation h · cos θ = <b>" + fx(dev, 3) + " mm</b>" +
+      '<div class="vl-v">' + (run > 1 ? "Visible terraces: this slope looks stepped." : run > 0.35 ? "Slight stepping, visible in raking light." : "Steps are finer than a typical line width.") + "</div>");
+  });
+
+  /* ---------- (b) Overhang angle ---------- */
+  controls("b", [
+    { k: "a", l: "Overhang angle α (from vertical)", t: "range", min: 0, max: 85, step: 1, v: 50, u: "°" },
+    { k: "h", l: "Layer height", t: "range", min: 0.04, max: 0.4, step: 0.01, v: 0.2, u: "mm" },
+    { k: "w", l: "Line width", t: "range", min: 0.3, max: 0.8, step: 0.01, v: 0.42, u: "mm" }
+  ], function (S) {
+    var n = 14, d = S.h * Math.tan(S.a * Math.PI / 180), ov = clamp(1 - d / S.w, 0, 1), i;
+    var totalW = (n - 1) * d + S.w + 1, totalH = n * S.h + 0.6;
+    var s = Math.min(560 / totalW, 220 / totalH), ox = 40, base = 290;
+    var col = ov >= 0.5 ? "var(--green)" : ov >= 0.25 ? "var(--orange)" : "var(--red)";
+    var h = '<rect x="' + ox + '" y="' + base + '" width="' + r(Math.max(40, (S.w + 0.3) * s)) + '" height="12" class="d-solid" opacity=".5"/>';
+    h += '<line x1="' + r(ox + S.w / 2 * s) + '" y1="' + base + '" x2="' + r(ox + (S.w / 2 + (n * S.h) * Math.tan(S.a * Math.PI / 180)) * s) + '" y2="' + r(base - n * S.h * s) + '" stroke="var(--ink)" stroke-dasharray="5 4" opacity=".6"/>';
+    for (i = 0; i < n; i++) {
+      var x0 = ox + i * d * s, y0 = base - (i + 1) * S.h * s, hh = Math.max(S.h * s - 0.4, 0.8), wsup = Math.min(S.w, S.w - d), hang = Math.min(S.w, d);
+      if (i === 0) { wsup = S.w; hang = 0; }
+      h += '<rect x="' + r(x0) + '" y="' + r(y0) + '" width="' + r(Math.max(0, wsup * s)) + '" height="' + r(hh) + '" rx="' + r(Math.min(hh / 2, 3)) + '" fill="' + col + '"/>';
+      if (hang > 0) h += '<rect x="' + r(x0 + wsup * s) + '" y="' + r(y0) + '" width="' + r(hang * s) + '" height="' + r(hh) + '" rx="' + r(Math.min(hh / 2, 3)) + '" fill="' + col + '" fill-opacity=".3" stroke="' + col + '" stroke-dasharray="3 2"/>';
+    }
+    var bm = [0.1, 0.2, 0.5, 1, 2, 5, 10], bsel = 10; for (i = 0; i < bm.length; i++) { if (bm[i] * s >= 50) { bsel = bm[i]; break; } }
+    h += '<rect x="460" y="40" width="' + r(bsel * s) + '" height="6" class="d-solid"/><text class="t-xs" x="' + r(466 + bsel * s) + '" y="47">' + bsel + ' mm</text>';
+    h += '<text class="t-sm" x="460" y="75">offset d = ' + fx(d, 3) + ' mm / layer</text>';
+    dyn("b", h);
+    var a50 = Math.atan(0.5 * S.w / S.h) * 180 / Math.PI, a25 = Math.atan(0.75 * S.w / S.h) * 180 / Math.PI;
+    readout("b", "Under-layer offset d = h · tan α = <b>" + fx(d, 3) + " mm</b><br>Supported share of each line = <b>" + Math.round(ov * 100) + " %</b><br>50 % overlap at α ≈ <b>" + fx(a50, 0) + "°</b>, 25 % at α ≈ <b>" + fx(a25, 0) + "°</b>" +
+      '<div class="vl-v">' + (ov >= 0.5 ? "Prints cleanly with normal cooling." : ov >= 0.25 ? "Marginal: use full fan, slower outer walls, maybe a thinner layer." : "Unsupported: add support or change the geometry.") + "</div>");
+  });
+
+  /* ---------- (c) Infill explorer ---------- */
+  (function () {
+    var K = 3, AREA = 10000, PLA = 1.24;
+    var NAMES = { lines: "Lines (±45°, alternate)", grid: "Grid", tri: "Triangles", hex: "Honeycomb", gyro: "Gyroid (true slice)" };
+    function clip(x1, y1, x2, y2) {
+      var t0 = 0, t1 = 1, dx = x2 - x1, dy = y2 - y1, p = [-dx, dx, -dy, dy], q = [x1, 100 - x1, y1, 100 - y1];
+      for (var i = 0; i < 4; i++) {
+        if (p[i] === 0) { if (q[i] < 0) return null; }
+        else { var t = q[i] / p[i]; if (p[i] < 0) { if (t > t1) return null; if (t > t0) t0 = t; } else { if (t < t0) return null; if (t < t1) t1 = t; } }
+      }
+      return [x1 + t0 * dx, y1 + t0 * dy, x1 + t1 * dx, y1 + t1 * dy];
+    }
+    function build(type, s, layer) {
+      var d = [], len = 0, i, j;
+      function seg(a, b, c, e) {
+        var q = clip(a, b, c, e); if (!q) return;
+        len += Math.hypot(q[2] - q[0], q[3] - q[1]);
+        d.push("M" + r1(q[0] * K) + " " + r1(q[1] * K) + "L" + r1(q[2] * K) + " " + r1(q[3] * K));
+      }
+      function family(deg, sp) {
+        var a = deg * Math.PI / 180, nx = -Math.sin(a), ny = Math.cos(a), ux = Math.cos(a), uy = Math.sin(a);
+        var kmax = Math.ceil(72 / sp);
+        for (var k = -kmax; k <= kmax; k++) { var px = 50 + nx * k * sp, py = 50 + ny * k * sp; seg(px - ux * 150, py - uy * 150, px + ux * 150, py + uy * 150); }
+      }
+      if (type === "lines") family(layer % 2 ? 135 : 45, s);
+      else if (type === "grid") { family(0, s); family(90, s); }
+      else if (type === "tri") { family(0, s); family(60, s); family(120, s); }
+      else if (type === "hex") {
+        var a = s, h2 = Math.sqrt(3) * a / 2, rows = Math.ceil(100 / (1.5 * a)) + 2, cols = Math.ceil(100 / h2) + 3;
+        for (j = -1; j < rows; j++) {
+          for (i = -1; i < cols; i++) {
+            var top = (((i - j) % 2) + 2) % 2 === 0, y0 = j * 1.5 * a, y = y0 + (top ? 0 : a / 2), y2 = y0 + (top ? a / 2 : 0);
+            seg(i * h2, y, (i + 1) * h2, y2);
+            if (!top) seg(i * h2, y0 + a / 2, i * h2, y0 + 1.5 * a);
+          }
+        }
+      } else {
+        var p = s, cs = Math.max(0.4, p / 8), n = Math.ceil(100 / cs), k = 2 * Math.PI / p, kz = k * layer * 0.2, cz = Math.cos(kz), sz = Math.sin(kz);
+        var g = new Float32Array((n + 1) * (n + 1)), x, y;
+        for (j = 0; j <= n; j++) { y = j * cs; for (i = 0; i <= n; i++) { x = i * cs; g[j * (n + 1) + i] = Math.sin(k * x) * Math.cos(k * y) + Math.sin(k * y) * cz + sz * Math.cos(k * x); } }
+        for (j = 0; j < n; j++) {
+          for (i = 0; i < n; i++) {
+            var va = g[j * (n + 1) + i], vb = g[j * (n + 1) + i + 1], vc = g[(j + 1) * (n + 1) + i + 1], vd = g[(j + 1) * (n + 1) + i];
+            var sa = va > 0, sb = vb > 0, sc = vc > 0, sd = vd > 0;
+            if (sa === sb && sb === sc && sc === sd) continue;
+            var X = i * cs, Y = j * cs, pts = [];
+            if (sa !== sb) { var t = va / (va - vb); pts.push([X + t * cs, Y]); }
+            if (sb !== sc) { var t2 = vb / (vb - vc); pts.push([X + cs, Y + t2 * cs]); }
+            if (sc !== sd) { var t3 = vc / (vc - vd); pts.push([X + cs - t3 * cs, Y + cs]); }
+            if (sd !== sa) { var t4 = vd / (vd - va); pts.push([X, Y + cs - t4 * cs]); }
+            seg(pts[0][0], pts[0][1], pts[1][0], pts[1][1]);
+            if (pts.length === 4) seg(pts[2][0], pts[2][1], pts[3][0], pts[3][1]);
+          }
+        }
+      }
+      return { d: d.join(""), len: len };
+    }
+    controls("c", [
+      { k: "pat", l: "Pattern", t: "select", o: [["lines", NAMES.lines], ["grid", NAMES.grid], ["tri", NAMES.tri], ["hex", NAMES.hex], ["gyro", NAMES.gyro]], v: "grid" },
+      { k: "dens", l: "Infill density", t: "range", min: 5, max: 100, step: 1, v: 20, u: "%" },
+      { k: "layer", l: "Layer number", t: "range", min: 0, max: 60, step: 1, v: 0 },
+      { k: "lw", l: "Line width", t: "range", min: 0.3, max: 0.8, step: 0.01, v: 0.42, u: "mm" }
+    ], function (S) {
+      var dens = S.pat === "gyro" ? Math.min(S.dens, 30) : S.dens, rho = dens / 100;
+      var ref = S.pat === "hex" ? 8 : S.pat === "gyro" ? 12 : 10;
+      var b0 = build(S.pat, ref, 0), rho0 = b0.len * S.lw / AREA;
+      var sp = ref * rho0 / rho, b = build(S.pat, sp, S.layer), meas = b.len * S.lw / AREA;
+      var vis = Math.max(S.lw * K, 1.6);
+      var h = '<rect x="28" y="18" width="304" height="304" class="vl-box0"/>' +
+        '<g transform="translate(30 20)"><path d="' + b.d + '" fill="none" stroke="var(--blue)" stroke-width="' + r(vis) + '" stroke-linecap="round"/></g>' +
+        '<text class="t-b t-lg" x="360" y="44">' + NAMES[S.pat] + "</text>" +
+        '<text class="t-sm t-m" x="360" y="68">target density ' + dens + " %" + (S.pat === "gyro" && S.dens > 30 ? " (gyroid capped at 30 % here)" : "") + "</text>" +
+        '<text class="t-sm" x="360" y="104">Plastic in this layer</text>' +
+        '<rect x="360" y="114" width="240" height="18" rx="9" class="vl-box"/><rect x="360" y="114" width="' + r(240 * Math.min(1, meas)) + '" height="18" rx="9" fill="var(--blue)"/>' +
+        '<text class="t-lg" x="360" y="160">' + fx(meas * 100, 1) + " %</text>" +
+        '<text class="t-sm t-m" x="360" y="190">line spacing / cell size: ' + fx(sp, 1) + " mm</text>" +
+        '<text class="t-sm t-m" x="360" y="212">path length in this slice: ' + Math.round(b.len) + " mm</text>" +
+        '<text class="t-sm" x="360" y="244">In a 100 mm cube (1000 cm³):</text>' +
+        '<text class="t-b" x="360" y="268">' + fx(meas * 1000, 0) + " cm³ ≈ " + fx(meas * 1000 * PLA, 0) + " g of PLA</text>" +
+        '<text class="t-xs" x="360" y="296">Lines drawn at least 1.6 px wide; estimate uses the real width.</text>';
+      dyn("c", h);
+      readout("c", "Pattern: <b>" + NAMES[S.pat] + "</b> · density <b>" + dens + " %</b><br>Measured plastic in this layer: <b>" + fx(meas * 100, 1) + " %</b> · spacing <b>" + fx(sp, 1) + " mm</b>" +
+        '<div class="vl-v">' + (S.pat === "lines" ? "Lines change direction each layer (layer " + S.layer + ": " + (S.layer % 2 ? "135°" : "45°") + ")." : S.pat === "gyro" ? "Move the layer slider: the wavy pattern morphs continuously." : "Same pattern repeats every layer; crossings are printed twice, so real material is a little higher.") + "</div>");
+    });
+  })();
+
+  /* ---------- (d) Wall cross-section ---------- */
+  controls("d", [
+    { k: "W", l: "Bar width", t: "range", min: 8, max: 40, step: 1, v: 20, u: "mm" },
+    { k: "H", l: "Bar height", t: "range", min: 6, max: 30, step: 1, v: 12, u: "mm" },
+    { k: "n", l: "Wall loops", t: "range", min: 0, max: 8, step: 1, v: 3 },
+    { k: "w", l: "Line width", t: "range", min: 0.3, max: 0.8, step: 0.01, v: 0.42, u: "mm" },
+    { k: "tb", l: "Top and bottom layers", t: "range", min: 0, max: 12, step: 1, v: 5 },
+    { k: "lh", l: "Layer height", t: "range", min: 0.08, max: 0.32, step: 0.01, v: 0.2, u: "mm" },
+    { k: "rho", l: "Infill density", t: "range", min: 0, max: 100, step: 1, v: 15, u: "%" }
+  ], function (S) {
+    var t = S.n * S.w, tb = S.tb * S.lh, Wc = Math.max(0, S.W - 2 * t), Hc = Math.max(0, S.H - 2 * tb), rho = S.rho / 100, i;
+    var A = S.W * S.H, Ac = Wc * Hc, solid = (A - Ac + rho * Ac) / A;
+    var Ifull = S.W * Math.pow(S.H, 3) / 12, Ishell = (S.W * Math.pow(S.H, 3) - Wc * Math.pow(Hc, 3)) / 12, Icore = Wc * Math.pow(Hc, 3) / 12;
+    var EI = Ishell + rho * Icore, eff = EI / Ifull, shellShare = Ishell / EI;
+    var s = Math.min(330 / S.W, 270 / S.H), ox = 20 + (330 - S.W * s) / 2, oy = 25 + (270 - S.H * s) / 2;
+    var cx = ox + t * s, cy = oy + tb * s, cw = Wc * s, ch = Hc * s;
+    var h = '<defs><clipPath id="d-cp"><rect x="' + r(cx) + '" y="' + r(cy) + '" width="' + r(cw) + '" height="' + r(ch) + '"/></clipPath></defs>' +
+      '<rect x="' + r(ox) + '" y="' + r(oy) + '" width="' + r(S.W * s) + '" height="' + r(S.H * s) + '" fill="var(--blue)" fill-opacity=".55" stroke="var(--ink)" stroke-width="1.5"/>';
+    if (cw > 0 && ch > 0) {
+      h += '<rect x="' + r(cx) + '" y="' + r(cy) + '" width="' + r(cw) + '" height="' + r(ch) + '" class="vl-box0"/>';
+      if (rho > 0) {
+        var sp = S.w * s / rho;
+        if (sp < 2.5) h += '<rect x="' + r(cx) + '" y="' + r(cy) + '" width="' + r(cw) + '" height="' + r(ch) + '" fill="var(--blue)" fill-opacity="' + r(0.15 + rho * 0.4) + '"/>';
+        else { h += '<g clip-path="url(#d-cp)" stroke="var(--blue)" stroke-width="' + r(Math.max(1, S.w * s)) + '" opacity=".8">'; for (i = 0; cx + i * sp < cx + cw + 1; i++) h += '<line x1="' + r(cx + i * sp) + '" y1="' + r(cy - 2) + '" x2="' + r(cx + i * sp) + '" y2="' + r(cy + ch + 2) + '"/>'; h += "</g>"; }
+      }
+      h += '<rect x="' + r(cx) + '" y="' + r(cy) + '" width="' + r(cw) + '" height="' + r(ch) + '" fill="none" stroke="var(--ink)" stroke-width="1.2"/>';
+    }
+    for (i = 1; i <= S.n && i * S.w * 2 < S.W && i * S.w * 2 < S.H; i++) { var o = i * S.w * s; h += '<rect x="' + r(ox + o) + '" y="' + r(oy + o) + '" width="' + r(Math.max(0, S.W * s - 2 * o)) + '" height="' + r(Math.max(0, S.H * s - 2 * o)) + '" fill="none" stroke="var(--ink)" stroke-width=".6" opacity=".55"/>'; }
+    h += '<text class="t-xs" x="' + r(ox) + '" y="' + r(oy - 6) + '">' + S.W + " mm</text>";
+    h += '<text class="t-sm" x="380" y="44">Shell: ' + fx(t) + " mm sides, " + fx(tb) + " mm top/bottom</text>";
+    var bars = [["Solid plastic fraction", solid, "var(--blue)"], ["Bending stiffness vs solid bar", eff, "var(--green)"], ["Stiffness carried by the shell", shellShare, "var(--orange)"]];
+    bars.forEach(function (b, k) {
+      var y = 90 + k * 62;
+      h += '<text class="t-sm" x="380" y="' + y + '">' + b[0] + '</text><rect x="380" y="' + (y + 8) + '" width="240" height="16" rx="8" class="vl-box"/><rect x="380" y="' + (y + 8) + '" width="' + r(240 * clamp(b[1], 0, 1)) + '" height="16" rx="8" fill="' + b[2] + '"/><text class="t-b t-sm" x="380" y="' + (y + 42) + '">' + Math.round(b[1] * 100) + " %</text>";
+    });
+    if (cw <= 0 || ch <= 0) h += '<text class="t-sm c-red" x="380" y="300">The shell fills the whole bar: it is solid.</text>';
+    dyn("d", h);
+    readout("d", "Solid fraction f = <b>" + Math.round(solid * 100) + " %</b> · stiffness = <b>" + Math.round(eff * 100) + " %</b> of a solid bar<br>Stiffness per unit mass vs solid: <b>" + fx(eff / solid, 2) + "×</b> (shell " + Math.round(shellShare * 100) + " % of stiffness)" +
+      '<div class="vl-v">' + (eff / solid > 1 ? "Good value: material is placed far from the middle." : "More plastic than the stiffness justifies.") + "</div>");
+  });
+
+  /* ---------- (e) Retraction and stringing ---------- */
+  (function () {
+    var st = {}, PER = 6;
+    function pOf(u) {
+      if (u < 0.2) return 1;
+      if (u < 0.28) return 1 - (1 - st.pres) * ((u - 0.2) / 0.08);
+      var pEnd = st.pres * Math.exp(-0.44 * 1.2);
+      if (u < 0.72) return st.pres * Math.exp(-(u - 0.28) * 1.2);
+      if (u < 0.8) return pEnd + (1 - pEnd) * ((u - 0.72) / 0.08);
+      return 1;
+    }
+    var S = controls("e", [
+      { k: "ext", l: "Extruder type", t: "select", o: [[0.6, "Direct drive (d₀ ≈ 0.6 mm)"], [3, "Bowden tube (d₀ ≈ 3 mm)"]], v: 0.6 },
+      { k: "d", l: "Retraction distance", t: "range", min: 0, max: 8, step: 0.1, v: 0.8, u: "mm" },
+      { k: "T", l: "Nozzle temperature", t: "range", min: 190, max: 260, step: 1, v: 220, u: "°C" },
+      { k: "gap", l: "Travel distance", t: "range", min: 10, max: 80, step: 1, v: 40, u: "mm" },
+      { k: "v", l: "Travel speed", t: "range", min: 30, max: 400, step: 5, v: 200, u: "mm/s" }
+    ], function (S) {
+      var eff = 1 - Math.exp(-S.d / S.ext), visc = Math.exp((S.T - 220) / 25), tt = S.gap / S.v;
+      st.eff = eff; st.pres = clamp(visc * (1 - eff), 0, 1);
+      st.strength = clamp(visc * (1 - eff) * clamp(0.4 + tt * 3, 0.4, 1.5), 0, 1.5);
+      var lab = st.strength < 0.08 ? "Clean: no visible strings." : st.strength < 0.3 ? "A few wisps." : st.strength < 0.7 ? "Noticeable strings." : "Webbing between the posts.";
+      readout("e", "Pressure relieved by retraction: <b>" + Math.round(eff * 100) + " %</b><br>Melt viscosity factor at " + S.T + " °C: <b>" + fx(visc) + "×</b> · travel time <b>" + fx(tt, 2) + " s</b><br>String strength (0–1.5): <b>" + fx(st.strength) + "</b>" +
+        '<div class="vl-v">' + lab + (S.d > 6 * S.ext ? " Retraction this long risks heat creep and clogs." : "") + "</div>");
+      redraw("e");
+    });
+    animate("e", function (t) {
+      var u = (((t % PER) + PER) % PER) / PER, P = pOf(u), i, nx, label;
+      if (u < 0.2) { nx = 135 + 25 * Math.sin(u / 0.2 * 2 * Math.PI); label = "Printing the first post"; }
+      else if (u < 0.28) { nx = 135; label = "Retracting"; }
+      else if (u < 0.72) { var e = (u - 0.28) / 0.44; nx = 135 + 370 * e * e * (3 - 2 * e); label = "Travelling"; }
+      else if (u < 0.8) { nx = 505; label = "Priming"; }
+      else { nx = 505 + 25 * Math.sin((u - 0.8) / 0.2 * 2 * Math.PI); label = "Printing the second post"; }
+      var rp = u < 0.2 ? 0 : u < 0.28 ? (u - 0.2) / 0.08 : u < 0.72 ? 1 : u < 0.8 ? 1 - (u - 0.72) / 0.08 : 0;
+      var h = '<rect x="20" y="250" width="600" height="10" class="vl-box"/>' +
+        '<rect x="100" y="170" width="70" height="80" class="vl-box0"/><rect x="470" y="170" width="70" height="80" class="vl-box0"/>' +
+        '<rect x="100" y="166" width="70" height="5" fill="var(--blue)" opacity="' + (u < 0.2 ? 1 : 0.7) + '"/><rect x="470" y="' + (u > 0.8 ? 166 : 170) + '" width="70" height="' + (u > 0.8 ? 5 : 1) + '" fill="var(--blue)"/>';
+      var n = Math.round(clamp(st.strength, 0, 1.5) * 4), hairA = u >= 0.72 ? 1 : u < 0.28 ? 1 - u / 0.28 : 0;
+      for (i = 0; i < n && hairA > 0.02; i++) {
+        var y0 = 169 - 0.5 * i, sag = 14 + i * 9;
+        h += '<path d="M170 ' + y0 + " Q320 " + (y0 + sag) + " 470 " + y0 + '" fill="none" stroke="var(--orange)" stroke-width="' + r(clamp(0.8 + st.strength, 0.8, 2.4)) + '" opacity="' + r(hairA * 0.85) + '"/>';
+      }
+      if (u >= 0.28 && u < 0.72 && P > 0.04) {
+        h += '<path d="M170 169 Q' + r((170 + nx) / 2) + " " + r(176 + 40 * P) + " " + r(nx) + ' 164" fill="none" stroke="var(--orange)" stroke-width="' + r(clamp(P * 3.6, 0.8, 4)) + '"/>';
+      }
+      var ny = 162;
+      h += '<line x1="' + r(nx) + '" y1="20" x2="' + r(nx) + '" y2="' + r(ny - 60 - rp * Math.min(S.d, 8) * 4) + '" stroke="var(--blue)" stroke-width="5"/>' +
+        '<line x1="' + r(nx) + '" y1="' + r(ny - 60 - rp * Math.min(S.d, 8) * 4) + '" x2="' + r(nx) + '" y2="' + (ny - 20) + '" stroke="var(--blue)" stroke-width="5" opacity="' + r(0.25 + 0.75 * P) + '"/>' +
+        '<path d="M' + r(nx - 16) + " " + (ny - 70) + " H" + r(nx + 16) + " V" + (ny - 20) + " L" + r(nx + 5) + " " + ny + " H" + r(nx - 5) + " L" + r(nx - 16) + " " + (ny - 20) + ' Z" class="vl-box0" style="stroke-width:2;stroke:var(--ink)"/>' +
+        '<rect x="' + r(nx - 16) + '" y="' + (ny - 70) + '" width="32" height="24" fill="var(--red)" opacity=".35"/>' +
+        '<rect x="570" y="80" width="26" height="160" rx="6" class="vl-box"/><rect x="570" y="' + r(240 - 160 * clamp(P, 0, 1)) + '" width="26" height="' + r(160 * clamp(P, 0, 1)) + '" rx="6" fill="var(--orange)"/>' +
+        '<text class="t-xs t-c" x="583" y="68">melt</text><text class="t-xs t-c" x="583" y="78">pressure</text>' +
+        '<text class="t-b" x="24" y="40">' + label + "</text>" +
+        '<text class="t-sm t-m" x="24" y="62">retraction ' + fx(S.d, 1) + " mm · " + Math.round(st.eff * 100) + " % pressure relieved</text>" +
+        '<text class="t-xs t-c" x="320" y="290">' + S.gap + " mm travel</text>";
+      dyn("e", h);
+    }, { step: 0.15 });
+  })();
+
+  /* ---------- (f) Cooling and layer time ---------- */
+  (function () {
+    var MAT = { PLA: [215, 60], PETG: [240, 80], ABS: [245, 105], ASA: [245, 100] }, st = {};
+    function col(T) { var f = clamp((T - st.air) / (st.dep - st.air), 0, 1); return "hsl(" + r((1 - f) * 225) + ",80%,52%)"; }
+    controls("f", [
+      { k: "m", l: "Material", t: "select", o: [["PLA", "PLA (Tg ≈ 60 °C)"], ["PETG", "PETG (Tg ≈ 80 °C)"], ["ABS", "ABS (Tg ≈ 105 °C)"], ["ASA", "ASA (Tg ≈ 100 °C)"]], v: "PLA" },
+      { k: "lt", l: "Layer time", t: "range", min: 2, max: 60, step: 1, v: 10, u: "s" },
+      { k: "fan", l: "Part-cooling fan", t: "range", min: 0, max: 100, step: 5, v: 100, u: "%" },
+      { k: "air", l: "Chamber air", t: "select", o: [[25, "Open room, 25 °C"], [40, "Warm enclosure, 40 °C"], [60, "Heated chamber, 60 °C"]], v: 25 }
+    ], function (S) {
+      st.dep = MAT[S.m][0]; st.tg = MAT[S.m][1]; st.air = +S.air; st.lt = S.lt;
+      st.tau = 9 / (1 + 2.2 * S.fan / 100) * (1 + (st.air - 25) / 120);
+      st.under = st.air + (st.dep - st.air) * Math.exp(-S.lt / st.tau);
+      st.col = st.under > st.tg + 15 ? "var(--red)" : st.under > st.tg - 20 ? "var(--green)" : "var(--blue)";
+      var v = st.under > st.tg + 15 ? "Too hot: the next layer lands on soft plastic (sagging, blobs, lost detail). Lengthen the layer time or add airflow." : st.under > st.tg - 20 ? "Good window: the surface is near its glass transition, so the layers fuse while the shape holds." : "Cold interface: the lower layer is well below Tg, which is fine for detail but can weaken layer bonding.";
+      readout("f", "Cooling time constant τ = <b>" + fx(st.tau, 1) + " s</b><br>Temperature of the layer below when the next one arrives: <b>" + Math.round(st.under) + " °C</b> (Tg " + st.tg + " °C)" + '<div class="vl-v">' + v + "</div>");
+      redraw("f");
+    });
+    animate("f", function (t) {
+      var S2 = labs.f.S, LT = S2.lt, s = t * LT / 3, k = Math.floor(s / LT), ph = (s - k * LT) / LT, i, h = "";
+      var gid = "f-g";
+      h += '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + col(st.dep) + '"/><stop offset="1" stop-color="' + col(st.air) + '"/></linearGradient></defs>';
+      for (i = 0; i < 9; i++) {
+        var j = k - 8 + i; if (j < 0) continue;
+        var age = s - j * LT, T = st.air + (st.dep - st.air) * Math.exp(-age / st.tau), idx = k < 8 ? j : i, y = 290 - (idx + 1) * 24, w = j === k ? 150 * ph : 150;
+        h += '<rect x="50" y="' + y + '" width="' + r(w) + '" height="22" rx="4" fill="' + col(T) + '"/><text class="t-xs" x="56" y="' + (y + 15) + '" style="fill:#fff">' + Math.round(T) + " °C</text>";
+      }
+      var yTop = 290 - ((k < 8 ? k : 8) + 1) * 24, nxp = 50 + 150 * ph;
+      h += '<path d="M' + r(nxp - 12) + " " + (yTop - 32) + " H" + r(nxp + 12) + " V" + (yTop - 14) + " L" + r(nxp + 4) + " " + (yTop - 1) + " H" + r(nxp - 4) + " L" + r(nxp - 12) + " " + (yTop - 14) + ' Z" class="vl-box0" style="stroke:var(--ink);stroke-width:2"/>';
+      h += '<rect x="228" y="70" width="14" height="220" rx="4" fill="url(#' + gid + ')"/>';
+      var yg = 290 - 220 * clamp((st.tg - st.air) / (st.dep - st.air), 0, 1);
+      h += '<line x1="224" y1="' + r(yg) + '" x2="248" y2="' + r(yg) + '" stroke="var(--ink)" stroke-width="2"/><text class="t-xs" x="252" y="' + r(yg + 4) + '">Tg</text>' +
+        '<text class="t-xs" x="252" y="80">' + st.dep + '</text><text class="t-xs" x="252" y="290">' + st.air + "</text>";
+      var gx = 340, gy = 50, gw = 270, gh = 200, y1 = st.dep + 10, y0 = st.air - 5;
+      function X(ts) { return gx + gw * ts / (2 * LT); }
+      function Y(T) { return gy + gh * (1 - (T - y0) / (y1 - y0)); }
+      var d = "";
+      for (i = 0; i <= 60; i++) { var ts = 2 * LT * i / 60; d += (i ? "L" : "M") + r(X(ts)) + " " + r(Y(st.air + (st.dep - st.air) * Math.exp(-ts / st.tau))); }
+      var tc = (s % (2 * LT)), Tc = st.air + (st.dep - st.air) * Math.exp(-tc / st.tau);
+      h += '<rect x="' + gx + '" y="' + gy + '" width="' + gw + '" height="' + gh + '" class="vl-box0"/>' +
+        '<line x1="' + gx + '" y1="' + r(Y(st.tg)) + '" x2="' + (gx + gw) + '" y2="' + r(Y(st.tg)) + '" stroke="var(--ink)" stroke-dasharray="5 4"/><text class="t-xs" x="' + (gx + 4) + '" y="' + r(Y(st.tg) - 4) + '">glass transition</text>' +
+        '<line x1="' + r(X(LT)) + '" y1="' + gy + '" x2="' + r(X(LT)) + '" y2="' + (gy + gh) + '" stroke="var(--muted)" stroke-dasharray="3 3"/><text class="t-xs t-c" x="' + r(X(LT)) + '" y="' + (gy - 6) + '">next layer lands</text>' +
+        '<path d="' + d + '" fill="none" stroke="var(--orange)" stroke-width="2.5"/>' +
+        '<circle cx="' + r(X(LT)) + '" cy="' + r(Y(st.under)) + '" r="6" fill="' + st.col + '" stroke="var(--ink)"/>' +
+        '<circle cx="' + r(X(tc)) + '" cy="' + r(Y(Tc)) + '" r="4.5" fill="var(--ink)"/>' +
+        '<text class="t-sm" x="' + (gx + gw - 4) + '" y="' + r(Math.min(gy + gh - 8, Y(st.under) - 12)) + '" style="text-anchor:end">' + Math.round(st.under) + " °C under the new layer</text>" +
+        '<text class="t-xs t-c" x="' + (gx + gw / 2) + '" y="272">time since the line was laid (0 to ' + 2 * LT + " s)</text>";
+      dyn("f", h);
+    }, { step: 0.2, speed: 1 });
+  })();
+
+  /* ---------- (g) Bridge sag ---------- */
+  (function () {
+    var st = {};
+    controls("g", [
+      { k: "L", l: "Bridge span", t: "range", min: 5, max: 100, step: 1, v: 40, u: "mm" },
+      { k: "fan", l: "Part-cooling fan", t: "range", min: 0, max: 100, step: 5, v: 100, u: "%" },
+      { k: "T", l: "Nozzle temperature", t: "range", min: 190, max: 260, step: 1, v: 215, u: "°C" },
+      { k: "v", l: "Bridge speed", t: "range", min: 10, max: 80, step: 1, v: 40, u: "mm/s" }
+    ], function (S) {
+      var fan = S.fan / 100, soft = Math.exp((S.T - 215) / 22) * (1 - 0.7 * fan) * Math.sqrt(clamp(40 / S.v, 0.6, 1.6));
+      st.delta = 0.04 * Math.pow(S.L / 10, 2.2) * soft;
+      st.tauF = 0.8 / (1 + 3 * fan) * Math.exp((S.T - 215) / 40);
+      st.cross = S.L / S.v; st.hold = clamp(3 * st.tauF, 1.5, 6);
+      st.grade = st.delta < 0.15 ? "Clean bridge: almost flat." : st.delta < 0.5 ? "Visible sag: acceptable for hidden surfaces." : "Heavy sag: shorten the span, cool more or add support.";
+      readout("g", "Final sag δ ≈ <b>" + fx(st.delta, 2) + " mm</b> · freeze time τ ≈ <b>" + fx(st.tauF, 2) + " s</b><br>Crossing time <b>" + fx(st.cross, 1) + " s</b>" + '<div class="vl-v">' + st.grade + "</div>");
+      redraw("g");
+    });
+    animate("g", function (t) {
+      var S = labs.g.S, per = st.cross + st.hold + 0.8, tt = t % per, pxmm = 340 / S.L, i;
+      var xmax = Math.min(490, 150 + S.v * pxmm * tt), dpx = st.delta * pxmm * 3, col = st.delta < 0.15 ? "var(--green)" : st.delta < 0.5 ? "var(--orange)" : "var(--red)";
+      var d = "";
+      for (i = 0; i <= 60; i++) {
+        var x = 150 + 340 * i / 60; if (x > xmax) break;
+        var sP = (x - 150) / 340, age = tt - (x - 150) / (S.v * pxmm), g = 1 - Math.exp(-Math.max(0, age) / st.tauF), sh = 16 * sP * sP * (1 - sP) * (1 - sP);
+        d += (i ? "L" : "M") + r(x) + " " + r(150 + dpx * sh * g);
+      }
+      var h = '<rect x="20" y="268" width="600" height="10" class="vl-box"/><rect x="90" y="150" width="60" height="118" class="vl-box0"/><rect x="490" y="150" width="60" height="118" class="vl-box0"/>' +
+        '<line x1="150" y1="150" x2="490" y2="150" stroke="var(--muted)" stroke-dasharray="6 5"/>';
+      if (d) h += '<path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="5" stroke-linecap="round"/>';
+      var nx = clamp(xmax, 120, 490);
+      if (tt < st.cross + 0.2) h += '<path d="M' + r(nx - 14) + " 70 H" + r(nx + 14) + " V132 L" + r(nx + 5) + " 148 H" + r(nx - 5) + " L" + r(nx - 14) + ' 132 Z" class="vl-box0" style="stroke:var(--ink);stroke-width:2"/><rect x="' + r(nx - 14) + '" y="70" width="28" height="26" fill="var(--red)" opacity=".35"/>';
+      h += '<line x1="90" y1="298" x2="' + r(90 + 10 * pxmm) + '" y2="298" stroke="var(--ink)" stroke-width="3"/><text class="t-xs" x="' + r(98 + 10 * pxmm) + '" y="302">10 mm</text>' +
+        '<text class="t-sm t-c" x="320" y="120">span ' + S.L + " mm</text>" +
+        '<text class="t-b" x="320" y="' + r(Math.min(250, 150 + dpx + 26)) + '" style="text-anchor:middle">sag ≈ ' + fx(st.delta, 2) + " mm (drawn 3×)</text>";
+      dyn("g", h);
+    }, { step: 0.15 });
+  })();
+
+  /* ---------- (h) Thermal expansion and warp ---------- */
+  (function () {
+    var MAT = { PLA: [68, 60, 3.5], PETG: [60, 80, 2.1], ABS: [90, 105, 2.2], ASA: [95, 100, 2.0], PC: [65, 147, 2.3], PA12: [100, 45, 1.4], PACF: [30, 70, 7] }, st = {};
+    controls("h", [
+      { k: "m", l: "Material", t: "select", o: [["PLA", "PLA"], ["PETG", "PETG"], ["ABS", "ABS"], ["ASA", "ASA"], ["PC", "Polycarbonate"], ["PA12", "Nylon (PA12)"], ["PACF", "Nylon CF"]], v: "ABS" },
+      { k: "L", l: "Part length", t: "range", min: 20, max: 400, step: 5, v: 200, u: "mm" },
+      { k: "t", l: "Thickness", t: "range", min: 1, max: 20, step: 0.5, v: 3, u: "mm" },
+      { k: "ch", l: "Chamber temperature", t: "range", min: 20, max: 70, step: 1, v: 30, u: "°C" },
+      { k: "mm", l: "Layer-to-layer cooling mismatch", t: "range", min: 10, max: 60, step: 1, v: 25, u: "%" },
+      { k: "adh", l: "Bed adhesion holds the ends down", t: "check", v: false }
+    ], function (S) {
+      var m = MAT[S.m], dT = Math.max(0, m[1] - S.ch), eps = m[0] * 1e-6 * dT;
+      st.dT = dT; st.dL = eps * S.L; st.eps = eps;
+      st.kappa = 1.5 * eps * (S.mm / 100) / S.t; st.lift = st.kappa * S.L * S.L / 8;
+      st.sigma = m[2] * 1000 * eps * (S.mm / 100);
+      readout("h", "Cooling range ΔT = Tg − chamber = <b>" + dT + " K</b><br>Shrink ΔL = α · L · ΔT = <b>" + fx(st.dL, 2) + " mm</b> (" + fx(eps * 100, 2) + " %)<br>" +
+        (S.adh ? "Held down: lift 0 mm, interface stress ≈ <b>" + fx(st.sigma, 1) + " MPa</b> (indicative)" : "Free corner lift κL²/8 = <b>" + fx(st.lift, 2) + " mm</b>") +
+        '<div class="vl-v">' + (dT === 0 ? "The chamber is at or above Tg: almost no warp stress." : st.lift > 1 && !S.adh ? "This part will curl: warm the chamber, use a brim and cool slowly." : "Mild: a normal first layer and brim should hold it.") + "</div>");
+      redraw("h");
+    });
+    animate("h", function (t) {
+      var S = labs.h.S, per = 7, p = clamp(((t % per) / per) * 1.25, 0, 1), L = 380, sc = L / S.L, i;
+      var ex = clamp(Math.round(55 / Math.max(0.01, st.lift * sc)), 1, 40), liftPx = S.adh ? 0 : st.lift * p * sc * ex;
+      var tpx = Math.max(5, S.t * sc), bed = 250, cx = 320, shrink = st.eps * p * 20;
+      var top = "", bot = "";
+      for (i = 0; i <= 40; i++) {
+        var f = i / 20 - 1, x = cx + f * L / 2 * (1 - shrink), y = bed - liftPx * f * f;
+        top += (i ? "L" : "M") + r(x) + " " + r(y - tpx); bot = "L" + r(x) + " " + r(y) + bot;
+      }
+      var Tnow = MAT[S.m][1] - (MAT[S.m][1] - S.ch) * p;
+      var h = '<rect x="30" y="' + bed + '" width="580" height="14" class="vl-box"/><text class="t-xs" x="36" y="' + (bed + 11) + '">heated bed</text>' +
+        '<rect x="' + (cx - L / 2) + '" y="' + (bed - tpx - 8) + '" width="' + L + '" height="' + (tpx + 8) + '" fill="none" stroke="var(--muted)" stroke-dasharray="5 4"/>' +
+        '<path d="' + top + bot + 'Z" fill="var(--blue)" fill-opacity=".55" stroke="var(--blue)" stroke-width="2"/>';
+      if (S.adh) h += '<rect x="' + (cx - L / 2 - 6) + '" y="' + (bed - tpx - 6) + '" width="12" height="' + (tpx + 6) + '" fill="var(--green)" opacity=".7"/><rect x="' + (cx + L / 2 - 6) + '" y="' + (bed - tpx - 6) + '" width="12" height="' + (tpx + 6) + '" fill="var(--green)" opacity=".7"/>';
+      h += '<text class="t-b" x="30" y="40">Part at ' + Math.round(Tnow) + ' °C</text>' +
+        '<text class="t-sm t-m" x="30" y="62">shrink ' + fx(st.dL * p, 2) + " mm · lift " + fx(st.lift * p * (S.adh ? 0 : 1), 2) + " mm</text>" +
+        '<text class="t-xs t-m" x="30" y="82">vertical lift exaggerated ×' + ex + ", shrink ×20; dashed = hot size</text>" +
+        '<line x1="' + r(cx - L / 2 * (1 - shrink)) + '" y1="' + (bed + 34) + '" x2="' + r(cx + L / 2 * (1 - shrink)) + '" y2="' + (bed + 34) + '" class="d-ink arrow arrow-start"/>' +
+        '<text class="t-xs t-c" x="' + cx + '" y="' + (bed + 50) + '">' + fx(S.L - st.dL * p, 1) + " mm</text>";
+      dyn("h", h);
+    }, { step: 0.4 });
+  })();
+
+  function T(x, y, s, cls, extra) { return '<text class="' + cls + '" x="' + r1(x) + '" y="' + r1(y) + '"' + (extra || "") + ">" + s + "</text>"; }
+  function LN(x1, y1, x2, y2, extra) { return '<line x1="' + r1(x1) + '" y1="' + r1(y1) + '" x2="' + r1(x2) + '" y2="' + r1(y2) + '" ' + (extra || "") + "/>"; }
+  function polyPath(pts) { var s = "", i; for (i = 0; i < pts.length; i++) s += (i ? "L" : "M") + r1(pts[i][0]) + " " + r1(pts[i][1]); return s; }
+
+  /* ---------- (i) CoreXY motion ---------- */
+  (function () {
+    var BX = 30, BY = 296, SZ = 256, pos = { x: 128, y: 128 }, tgt = { x: 128, y: 128 }, wp = 0, lastT = 0, sig = "";
+    var PATHS = {
+      square: [[50, 50], [50, 200], [200, 200], [200, 50]],
+      px: [[40, 128], [216, 128]],
+      py: [[128, 40], [128, 216]],
+      diag: [[60, 130], [130, 200], [200, 130], [130, 60]]
+    };
+    var svg = $("#i-svg");
+    function toManual() {
+      var S = labs.i.S;
+      if (S.path !== "manual") { S.path = "manual"; $("#i-path").value = "manual"; store.set("vl:i", JSON.stringify(S)); }
+    }
+    function target(x, y) {
+      toManual();
+      tgt = { x: clamp(x, 0, SZ), y: clamp(y, 0, SZ) };
+      var a = labs.i.anim;
+      if (a && (!a.playing || pauseBox.checked)) { pos = { x: tgt.x, y: tgt.y }; }
+      redraw("i");
+    }
+    controls("i", [
+      { k: "path", l: "Move pattern", t: "select", o: [["manual", "Manual (click the bed)"], ["square", "Square: X and Y moves"], ["px", "Pure X, back and forth"], ["py", "Pure Y, back and forth"], ["diag", "Diamond: 45° diagonals"]], v: "square" },
+      { k: "v", l: "Toolhead speed", t: "range", min: 20, max: 400, step: 10, v: 100, u: "mm/s" }
+    ], function (S) {
+      if (S.path !== "manual") { wp = 0; tgt = { x: PATHS[S.path][0][0], y: PATHS[S.path][0][1] }; }
+      sig = "";
+      redraw("i");
+    });
+    svg.addEventListener("click", function (e) {
+      var m = svg.getScreenCTM(); if (!m) return;
+      var pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+      var p = pt.matrixTransform(m.inverse());
+      if (p.x < BX - 8 || p.x > BX + SZ + 8 || p.y < BY - SZ - 8 || p.y > BY + 8) return;
+      target(p.x - BX, BY - p.y);
+    });
+    svg.addEventListener("keydown", function (e) {
+      var d = e.shiftKey ? 1 : 10, dx = 0, dy = 0;
+      if (e.key === "ArrowLeft") dx = -d; else if (e.key === "ArrowRight") dx = d; else if (e.key === "ArrowUp") dy = d; else if (e.key === "ArrowDown") dy = -d; else return;
+      e.preventDefault();
+      target(tgt.x + dx, tgt.y + dy);
+    });
+    function describe(S) {
+      var dx = tgt.x - pos.x, dy = tgt.y - pos.y, d = Math.hypot(dx, dy), key, msg, ux, uy, a, b;
+      if (d < 0.5) { key = "idle"; msg = "The toolhead is at rest, so both motors are still. Click the bed or use the arrow keys."; }
+      else {
+        ux = dx / d; uy = dy / d; a = ux + uy; b = ux - uy;
+        if (Math.abs(uy) < 0.03) { key = "x"; msg = "<b>Pure X move:</b> both motors turn the same way at the same speed."; }
+        else if (Math.abs(ux) < 0.03) { key = "y"; msg = "<b>Pure Y move:</b> the motors turn in opposite directions at the same speed."; }
+        else if (Math.abs(b) < 0.03) { key = "a"; msg = "<b>45° diagonal:</b> only motor A turns; B stays still."; }
+        else if (Math.abs(a) < 0.03) { key = "b"; msg = "<b>45° diagonal:</b> only motor B turns; A stays still."; }
+        else { key = "m"; msg = "<b>General move:</b> both motors turn, at different speeds."; }
+        msg += "<br>This move: ΔX " + fx(dx, 0) + ", ΔY " + fx(dy, 0) + " mm → ΔA " + fx(dx + dy, 0) + ", ΔB " + fx(dx - dy, 0) + " mm of belt (" + fx((dx + dy) / 40, 2) + " and " + fx((dx - dy) / 40, 2) + " rev).<br>Belt speeds at " + S.v + " mm/s: A " + fx(S.v * Math.abs(a), 0) + ", B " + fx(S.v * Math.abs(b), 0) + " mm/s.";
+      }
+      var s = key + Math.round(tgt.x) + "," + Math.round(tgt.y) + "," + S.v;
+      if (s !== sig) { sig = s; readout("i", msg); }
+    }
+    function dial(cx, cy, val, col, name) {
+      var h = '<circle cx="' + cx + '" cy="' + cy + '" r="46" class="vl-box0"/>', k, an;
+      for (k = 0; k < 12; k++) { an = k * Math.PI / 6; h += LN(cx + 40 * Math.sin(an), cy - 40 * Math.cos(an), cx + 46 * Math.sin(an), cy - 46 * Math.cos(an), 'stroke="var(--muted)"'); }
+      h += '<g transform="rotate(' + r1((val / 40 * 360) % 360) + " " + cx + " " + cy + ')">' + LN(cx, cy, cx, cy - 36, 'stroke="' + col + '" stroke-width="4" stroke-linecap="round"') +
+        '<circle cx="' + cx + '" cy="' + (cy - 36) + '" r="5" fill="' + col + '"/>' + LN(cx, cy, cx, cy + 22, 'stroke="var(--muted)" stroke-width="2"') + "</g>" +
+        '<circle cx="' + cx + '" cy="' + cy + '" r="4" fill="var(--ink)"/>' +
+        T(cx, cy - 58, name, "t-b t-c", ' style="fill:' + col + '"') + T(cx, cy + 66, fx(val / 40, 2) + " rev", "t-sm t-c") + T(cx, cy + 83, fx(val, 1) + " mm belt", "t-xs t-c");
+      return h;
+    }
+    animate("i", function (t) {
+      var S = labs.i.S, dist = Math.max(0, t - lastT) * S.v, n = 0, i;
+      lastT = t;
+      while (dist > 1e-6 && n++ < 8) {
+        var dx = tgt.x - pos.x, dy = tgt.y - pos.y, d = Math.hypot(dx, dy);
+        if (d <= dist) {
+          pos.x = tgt.x; pos.y = tgt.y; dist -= d;
+          if (S.path === "manual") break;
+          wp = (wp + 1) % PATHS[S.path].length; tgt = { x: PATHS[S.path][wp][0], y: PATHS[S.path][wp][1] };
+        } else { pos.x += dx / d * dist; pos.y += dy / d * dist; dist = 0; }
+      }
+      describe(S);
+      var hx = BX + pos.x, hy = BY - pos.y, A = pos.x + pos.y, B = pos.x - pos.y, mA = [BX, 22], mB = [BX + SZ, 22];
+      var h = '<rect x="' + BX + '" y="' + (BY - SZ) + '" width="' + SZ + '" height="' + SZ + '" class="vl-box0"/>';
+      for (i = 1; i < 8; i++) h += LN(BX + i * 32, BY - SZ, BX + i * 32, BY, 'stroke="var(--line)"') + LN(BX, BY - i * 32, BX + SZ, BY - i * 32, 'stroke="var(--line)"');
+      h += T(BX, BY + 16, "0,0", "t-xs") + T(BX + SZ, BY + 16, "256", "t-xs t-r") + T(BX - 4, BY - SZ + 10, "256", "t-xs t-r") + T(BX + SZ / 2, BY + 16, "X →", "t-xs t-c") +
+        '<rect x="' + (BX - 8) + '" y="14" width="16" height="16" rx="3" fill="var(--blue)"/><rect x="' + (BX + SZ - 8) + '" y="14" width="16" height="16" rx="3" fill="var(--orange)"/>' +
+        T(BX + 14, 27, "A", "t-b") + T(BX + SZ - 24, 27, "B", "t-b") +
+        LN(BX - 6, hy, BX + SZ + 6, hy, 'stroke="var(--muted)" stroke-width="5" stroke-linecap="round" opacity=".6"') +
+        LN(mA[0], mA[1] + 8, hx, hy, 'stroke="var(--blue)" stroke-width="2.5"') + LN(mB[0], mB[1] + 8, hx, hy, 'stroke="var(--orange)" stroke-width="2.5"');
+      if (Math.hypot(tgt.x - pos.x, tgt.y - pos.y) > 0.5) h += '<circle cx="' + (BX + tgt.x) + '" cy="' + (BY - tgt.y) + '" r="8" fill="none" stroke="var(--red)" stroke-width="2" stroke-dasharray="3 3"/>';
+      h += '<rect x="' + r1(hx - 8) + '" y="' + r1(hy - 8) + '" width="16" height="16" rx="3" class="vl-box0" style="stroke:var(--ink);stroke-width:2"/>' + LN(hx - 5, hy, hx + 5, hy, 'stroke="var(--ink)"') + LN(hx, hy - 5, hx, hy + 5, 'stroke="var(--ink)"');
+      h += dial(410, 112, A, "var(--blue)", "Motor A") + dial(550, 112, B, "var(--orange)", "Motor B") +
+        T(340, 238, "Toolhead X " + fx(pos.x, 1) + "  Y " + fx(pos.y, 1) + " mm", "t-sm") +
+        T(340, 258, "A = X + Y = " + fx(A, 1) + " mm", "t-sm", ' style="fill:var(--blue)"') +
+        T(340, 278, "B = X − Y = " + fx(B, 1) + " mm", "t-sm", ' style="fill:var(--orange)"') +
+        T(340, 304, "40 mm of belt = 1 turn (GT2, 20 teeth)", "t-xs t-m");
+      dyn("i", h);
+    }, { step: 0.3 });
+  })();
+
+  /* ---------- (j) Pressure advance ---------- */
+  (function () {
+    var st = null, SIDE = 40, PXM = 5, X0 = 45, Y0 = 235, NOM = 9, DUR = 7;
+    var STARTS = [[X0, Y0], [X0, Y0 - SIDE * PXM], [X0 + SIDE * PXM, Y0 - SIDE * PXM], [X0 + SIDE * PXM, Y0]], DIRS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
+    function simulate(S) {
+      var v = S.v, vc = Math.min(S.vc, v), a = S.a, da = (v * v - vc * vc) / (2 * a), vp = v, t1, tc, Ts, ns, dt, k, sd, i, s;
+      if (2 * da > SIDE) { vp = Math.sqrt(vc * vc + a * SIDE); da = SIDE / 2; }
+      t1 = (vp - vc) / a; tc = (SIDE - 2 * da) / vp; Ts = 2 * t1 + tc;
+      ns = Math.max(60, Math.round(Ts / 0.001)); dt = Ts / ns;
+      var vel = [], acc = [], cum = [0];
+      for (k = 0; k < ns; k++) {
+        s = (k + 0.5) * dt;
+        if (s < t1) { vel.push(vc + a * s); acc.push(a); } else if (s < t1 + tc) { vel.push(vp); acc.push(0); } else { vel.push(Math.max(vc, vp - a * (s - t1 - tc))); acc.push(-a); }
+        cum.push(cum[k] + vel[k] * dt);
+      }
+      var o = { n: 4 * ns, ns: ns, dt: dt, T: 4 * Ts, vel: [], qo: [], qs: [], ratio: [], x: [], y: [], side: [], fr: [] }, qo = vel[0], rmax = 0, rmin = 9;
+      for (sd = 0, i = 0; sd < 4; sd++) {
+        for (k = 0; k < ns; k++, i++) {
+          var qsnd = Math.max(0, vel[k] + S.K * acc[k]);
+          qo += (qsnd - qo) / S.tau * dt;
+          var f = cum[k] / cum[ns], rt = qo / vel[k];
+          o.vel.push(vel[k]); o.qo.push(qo); o.qs.push(qsnd); o.ratio.push(rt); o.side.push(sd);
+          o.x.push(STARTS[sd][0] + DIRS[sd][0] * f * SIDE * PXM); o.y.push(STARTS[sd][1] + DIRS[sd][1] * f * SIDE * PXM);
+          if (rt > rmax) rmax = rt; if (rt < rmin) rmin = rt;
+        }
+      }
+      o.rmax = rmax; o.rmin = rmin; o.ymax = Math.max(v * 1.25, 10);
+      return o;
+    }
+    function mw(rt) { return clamp(1 + 3 * (rt - 1), 0.2, 3); }
+    controls("j", [
+      { k: "v", l: "Cruise speed", t: "range", min: 40, max: 300, step: 5, v: 120, u: "mm/s" },
+      { k: "vc", l: "Corner speed", t: "range", min: 10, max: 100, step: 5, v: 40, u: "mm/s" },
+      { k: "a", l: "Acceleration", t: "range", min: 1000, max: 20000, step: 500, v: 5000, u: "mm/s²" },
+      { k: "tau", l: "Pressure lag τ (the printer's physics)", t: "range", min: 0.01, max: 0.12, step: 0.005, v: 0.04, u: "s", d: 3 },
+      { k: "K", l: "Pressure advance K (your setting)", t: "range", min: 0, max: 0.12, step: 0.005, v: 0, u: "s", d: 3 }
+    ], function (S) {
+      st = simulate(S);
+      var bulge = (st.rmax - 1) * 100, thin = (1 - st.rmin) * 100, dk = S.K - S.tau, verdict;
+      if (S.K === 0) verdict = "No pressure advance: fat corners and thin starts.";
+      else if (Math.abs(dk) <= 0.15 * S.tau) verdict = "K matches the lag: the line stays uniform.";
+      else if (dk < 0) verdict = "K is too low: some bulge is left over.";
+      else verdict = "K is too high: the corner is starved and the next line starts too fat.";
+      readout("j", "Largest bulge: <b>+" + fx(bulge, 0) + " %</b> · thinnest: <b>−" + fx(thin, 0) + " %</b><br>One lap takes " + fx(st.T, 2) + " s (shown in slow motion)<br>Ideal K ≈ τ = " + fx(S.tau, 3) + " s" + '<div class="vl-v">' + verdict + "</div>");
+      redraw("j");
+    });
+    animate("j", function (t) {
+      if (!st) return;
+      var S = labs.j.S, p = Math.min(t % (DUR + 1.2), DUR) / DUR, idx = Math.min(st.n - 1, Math.floor(p * st.n)), i, j, h = "", q = { ok: "", hi: "", lo: "" };
+      for (i = 4; i <= idx; i += 4) {
+        j = i - 4;
+        if (st.side[i] !== st.side[j]) continue;
+        var dir = DIRS[st.side[i]], nx = -dir[1], ny = dir[0], ha = 0.5 * NOM * mw(st.ratio[j]), hb = 0.5 * NOM * mw(st.ratio[i]), rt = st.ratio[i];
+        var d = "M" + r1(st.x[j] + nx * ha) + " " + r1(st.y[j] + ny * ha) + "L" + r1(st.x[i] + nx * hb) + " " + r1(st.y[i] + ny * hb) + "L" + r1(st.x[i] - nx * hb) + " " + r1(st.y[i] - ny * hb) + "L" + r1(st.x[j] - nx * ha) + " " + r1(st.y[j] - ny * ha) + "Z";
+        q[rt > 1.12 ? "hi" : rt < 0.88 ? "lo" : "ok"] += d;
+      }
+      h += '<rect x="' + X0 + '" y="' + (Y0 - SIDE * PXM) + '" width="' + SIDE * PXM + '" height="' + SIDE * PXM + '" fill="none" stroke="var(--muted)" stroke-dasharray="4 4"/>' +
+        '<path d="' + q.ok + '" fill="var(--blue)" fill-opacity=".55"/><path d="' + q.hi + '" fill="var(--red)" fill-opacity=".75"/><path d="' + q.lo + '" fill="var(--orange)" fill-opacity=".8"/>' +
+        '<circle cx="' + r1(st.x[idx]) + '" cy="' + r1(st.y[idx]) + '" r="5" fill="var(--ink)"/>';
+      var px0 = 300, pw = 320, cur = px0 + idx / st.n * pw, yb = 150, ph = 120, y2b = 312, y2h = 100, ym = st.ymax;
+      function fy(q2) { return yb - clamp(q2 / ym, 0, 1) * ph; }
+      function fr(rt) { return y2b - clamp((rt - 0.3) / 2, 0, 1) * y2h; }
+      var cmd = "", act = "", snd = "", rat = "", st4 = Math.max(1, Math.floor(st.n / 320));
+      for (i = 0; i < st.n; i += st4) {
+        var xx = px0 + i / st.n * pw, c = i ? "L" : "M";
+        cmd += c + r1(xx) + " " + r1(fy(st.vel[i])); act += c + r1(xx) + " " + r1(fy(st.qo[i])); snd += c + r1(xx) + " " + r1(fy(st.qs[i])); rat += c + r1(xx) + " " + r1(fr(st.ratio[i]));
+      }
+      h += T(px0, 22, "Flow leaving the nozzle (mm/s of line)", "t-sm") + LN(px0, yb, px0 + pw, yb, 'stroke="var(--line)"') + LN(px0, yb - ph, px0, yb, 'stroke="var(--line)"') +
+        T(px0 - 4, yb, "0", "t-xs t-r") + T(px0 - 4, yb - ph + 8, Math.round(ym), "t-xs t-r") +
+        '<path d="' + cmd + '" fill="none" stroke="var(--muted)" stroke-dasharray="5 4" stroke-width="2"/>' +
+        (S.K > 0 ? '<path d="' + snd + '" fill="none" stroke="var(--green)" stroke-width="1.2" opacity=".8"/>' : "") +
+        '<path d="' + act + '" fill="none" stroke="var(--orange)" stroke-width="2.5"/>' +
+        T(px0 + pw, yb + 14, "dashed: commanded", "t-xs t-r") + T(px0 + pw, yb + 28, (S.K > 0 ? "green: sent with PA · " : "") + "orange: actual", "t-xs t-r") +
+        T(px0, 192, "Bead width ÷ nominal", "t-sm") + LN(px0, y2b, px0 + pw, y2b, 'stroke="var(--line)"') + LN(px0, fr(1), px0 + pw, fr(1), 'stroke="var(--muted)" stroke-dasharray="4 4"') +
+        T(px0 - 4, fr(1) + 4, "1", "t-xs t-r") + '<path d="' + rat + '" fill="none" stroke="var(--blue)" stroke-width="2.5"/>' +
+        LN(cur, yb - ph, cur, y2b, 'stroke="var(--ink)" opacity=".5"') + '<circle cx="' + r1(cur) + '" cy="' + r1(fy(st.qo[idx])) + '" r="4" fill="var(--orange)"/>' + '<circle cx="' + r1(cur) + '" cy="' + r1(fr(st.ratio[idx])) + '" r="4" fill="var(--blue)"/>' +
+        '<rect x="45" y="262" width="12" height="12" fill="var(--blue)" fill-opacity=".55"/>' + T(62, 272, "on target", "t-xs") +
+        '<rect x="125" y="262" width="12" height="12" fill="var(--red)" fill-opacity=".75"/>' + T(142, 272, "too fat", "t-xs") +
+        '<rect x="195" y="262" width="12" height="12" fill="var(--orange)" fill-opacity=".8"/>' + T(212, 272, "too thin", "t-xs") +
+        T(45, 296, "Width differences are exaggerated 3×; the lap is slowed down.", "t-xs t-m");
+      dyn("j", h);
+    }, { step: 0.25 });
+  })();
+
+  /* ---------- (k) Tolerance fit ---------- */
+  (function () {
+    var ZONES = [[-0.3, 0, "var(--red)", "interference"], [0, 0.1, "var(--orange)", "press"], [0.1, 0.25, "var(--green)", "slide"], [0.25, 0.5, "var(--blue)", "loose"], [0.5, 0.7, "var(--muted)", "sloppy"]];
+    function zoneOf(c) { var i; for (i = 0; i < ZONES.length; i++) { if (c < ZONES[i][1]) return ZONES[i]; } return ZONES[ZONES.length - 1]; }
+    controls("k", [
+      { k: "hole", l: "Hole diameter in the model", t: "range", min: 7.8, max: 8.6, step: 0.01, v: 8.3, u: "mm" },
+      { k: "peg", l: "Peg diameter in the model", t: "range", min: 7.8, max: 8.4, step: 0.01, v: 8, u: "mm" },
+      { k: "eh", l: "Printed hole comes out smaller by", t: "range", min: 0, max: 0.3, step: 0.01, v: 0.1, u: "mm" },
+      { k: "ep", l: "Printed peg comes out larger by", t: "range", min: 0, max: 0.2, step: 0.01, v: 0.05, u: "mm" }
+    ], function (S) {
+      var dh = S.hole - S.eh, dp = S.peg + S.ep, c = dh - dp, K = 28, cx = 190, cy = 160, rh = dh / 2 * K, rp = dp / 2 * K, z = zoneOf(c), i;
+      var pcy = c > 0 ? cy + c / 2 * K : cy;
+      var h = '<rect x="20" y="10" width="340" height="300" rx="8" class="vl-box"/><circle cx="' + cx + '" cy="' + cy + '" r="' + r(S.hole / 2 * K) + '" fill="none" stroke="var(--muted)" stroke-dasharray="5 4"/>' +
+        '<circle cx="' + cx + '" cy="' + cy + '" r="' + r(rh) + '" class="vl-box0" style="stroke:var(--ink);stroke-width:2"/>' +
+        '<circle cx="' + cx + '" cy="' + r(pcy) + '" r="' + r(rp) + '" fill="var(--blue)" fill-opacity=".6" stroke="var(--blue)" stroke-width="2"/>';
+      if (c < 0) h += '<path fill-rule="evenodd" fill="var(--red)" fill-opacity=".9" d="M' + r(cx - rp) + " " + cy + "a" + r(rp) + " " + r(rp) + " 0 1 0 " + r(2 * rp) + " 0a" + r(rp) + " " + r(rp) + " 0 1 0 " + r(-2 * rp) + " 0ZM" + r(cx - rh) + " " + cy + "a" + r(rh) + " " + r(rh) + " 0 1 0 " + r(2 * rh) + " 0a" + r(rh) + " " + r(rh) + " 0 1 0 " + r(-2 * rh) + ' 0Z"/>';
+      else if (c > 0.005) h += LN(cx, cy - rh, cx, pcy - rp, 'stroke="var(--red)" stroke-width="2"') + T(cx, cy - rh - 8, "gap at the top: " + fx(c, 2) + " mm", "t-xs t-c", ' style="fill:var(--red)"');
+      h += T(32, 300, "dashed: hole as modeled · 28 px per mm", "t-xs t-m");
+      h += T(400, 36, "Hole: modeled " + fx(S.hole, 2) + " → printed " + fx(dh, 2) + " mm", "t-sm") + T(400, 58, "Peg: modeled " + fx(S.peg, 2) + " → printed " + fx(dp, 2) + " mm", "t-sm");
+      var gx = 400, gw = 220, gy = 116, mx = function (v) { return gx + (clamp(v, -0.3, 0.7) + 0.3) / 1.0 * gw; };
+      for (i = 0; i < ZONES.length; i++) h += '<rect x="' + r1(mx(ZONES[i][0])) + '" y="' + gy + '" width="' + r1(mx(ZONES[i][1]) - mx(ZONES[i][0])) + '" height="22" fill="' + ZONES[i][2] + '" fill-opacity=".7"/>';
+      h += T(mx(-0.15), gy + 38, "press-in", "t-xs t-c") + T(mx(0.05), gy + 38, "press", "t-xs t-c") + T(mx(0.175), gy + 38, "slide", "t-xs t-c") + T(mx(0.375), gy + 38, "loose", "t-xs t-c") + T(mx(0.6), gy + 38, "sloppy", "t-xs t-c") +
+        '<path d="M' + r1(mx(c)) + " " + (gy - 4) + "l-7 -12h14Z" + '" fill="var(--ink)"/>' + LN(mx(c), gy - 4, mx(c), gy + 22, 'stroke="var(--ink)" stroke-width="2"') +
+        T(gx, gy + 62, "−0.3", "t-xs") + T(gx + gw, gy + 62, "+0.7 mm", "t-xs t-r") +
+        T(400, 230, "Clearance c = " + fx(c, 2) + " mm", "t-lg") + T(400, 256, z[3].charAt(0).toUpperCase() + z[3].slice(1) + " fit", "t-b", ' style="fill:' + z[2] + '"');
+      dyn("k", h);
+      var need = 0.2 - c;
+      readout("k", "Clearance <b>c = " + fx(c, 2) + " mm</b> → " + z[3] + " fit" + (c <= 0 ? "<br>The parts overlap by " + fx(-c, 2) + " mm on the diameter: they will not assemble without force." : "") +
+        '<div class="vl-v">' + (Math.abs(need) < 0.02 ? "Already close to a 0.2 mm sliding fit." : need > 0 ? "For a 0.2 mm sliding fit, open the hole by " + fx(need, 2) + " mm." : "For a 0.2 mm sliding fit, shrink the hole by " + fx(-need, 2) + " mm.") + "</div>");
+    });
+  })();
+
+  /* ---------- (l) Flush and prime tower ---------- */
+  (function () {
+    var PAL = ["#e5484d", "#f76b15", "#ffc53d", "#30a46c", "#3e63dd", "#8e4ec6", "#12a594", "#889096"], st = null;
+    function frac(x) { return x - Math.floor(x); }
+    controls("l", [
+      { k: "N", l: "Colors in the model", t: "range", min: 2, max: 8, step: 1, v: 4 },
+      { k: "n", l: "Layers", t: "range", min: 10, max: 200, step: 5, v: 80 },
+      { k: "sh", l: "Layers that change color", t: "range", min: 5, max: 100, step: 5, v: 40, u: "%" },
+      { k: "V", l: "Flush volume per change (placeholder)", t: "range", min: 30, max: 500, step: 10, v: 150, u: "mm³" },
+      { k: "sw", l: "Changes done by nozzle swap (X2D)", t: "range", min: 0, max: 80, step: 5, v: 0, u: "%" }
+    ], function (S) {
+      var ci = [], ch = [], sw = [], cum = [], i, prev = 0, cl = 0, g = 0, per = (S.N - 1) * (1 - S.sw / 100) * S.V * 1.24 / 1000;
+      for (i = 0; i < S.n; i++) {
+        var c = i > 0 && frac(i * 0.618034 + 0.3) < S.sh / 100;
+        if (c) { prev = (prev + 1) % S.N; cl++; g += per; }
+        ci.push(prev); ch.push(c); sw.push(frac(i * 0.7548 + 0.1) < S.sw / 100); cum.push(g);
+      }
+      st = { ci: ci, ch: ch, sw: sw, cum: cum, cl: cl, total: g, changes: cl * (S.N - 1) };
+      readout("l", "Changing layers: <b>" + cl + "</b> of " + S.n + " · color changes: <b>" + st.changes + "</b><br>Flush volume ≈ " + fx(st.changes * (1 - S.sw / 100) * S.V / 1000, 1) + " cm³ after swaps<br>Estimated waste ≈ <b>" + fx(g, 1) + " g</b> (at 1.24 g/cm³)" +
+        '<div class="vl-v">Conceptual: Bambu Studio’s flush matrix gives the exact numbers.</div>');
+      redraw("l");
+    });
+    animate("l", function (t) {
+      if (!st) return;
+      var S = labs.l.S, p = Math.min(t % 9, 7) / 7, k = Math.min(S.n - 1, Math.floor(p * S.n)), H = 260, lh = H / S.n, i, h = "", ch = 0;
+      h += '<rect x="40" y="40" width="160" height="' + H + '" fill="none" stroke="var(--line)"/><rect x="270" y="40" width="80" height="' + H + '" fill="none" stroke="var(--line)" stroke-dasharray="4 3"/>';
+      for (i = 0; i <= k; i++) {
+        var y = 300 - (i + 1) * lh;
+        h += '<rect x="40" y="' + r(y) + '" width="160" height="' + r(lh + 0.5) + '" fill="' + PAL[st.ci[i] % PAL.length] + '"/>';
+        if (st.ch[i]) {
+          ch += S.N - 1;
+          h += '<rect x="270" y="' + r(y) + '" width="80" height="' + r(Math.max(lh, 1.2)) + '" fill="' + PAL[(st.ci[i] + S.N - 1) % S.N % PAL.length] + '" opacity="' + (st.sw[i] ? 0.3 : 1) + '"/>';
+        } else h += '<rect x="270" y="' + r(y) + '" width="80" height="' + r(lh + 0.5) + '" fill="var(--surface-2)"/>';
+      }
+      var yc = 300 - (k + 1) * lh;
+      h += LN(30, yc, 360, yc, 'stroke="var(--ink)" stroke-width="2"') + T(120, 326, "Part", "t-sm t-c") + T(310, 326, "Prime tower", "t-sm t-c") +
+        T(400, 60, "Layer " + (k + 1) + " / " + S.n, "t-b") + T(400, 90, "Color changes so far: " + ch, "t-sm") + T(400, 114, "Flush so far: " + fx(st.cum[k], 1) + " g", "t-sm") +
+        T(400, 138, "Total estimate: " + fx(st.total, 1) + " g", "t-sm") + T(400, 174, "Pale bands = changes done by", "t-xs t-m") + T(400, 190, "a nozzle swap (little purge)", "t-xs t-m") + T(400, 226, "Colors in this model:", "t-xs t-m");
+      for (i = 0; i < S.N; i++) h += '<rect x="' + (400 + i * 26) + '" y="236" width="20" height="20" rx="4" fill="' + PAL[i] + '"/>';
+      h += T(400, 290, "Conceptual model only", "t-xs t-m");
+      dyn("l", h);
+    }, { step: 0.5 });
+  })();
+
+  /* ---------- (m) Input shaping ---------- */
+  (function () {
+    var st = null, WL = 20, PXM = 12, N = 240;
+    function stepResp(t, w, z) { if (t < 0) return 0; var wd = w * Math.sqrt(1 - z * z); return 1 - Math.exp(-z * w * t) * (Math.cos(wd * t) + z * w / wd * Math.sin(wd * t)); }
+    controls("m", [
+      { k: "f", l: "Resonant frequency", t: "range", min: 20, max: 120, step: 1, v: 50, u: "Hz" },
+      { k: "z", l: "Damping ratio ζ", t: "range", min: 0.01, max: 0.2, step: 0.005, v: 0.05, d: 3 },
+      { k: "v", l: "Print speed", t: "range", min: 50, max: 300, step: 10, v: 150, u: "mm/s" },
+      { k: "sh", l: "Input shaper", t: "select", o: [["none", "None"], ["ZV", "ZV (2 impulses)"], ["ZVD", "ZVD (3 impulses)"]], v: "ZV" },
+      { k: "err", l: "Shaper tuned too high by", t: "range", min: -30, max: 30, step: 1, v: 0, u: "%" }
+    ], function (S) {
+      var w = 2 * Math.PI * S.f, z = S.z, K = Math.exp(-z * Math.PI / Math.sqrt(1 - z * z)), Tds = 2 * Math.PI / (2 * Math.PI * S.f * (1 + S.err / 100) * Math.sqrt(1 - z * z)), Tw = WL / S.v, i, j;
+      var imp = S.sh === "ZV" ? [[0, 1 / (1 + K)], [Tds / 2, K / (1 + K)]] : S.sh === "ZVD" ? [[0, 1 / Math.pow(1 + K, 2)], [Tds / 2, 2 * K / Math.pow(1 + K, 2)], [Tds, K * K / Math.pow(1 + K, 2)]] : [[0, 1]];
+      var xu = [], xs = [], ru = 0, rs = 0;
+      for (i = 0; i <= N; i++) {
+        var t = i / N * Tw, a = stepResp(t, w, z), b = 0;
+        for (j = 0; j < imp.length; j++) b += imp[j][1] * stepResp(t - imp[j][0], w, z);
+        xu.push(a); xs.push(b);
+        if (i > N * 0.7) { ru = Math.max(ru, Math.abs(a - 1)); rs = Math.max(rs, Math.abs(b - 1)); }
+      }
+      st = { xu: xu, xs: xs, imp: imp, Tw: Tw, K: K };
+      readout("m", "Overshoot of the unshaped step: <b>" + fx(K * 100, 0) + " %</b> · ripple spacing λ = v / f = <b>" + fx(S.v / S.f, 1) + " mm</b><br>Shaper delay: <b>" + fx(imp[imp.length - 1][0] * 1000, 1) + " ms</b><br>Ripple left at the end of the wall: unshaped " + fx(ru * 100, 0) + " %, shaped " + fx(rs * 100, 0) + " %" +
+        '<div class="vl-v">' + (S.sh === "none" ? "No shaper: the full ringing prints into the wall." : Math.abs(S.err) > 15 && S.sh === "ZV" ? "The shaper is detuned: ZV leaves a lot of ripple. Try ZVD." : rs < ru * 0.2 ? "The shaper cancels most of the ringing." : "The shaper helps, but is detuned; ZVD is more forgiving.") + "</div>");
+      redraw("m");
+    });
+    animate("m", function (t) {
+      if (!st) return;
+      var S = labs.m.S, p = Math.min(t % 6, 4) / 4, idx = Math.floor(p * N), i, h = "", y1 = 110, y2 = 240, amp = 30;
+      function wall(arr, y0, col) {
+        var pts = [], k;
+        for (k = 0; k <= idx; k++) pts.push([30 + k / N * WL * PXM, y0 + amp * (arr[k] - 1)]);
+        return LN(30, y0 - 54, 30, y0 - amp, 'stroke="' + col + '" stroke-width="5" stroke-linecap="round"') + '<path d="' + polyPath(pts) + '" fill="none" stroke="' + col + '" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>' +
+          LN(30, y0, 30 + WL * PXM, y0, 'stroke="var(--muted)" stroke-dasharray="4 4"') + '<circle cx="' + r1(30 + idx / N * WL * PXM) + '" cy="' + r1(y0 + amp * (arr[idx] - 1)) + '" r="5" fill="var(--ink)"/>';
+      }
+      h += T(30, 26, "Wall without a shaper", "t-sm") + wall(st.xu, y1, "var(--red)") + T(30, 176, "Wall with " + (S.sh === "none" ? "no shaper" : S.sh), "t-sm") + wall(st.xs, y2, "var(--green)");
+      var lam = S.v / S.f * PXM;
+      if (lam < 230) h += LN(30, y1 + 46, 30 + lam, y1 + 46, 'stroke="var(--ink)" stroke-width="2"') + T(34 + lam, y1 + 50, "λ = " + fx(S.v / S.f, 1) + " mm", "t-xs");
+      h += T(30, 300, "Ripples exaggerated; the 20 mm wall is printed at " + S.v + " mm/s", "t-xs t-m");
+      var px0 = 340, pw = 280, ytop = 40, ybot = 240;
+      function fy(v) { return ybot - (v + 0.1) / 2.15 * (ybot - ytop); }
+      var u = "", s = "", k2;
+      for (k2 = 0; k2 <= N; k2 += 2) { u += (k2 ? "L" : "M") + r1(px0 + k2 / N * pw) + " " + r1(fy(st.xu[k2])); s += (k2 ? "L" : "M") + r1(px0 + k2 / N * pw) + " " + r1(fy(st.xs[k2])); }
+      h += T(px0, 26, "Tool position after the corner", "t-sm") + LN(px0, fy(0), px0 + pw, fy(0), 'stroke="var(--line)"') + LN(px0, fy(1), px0 + pw, fy(1), 'stroke="var(--muted)" stroke-dasharray="5 4"') +
+        T(px0 - 4, fy(1) + 4, "1", "t-xs t-r") + T(px0 - 4, fy(0) + 4, "0", "t-xs t-r") +
+        '<path d="' + u + '" fill="none" stroke="var(--red)" stroke-width="2"/>' + (S.sh !== "none" ? '<path d="' + s + '" fill="none" stroke="var(--green)" stroke-width="2.5"/>' : "") +
+        LN(px0 + idx / N * pw, ytop, px0 + idx / N * pw, ybot, 'stroke="var(--ink)" opacity=".5"') + T(px0 + pw, ybot + 16, "time → " + fx(st.Tw * 1000, 0) + " ms", "t-xs t-r") +
+        T(px0, 270, "Shaper impulses", "t-xs t-m");
+      for (i = 0; i < st.imp.length; i++) {
+        var ix = px0 + st.imp[i][0] / st.Tw * pw;
+        if (ix <= px0 + pw) h += LN(ix, 300, ix, 300 - st.imp[i][1] * 24, 'stroke="var(--green)" stroke-width="4"');
+      }
+      h += LN(px0, 300, px0 + pw, 300, 'stroke="var(--line)"');
+      dyn("m", h);
+    }, { step: 0.3 });
+  })();
+
+});
+</script>
+</main>
+</body>
+</html>
