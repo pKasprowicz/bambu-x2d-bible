@@ -80,6 +80,9 @@ a:hover { color: var(--brand); }
 .site-header .brand svg { width: 30px; height: 30px; flex: none; }
 .site-header .brand small { display: block; font-weight: 500; font-size: 11px; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; line-height: 1; margin-top: 2px; }
 .site-header .spacer { flex: 1; }
+.ver-chip { font: 650 11.5px var(--mono); color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 2px 9px; text-decoration: none; white-space: nowrap; letter-spacing: 0; text-transform: none; }
+.ver-chip:hover { border-color: var(--brand); color: var(--brand); }
+.kicker .ver-chip { margin-left: 10px; vertical-align: 1px; }
 .icon-btn {
   appearance: none; border: 1px solid var(--line); background: var(--surface); color: var(--ink);
   border-radius: 10px; height: 38px; min-width: 38px; padding: 0 10px; cursor: pointer; font: inherit; font-size: 15px;
@@ -138,6 +141,7 @@ a:hover { color: var(--brand); }
   .site-header { gap: 8px; padding: 0 10px; }
   .site-header .brand { min-width: 0; gap: 8px; }
   .site-header .brand > span { overflow: hidden; text-overflow: ellipsis; font-size: 15px; }
+  .site-header .ver-chip { display: none; }
 }
 
 /* ---------- Typography ---------- */

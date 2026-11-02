@@ -50,6 +50,7 @@
   var header = el("header", { class: "site-header" },
     '<button class="icon-btn menu-btn" aria-label="Menu">☰</button>' +
     '<a class="brand" href="' + base + 'index.html">' + logo + '<span>' + NAV.short + '<small>from first print to expert</small></span></a>' +
+    (NAV.version ? '<a class="ver-chip" href="' + (NAV.repo ? NAV.repo + '/releases/tag/v' + NAV.version : '#') + '" rel="noopener" title="Release notes">v' + NAV.version + '</a>' : '') +
     '<span class="spacer"></span>' +
     '<button class="icon-btn search-btn" aria-label="Search"><span aria-hidden="true">🔍</span><span class="lbl">Search…</span><kbd>/</kbd></button>' +
     '<button class="icon-btn theme-btn" aria-label="Toggle dark mode">🌓</button>');
@@ -93,6 +94,8 @@
     "The 3D Printing Compendium · built for GitHub Pages · Settings shown are starting points — always validate on your own printer & filament.<br>Product facts for the Bambu Lab X2D and AMS 2 Pro come from Bambu Lab's public documentation and may change with firmware updates." +
     (NAV.version ? '<br><small>Version ' + NAV.version + (NAV.repo ? ' · <a href="' + NAV.repo + '/blob/master/CHANGELOG.md" rel="noopener">changelog</a> · <a href="' + NAV.repo + '/releases" rel="noopener">releases</a>' : '') + '</small>' : ''));
   body.appendChild(footer);
+  var kicker = $(".home-hero .kicker");
+  if (kicker && NAV.version) kicker.appendChild(el("a", { class: "ver-chip", href: (NAV.repo || "") + "/blob/master/CHANGELOG.md", rel: "noopener", title: "What changed" }, "v" + NAV.version + " · changelog"));
   var toTop = el("button", { class: "icon-btn to-top", "aria-label": "Back to top" }, "↑");
   toTop.addEventListener("click", function () { window.scrollTo({ top: 0 }); });
   body.appendChild(toTop);
