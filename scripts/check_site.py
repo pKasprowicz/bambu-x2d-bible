@@ -133,11 +133,36 @@ def check_svgs(html, rel, errors):
             errors.append((rel, line, "SVG without viewBox"))
 
 
+def check_version(errors):
+    """VERSION, nav.js and the newest CHANGELOG release must name the same version."""
+    semver = r"\d+\.\d+\.\d+"
+    try:
+        v_file = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+    except OSError:
+        errors.append(("VERSION", 0, "file is missing"))
+        return
+    if not re.fullmatch(semver, v_file):
+        errors.append(("VERSION", 0, f"'{v_file}' is not MAJOR.MINOR.PATCH"))
+        return
+    m = re.search(r'version:\s*"(' + semver + ')"', (ROOT / "assets/js/nav.js").read_text(encoding="utf-8-sig"))
+    if not m or m.group(1) != v_file:
+        errors.append(("assets/js/nav.js", 0, f"version is {m.group(1) if m else 'missing'}, VERSION says {v_file}"))
+    try:
+        log = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    except OSError:
+        errors.append(("CHANGELOG.md", 0, "file is missing"))
+        return
+    m = re.search(r"^## \[(" + semver + r")\]", log, re.M)
+    if not m or m.group(1) != v_file:
+        errors.append(("CHANGELOG.md", 0, f"newest release entry is {m.group(1) if m else 'missing'}, VERSION says {v_file}"))
+
+
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     strict = "--strict" in sys.argv
     errors, warnings = [], []
     files_in_nav = nav_files()
+    check_version(errors)
     for f in files_in_nav:
         if not (ROOT / f).exists():
             errors.append((f, 0, "listed in nav.js but file is missing"))
