@@ -37,24 +37,27 @@ Totals at last check: **62 pages, ~276k words, 662 SVG figures**, `check_site.py
 - `python scripts/check_site.py` — 0 errors.
 - Headless Chromium (Playwright) loaded 12 pages in light and dark: no JS exceptions, no failed requests, no horizontal overflow. Pages covered: home, start-here, calculators, material-picker, visual-lab, troubleshooting, glossary, FAQ, quizzes, exercises index, X2D overview, design principles.
 
+## QA log (2026-11-02)
+
+- **OpenSCAD 2021.01** installed; all 14 `exercises/models/*.scad` (plus the `part` variants of `parametric_box`, `snap_fit_test`, `tolerance_gauge`) and the 3 OpenSCAD snippets in pages compile with no warnings; STLs are valid solids. Python snippets (CadQuery/build123d) parse.
+- **Calculators:** all 17 load; outputs for 10 of them hand-checked against the formulas (filament, cost, time, flow, spool, beam, motion, e-steps, Z, flush); bad/empty input shows a message, never NaN. Material picker rankings respond sensibly.
+- **Fixed:** quiz answers sat mostly in option 2 (now shuffled at load in `site.js`); visual-lab wall builder NaN at zero material; header overflowed and the search icon vanished on phones; picker chips and cheat-sheet/pattern grids overflowed narrow screens; dead Formnext link; two duplicated page-local CSS rules moved to `style.css`.
+- **Layout sweep:** all 62 pages have no horizontal overflow at 320, 375 and 414 px.
+- **External links:** 43 checked; all return 200 or a bot-blocking 403.
+- **X2D specs** (build volumes, 300/120/65 degC, size/weight, speeds, power, cameras, screen) match the spec sheet at bambulab.com/en/x2d/specs. `wiki.bambulab.com` could not be fetched directly (HTTP 402).
+
 ## Known gaps / risks
 
-1. **Deployed.** Merged to `master`; the Pages workflow succeeded and the site is live at https://pkasprowicz.github.io/bambu-x2d-bible/ (Pages source is GitHub Actions).
-2. **Not exhaustively browser-tested.** Only the 12 pages above were opened; interactive widgets were loaded but not clicked through (calculator math, picker scoring, animations, quiz scoring should get a manual pass).
-3. **OpenSCAD models and code samples unverified** — `openscad` is not installed here; the `.scad` files and the OpenSCAD/CadQuery/build123d snippets in the pages were reviewed, not compiled.
-4. **X2D facts** come from Bambu's public wiki/store pages (fetched during research). Anything not supported was labelled "typical" or "check the wiki". Unboxing/transport-lock details and per-material drying tables for the AMS 2 Pro were not in the research and defer to the manual. Re-verify against the wiki when firmware/hardware changes. No prices are included by design.
-5. **External links** (resources page) are well-known homepages but were not checked live.
-6. **Several pages carry page-local `<style>` blocks** (`ts-`, `cs-`, `faq-`, `app-`, `dp-`, `pc-`, `ss-`, `tol-`, `jf-`, `so-` …). Candidates to promote to `style.css`: `.no-print`, `.muted`, `.sr-only`, glossary jump-bar/filter, `.tol-note`, equation style.
-7. Some pages sit near the lower word targets (cheat sheets ~3.7k, troubleshooting ~5.4k words but with 40 card SVGs). Content is complete; expansion is optional.
-8. `ams-2-pro.html` may start with a harmless UTF-8 BOM.
-9. Numeric values throughout are starting points and intentionally caveated; a domain expert review would be valuable.
+1. Visual-lab animations, dark-mode toggle and search were not exercised by hand beyond load/console checks.
+2. Facts not on Bambu's public spec pages (unboxing/transport-lock steps, per-material AMS 2 Pro drying tables) defer to the manual. Re-verify when firmware/hardware changes. No prices by design.
+3. Remaining page-local `<style>` blocks are namespaced per page (`ts-`, `cs-`, `faq-` ...) and not duplicated; leaving them is fine.
+4. Numeric values are caveated starting points; a domain-expert review would still be valuable.
+5. `ams-2-pro.html` may start with a harmless UTF-8 BOM.
 
 ## Next steps
 
-1. Manual QA of the live site: interactive tools, exercise/quiz progress persistence, mobile layout.
-2. Compile all `.scad` files with OpenSCAD and fix any errors.
-3. Verify external links and re-check X2D facts against wiki.bambulab.com.
-4. Optionally consolidate page-local CSS into `style.css`.
+1. Optional: expert review of numeric guidance; spot-check against the Bambu wiki when it is reachable.
+2. Optional: expand the shorter pages (cheat sheets ~3.7k words).
 
 ## Git identity
 

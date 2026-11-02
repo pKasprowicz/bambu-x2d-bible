@@ -536,7 +536,7 @@ document.addEventListener("c3d:ready", function () {
     var t = S.n * S.w, tb = S.tb * S.lh, Wc = Math.max(0, S.W - 2 * t), Hc = Math.max(0, S.H - 2 * tb), rho = S.rho / 100, i;
     var A = S.W * S.H, Ac = Wc * Hc, solid = (A - Ac + rho * Ac) / A;
     var Ifull = S.W * Math.pow(S.H, 3) / 12, Ishell = (S.W * Math.pow(S.H, 3) - Wc * Math.pow(Hc, 3)) / 12, Icore = Wc * Math.pow(Hc, 3) / 12;
-    var EI = Ishell + rho * Icore, eff = EI / Ifull, shellShare = Ishell / EI;
+    var EI = Ishell + rho * Icore, eff = EI / Ifull, shellShare = EI > 0 ? Ishell / EI : 0;
     var s = Math.min(330 / S.W, 270 / S.H), ox = 20 + (330 - S.W * s) / 2, oy = 25 + (270 - S.H * s) / 2;
     var cx = ox + t * s, cy = oy + tb * s, cw = Wc * s, ch = Hc * s;
     var h = '<defs><clipPath id="d-cp"><rect x="' + r(cx) + '" y="' + r(cy) + '" width="' + r(cw) + '" height="' + r(ch) + '"/></clipPath></defs>' +
@@ -560,8 +560,8 @@ document.addEventListener("c3d:ready", function () {
     });
     if (cw <= 0 || ch <= 0) h += '<text class="t-sm c-red" x="380" y="300">The shell fills the whole bar: it is solid.</text>';
     dyn("d", h);
-    readout("d", "Solid fraction f = <b>" + Math.round(solid * 100) + " %</b> · stiffness = <b>" + Math.round(eff * 100) + " %</b> of a solid bar<br>Stiffness per unit mass vs solid: <b>" + fx(eff / solid, 2) + "×</b> (shell " + Math.round(shellShare * 100) + " % of stiffness)" +
-      '<div class="vl-v">' + (eff / solid > 1 ? "Good value: material is placed far from the middle." : "More plastic than the stiffness justifies.") + "</div>");
+    readout("d", "Solid fraction f = <b>" + Math.round(solid * 100) + " %</b> · stiffness = <b>" + Math.round(eff * 100) + " %</b> of a solid bar<br>Stiffness per unit mass vs solid: <b>" + fx(solid > 0 ? eff / solid : 0, 2) + "×</b> (shell " + Math.round(shellShare * 100) + " % of stiffness)" +
+      '<div class="vl-v">' + (solid > 0 && eff / solid > 1 ? "Good value: material is placed far from the middle." : "More plastic than the stiffness justifies.") + "</div>");
   });
 
   /* ---------- (e) Retraction and stringing ---------- */

@@ -16,7 +16,8 @@
     .cs-jump a { display: inline-block; padding: 3px 10px; border: 1px solid var(--line); border-radius: 999px; font-size: 13px; text-decoration: none; background: var(--surface); }
     .cs-sheet { border: 1px solid var(--line); border-radius: var(--radius); padding: 4px 18px 14px; margin: 0 0 1.6em; background: var(--surface); }
     .cs-sheet > h2 { margin-top: .8em; }
-    .cs-two { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+    .cs-two > * { min-width: 0; margin-left: 0; margin-right: 0; }
+    .cs-two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 16px; }
     @media print {
       .no-print { display: none !important; }
       .cs-sheet { break-inside: avoid; page-break-inside: avoid; border: 1px solid #999; padding: 4px 10px 8px; margin-bottom: 10pt; }

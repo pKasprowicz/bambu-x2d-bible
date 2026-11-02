@@ -51,7 +51,7 @@
     '<button class="icon-btn menu-btn" aria-label="Menu">☰</button>' +
     '<a class="brand" href="' + base + 'index.html">' + logo + '<span>' + NAV.short + '<small>from first print to expert</small></span></a>' +
     '<span class="spacer"></span>' +
-    '<button class="icon-btn search-btn" aria-label="Search"><span class="lbl">🔍 Search…</span><kbd>/</kbd></button>' +
+    '<button class="icon-btn search-btn" aria-label="Search"><span aria-hidden="true">🔍</span><span class="lbl">Search…</span><kbd>/</kbd></button>' +
     '<button class="icon-btn theme-btn" aria-label="Toggle dark mode">🌓</button>');
 
   var sidebar = el("nav", { class: "sidebar", "aria-label": "Site navigation" });
@@ -190,6 +190,12 @@
   var sb = $(".score-board");
   function updateScore() { if (sb) sb.innerHTML = "🎯 Score: <b>" + score.right + "</b> / " + score.total + " answered · " + quizzes.length + " questions in this quiz"; }
   quizzes.forEach(function (q) {
+    var opts = $(".options", q);
+    if (opts) { /* authored answers sit mostly in one slot: shuffle so position gives nothing away */
+      var items = $$("li", opts), k, j, t;
+      for (k = items.length - 1; k > 0; k--) { j = Math.floor(Math.random() * (k + 1)); t = items[k]; items[k] = items[j]; items[j] = t; }
+      items.forEach(function (li) { opts.appendChild(li); });
+    }
     $$(".options li", q).forEach(function (li) {
       li.addEventListener("click", function () {
         if (q.classList.contains("answered")) return;
