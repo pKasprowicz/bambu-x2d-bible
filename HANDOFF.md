@@ -39,7 +39,9 @@ Totals at last check: **62 pages, ~276k words, 662 SVG figures**, `check_site.py
 
 ## Workflow and versions
 
-GitHub Flow: short branches into `master` via pull request (CI runs the checker), `master` deploys. Numbered editions use `VERSION` + `nav.js` + `CHANGELOG.md` (kept consistent by `check_site.py`); pushing tag `vX.Y.Z` publishes a GitHub Release with an offline zip. Details: `docs/github-flow-and-versioning.md`. First release **v1.0.0** is tagged after the workflow PR merges.
+GitHub Flow: short branches into `master` via pull request (CI runs the checker), `master` deploys. Numbered editions use `VERSION` + `nav.js` + `CHANGELOG.md` (kept consistent by `check_site.py`); pushing tag `vX.Y.Z` publishes a GitHub Release with an offline zip. Details: `docs/github-flow-and-versioning.md`.
+
+Released editions: **v1.0.0** (first edition) and **v1.0.1** (muted colour palette with `--*-ink` text variants and `--on-brand` button text; version shown in the header and home hero; SVG text fixes for dark mode). See `CHANGELOG.md`.
 
 ## QA log (2026-11-02)
 
@@ -56,7 +58,10 @@ GitHub Flow: short branches into `master` via pull request (CI runs the checker)
 2. Facts not on Bambu's public spec pages (unboxing/transport-lock steps, per-material AMS 2 Pro drying tables) defer to the manual. Re-verify when firmware/hardware changes. No prices by design.
 3. Remaining page-local `<style>` blocks are namespaced per page (`ts-`, `cs-`, `faq-` ...) and not duplicated; leaving them is fine.
 4. Numeric values are caveated starting points; a domain-expert review would still be valuable.
-5. `ams-2-pro.html` may start with a harmless UTF-8 BOM.
+
+## Since v1.0.1 (unreleased)
+
+- Removed the UTF-8 BOM from `x2d/ams-2-pro.html` (no other HTML file has one).
 
 ## Next steps
 
