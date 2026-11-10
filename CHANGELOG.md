@@ -10,6 +10,11 @@ All notable changes to the Compendium. Format: [Keep a Changelog](https://keepac
 - Cheat-sheet nozzle temperature chart: bars for PETG, ABS/ASA, nylon and PC sat 10–20 °C below the values in the table beside them; the axis now runs 180–300 °C.
 - Drying figures now agree across pages and with Bambu Lab's published values: PC 80 °C for 8 h, nylon 80–90 °C, PPS-CF 100–140 °C for 8–12 h (was as low as 80 °C).
 - Unfilled PC no longer listed as preferring a hardened nozzle.
+- Eight more charts were drawn off their own axes and now read correctly: the filament-compatibility drying chart (65 °C line again drawn at 60 °C), the overhang angle scale, the chamber-temperature and wood-fill colour charts, the moisture and shrinkage bar charts, the moisture-uptake curve and the maximum feed speed chart (y labels made the curves read too slow).
+- Bed-temperature bars: TPU no longer drawn longer than PLA. The smallest-feature bars are now labelled as not to scale.
+
+### Added
+- `scripts/check_charts.py`, a review aid that flags charts whose bars or ticks do not match their own scale.
 
 ## [1.0.1] - 2026-11-02
 

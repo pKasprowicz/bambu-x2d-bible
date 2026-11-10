@@ -47,11 +47,33 @@ Canonical pages: `materials/drying-and-storage.html` for drying, `materials/over
 - PVA heat column "~60 °C (then sticky)" (overview) vs Tg ≈ 75 °C (drying page).
 - `materials/drying-and-storage.html` gives a dryer price ("≈ US$100–250") although the site avoids prices.
 
+## Batch 2 — chart scales (2026-11-10)
+
+**Scope:** every SVG chart with a numeric axis (horizontal and vertical) and every CSS bar chart (`.bars`) on all 62 pages. Done with `scripts/check_charts.py`, then each flag triaged by hand and every changed chart rendered in Chromium to confirm it.
+
+**Fixed:**
+
+| Where | Problem | Fix |
+|-------|---------|-----|
+| `x2d/filament-compatibility.html` drying chart | Same bug as the AMS 2 Pro chart: "65 °C maximum" line drawn at 60 °C; every bar ended 2.5–5 °C short of its label | Line at 65 °C; bars end at the top of each range; PETG 60–65, ABS/ASA 70–80, PC 80 (Bambu) |
+| `techniques/supports-bridges-overhangs.html` overhang scale | 30°, 45°, 60° placed unevenly on a 0–90° scale (30° sat at about 22°) | Zones and ticks on a linear scale |
+| `materials/engineering-plastics.html` chamber chart | Evenly spaced ticks labelled 25, 40, 55, 65 °C (last step 10 °C, not 15) | Ticks moved to a linear scale; overlapping note moved clear of the PC label |
+| `materials/flexibles-and-specialty.html` wood-fill chart | Evenly spaced ticks labelled 190, 205, 220, 240 °C; the "burn above 230 °C" marker only fits a linear scale | Ticks moved to a linear scale |
+| `materials/drying-and-storage.html` moisture bar chart | Bars drawn at 25 px/%, but gridlines and labels used a 30 px first step then 50 px steps, so PA6 (≈ 3 %) read as 4 % | Gridlines and labels at 25 px/%; PVA and BVOH bars topped out at "8 %+" to match the 8–15 % in the description |
+| `materials/drying-and-storage.html` moisture uptake chart (illustrative) | "50" label off-centre; y-axis title clipped | Label and gridlines evened out; title moved into view |
+| `materials/engineering-plastics.html` shrinkage chart | Same uneven grid as the moisture chart, so bars read about 0.1–0.2 % high | Gridlines and labels at the bars' own scale (125 px/%) |
+| `software/slicer-settings.html` max feed speed chart | Curves drawn exactly from speed = flow ÷ (0.42 × layer height), but y labels 200/280/380 sat 10–21 px too high, so the curves read slow | Axis relabelled 0–400 mm/s at the curves' scale |
+| `techniques/first-layer-and-adhesion.html` bed temperature bars | TPU drawn longer than PLA though its range is lower; ABS/ASA short | Bars proportional to range midpoints |
+| `foundations/printing-processes.html` smallest-feature bars | No consistent scale (open-ended "2+" for pellet printers) | Title now says bar lengths are not to scale |
+
+**Checked, no change:** the remaining flags are tables (flush matrix), timelines with deliberately even spacing, categorical axes (wall counts, infill steps, months), UI mock-ups and drawings of test models. CSS bar charts for print time, heat resistance, stiffness and price (log scale) are within a few percent of proportional.
+
 ## Next batches
 
-1. **Chart scales site-wide.** Two of the first charts checked were drawn off their own axes, so this is likely systemic. Script it: parse grid lines and axis labels, derive the scale, compare bars and markers with their labels or the adjacent table.
-2. **X2D settings and recipes** (`x2d/settings-and-profiles.html`, `x2d/recipes.html`, `x2d/engineering-and-chamber.html`): plate and bed temperatures, chamber setpoints, speeds.
-3. **Design numbers** (`design/tolerances-and-fits.html`, `design/joints-and-fasteners.html`, `design/design-patterns.html`): clearances, wall thicknesses, snap-fit strain, heat-set insert holes.
-4. **Slicer settings and speed/cooling** (`software/slicer-settings.html`, `techniques/speed-cooling-quality.html`): volumetric flow, retraction, cooling.
-5. **Safety** (`foundations/safety-and-workspace.html`): emission and temperature claims.
-6. **Calculators**: formulas were hand-checked in the 2026-11-02 QA; re-check default constants (densities, costs per unit) against the material tables.
+Run `python scripts/check_charts.py` after editing any chart.
+
+1. **X2D settings and recipes** (`x2d/settings-and-profiles.html`, `x2d/recipes.html`, `x2d/engineering-and-chamber.html`): plate and bed temperatures, chamber setpoints, speeds.
+2. **Design numbers** (`design/tolerances-and-fits.html`, `design/joints-and-fasteners.html`, `design/design-patterns.html`): clearances, wall thicknesses, snap-fit strain, heat-set insert holes.
+3. **Slicer settings and speed/cooling** (`software/slicer-settings.html`, `techniques/speed-cooling-quality.html`): volumetric flow, retraction, cooling.
+4. **Safety** (`foundations/safety-and-workspace.html`): emission and temperature claims.
+5. **Calculators**: formulas were hand-checked in the 2026-11-02 QA; re-check default constants (densities, costs per unit) against the material tables.

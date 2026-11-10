@@ -29,6 +29,7 @@ Totals at last check: **62 pages, ~276k words, 662 SVG figures**, `check_site.py
 - `assets/css/style.css` — design system (themes, components, SVG utility classes).
 - `CONTRIBUTING.md` — page skeleton and component reference (follow it when adding pages).
 - `scripts/check_site.py` — validates links, anchors, SVG XML, structure, `data-page`.
+- `scripts/check_charts.py` — review aid that flags charts drawn off their own scale (heuristic, not in CI).
 - `scripts/build_search_index.py` — generates `assets/search-index.json` (committed; also rebuilt in CI).
 - `.github/workflows/pages.yml` — builds index, validates, deploys via GitHub Actions on push to `master`/`main`.
 
@@ -65,7 +66,7 @@ Released editions: **v1.0.0** (first edition) and **v1.0.1** (muted colour palet
 
 ## Next steps
 
-1. Expert review of numeric guidance: in progress, logged in `docs/numeric-review.md`. Batch 1 (material temperatures and drying) is done; the log lists open items and the next batches, starting with a site-wide check of chart scales.
+1. Expert review of numeric guidance: in progress, logged in `docs/numeric-review.md`. Batches 1 (material temperatures and drying) and 2 (chart scales, with `scripts/check_charts.py`) are done; the log lists open items and the next batches, starting with the X2D settings and recipes.
 2. Optional: expand the shorter pages (cheat sheets ~3.7k words).
 
 ## Git identity
