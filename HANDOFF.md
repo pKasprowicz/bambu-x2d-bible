@@ -65,7 +65,7 @@ Released editions: **v1.0.0** (first edition) and **v1.0.1** (muted colour palet
 
 ## Next steps
 
-1. Optional: expert review of numeric guidance; spot-check against the Bambu wiki when it is reachable.
+1. Expert review of numeric guidance: in progress, logged in `docs/numeric-review.md`. Batch 1 (material temperatures and drying) is done; the log lists open items and the next batches, starting with a site-wide check of chart scales.
 2. Optional: expand the shorter pages (cheat sheets ~3.7k words).
 
 ## Git identity

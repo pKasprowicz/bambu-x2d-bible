@@ -6,6 +6,10 @@ All notable changes to the Compendium. Format: [Keep a Changelog](https://keepac
 
 ### Fixed
 - Removed a stray UTF-8 byte-order mark at the start of the AMS 2 Pro page.
+- AMS 2 Pro drying chart: the 65 °C limit line was drawn at 60 °C, which made PETG look as if it could not be dried in the unit.
+- Cheat-sheet nozzle temperature chart: bars for PETG, ABS/ASA, nylon and PC sat 10–20 °C below the values in the table beside them; the axis now runs 180–300 °C.
+- Drying figures now agree across pages and with Bambu Lab's published values: PC 80 °C for 8 h, nylon 80–90 °C, PPS-CF 100–140 °C for 8–12 h (was as low as 80 °C).
+- Unfilled PC no longer listed as preferring a hardened nozzle.
 
 ## [1.0.1] - 2026-11-02
 
