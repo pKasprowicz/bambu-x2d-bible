@@ -28,6 +28,10 @@ All notable changes to the Compendium. Format: [Keep a Changelog](https://keepac
 - Cheat sheets: the missing sheet 15 (build plates and adhesion, with a fix ladder for parts that will not stick or stick too hard) and a new sheet 21 (maintenance intervals).
 - First print: a two-minute routine for reading the slicer preview, and a section on pausing, cancelling, filament runout, planned color changes and power cuts.
 - Safety & workspace: printed parts in use (food contact, skin, toys, loads, creep, heat) and remote printing (checks before a remote start, cameras, accounts and network safety).
+- X2D dual-nozzle printing: designing a model for two nozzles (how the color layout sets the number of swaps) and how to measure the saving on your own model.
+- X2D maintenance: what to recalibrate after each kind of maintenance, and a symptom index that links each problem to its section.
+- X2D filament compatibility: three checks for whether two filaments can share one job (nozzle side, chamber mode, bond), with common pairs.
+- X2D TPU: making parts softer with walls, infill and shape before moving to a softer grade and larger hotends.
 
 ## [1.0.1] - 2026-11-02
 

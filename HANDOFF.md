@@ -65,12 +65,13 @@ Released editions: **v1.0.0** (first edition) and **v1.0.1** (muted colour palet
 - Removed the UTF-8 BOM from `x2d/ams-2-pro.html` (no other HTML file has one).
 - New page `design/mechanisms.html`: a catalog of 50 mechanisms by job (hinges, latches, mounts, slides, rotary, clamps, springs), checked in Chromium (no errors, no overflow at 375 px, light and dark).
 - Expanded pages: cheat sheets (new sheets 15 and 21), first print (preview routine; pause, runout, color change, power cuts), safety (printed parts in use; remote printing).
+- Expanded X2D pages: dual-nozzle (design for two nozzles, measuring the saving), maintenance (recalibration matrix, symptom index; sections renumbered 9–13), filament compatibility (three gates for two-filament jobs), TPU (softer by design).
 - Numeric review (seven batches): wrong charts, drying figures, insert and snap-fit calculator data, fit classes and first aid fixed; see `CHANGELOG.md` and `docs/numeric-review.md`.
 
 ## Next steps
 
 1. Optional: have a printing specialist look at the open items in `docs/numeric-review.md`; spot-check Bambu figures against the Bambu wiki when it is reachable (it was not from the review environment).
-2. Optional: expand the shorter pages. Done for the cheat sheets, first print and safety pages; the shortest content pages left are the X2D pages (maintenance, filament compatibility, dual-nozzle, TPU, about 2.7–2.9k words each). Their gaps need facts checked against Bambu's documentation.
+2. Optional: expand the shorter pages. Done for the cheat sheets, first print, safety and the four short X2D pages (maintenance, filament compatibility, dual-nozzle, TPU). The X2D additions only combine facts already on those pages with general practice, because Bambu's wiki was again not reachable (proxy refusal; web search found no X2D wiki pages). Next candidates by length: tools/visual-lab, x2d/setup-and-first-print, x2d/hardware-tour, foundations/buying-guide.
 
 ## Git identity
 
