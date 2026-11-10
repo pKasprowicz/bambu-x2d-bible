@@ -4,6 +4,9 @@ All notable changes to the Compendium. Format: [Keep a Changelog](https://keepac
 
 ## [Unreleased]
 
+### Fixed
+- Removed a stray UTF-8 byte-order mark at the start of the AMS 2 Pro page.
+
 ## [1.0.1] - 2026-11-02
 
 ### Changed
