@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mechanism catalog · 3D Printing Compendium</title>
+  <meta name="description" content="A catalog of mechanisms that print well, grouped by job: hinges, latches and catches, mounts, slides and guides, rotary and indexing mechanisms, clamps and adjusters, springs and flexures. Each entry has a diagram, how it works, starting dimensions in mm, print orientation, material and when to choose it.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/nav.js" defer></script>
+  <script src="../assets/js/site.js" defer></script>
+  <style>
+    .mc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); gap: 18px; margin: 16px 0 28px; }
+    .mc-card { border: 1px solid var(--border, rgba(127,127,127,.3)); border-radius: 12px; padding: 14px 16px; background: var(--surface, transparent); }
+    .mc-card h3 { margin: 0 0 6px; font-size: 17px; }
+    .mc-card figure.fig { margin: 6px 0 10px; }
+    .mc-card p { margin: 6px 0; font-size: 14px; }
+    .mc-spec { margin: 6px 0 0; padding-left: 18px; font-size: 13px; color: var(--muted); }
+    .mc-spec li { margin: 2px 0; }
+    .mc-fit { font-size: 13px; margin: 8px 0 0; }
+    .mc-table td:first-child { white-space: nowrap; font-weight: 600; }
+  </style>
+</head>
+<body data-page="design/mechanisms.html">
+<main class="content">
+
+  <header class="hero">
+    <div class="kicker">Part 5 · Design for printing</div>
+    <h1>Mechanism catalog</h1>
+    <p class="lead">Hinges, latches, mounts, slides, rotary drives, clamps and springs that print well, side by side. Each entry shows how the mechanism works, the dimensions to start from, how to orient it on the plate, which material to use and when to pick something else.</p>
+    <div class="meta"><span class="badge intermediate">Intermediate</span><span class="badge time">⏱ 50 min read</span></div>
+  </header>
+
+  <div class="callout goal"><span class="callout-title">What you will learn</span>
+    <p>How to pick the right mechanism for a job (a lid that stays open, a box that locks, a panel that slides, a part that hangs on a rail) and size it for printing. The catalog complements two other pages: <a href="joints-and-fasteners.html">Joints &amp; fasteners</a> explains the underlying rules (snap-fit strain, pins, print-in-place gaps) and <a href="design-patterns.html">Design patterns</a> shows complete parts built from them. Here the focus is the mechanism itself and its alternatives.</p></div>
+
+  <h2 id="how-to-use">🔰 How to use this catalog</h2>
+  <p>A <b>mechanism</b> is an arrangement of parts that guides, locks, holds or converts motion. Most printed products need only a handful of them, and almost every one has several variants that trade hardware, durability, play and print difficulty against each other. The entries are grouped by job: <a href="#hinges">hinges</a>, <a href="#latches">latches and catches</a>, <a href="#mounts">mounts</a>, <a href="#slides">slides and guides</a>, <a href="#rotary">rotary and indexing</a>, <a href="#clamps">clamps and adjusters</a> and <a href="#springs">springs and flexures</a>.</p>
+  <p>Every card has the same parts: a diagram, a one-line <b>use</b>, the <b>starting dimensions</b>, the <b>print orientation and material</b>, and <b>choose / avoid</b>. Dimensions assume a 0.4 mm nozzle, 0.2 mm layers and a calibrated printer. They are starting values: print a one-joint test piece before you commit, as described in <a href="#testing">testing a mechanism</a>.</p>
+
+  <div class="table-wrap"><table class="data compact mc-table">
+    <thead><tr><th>Shared default</th><th>Value used on this page</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr><td>Clearances</td><td>Diametral fit classes: slip +0.20 to +0.30 mm, sliding +0.30 to +0.40 mm, loose +0.40 to +0.60 mm</td><td><a href="tolerances-and-fits.html#fit-classes">Fit classes</a></td></tr>
+      <tr><td>Print-in-place gap</td><td>0.3–0.5 mm per side horizontally; at least two layers (0.4 mm) vertically; 45° chamfers over every gap</td><td><a href="joints-and-fasteners.html#print-in-place">Print-in-place joints</a></td></tr>
+      <tr><td>Flexing parts</td><td>Keep bending strain under the one-off limit (PLA 0.8–1.0 %, PETG 2 %, nylon 3–4 %) and half that for repeated use</td><td><a href="joints-and-fasteners.html#snap-fits">Snap-fit strain limits</a></td></tr>
+      <tr><td>Walls</td><td>At least two lines (0.8–1.2 mm); three to four lines (1.2–1.6 mm) for anything that carries load</td><td><a href="principles.html">Design principles</a></td></tr>
+      <tr><td>Pins and axles</td><td>Steel rod, a nail, a screw shank or 1.75 mm filament in a 1.9–2.0 mm hole; printed pins only for light duty</td><td><a href="joints-and-fasteners.html#pins-hinges">Pins and hinges</a></td></tr>
+      <tr><td>Default material</td><td>PETG for anything that flexes or clicks; PLA for stiff, rarely moved parts; nylon or PP for many cycles; TPU for grip and damping</td><td><a href="../materials/overview.html">Materials overview</a></td></tr>
+    </tbody></table></div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 820 300" role="img" aria-label="Map for choosing a mechanism family by the motion needed: rotate leads to hinges and rotary mechanisms, slide leads to slides and guides, lock and release leads to latches, attach leads to mounts, squeeze or adjust leads to clamps, and return by itself leads to springs and flexures">
+      <rect class="f-gray" x="320" y="122" width="180" height="56" rx="12"/>
+      <text class="t t-c t-b" x="410" y="146">What must the</text><text class="t t-c t-b" x="410" y="164">part do?</text>
+      <rect class="f-blue" x="30" y="20" width="220" height="60" rx="10"/><text class="t t-b" x="46" y="44">Rotate about an axis</text><text class="t-sm t-m" x="46" y="64">→ hinges · rotary &amp; indexing</text>
+      <rect class="f-teal" x="300" y="20" width="220" height="60" rx="10"/><text class="t t-b" x="316" y="44">Slide along a line</text><text class="t-sm t-m" x="316" y="64">→ slides &amp; guides</text>
+      <rect class="f-orange" x="570" y="20" width="220" height="60" rx="10"/><text class="t t-b" x="586" y="44">Lock, then release</text><text class="t-sm t-m" x="586" y="64">→ latches &amp; catches</text>
+      <rect class="f-green" x="30" y="220" width="220" height="60" rx="10"/><text class="t t-b" x="46" y="244">Attach to something</text><text class="t-sm t-m" x="46" y="264">→ mounts</text>
+      <rect class="f-purple" x="300" y="220" width="220" height="60" rx="10"/><text class="t t-b" x="316" y="244">Squeeze or adjust</text><text class="t-sm t-m" x="316" y="264">→ clamps &amp; adjusters</text>
+      <rect class="f-pink" x="570" y="220" width="220" height="60" rx="10"/><text class="t t-b" x="586" y="244">Return by itself</text><text class="t-sm t-m" x="586" y="264">→ springs &amp; flexures</text>
+      <path class="d-ink arrow" d="M350 122 L200 82"/><path class="d-ink arrow" d="M410 122 V82"/><path class="d-ink arrow" d="M470 122 L620 82"/>
+      <path class="d-ink arrow" d="M350 178 L200 218"/><path class="d-ink arrow" d="M410 178 V218"/><path class="d-ink arrow" d="M470 178 L620 218"/>
+    </svg>
+    <figcaption><b>Figure 1.</b> Start from the motion, not from the part. Most products combine two or three families: a box is a hinge plus a latch, a wall bracket is a mount plus a clamp.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>You need…</th><th>First choice</th><th>Alternative</th><th>Extra hardware</th></tr></thead>
+    <tbody>
+      <tr><td>A lid that opens hundreds of times</td><td><a href="#pin-hinge">Pin-and-knuckle hinge</a></td><td><a href="#pip-hinge">Print-in-place hinge</a></td><td>Steel pin (or none)</td></tr>
+      <tr><td>A lid that comes off for cleaning</td><td><a href="#snap-hinge">Snap-on hinge</a></td><td><a href="#pin-hinge">Pin hinge</a> with a removable pin</td><td>None</td></tr>
+      <tr><td>A box that stays shut in a bag</td><td><a href="#toggle-latch">Over-center latch</a></td><td><a href="#snap-hook">Snap hook</a> with a 60–75° return face</td><td>Pin</td></tr>
+      <tr><td>A door that closes softly and stays shut</td><td><a href="#magnet-catch">Magnetic catch</a></td><td><a href="#roller-catch">Bump catch</a></td><td>Magnets</td></tr>
+      <tr><td>A cap that screws or twists on</td><td><a href="#bayonet">Bayonet</a></td><td><a href="design-patterns.html#threaded-container">Printed thread</a></td><td>None</td></tr>
+      <tr><td>A part on a wall that lifts off</td><td><a href="#french-cleat">French cleat</a></td><td><a href="#keyhole">Keyhole slot</a></td><td>Screws</td></tr>
+      <tr><td>A module on a rail or extrusion</td><td><a href="#din-clip">DIN-rail clip</a></td><td><a href="#t-slot">T-slot slide</a></td><td>None / T-nuts</td></tr>
+      <tr><td>A smooth linear motion</td><td><a href="#rod-bushing">Rod and bushing</a></td><td><a href="#dovetail-slide">Dovetail slide</a></td><td>Steel rods</td></tr>
+      <tr><td>A knob that clicks in steps</td><td><a href="#detent-wheel">Detent wheel</a></td><td><a href="#ratchet">Ratchet</a> (one direction only)</td><td>None</td></tr>
+      <tr><td>A clamp you tighten by hand</td><td><a href="#cam-clamp">Cam-lever clamp</a></td><td><a href="#thumbscrew">Thumbscrew</a></td><td>Pin / screw</td></tr>
+    </tbody></table></div>
+
+  <h2 id="hinges">🔰 Hinges</h2>
+  <p>A hinge lets one part rotate about an axis fixed to another. Printed hinges differ in where the axle comes from (a separate pin, a printed cone, the plastic itself) and therefore in how much play they have, how many cycles they survive and whether they need assembly. All of them want the <b>hinge axis parallel to the build plate</b>: the knuckles are then stacks of rings whose layers wrap around the pin instead of splitting along it.</p>
+
+  <div class="mc-grid">
+    <article class="mc-card" id="pin-hinge"><h3>Pin-and-knuckle hinge</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Two leaves joined by three alternating knuckles and a steel pin running through them">
+        <rect class="d-plastic2" x="30" y="14" width="200" height="40" rx="3"/>
+        <rect class="d-plastic" x="30" y="96" width="200" height="34" rx="3"/>
+        <rect class="d-plastic" x="30" y="58" width="62" height="36" rx="8"/>
+        <rect class="d-plastic2" x="99" y="58" width="62" height="36" rx="8"/>
+        <rect class="d-plastic" x="168" y="58" width="62" height="36" rx="8"/>
+        <rect class="d-metal" x="18" y="73" width="224" height="6" rx="3"/>
+        <text class="t-xs" x="36" y="38">leaf B</text><text class="t-xs" x="36" y="118">leaf A</text>
+        <text class="t-xs" x="64" y="146">knuckle gap 0.3–0.5 · pin Ø 3</text>
+      </svg><figcaption><b>Figure 2.</b> Outer knuckles belong to one leaf, the middle one to the other; the pin carries the load in shear.</figcaption></figure>
+      <p><b>Use:</b> box lids, doors, flaps, anything opened daily.</p>
+      <ul class="mc-spec"><li>Pin: steel rod or 1.75 mm filament; hole = pin + 0.3–0.4 mm in the turning knuckles, + 0.1–0.2 mm where the pin is held</li><li>Knuckle length ≥ 3 × pin Ø; outer Ø ≈ 2.5–3 × pin Ø; 0.3–0.5 mm gap between knuckles</li><li>Retain the pin: mushroom a filament end with a hot tip, or add a cap</li><li>Print with the axis horizontal; PETG or PLA</li></ul>
+      <p class="mc-fit"><b>Choose</b> for durability and low play. <b>Avoid</b> when assembly is not possible. Rules: <a href="joints-and-fasteners.html#pins-hinges">pins &amp; hinges</a>.</p></article>
+
+    <article class="mc-card" id="pip-hinge"><h3>Print-in-place cone hinge</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Section through a print-in-place hinge: a conical pin on part A sits in a matching conical socket in part B with a small gap all round">
+        <rect class="d-plastic" x="24" y="40" width="98" height="60" rx="6"/>
+        <path class="d-plastic" d="M122 50 L156 70 L122 90 Z"/>
+        <path class="d-plastic2" d="M127 40 H236 V100 H127 V95 L163 70 L127 45 Z"/>
+        <text class="t-xs" x="34" y="120">part A with cone</text><text class="t-xs" x="150" y="120">part B socket</text>
+        <text class="t-xs" x="20" y="26">gap 0.3–0.5 per side · cone ≤ 45°</text>
+        <text class="t-xs" x="20" y="142">prints assembled, no support inside</text>
+      </svg><figcaption><b>Figure 3.</b> A cone instead of a cylinder: its sloping faces are 45° overhangs, so the axle prints without support and frees with a twist.</figcaption></figure>
+      <p><b>Use:</b> one-piece cases, toys, folding stands, articulated models.</p>
+      <ul class="mc-spec"><li>Cone half-angle 45° or steeper; gap 0.3–0.5 mm per side, never less than two layers vertically</li><li>Two opposed cones (one at each end) keep the parts from separating</li><li>Break it free gently after cooling; a little play is the price of no assembly</li><li>Axis horizontal; PLA or PETG; slow outer walls for round cones</li></ul>
+      <p class="mc-fit"><b>Choose</b> when the product must come off the plate finished. <b>Avoid</b> for precise or heavily loaded hinges. Rules: <a href="joints-and-fasteners.html#print-in-place">print-in-place joints</a>.</p></article>
+
+    <article class="mc-card" id="snap-hinge"><h3>Snap-on (lift-off) hinge</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A C-shaped clip on the lid snaps over a round pin boss on the box">
+        <rect class="d-plastic2" x="20" y="96" width="220" height="34" rx="3"/>
+        <rect class="d-plastic2" x="122" y="78" width="16" height="20"/>
+        <circle class="d-plastic2" cx="130" cy="66" r="13"/>
+        <path class="k-orange" d="M121 89 A 21 21 0 1 1 150 80" style="stroke-width:8;fill:none"/>
+        <rect class="d-plastic" x="20" y="22" width="96" height="14" rx="3"/>
+        <path class="k-orange" d="M116 30 L118 48" style="stroke-width:8;fill:none"/>
+        <text class="t-xs" x="160" y="40">C-clip on the lid</text><text class="t-xs" x="160" y="56">wraps 200–240°</text>
+        <text class="t-xs" x="24" y="146">mouth ≈ 85–90 % of boss Ø (PETG)</text>
+      </svg><figcaption><b>Figure 4.</b> The clip springs open over the boss and closes around it; pull hard and the lid comes off without tools.</figcaption></figure>
+      <p><b>Use:</b> lids you remove for cleaning or filling, battery doors, detachable covers.</p>
+      <ul class="mc-spec"><li>Boss Ø 5–8 mm; clip bore = boss + 0.3 mm; clip wall 1.6–2.4 mm</li><li>Mouth 85–90 % of the boss Ø in PETG, 90–95 % in PLA; check the arm strain</li><li>Best printed with the hinge axis vertical, so the C lies in the layer plane and opens without bending layers apart; if the lid must print flat, make the clip thicker and use PETG or nylon</li><li>PETG, nylon; PLA cracks after a few removals</li></ul>
+      <p class="mc-fit"><b>Choose</b> for parts that separate. <b>Avoid</b> in PLA or under shock loads. Rules: <a href="joints-and-fasteners.html#snap-fits">snap-fits</a>.</p></article>
+
+    <article class="mc-card" id="living-hinge"><h3>Living hinge</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Two thick plates joined by a thin web of plastic, with one plate bent upward">
+        <rect class="d-plastic" x="16" y="86" width="104" height="16" rx="2"/>
+        <rect class="d-plastic" x="119" y="98" width="20" height="4"/>
+        <rect class="d-plastic" x="138" y="86" width="104" height="16" rx="2" transform="rotate(-28 138 102)"/>
+        <path class="d-thin arrow" d="M128 128 V106"/>
+        <text class="t-xs" x="74" y="140">web 0.4–0.6 thick, 2–3 long</text>
+        <text class="t-xs" x="16" y="30">layers must run across the web</text>
+        <text class="t-xs" x="16" y="46">(print it flat)</text>
+      </svg><figcaption><b>Figure 5.</b> The plastic itself is the hinge. The web must be printed in the plate's plane so that each layer bends, instead of layers peeling apart.</figcaption></figure>
+      <p><b>Use:</b> flip-top caps, cable clips, folding boxes, one-piece clamshells.</p>
+      <ul class="mc-spec"><li>PP: 0.4–0.5 mm web, thousands of cycles; PETG: 0.4–0.6 mm, 10–200 cycles; TPU 95A: 0.8–1.2 mm, practically unlimited</li><li>Web 2–3 mm long (3–5 mm in TPU), with generous fillets into both plates</li><li>PLA: do not use</li></ul>
+      <p class="mc-fit"><b>Choose</b> for zero-part-count products in PP or TPU. <b>Avoid</b> in PLA and for daily use in PETG. Rules: <a href="joints-and-fasteners.html#living-hinges">living hinges</a>.</p></article>
+
+    <article class="mc-card" id="detent-hinge"><h3>Detent (click-stop) hinge</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="End view of a hinge knuckle with four small bumps on its face, and a side view of a bump sitting in a dimple of the neighbouring knuckle">
+        <circle class="d-plastic2" cx="76" cy="74" r="44"/>
+        <circle class="d-metal" cx="76" cy="74" r="7"/>
+        <circle class="s-orange" cx="76" cy="44" r="5"/><circle class="s-orange" cx="106" cy="74" r="5"/><circle class="s-orange" cx="76" cy="104" r="5"/><circle class="s-orange" cx="46" cy="74" r="5"/>
+        <rect class="d-plastic2" x="150" y="44" width="34" height="60" rx="4"/>
+        <rect class="d-plastic" x="188" y="44" width="34" height="60" rx="4"/>
+        <path class="d-plastic" d="M188 66 L182 74 L188 82 Z"/>
+        <text class="t-xs" x="150" y="122">bump · dimple</text>
+        <text class="t-xs" x="20" y="142">bumps 0.3–0.5 high every 45–90°</text>
+      </svg><figcaption><b>Figure 6.</b> Bumps on one knuckle face drop into dimples on the next; a slight axial spring in the knuckle stack makes the clicks.</figcaption></figure>
+      <p><b>Use:</b> lids that stay open, adjustable stands, folding legs.</p>
+      <ul class="mc-spec"><li>Bumps 0.3–0.5 mm high with 30–45° flanks; dimples 0.1 mm larger</li><li>The spring: a slit behind the outer knuckle, or one knuckle on a thin flexure</li><li>For smooth friction instead of clicks, run the pin with a snug fit (+0.1 mm) or add an O-ring between knuckles</li><li>PETG or nylon; PLA bumps wear flat</li></ul>
+      <p class="mc-fit"><b>Choose</b> to hold an angle. <b>Avoid</b> when the holding torque must be large: add a stay or prop instead.</p></article>
+
+    <article class="mc-card" id="piano-hinge"><h3>Piano (continuous) hinge</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A long hinge with many short alternating knuckles along one edge">
+        <rect class="d-plastic2" x="14" y="24" width="232" height="34" rx="3"/>
+        <rect class="d-plastic" x="14" y="92" width="232" height="34" rx="3"/>
+        <rect class="d-plastic" x="14" y="60" width="26" height="30" rx="6"/><rect class="d-plastic2" x="43" y="60" width="26" height="30" rx="6"/><rect class="d-plastic" x="72" y="60" width="26" height="30" rx="6"/><rect class="d-plastic2" x="101" y="60" width="26" height="30" rx="6"/><rect class="d-plastic" x="130" y="60" width="26" height="30" rx="6"/><rect class="d-plastic2" x="159" y="60" width="26" height="30" rx="6"/><rect class="d-plastic" x="188" y="60" width="26" height="30" rx="6"/><rect class="d-plastic2" x="217" y="60" width="29" height="30" rx="6"/>
+        <rect class="d-metal" x="8" y="72" width="244" height="6" rx="3"/>
+        <text class="t-xs" x="20" y="144">many knuckles share the load along a long edge</text>
+      </svg><figcaption><b>Figure 7.</b> A continuous hinge spreads the load over the whole edge and keeps a long lid from twisting.</figcaption></figure>
+      <p><b>Use:</b> long lids, cases, folding panels, display covers.</p>
+      <ul class="mc-spec"><li>Knuckles 8–15 mm long, gap 0.3–0.5 mm; one continuous steel rod as the pin</li><li>Print in place with cone ends per knuckle, or as two halves and slide the rod in</li><li>Leaf thickness ≥ 2 mm so the lid does not twist</li></ul>
+      <p class="mc-fit"><b>Choose</b> for lids longer than about 150 mm. <b>Avoid</b> on short parts: two or three knuckles are easier to print.</p></article>
+
+    <article class="mc-card" id="flexure-pivot"><h3>Flexure pivot (cross-spring)</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Two thin crossed blades connect a fixed base to a moving block above it, forming a pivot without friction">
+        <rect class="d-plastic2" x="40" y="108" width="180" height="26" rx="3"/>
+        <rect class="d-plastic" x="40" y="18" width="180" height="26" rx="3"/>
+        <path class="k-orange" d="M70 44 L190 108 M190 44 L70 108" style="stroke-width:4;fill:none"/>
+        <circle class="s-red" cx="130" cy="76" r="4"/>
+        <text class="t-xs" x="140" y="80">virtual pivot</text>
+        <text class="t-xs" x="18" y="146">blades 0.8–1.2 thick · ±10° in PETG</text>
+      </svg><figcaption><b>Figure 8.</b> Two crossed blades bend instead of sliding, so the pivot has no friction, no play and no wear within its small range.</figcaption></figure>
+      <p><b>Use:</b> precision tilts, measuring arms, grippers, instrument mounts.</p>
+      <ul class="mc-spec"><li>Blade strain ≈ t · θ / (2L): a 1 mm × 15 mm blade at ±10° (0.17 rad) sees about 0.6 %</li><li>Blades printed flat so their layers bend; PETG, nylon or PP</li><li>Add hard stops so it cannot be bent past its range</li></ul>
+      <p class="mc-fit"><b>Choose</b> for small, precise motions. <b>Avoid</b> for more than about ±15°. Background: <a href="design-patterns.html#compliant">compliant mechanisms</a>.</p></article>
+  </div>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Hinge</th><th>Hardware</th><th>Typical life</th><th>Play</th><th>Print difficulty</th><th>Best for</th></tr></thead>
+    <tbody>
+      <tr><td>Pin and knuckle</td><td>Pin</td><td><span class="chip green">Very high</span></td><td>Low</td><td><span class="chip green">Easy</span></td><td>Lids and doors opened daily</td></tr>
+      <tr><td>Print-in-place cone</td><td>None</td><td><span class="chip green">High</span></td><td>Medium</td><td><span class="chip yellow">Medium</span></td><td>One-piece products</td></tr>
+      <tr><td>Snap-on</td><td>None</td><td><span class="chip green">High</span> (PETG)</td><td>Low</td><td><span class="chip green">Easy</span></td><td>Removable lids</td></tr>
+      <tr><td>Living hinge</td><td>None</td><td><span class="chip yellow">PP high, PETG low</span></td><td>None</td><td><span class="chip yellow">Medium</span></td><td>Caps, clips, clamshells</td></tr>
+      <tr><td>Detent</td><td>Pin or none</td><td><span class="chip green">High</span></td><td>Low</td><td><span class="chip yellow">Medium</span></td><td>Lids that stay open, stands</td></tr>
+      <tr><td>Piano</td><td>Long rod</td><td><span class="chip green">Very high</span></td><td>Low</td><td><span class="chip yellow">Medium</span></td><td>Long lids</td></tr>
+      <tr><td>Flexure pivot</td><td>None</td><td><span class="chip green">Very high</span> within range</td><td>None</td><td><span class="chip yellow">Medium</span></td><td>Small precise angles</td></tr>
+    </tbody></table></div>
+
+  <div class="callout trick"><span class="callout-title">Pro trick</span><p>Add a <b>stop</b> to every hinge: a step on the leaf that touches the other leaf at the end of travel. Without it, a lid that is opened too far levers on the knuckles and cracks them, and print-in-place hinges are pulled apart.</p></div>
+
+  <h2 id="latches">🔧 Latches and catches</h2>
+  <p>A <b>latch</b> locks two parts together until someone releases it; a <b>catch</b> only holds them lightly, so a pull opens it. The difference is the shape of the locking face: a face square to the pull locks, a sloped face lets go. Pick the weakest closure that does the job: it is easier to use, and it fails less often than a strong latch that has to be forced.</p>
+
+  <div class="mc-grid">
+    <article class="mc-card" id="snap-hook"><h3>Cantilever snap hook</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A flexible beam with a hook at its tip catches under a ledge on the mating part">
+        <rect class="d-plastic" x="20" y="110" width="110" height="24" rx="2"/>
+        <rect class="d-plastic" x="40" y="30" width="12" height="80"/>
+        <path class="d-plastic" d="M52 26 L74 46 L52 46 Z"/>
+        <rect class="d-plastic2" x="60" y="47" width="170" height="12" rx="2"/>
+        <text class="t-xs" x="22" y="74">L</text><text class="t-xs" x="78" y="30">lead-in 30–45°</text>
+        <text class="t-xs" x="140" y="90">ε = 1.5 · h · y / L²</text>
+        <text class="t-xs" x="140" y="106">undercut y 0.5–1.2</text>
+        <text class="t-xs" x="14" y="148">return face: 90° locks · 45–60° releases</text>
+      </svg><figcaption><b>Figure 9.</b> The beam bends while the ramp passes the ledge, then springs back. Its length L sets the strain; the return angle sets whether it ever lets go.</figcaption></figure>
+      <p><b>Use:</b> enclosure lids, battery doors, clip-in panels.</p>
+      <ul class="mc-spec"><li>Size the beam with the strain formula; arms of 10–20 mm are typical for 1.2–2 mm thickness</li><li>Taper the arm to h/2 at the tip to spread the strain; 0.5–1 mm fillet at the root</li><li>Print so the beam lies in the layer plane</li><li>PETG, ABS, nylon; PLA only for one-off assembly</li></ul>
+      <p class="mc-fit"><b>Choose</b> as the default closure. Rules and strain table: <a href="joints-and-fasteners.html#snap-fits">snap-fits</a>.</p></article>
+
+    <article class="mc-card" id="release-latch"><h3>Push-button release latch</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A snap hook whose beam continues past the hook to a press pad; pressing the pad bends the beam away from the ledge and releases it">
+        <rect class="d-plastic" x="20" y="112" width="100" height="22" rx="2"/>
+        <rect class="d-plastic" x="40" y="22" width="12" height="90"/>
+        <rect class="s-orange" x="34" y="14" width="24" height="12" rx="3"/>
+        <path class="d-plastic" d="M52 56 L72 74 L52 74 Z"/>
+        <rect class="d-plastic2" x="58" y="75" width="170" height="12" rx="2"/>
+        <path class="d-ink arrow" d="M110 20 H64"/>
+        <text class="t-xs" x="116" y="24">press</text>
+        <text class="t-xs" x="104" y="110">arm bends left,</text><text class="t-xs" x="104" y="124">hook clears the ledge</text>
+        <text class="t-xs" x="14" y="148">arm ≥ 15 · pad reachable through a slot</text>
+      </svg><figcaption><b>Figure 10.</b> A snap hook with a 90° return face that is released on purpose: the beam carries on past the hook to a pad you press.</figcaption></figure>
+      <p><b>Use:</b> cases that must stay shut but open by hand, buckles, module ejectors.</p>
+      <ul class="mc-spec"><li>Return face 90° (locks under pull); release only by pressing the pad</li><li>The press travel must exceed the undercut by 0.5 mm, and the arm must survive that deflection: check its strain</li><li>Two opposed latches make a squeeze-to-release buckle</li><li>PETG or nylon</li></ul>
+      <p class="mc-fit"><b>Choose</b> when a pull must never open it. <b>Avoid</b> if the pad cannot be reached through the housing.</p></article>
+
+    <article class="mc-card" id="bayonet"><h3>Bayonet (twist-lock)</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Unrolled view of a bayonet slot: the lug enters down a vertical slot, then twists along a horizontal run past a small bump that holds it">
+        <rect class="d-plastic2" x="20" y="26" width="220" height="96" rx="4"/>
+        <path class="d-surface" d="M58 26 H82 V76 H214 V100 H58 Z"/>
+        <path class="d-plastic2" d="M150 76 L157 83 L164 76 Z"/>
+        <rect class="s-orange" x="190" y="80" width="16" height="16" rx="3"/>
+        <path class="d-ink arrow" d="M70 34 V64"/><path class="d-ink arrow" d="M92 88 H178"/>
+        <text class="t-xs" x="90" y="48">1 push in</text><text class="t-xs" x="96" y="116">2 twist 15–30°</text>
+        <text class="t-xs" x="140" y="70">bump 0.3–0.5</text>
+        <text class="t-xs" x="20" y="144">unrolled wall · 2–3 lugs on the cap</text>
+      </svg><figcaption><b>Figure 11.</b> The cap's lugs drop into the vertical slots, then a short twist carries them under the rim and over a small bump that clicks them in place.</figcaption></figure>
+      <p><b>Use:</b> lids, lens caps, filter housings, quick-change tool heads.</p>
+      <ul class="mc-spec"><li>2–3 lugs, equally spaced; lug 3–6 mm wide, 1.5–2.5 mm deep</li><li>Slot width = lug + 0.4–0.6 mm; a 1–2° ramp in the run pulls the cap tight</li><li>Print the cap upright (lugs as short overhangs, chamfer their undersides 45°)</li><li>PETG, ABS; add a TPU or O-ring seal for watertight caps</li></ul>
+      <p class="mc-fit"><b>Choose</b> over a thread for a fast, short twist. <b>Avoid</b> when the cap must be pulled very tight; use a thread.</p></article>
+
+    <article class="mc-card" id="toggle-latch"><h3>Over-center (draw) latch</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A lever on the box pulls a link hooked over a keeper on the lid; when the link's pivot passes the straight line between the lever pivot and the keeper, the latch locks">
+        <rect class="d-plastic" x="14" y="98" width="118" height="36" rx="3"/>
+        <rect class="d-plastic2" x="190" y="72" width="56" height="62" rx="3"/>
+        <rect class="d-plastic2" x="182" y="78" width="14" height="14" rx="2"/>
+        <path class="d-dash" d="M58 98 L188 84"/>
+        <path class="k-orange" d="M58 98 L140 30" style="stroke-width:7"/>
+        <path class="k-blue" d="M92 72 L184 86" style="stroke-width:4"/>
+        <circle class="d-metal" cx="58" cy="98" r="5"/><circle class="d-metal" cx="92" cy="72" r="4"/>
+        <text class="t-xs" x="146" y="30">lever</text><text class="t-xs" x="120" y="66">link</text>
+        <text class="t-xs" x="200" y="66">keeper</text>
+        <text class="t-xs" x="14" y="148">link pivot passes the dashed line → locks</text>
+      </svg><figcaption><b>Figure 12.</b> Closing the lever stretches the link until its pivot crosses the line between lever pivot and keeper; the clamping force then holds the lever shut against a stop.</figcaption></figure>
+      <p><b>Use:</b> toolboxes, cases that travel, clamping lids onto a seal.</p>
+      <ul class="mc-spec"><li>Go a few degrees past center and land on a stop; too far and it opens itself</li><li>Steel pins (Ø 2–3 mm) at the pivots; the link can be a printed spring or a wire loop</li><li>The pull-in comes from the link stretching 0.5–1.5 mm: make it a flexible loop or add a TPU pad on the keeper</li><li>PETG, nylon; lever printed flat</li></ul>
+      <p class="mc-fit"><b>Choose</b> when the lid must be pulled tight. <b>Avoid</b> on small, light lids: a snap is simpler.</p></article>
+
+    <article class="mc-card" id="slide-bolt"><h3>Sliding bolt</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A bolt slides in a guide on the door and enters a keeper on the frame; small bumps hold it open or shut">
+        <rect class="d-plastic2" x="18" y="48" width="140" height="54" rx="4"/>
+        <rect class="d-surface" x="18" y="62" width="140" height="26"/>
+        <rect class="d-plastic" x="30" y="64" width="190" height="22" rx="3"/>
+        <rect class="d-plastic2" x="184" y="40" width="58" height="70" rx="4"/>
+        <rect class="d-plastic" x="184" y="64" width="36" height="22"/>
+        <circle class="d-plastic" cx="82" cy="52" r="10"/>
+        <path class="d-plastic2" d="M56 62 L61 67 L66 62 Z"/><path class="d-plastic2" d="M116 62 L121 67 L126 62 Z"/>
+        <text class="t-xs" x="18" y="34">guide on the door</text><text class="t-xs" x="190" y="30">keeper</text>
+        <text class="t-xs" x="18" y="124">sliding fit +0.3–0.4 in the guide</text>
+        <text class="t-xs" x="18" y="140">detent bumps at open and shut</text>
+      </svg><figcaption><b>Figure 13.</b> A rectangular or dovetail bolt in a guide; detent bumps keep it from creeping open with vibration.</figcaption></figure>
+      <p><b>Use:</b> cabinet doors, gates of small enclosures, locking pins for jigs.</p>
+      <ul class="mc-spec"><li>Bolt ≥ 4 × 4 mm; guide length ≥ 2 × the bolt's travel</li><li>Print the bolt flat (layers along its length), the guide with its channel horizontal</li><li>Hole in the knob for a padlock shackle if needed</li></ul>
+      <p class="mc-fit"><b>Choose</b> for a positive lock that is obvious to the user. <b>Avoid</b> where the door must open with one hand.</p></article>
+
+    <article class="mc-card" id="magnet-catch"><h3>Magnetic catch</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Frame and door each hold a magnet in a pocket just under the surface, opposite poles facing">
+        <rect class="d-plastic2" x="20" y="36" width="100" height="76" rx="3"/>
+        <rect class="d-plastic" x="124" y="36" width="100" height="76" rx="3"/>
+        <rect class="d-metal" x="104" y="56" width="12" height="36"/><rect class="d-metal" x="128" y="56" width="12" height="36"/>
+        <text class="t-xs t-b" x="106" y="78">N</text><text class="t-xs t-b" x="130" y="78">S</text>
+        <text class="t-xs" x="20" y="28">frame</text><text class="t-xs" x="190" y="28">door</text>
+        <text class="t-xs" x="20" y="130">skin 0.4–0.6 · pocket Ø + 0.1–0.2</text>
+        <text class="t-xs" x="20" y="146">mark polarity on every part</text>
+      </svg><figcaption><b>Figure 14.</b> Magnets embedded just under the surface pull the door shut over the last few millimeters and hold it without wear.</figcaption></figure>
+      <p><b>Use:</b> cabinet doors, lids that should close softly, removable covers.</p>
+      <ul class="mc-spec"><li>Pocket Ø = magnet + 0.1–0.2 mm, depth = thickness + 0.2 mm; skin 0.4–0.6 mm towards the mating face</li><li>Embed by pausing the print, or press in and glue from the back</li><li>Pull force falls quickly with distance: every extra layer of skin costs force</li><li>One magnet and a steel disc avoid polarity mistakes</li></ul>
+      <p class="mc-fit"><b>Choose</b> for wear-free, soft closing. <b>Avoid</b> near magnetic cards and where a fall must not open it. Rules: <a href="joints-and-fasteners.html#magnets">magnets</a>.</p></article>
+
+    <article class="mc-card" id="roller-catch"><h3>Bump (ball) catch</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A spring arm on the frame carries a rounded bump that clicks into a groove on the edge of the door">
+        <rect class="d-plastic2" x="20" y="96" width="120" height="38" rx="3"/>
+        <rect class="d-plastic2" x="30" y="76" width="96" height="8"/>
+        <rect class="d-plastic2" x="30" y="76" width="10" height="22"/>
+        <circle class="d-plastic2" cx="118" cy="72" r="8"/>
+        <path class="d-plastic" d="M100 20 H230 V64 H128 A 9 9 0 0 0 110 64 H100 Z"/>
+        <text class="t-xs" x="136" y="46">door edge, groove</text>
+        <text class="t-xs" x="146" y="96">spring arm + bump</text>
+        <text class="t-xs" x="20" y="148">bump 0.6–1.0 high · 30–45° flanks</text>
+      </svg><figcaption><b>Figure 15.</b> A rounded bump on a short spring arm snaps into a groove. The flank angle sets the pull needed to open it.</figcaption></figure>
+      <p><b>Use:</b> cabinet doors, drawer stops, sliding lids, hatch covers.</p>
+      <ul class="mc-spec"><li>Arm 15–25 mm long, 1.2–1.6 mm thick; bump 0.6–1.0 mm with 30–45° flanks so it opens with a pull</li><li>Check the arm strain for the bump height (deflection = bump height)</li><li>PETG, nylon, POM-like filaments; PLA arms fatigue</li></ul>
+      <p class="mc-fit"><b>Choose</b> for a light hold that opens with a tug. <b>Avoid</b> where it must not open on its own under shock.</p></article>
+
+    <article class="mc-card" id="turn-button"><h3>Turn button and quarter-turn cam</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Front view of a frame and a door; a tab on a screw pivot on the frame rotates over the edge of the door to hold it">
+        <rect class="d-plastic2" x="16" y="16" width="108" height="118" rx="3"/>
+        <rect class="d-plastic" x="128" y="16" width="116" height="118" rx="3"/>
+        <rect class="d-plastic" x="70" y="62" width="110" height="26" rx="13" style="opacity:.9"/>
+        <circle class="d-metal" cx="88" cy="75" r="6"/>
+        <path class="d-ink arrow" d="M150 52 Q176 40 186 60"/>
+        <text class="t-xs" x="22" y="34">frame</text><text class="t-xs" x="190" y="34">door</text>
+        <text class="t-xs" x="22" y="116">screw pivot</text>
+        <text class="t-xs" x="136" y="116">ramp underneath</text>
+      </svg><figcaption><b>Figure 16.</b> A tab rotates over the door edge. A 5–10° ramp on its underside pulls the door tight as it turns, and a stop ends the turn at 90°.</figcaption></figure>
+      <p><b>Use:</b> access panels, picture backs, enclosure covers, quarter-turn fasteners.</p>
+      <ul class="mc-spec"><li>Tab 6–10 mm wide, 3–4 mm thick; pivot on a screw with a washer, or a printed snap pin</li><li>Ramp 5–10° over the last 30° of travel; a small bump at 90° holds it</li><li>Quarter-turn version: a cam on a shaft through the panel, turned with a slot or knob</li></ul>
+      <p class="mc-fit"><b>Choose</b> for panels opened occasionally. <b>Avoid</b> in sight on cosmetic faces.</p></article>
+
+    <article class="mc-card" id="push-push"><h3>Push-push latch</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Heart-shaped cam track with a pin follower: the first push guides the pin into the notch where it locks, the next push guides it out">
+        <rect class="d-plastic2" x="40" y="14" width="180" height="122" rx="6"/>
+        <path class="d-surface" d="M130 124 C 70 100 60 40 92 32 C 112 28 124 44 130 60 C 136 44 148 28 168 32 C 200 40 190 100 130 124 Z"/>
+        <path class="d-plastic2" d="M130 92 L116 70 L130 78 L144 70 Z"/>
+        <circle class="s-orange" cx="130" cy="82" r="6"/>
+        <text class="t-xs" x="60" y="148">push: lock · push again: release</text>
+      </svg><figcaption><b>Figure 17.</b> A follower pin on a spring arm runs round a heart-shaped track. The first push parks it in the notch, the second push sends it round the other side and out.</figcaption></figure>
+      <p><b>Use:</b> hidden drawer and door releases, pen mechanisms, flush lids without handles.</p>
+      <ul class="mc-spec"><li>Track 1.5–2 mm deep, 0.4 mm wider than the pin; steps in the track floor force one-way travel</li><li>Needs a return spring (printed or steel) and a flexible pin arm</li><li>Print the track facing up; nylon or POM-like filament for low wear</li></ul>
+      <p class="mc-fit"><b>Choose</b> for a clean, handle-free face. <b>Avoid</b> unless you can test several iterations: it is the hardest latch here.</p></article>
+  </div>
+
+  <div class="callout warn"><span class="callout-title">Common mistake</span><p>Making every latch as strong as possible. A 90° hook in PLA that is meant to be opened will break the first time someone pulls on it. Decide first whether the closure is permanent, releasable by a pull, or released on purpose by a button, and pick the return face and the mechanism from that.</p></div>
+
+  <h2 id="mounts">🔧 Mounts</h2>
+  <p>A mount fixes a part to something else: a wall, a rail, a tripod, a tube, a pegboard. The main question is <b>which way the load goes</b>. Weight pulls down along the wall, leverage pulls the top of the part away from it, and vibration slowly undoes anything held by friction alone. Good mounts let gravity push the part into its seat rather than out of it.</p>
+
+  <div class="mc-grid">
+    <article class="mc-card" id="keyhole"><h3>Keyhole slot</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Back plate with a keyhole: a round entry hole for the screw head above a narrow slot the shank slides into">
+        <rect class="d-plastic" x="14" y="10" width="120" height="130" rx="8"/>
+        <path class="d-surface" d="M66 30 A 13 13 0 1 1 82 30 V100 A 8 8 0 0 1 66 100 Z"/>
+        <circle class="d-metal" cx="74" cy="100" r="5"/>
+        <text class="t-xs" x="144" y="30">entry = head + 1</text><text class="t-xs" x="144" y="70">slot = shank + 1</text><text class="t-xs" x="144" y="104">length ≥ 8</text>
+      </svg><figcaption><b>Figure 18.</b> The screw head enters the round hole and the part slides down until the head sits behind the slot.</figcaption></figure>
+      <p><b>Use:</b> signs, small boxes, panels, anything you hang and lift off.</p>
+      <ul class="mc-spec"><li>Entry Ø = head Ø + 1 mm; slot = shank Ø + 1 mm; slot ≥ 8 mm long</li><li>A recess behind the slot as deep as the head plus 1 mm; rear wall 2 mm around it</li><li>Use two keyholes at the same height for anything wider than a hand</li></ul>
+      <p class="mc-fit"><b>Choose</b> for a hidden, tool-free hang. More: <a href="design-patterns.html#keyhole">keyhole pattern</a>.</p></article>
+
+    <article class="mc-card" id="french-cleat"><h3>French cleat</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Side view: a strip on the wall with a 45 degree bevel facing up, and a matching strip on the object that hooks over it">
+        <rect class="d-surface2" x="10" y="4" width="14" height="142"/>
+        <path class="d-plastic2" d="M24 84 L64 44 L64 124 L24 124 Z"/>
+        <path class="d-plastic" d="M26 80 L66 40 L66 10 L26 10 Z"/>
+        <rect class="d-plastic" x="66" y="6" width="22" height="128" rx="2"/>
+        <rect class="d-metal" x="14" y="100" width="40" height="4"/>
+        <text class="t-xs" x="98" y="40">45° bevels hook together;</text><text class="t-xs" x="98" y="56">weight pulls the part</text><text class="t-xs" x="98" y="72">toward the wall</text>
+        <text class="t-xs" x="98" y="110">lift to remove</text>
+      </svg><figcaption><b>Figure 19.</b> The wall strip's bevel slopes down towards the wall; the object's strip drops into that groove, so its weight wedges it in.</figcaption></figure>
+      <p><b>Use:</b> tool walls, shelves, holders that you rearrange often.</p>
+      <ul class="mc-spec"><li>Bevel 45°; strip 12–20 mm thick in print, as long as the object is wide</li><li>Print the strips on their back so the bevel is a 45° slope, not an overhang</li><li>Screw the wall strip into studs or anchors; the cleat only transfers the load</li></ul>
+      <p class="mc-fit"><b>Choose</b> for modular walls. <b>Avoid</b> for items that get pushed upward in use.</p></article>
+
+    <article class="mc-card" id="din-clip"><h3>DIN-rail clip</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="End view of a top-hat rail on a panel with a module clipped on: a fixed hook under one flange and a sliding spring latch under the other">
+        <rect class="d-surface2" x="10" y="122" width="240" height="12"/>
+        <path class="d-metal" d="M40 90 H78 V120 H182 V90 H220 V95 H187 V122 H73 V95 H40 Z"/>
+        <rect class="d-plastic" x="28" y="20" width="204" height="56" rx="6"/>
+        <path class="d-plastic" d="M28 76 H40 V98 H54 V104 H28 Z"/>
+        <path class="d-plastic2" d="M232 76 H206 V98 H214 V104 H244 V84 H232 Z"/>
+        <path class="d-ink arrow" d="M238 112 H252"/>
+        <text class="t-xs" x="40" y="44">module</text>
+        <text class="t-xs" x="96" y="88">TS35 rail · 35 × 7.5</text>
+        <text class="t-xs" x="14" y="146">fixed hook · spring latch pulled to release</text>
+      </svg><figcaption><b>Figure 20.</b> Hook one side of the module under a rail flange, rock it on, and let the spring latch snap under the other flange.</figcaption></figure>
+      <p><b>Use:</b> electronics enclosures, terminal holders and cable guides in control cabinets.</p>
+      <ul class="mc-spec"><li>Common rail: 35 mm wide, 7.5 mm (or 15 mm) deep, about 1 mm thick steel flanges</li><li>Latch: a slider on a printed spring with a screwdriver slot; travel ≥ 2 mm</li><li>PETG or ABS/ASA for warm cabinets; PLA softens near hot power supplies</li></ul>
+      <p class="mc-fit"><b>Choose</b> for anything that lives in a cabinet. <b>Avoid</b> for heavy modules without an extra screw.</p></article>
+
+    <article class="mc-card" id="tripod-mount"><h3>Tripod screw mount</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Section of a printed plate with a quarter-inch threaded insert, and a tripod screw entering from below">
+        <rect class="d-plastic" x="40" y="34" width="180" height="46" rx="4"/>
+        <rect class="d-metal" x="112" y="50" width="36" height="30" rx="2"/>
+        <rect class="d-metal" x="122" y="80" width="16" height="36"/>
+        <rect class="d-surface2" x="60" y="116" width="140" height="22" rx="4"/>
+        <text class="t-xs" x="46" y="24">1/4-20 UNC insert or captive nut</text>
+        <text class="t-xs" x="150" y="104">tripod screw</text>
+        <text class="t-xs" x="24" y="148">3/8-16 for heavy heads and stands</text>
+      </svg><figcaption><b>Figure 21.</b> Camera and tripod hardware uses inch threads: put a metal 1/4-20 thread in the print rather than printing it.</figcaption></figure>
+      <p><b>Use:</b> camera brackets, phone and light holders, anything for a tripod or arm.</p>
+      <ul class="mc-spec"><li>1/4-20 UNC (6.35 mm, 20 threads per inch) is the camera standard; 3/8-16 for heavier heads</li><li>Heat-set insert or a captive hex nut; a flat 20 mm face around it so the head can clamp</li><li>Add a small anti-twist pin or rubber pad if the mount must not rotate</li></ul>
+      <p class="mc-fit"><b>Choose</b> whenever photo gear is involved. Rules: <a href="joints-and-fasteners.html#heat-set">heat-set inserts</a>.</p></article>
+
+    <article class="mc-card" id="prong-mount"><h3>Prong (finger) mount</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Three fingers on one part interleave with two on the other and a thumbscrew clamps them together">
+        <rect class="d-plastic" x="70" y="20" width="12" height="80" rx="3"/><rect class="d-plastic" x="106" y="20" width="12" height="80" rx="3"/><rect class="d-plastic" x="142" y="20" width="12" height="80" rx="3"/>
+        <rect class="d-plastic2" x="88" y="40" width="12" height="90" rx="3"/><rect class="d-plastic2" x="124" y="40" width="12" height="90" rx="3"/>
+        <rect class="d-metal" x="60" y="56" width="120" height="8" rx="3"/>
+        <circle class="d-plastic" cx="196" cy="60" r="16"/>
+        <text class="t-xs" x="170" y="96">thumbscrew</text>
+        <text class="t-xs" x="14" y="148">3 + 2 fingers · angle held by clamping friction</text>
+      </svg><figcaption><b>Figure 22.</b> Interleaved fingers clamped by one screw: a hinge that locks at any angle. It is the system used by action cameras.</figcaption></figure>
+      <p><b>Use:</b> camera and light arms, adjustable brackets, sensor mounts.</p>
+      <ul class="mc-spec"><li>Match an existing system by measuring it: finger thickness and gap must fit within 0.1–0.2 mm</li><li>Fine radial ridges on the finger faces add grip; an M5 or similar thumbscrew with a captive nut</li><li>Print the fingers flat so the clamping load is across the layers, not peeling them</li></ul>
+      <p class="mc-fit"><b>Choose</b> for adjustable angles. <b>Avoid</b> for heavy cantilevered loads; friction will slip.</p></article>
+
+    <article class="mc-card" id="tube-clip"><h3>Tube and edge clip</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="C-shaped clip on a stem gripping a round tube, with the mouth narrower than the tube">
+        <circle class="d-metal" cx="110" cy="72" r="30"/>
+        <path class="k-orange" d="M 96 40 A 35 35 0 1 0 124 40" style="stroke-width:9;fill:none"/>
+        <rect class="d-plastic" x="98" y="106" width="24" height="22"/>
+        <rect class="d-plastic" x="54" y="128" width="112" height="12" rx="3"/>
+        <text class="t-xs" x="160" y="40">mouth 85–90 % Ø</text><text class="t-xs" x="160" y="56">wrap 200–240°</text><text class="t-xs" x="160" y="88">bore = Ø + 0.2</text>
+      </svg><figcaption><b>Figure 23.</b> The clip opens over the tube and closes around it. The mouth width sets the snap force; the wrap angle sets how hard it is to pull off.</figcaption></figure>
+      <p><b>Use:</b> handlebar mounts, pipe and rod holders, clips on shelf edges and desk tops.</p>
+      <ul class="mc-spec"><li>Mouth 85–90 % of the tube Ø in PETG, 90–95 % in PLA; arm 1.6–2.4 mm thick; check the strain</li><li>Bore = tube + 0.2 mm, or a TPU liner for grip and damping</li><li>Print the C flat (axis vertical) so it opens within the layers</li><li>Edge clips (on a shelf or desk) work the same way with a U-shaped jaw and a ridge</li></ul>
+      <p class="mc-fit"><b>Choose</b> for tool-free mounting on round stock. <b>Avoid</b> when it must not turn: add a screw clamp.</p></article>
+
+    <article class="mc-card" id="grid-base"><h3>Grid baseplate</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A baseplate with a row of square pockets on a fixed pitch and a bin with a stepped foot seated in one of them">
+        <rect class="d-plastic2" x="14" y="100" width="232" height="30" rx="3"/>
+        <path class="d-surface" d="M24 100 L32 110 H72 L80 100 Z M92 100 L100 110 H140 L148 100 Z M160 100 L168 110 H208 L216 100 Z"/>
+        <rect class="d-plastic" x="96" y="34" width="56" height="62" rx="4"/>
+        <path class="d-plastic" d="M98 96 L104 108 H144 L150 96 Z"/>
+        <text class="t-xs" x="22" y="28">fixed pitch, chamfered pockets</text>
+        <text class="t-xs" x="160" y="60">bin with</text><text class="t-xs" x="160" y="74">stepped foot</text>
+        <text class="t-xs" x="22" y="146">every size = n × pitch − 0.5</text>
+      </svg><figcaption><b>Figure 24.</b> A baseplate on a fixed pitch, and bins whose chamfered feet drop into its pockets: the bins locate themselves and can be rearranged.</figcaption></figure>
+      <p><b>Use:</b> drawer organizers, workshop walls, desk systems.</p>
+      <ul class="mc-spec"><li>One pitch for everything (several open systems exist; follow one for compatibility)</li><li>45° chamfered feet print without support; optional magnets in the feet</li></ul>
+      <p class="mc-fit"><b>Choose</b> for organizers you will extend. More: <a href="design-patterns.html#modular-bin">modular bins</a>.</p></article>
+
+    <article class="mc-card" id="strap-anchor"><h3>Strap and cable-tie anchor</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A part with a tunnel under a bridge through which a cable tie passes to strap it to a tube">
+        <rect class="d-plastic" x="40" y="70" width="180" height="50" rx="4"/>
+        <rect class="d-surface" x="40" y="86" width="180" height="12"/>
+        <path class="k-gray" d="M20 92 H240" style="stroke-width:5"/>
+        <rect class="d-metal" x="60" y="120" width="140" height="20" rx="10"/>
+        <text class="t-xs" x="40" y="30">passage 4.5 × 2 for a 3.6 mm tie</text>
+        <text class="t-xs" x="40" y="46">bridge ≥ 2 mm, layers along it</text>
+        <text class="t-xs" x="40" y="62">round the edges the tie wraps over</text>
+      </svg><figcaption><b>Figure 25.</b> A tunnel under a short bridge lets a cable tie, strap or hook-and-loop band fasten the part to a tube or frame.</figcaption></figure>
+      <p><b>Use:</b> bike and frame mounts, cable routing, temporary fixtures.</p>
+      <ul class="mc-spec"><li>Passage = tie width + 0.8 mm by tie thickness + 0.8 mm; for straps, width + 1 mm</li><li>The bridge spans ≤ 10 mm so it prints flat; 1 mm fillets where the tie bends</li><li>A V-groove or TPU pad under the part stops it rotating on a tube</li></ul>
+      <p class="mc-fit"><b>Choose</b> for quick, adjustable mounts. <b>Avoid</b> for permanent or cosmetic fixings.</p></article>
+
+    <article class="mc-card" id="pegboard"><h3>Pegboard hook</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Side view of a pegboard with a printed holder: an upper hook through one hole and a straight peg through the hole below">
+        <rect class="d-surface2" x="40" y="10" width="14" height="132"/>
+        <rect class="d-surface" x="40" y="36" width="14" height="8"/><rect class="d-surface" x="40" y="96" width="14" height="8"/>
+        <path class="d-plastic" d="M60 30 H90 V120 H60 V104 H30 V96 H60 V44 H44 V54 H30 V36 H60 Z"/>
+        <rect class="d-plastic" x="90" y="70" width="110" height="14" rx="3"/>
+        <text class="t-xs" x="120" y="40">hook over the board,</text><text class="t-xs" x="120" y="54">peg below stops rotation</text>
+        <text class="t-xs" x="96" y="120">1/4 in holes, 1 in centers (US)</text>
+      </svg><figcaption><b>Figure 26.</b> An upper hook carries the weight; a straight peg one hole lower keeps the holder from tipping out.</figcaption></figure>
+      <p><b>Use:</b> tool holders, bins and shelves on pegboard.</p>
+      <ul class="mc-spec"><li>US hardboard pegboard: 1/4 in (6.35 mm) holes on 1 in (25.4 mm) centers; other boards differ, so measure</li><li>Hook and peg 0.3–0.5 mm under the hole size; hook depth = board thickness + 1 mm</li><li>Print the holder on its side so hook and peg are not layer-split</li></ul>
+      <p class="mc-fit"><b>Choose</b> for workshop walls. <b>Avoid</b> without the lower peg: the holder rotates out.</p></article>
+
+    <article class="mc-card" id="magnet-mount"><h3>Magnetic mount</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A printed holder with embedded magnets on a vertical steel surface; the pull force is large but the sliding resistance is only a fraction of it, so a lip carries the weight">
+        <rect class="d-metal" x="20" y="10" width="16" height="132"/>
+        <rect class="d-plastic" x="40" y="30" width="60" height="90" rx="4"/>
+        <rect class="d-metal" x="42" y="44" width="10" height="20"/><rect class="d-metal" x="42" y="86" width="10" height="20"/>
+        <path class="d-ink arrow" d="M110 52 H150"/><text class="t-xs" x="156" y="56">pull F</text>
+        <path class="d-ink arrow" d="M120 96 V126"/><text class="t-xs" x="130" y="114">slides at ≈ F/4–F/3</text>
+        <text class="t-xs" x="14" y="148">add a lip or peg to carry weight</text>
+      </svg><figcaption><b>Figure 27.</b> A magnet resists sliding with only a quarter to a third of its pull force, because only friction holds it sideways.</figcaption></figure>
+      <p><b>Use:</b> tool holders on steel, fridge and machine mounts, removable covers.</p>
+      <ul class="mc-spec"><li>Rate the mount for weight using about 25–30 % of the magnets' pull force</li><li>A TPU skin or rubber pad raises the friction and protects the paint</li><li>Skin 0.4–0.6 mm over the magnets</li></ul>
+      <p class="mc-fit"><b>Choose</b> for tool-free placement on steel. More: <a href="design-patterns.html#magnet-mount">magnetic mount pattern</a>.</p></article>
+  </div>
+
+  <h2 id="slides">🔧 Slides and guides</h2>
+  <p>A slide constrains a part to move along one line. Printed slides fail in two ways: they <b>bind</b> (jam when pushed off-center) or they <b>rattle</b> (too much clearance). The first is a geometry problem, solved by the length of the guide; the second is a tolerance problem, solved by a test print and, where it matters, by steel rods or ball bearings doing the guiding.</p>
+
+  <div class="mc-grid">
+    <article class="mc-card" id="dovetail-slide"><h3>Dovetail slide</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="End view of a slider with a dovetail tongue running in a matching groove in the base">
+        <rect class="d-plastic2" x="30" y="70" width="200" height="60" rx="3"/>
+        <path class="d-surface" d="M100 70 H160 L174 102 H86 Z"/>
+        <rect class="d-plastic" x="60" y="30" width="140" height="38" rx="3"/>
+        <path class="d-plastic" d="M104 68 H156 L168 98 H92 Z"/>
+        <text class="t-xs" x="180" y="96">45° flank</text>
+        <text class="t-xs" x="30" y="20">clearance 0.3 per side</text>
+        <text class="t-xs" x="30" y="146">rail lies flat: flanks print without support</text>
+      </svg><figcaption><b>Figure 28.</b> The tongue cannot lift out of the groove, so a dovetail guides and retains in one feature.</figcaption></figure>
+      <p><b>Use:</b> drawers, sliding lids, battery covers, adjustable fences.</p>
+      <ul class="mc-spec"><li>Clearance 0.3 mm per side; a 0.4 mm detent bump at the end positions</li><li>A 1–2° taper along the length turns it into a wedge lock that tightens as it slides home</li><li>Run the slide axis along the printed lines and wax or dry-lube it</li></ul>
+      <p class="mc-fit"><b>Choose</b> for all-plastic slides. Rules: <a href="joints-and-fasteners.html#shape-joints">dovetails</a>, <a href="design-patterns.html#drawer-rail">drawer rails</a>.</p></article>
+
+    <article class="mc-card" id="t-slot"><h3>T-slot slide on extrusion</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="End view of an aluminium extrusion with a T-shaped slot; a printed carriage has a tongue that runs in the slot opening">
+        <rect class="d-metal" x="80" y="60" width="100" height="84" rx="4"/>
+        <path class="d-surface" d="M118 60 H142 V70 H160 V86 H100 V70 H118 Z"/>
+        <rect class="d-plastic" x="50" y="22" width="160" height="36" rx="4"/>
+        <rect class="d-plastic" x="120" y="56" width="20" height="12"/>
+        <rect class="d-metal" x="104" y="72" width="52" height="10" rx="2"/>
+        <text class="t-xs" x="196" y="80">T-nut</text>
+        <text class="t-xs" x="14" y="14">tongue 0.3–0.4 under the slot width</text>
+        <text class="t-xs" x="6" y="122">20 mm profile:</text><text class="t-xs" x="6" y="136">6 mm slot, M5</text>
+      </svg><figcaption><b>Figure 29.</b> The slot guides the carriage; a T-nut and screw lock it in position when tightened.</figcaption></figure>
+      <p><b>Use:</b> printer and jig accessories, adjustable stops, camera sliders on aluminium extrusion.</p>
+      <ul class="mc-spec"><li>Common 20 mm profile: 6 mm slot opening, M5 hardware; measure your brand</li><li>Tongue = slot − 0.3–0.4 mm, 5–10 mm long at each end of the carriage</li><li>For rolling motion use V-wheels or ball bearings on the profile instead</li></ul>
+      <p class="mc-fit"><b>Choose</b> when an extrusion frame is already there. <b>Avoid</b> for long-stroke smooth motion without wheels.</p></article>
+
+    <article class="mc-card" id="rod-bushing"><h3>Rod and bushing</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Top view of a carriage riding on two parallel steel rods through printed bushings">
+        <rect class="d-metal" x="10" y="44" width="240" height="8" rx="4"/><rect class="d-metal" x="10" y="100" width="240" height="8" rx="4"/>
+        <rect class="d-plastic" x="80" y="30" width="100" height="92" rx="6"/>
+        <rect class="d-plastic2" x="76" y="38" width="108" height="20" rx="4"/><rect class="d-plastic2" x="76" y="94" width="108" height="20" rx="4"/>
+        <text class="t-xs" x="96" y="80">carriage</text>
+        <text class="t-xs" x="14" y="24">bore = rod + 0.2–0.3</text>
+        <text class="t-xs" x="14" y="140">bushing length ≥ 1.5 × rod Ø; long beats tight</text>
+      </svg><figcaption><b>Figure 30.</b> Steel rods give a straight, hard, smooth guide; the printed part only has to be a reasonable bushing around them.</figcaption></figure>
+      <p><b>Use:</b> camera and tool sliders, plotters, adjustable jigs, sliding doors.</p>
+      <ul class="mc-spec"><li>Ground rods or drill rod (6, 8 or 10 mm); bushings printed with the bore vertical for roundness</li><li>Two rods: make one bushing a close fit and give the other 0.5 mm side play, so the carriage does not jam if the rods are not perfectly parallel</li><li>PETG or nylon bushings; or press in linear ball bearings</li></ul>
+      <p class="mc-fit"><b>Choose</b> for smooth, accurate linear motion. <b>Avoid</b> in dusty places without wipers.</p></article>
+
+    <article class="mc-card" id="telescope"><h3>Telescoping tubes</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="An inner tube slides inside an outer tube; a spring button on the inner tube clicks into one of several holes in the outer tube">
+        <rect class="d-plastic2" x="16" y="46" width="160" height="56" rx="4"/>
+        <rect class="d-plastic" x="60" y="56" width="186" height="36" rx="3"/>
+        <rect class="d-surface" x="106" y="46" width="12" height="10"/><rect class="d-surface" x="136" y="46" width="12" height="10"/>
+        <rect class="s-orange" x="137" y="44" width="10" height="14" rx="3"/>
+        <text class="t-xs" x="16" y="32">outer tube with index holes</text>
+        <text class="t-xs" x="16" y="124">clearance 0.4–0.6 on diameter</text>
+        <text class="t-xs" x="16" y="140">button on a spring arm inside</text>
+      </svg><figcaption><b>Figure 31.</b> A spring button snaps into holes along the outer tube and sets the length in steps; press it to slide.</figcaption></figure>
+      <p><b>Use:</b> adjustable legs and arms, extendable handles, height stops.</p>
+      <ul class="mc-spec"><li>Walls ≥ 1.2 mm; diametral clearance 0.4–0.6 mm; overlap ≥ 1.5 × the tube width</li><li>Square or keyed sections stop rotation; round ones need a key</li><li>Print tubes upright for round sections; the button arm lies in the layer plane</li></ul>
+      <p class="mc-fit"><b>Choose</b> for stepped lengths. <b>Avoid</b> for continuous adjustment: use a clamp collar.</p></article>
+
+    <article class="mc-card" id="rack-pinion"><h3>Rack and pinion</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A gear meshing with a straight toothed rack; turning the gear moves the rack sideways">
+        <polygon class="d-plastic2" points="14.0,104.0 16.0,104.0 18.0,96.0 22.0,96.0 24.0,104.0 28.0,104.0 30.0,96.0 34.0,96.0 36.0,104.0 40.0,104.0 42.0,96.0 46.0,96.0 48.0,104.0 52.0,104.0 54.0,96.0 58.0,96.0 60.0,104.0 64.0,104.0 66.0,96.0 70.0,96.0 72.0,104.0 76.0,104.0 78.0,96.0 82.0,96.0 84.0,104.0 88.0,104.0 90.0,96.0 94.0,96.0 96.0,104.0 100.0,104.0 102.0,96.0 106.0,96.0 108.0,104.0 112.0,104.0 114.0,96.0 118.0,96.0 120.0,104.0 124.0,104.0 126.0,96.0 130.0,96.0 132.0,104.0 136.0,104.0 138.0,96.0 142.0,96.0 144.0,104.0 148.0,104.0 150.0,96.0 154.0,96.0 156.0,104.0 160.0,104.0 162.0,96.0 166.0,96.0 168.0,104.0 172.0,104.0 174.0,96.0 178.0,96.0 180.0,104.0 184.0,104.0 186.0,96.0 190.0,96.0 192.0,104.0 196.0,104.0 198.0,96.0 202.0,96.0 204.0,104.0 208.0,104.0 210.0,96.0 214.0,96.0 216.0,104.0 220.0,104.0 222.0,96.0 226.0,96.0 228.0,104.0 232.0,104.0 234.0,96.0 238.0,96.0 240.0,104.0 246.0,104.0 246.0,130.0 14.0,130.0"/>
+        <polygon class="d-plastic" points="140.7,57.7 146.9,59.4 146.9,64.6 140.7,66.3 140.3,68.4 145.6,72.2 143.8,77.0 137.4,76.6 136.3,78.4 139.9,83.7 136.6,87.7 130.7,85.0 129.1,86.4 130.7,92.7 126.2,95.3 121.6,90.7 119.6,91.5 119.0,97.9 113.9,98.8 111.1,93.0 108.9,93.0 106.1,98.8 101.0,97.9 100.4,91.5 98.4,90.7 93.8,95.3 89.3,92.7 90.9,86.4 89.3,85.0 83.4,87.7 80.1,83.7 83.7,78.4 82.6,76.6 76.2,77.0 74.4,72.2 79.7,68.4 79.3,66.3 73.1,64.6 73.1,59.4 79.3,57.7 79.7,55.6 74.4,51.8 76.2,47.0 82.6,47.4 83.7,45.6 80.1,40.3 83.4,36.3 89.3,39.0 90.9,37.6 89.3,31.3 93.8,28.7 98.4,33.3 100.4,32.5 101.0,26.1 106.1,25.2 108.9,31.0 111.1,31.0 113.9,25.2 119.0,26.1 119.6,32.5 121.6,33.3 126.2,28.7 130.7,31.3 129.1,37.6 130.7,39.0 136.6,36.3 139.9,40.3 136.3,45.6 137.4,47.4 143.8,47.0 145.6,51.8 140.3,55.6"/>
+        <circle class="d-metal" cx="110" cy="62" r="6"/>
+        <path class="d-ink arrow" d="M150 30 A 44 44 0 0 1 154 62"/>
+        <path class="d-ink arrow" d="M196 128 H246"/>
+        <text class="t-xs" x="14" y="20">travel per turn = π × pitch Ø</text>
+      </svg><figcaption><b>Figure 32.</b> A pinion turns, the rack moves in a straight line; one turn moves it by the pinion's pitch circumference.</figcaption></figure>
+      <p><b>Use:</b> focusing stages, adjustable heights, sliding doors, linear actuators.</p>
+      <ul class="mc-spec"><li>Module 1.5–2 for a 0.4 mm nozzle; ≥ 17 pinion teeth (or profile shift)</li><li>Guide the rack in a slot so the mesh distance cannot open up</li><li>Print the rack on its side so the teeth are not stacked layers</li></ul>
+      <p class="mc-fit"><b>Choose</b> to turn rotation into straight travel. Gear rules: <a href="joints-and-fasteners.html#gears">gears</a>.</p></article>
+
+    <article class="mc-card" id="roller-carriage"><h3>Roller carriage</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A plate with three ball-bearing wheels rolling on a bar, two above and one below on an eccentric pin">
+        <rect class="d-metal" x="10" y="64" width="240" height="24" rx="3"/>
+        <rect class="d-plastic" x="60" y="20" width="140" height="112" rx="8" style="opacity:.85"/>
+        <circle class="d-metal2" cx="90" cy="52" r="12"/><circle class="d-metal2" cx="170" cy="52" r="12"/><circle class="d-metal2" cx="130" cy="100" r="12"/>
+        <circle class="d-ink" cx="133" cy="100" r="3"/>
+        <text class="t-xs" x="10" y="146">ball bearings as wheels · eccentric pin sets preload</text>
+      </svg><figcaption><b>Figure 33.</b> Bearings roll instead of sliding, so friction stays low even with preload; an eccentric pin takes up the play.</figcaption></figure>
+      <p><b>Use:</b> long-stroke sliders, doors, carriages on extrusion or flat bar.</p>
+      <ul class="mc-spec"><li>Small ball bearings (for example 623, 625 or 608) on shoulder screws or pins</li><li>Eccentric 0.5–1 mm offset on one wheel to adjust preload</li><li>Wheels on a V-groove or with a printed TPU tire for grip</li></ul>
+      <p class="mc-fit"><b>Choose</b> for long travel with low friction. <b>Avoid</b> when space is tight: rods are slimmer.</p></article>
+  </div>
+
+  <h3 id="binding">Why sliders jam: the binding ratio</h3>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 700 230" role="img" aria-label="Top view of a slider of length L in a guide, pushed by a force F at a distance d from the guide axis; it tilts and presses on two diagonal corners">
+      <rect class="d-surface2" x="40" y="40" width="560" height="14"/><rect class="d-surface2" x="40" y="146" width="560" height="14"/>
+      <rect class="d-plastic" x="230" y="56" width="180" height="88" rx="4" transform="rotate(-2 320 100)"/>
+      <circle class="s-red" cx="232" cy="60" r="6"/><circle class="s-red" cx="408" cy="140" r="6"/>
+      <path class="d-ink arrow" d="M200 196 H310"/><text class="t" x="206" y="216">F</text>
+      <path class="d-dash" d="M410 100 H560"/><path class="d-thin" d="M560 100 V196"/><text class="t" x="568" y="152">d</text>
+      <path class="d-thin" d="M230 172 H410"/><text class="t t-c" x="320" y="188">L</text>
+      <text class="t-sm" x="430" y="30">contact at two corners (red)</text>
+    </svg>
+    <figcaption><b>Figure 34.</b> An off-center push tilts the slider until two diagonal corners touch. Their friction grows with the push, and beyond a certain offset no push can move it.</figcaption>
+  </figure>
+  <div class="callout fact"><span class="callout-title">Why it works</span><p>The off-center force F at distance d tilts the slider; two corners, a distance L apart, take the moment: N = F · d / L. Their friction is 2 μ N. The slider moves only while 2 μ F d / L &lt; F, that is while <b>d &lt; L / (2 μ)</b>. With printed plastic on plastic (μ ≈ 0.3) that means d &lt; about 1.7 L. Engineers round this to the "2:1 rule": keep the guided length at least half of the distance from the guide to where you push. The fix is never a looser fit; it is a longer guide, a push point closer to the guide, or two guides far apart.</p></div>
+
+  <h2 id="rotary">🚀 Rotary and indexing mechanisms</h2>
+  <p>Rotary mechanisms carry a shaft, stop it in steps, let it turn one way only, or convert rotation into another motion. Gears are covered in <a href="joints-and-fasteners.html#gears">Joints &amp; fasteners</a>; this section collects the other building blocks. Use metal shafts wherever you can: printed shafts bend and wear long before printed hubs do.</p>
+
+  <div class="mc-grid">
+    <article class="mc-card" id="bearing-seat"><h3>Ball-bearing seat</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Section through a printed housing with a ball bearing pressed into a pocket against a shoulder, with a shaft through it">
+        <rect class="d-plastic" x="30" y="30" width="200" height="90" rx="4"/>
+        <rect class="d-surface" x="70" y="30" width="120" height="50"/>
+        <rect class="d-metal2" x="72" y="34" width="116" height="44" rx="4"/>
+        <rect class="d-surface" x="112" y="34" width="36" height="86"/>
+        <rect class="d-metal" x="118" y="14" width="24" height="122" rx="2"/>
+        <text class="t-xs" x="20" y="146">608: pocket 22.1 (press 22.0) × 7.2 · shoulder 1</text>
+      </svg><figcaption><b>Figure 35.</b> A pocket a hair under the outer race for a press fit, and a shoulder that carries the axial load.</figcaption></figure>
+      <p><b>Use:</b> wheels, turntables, spool holders, pulleys, anything that spins under load.</p>
+      <ul class="mc-spec"><li>Pocket Ø = outer race + 0.1 mm (+0.0 for a press); depth = width + 0.2 mm; 1 mm shoulder; shaft hole 0.4 mm over the bore</li><li>Print the bore vertical; retain with a lip, a cover or a drop of CA glue</li></ul>
+      <p class="mc-fit"><b>Choose</b> for anything that spins fast or long. Pocket table: <a href="joints-and-fasteners.html#bearings">bearings</a>.</p></article>
+
+    <article class="mc-card" id="bushing"><h3>Plain bushing on a pin</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A printed sleeve turning on a steel pin with a thin running gap, retained by a washer and clip">
+        <rect class="d-plastic" x="60" y="40" width="140" height="70" rx="6"/>
+        <rect class="d-surface" x="60" y="66" width="140" height="18"/>
+        <rect class="d-metal" x="30" y="68" width="200" height="14" rx="3"/>
+        <rect class="d-metal2" x="202" y="56" width="6" height="38"/>
+        <text class="t-xs" x="20" y="28">bore = pin + 0.3–0.4 (running)</text>
+        <text class="t-xs" x="20" y="132">length 1–1.5 × Ø · washer + clip</text>
+      </svg><figcaption><b>Figure 36.</b> A plain bearing: a printed bore turning on a steel pin, lubricated and retained at each end.</figcaption></figure>
+      <p><b>Use:</b> slow pivots: levers, wheels of toys, arms, idlers.</p>
+      <ul class="mc-spec"><li>Running fit +0.3–0.4 mm; length 1–1.5 × pin Ø; washers at both faces</li><li>PETG, nylon or PTFE-filled filaments wear far less than PLA; a dab of grease helps</li><li>Bore printed vertical, or as a teardrop with the axis horizontal</li></ul>
+      <p class="mc-fit"><b>Choose</b> for slow, occasional motion. <b>Avoid</b> for high speed or load: use a ball bearing.</p></article>
+
+    <article class="mc-card" id="ratchet"><h3>Ratchet and pawl</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A ratchet wheel with saw-shaped teeth and a pawl on a flexible arm that lets it turn one way and blocks the other">
+        <polygon class="d-plastic" points="120.0,78.0 123.7,102.2 114.6,98.0 105.8,120.9 100.0,112.6 80.9,128.0 80.0,118.0 55.8,121.7 60.0,112.6 37.1,103.8 45.4,98.0 30.0,78.9 40.0,78.0 36.3,53.8 45.4,58.0 54.2,35.1 60.0,43.4 79.1,28.0 80.0,38.0 104.2,34.3 100.0,43.4 122.9,52.2 114.6,58.0 130.0,77.1"/>
+        <circle class="d-metal" cx="80" cy="78" r="7"/>
+        <rect class="d-plastic2" x="196" y="10" width="34" height="30" rx="3"/>
+        <path class="k-orange" d="M200 26 L95.4 35.7" style="stroke-width:5"/>
+        <text class="t-xs" x="140" y="62">one way only ↻</text>
+        <text class="t-xs" x="140" y="132">pawl on a flexure</text>
+      </svg><figcaption><b>Figure 37.</b> Saw-shaped teeth let the pawl ride over them one way; the steep face blocks the other way.</figcaption></figure>
+      <p><b>Use:</b> winches, tensioners, cable reels, adjustable straps, one-way clutches.</p>
+      <ul class="mc-spec"><li>12–24 teeth, 1–2 mm deep; the locking face slightly undercut (5–10°) so the pawl is pulled in under load</li><li>Pawl on a printed flexure arm, or a pin and a small spring</li><li>Print the wheel flat; PETG or nylon</li></ul>
+      <p class="mc-fit"><b>Choose</b> to allow motion one way. <b>Avoid</b> for silent operation: it clicks.</p></article>
+
+    <article class="mc-card" id="detent-wheel"><h3>Detent wheel (indexing)</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A wheel with evenly spaced rounded notches and a spring arm whose rounded tip drops into a notch, giving click stops">
+        <polygon class="d-plastic" points="124.0,78.0 124.3,79.5 125.3,81.2 126.7,82.9 128.5,84.8 129.2,86.7 128.9,88.4 128.5,90.1 128.1,91.8 127.6,93.5 127.0,95.1 126.4,96.7 125.7,98.3 124.9,99.9 124.1,101.5 123.3,103.0 122.4,104.5 121.5,106.0 120.5,107.4 117.8,107.5 115.3,107.7 113.3,108.0 111.7,108.6 110.6,109.7 110.0,111.3 109.7,113.3 109.5,115.8 109.4,118.5 108.0,119.5 106.5,120.4 105.0,121.3 103.5,122.1 101.9,122.9 100.3,123.7 98.7,124.4 97.1,125.0 95.5,125.6 93.8,126.1 92.1,126.5 90.4,126.9 88.7,127.2 86.8,126.5 84.9,124.7 83.2,123.3 81.5,122.3 80.0,122.0 78.5,122.3 76.8,123.3 75.1,124.7 73.2,126.5 71.3,127.2 69.6,126.9 67.9,126.5 66.2,126.1 64.5,125.6 62.9,125.0 61.3,124.4 59.7,123.7 58.1,122.9 56.5,122.1 55.0,121.3 53.5,120.4 52.0,119.5 50.6,118.5 50.5,115.8 50.3,113.3 50.0,111.3 49.4,109.7 48.3,108.6 46.7,108.0 44.7,107.7 42.2,107.5 39.5,107.4 38.5,106.0 37.6,104.5 36.7,103.0 35.9,101.5 35.1,99.9 34.3,98.3 33.6,96.7 33.0,95.1 32.4,93.5 31.9,91.8 31.5,90.1 31.1,88.4 30.8,86.7 31.5,84.8 33.3,82.9 34.7,81.2 35.7,79.5 36.0,78.0 35.7,76.5 34.7,74.8 33.3,73.1 31.5,71.2 30.8,69.3 31.1,67.6 31.5,65.9 31.9,64.2 32.4,62.5 33.0,60.9 33.6,59.3 34.3,57.7 35.1,56.1 35.9,54.5 36.7,53.0 37.6,51.5 38.5,50.0 39.5,48.6 42.2,48.5 44.7,48.3 46.7,48.0 48.3,47.4 49.4,46.3 50.0,44.7 50.3,42.7 50.5,40.2 50.6,37.5 52.0,36.5 53.5,35.6 55.0,34.7 56.5,33.9 58.1,33.1 59.7,32.3 61.3,31.6 62.9,31.0 64.5,30.4 66.2,29.9 67.9,29.5 69.6,29.1 71.3,28.8 73.2,29.5 75.1,31.3 76.8,32.7 78.5,33.7 80.0,34.0 81.5,33.7 83.2,32.7 84.9,31.3 86.8,29.5 88.7,28.8 90.4,29.1 92.1,29.5 93.8,29.9 95.5,30.4 97.1,31.0 98.7,31.6 100.3,32.3 101.9,33.1 103.5,33.9 105.0,34.7 106.5,35.6 108.0,36.5 109.4,37.5 109.5,40.2 109.7,42.7 110.0,44.7 110.6,46.3 111.7,47.4 113.3,48.0 115.3,48.3 117.8,48.5 120.5,48.6 121.5,50.0 122.4,51.5 123.3,53.0 124.1,54.5 124.9,56.1 125.7,57.7 126.4,59.3 127.0,60.9 127.6,62.5 128.1,64.2 128.5,65.9 128.9,67.6 129.2,69.3 128.5,71.2 126.7,73.1 125.3,74.8 124.3,76.5"/>
+        <circle class="d-metal" cx="80" cy="78" r="7"/>
+        <rect class="d-plastic2" x="200" y="16" width="34" height="30" rx="3"/>
+        <path class="k-orange" d="M204 34 L117.9 44.1" style="stroke-width:4"/>
+        <circle class="s-orange" cx="113.9" cy="44.1" r="6"/>
+        <text class="t-xs" x="160" y="24">click stops</text>
+        <text class="t-xs" x="140" y="132">spring arm, round tip</text>
+      </svg><figcaption><b>Figure 38.</b> A spring tip drops into rounded notches: the wheel stops at fixed angles but turns both ways.</figcaption></figure>
+      <p><b>Use:</b> selector knobs, rotary switches, indexing tables, adjustable angles.</p>
+      <ul class="mc-spec"><li>Notches as arcs 0.5–1 mm deep; the notch flank angle sets the holding torque</li><li>Size the arm by its strain for the notch depth (deflection = depth)</li><li>Same idea as a <a href="#detent-hinge">detent hinge</a>, but radial</li></ul>
+      <p class="mc-fit"><b>Choose</b> for positive steps both ways. <b>Avoid</b> where any position must be possible.</p></article>
+
+    <article class="mc-card" id="geneva"><h3>Geneva drive</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A driver disc with a pin enters radial slots of a four-slot wheel and turns it a quarter turn for each turn of the driver">
+        <circle class="d-plastic" cx="160" cy="74" r="46.7"/>
+        <rect class="d-surface" x="180.7" y="70" width="28" height="8" transform="rotate(45 160 74)"/><rect class="d-surface" x="180.7" y="70" width="28" height="8" transform="rotate(135 160 74)"/><rect class="d-surface" x="180.7" y="70" width="28" height="8" transform="rotate(225 160 74)"/><rect class="d-surface" x="180.7" y="70" width="28" height="8" transform="rotate(315 160 74)"/>
+        <circle class="d-metal" cx="160" cy="74" r="6"/>
+        <circle class="d-plastic2" cx="94" cy="74" r="26"/>
+        <path class="k-orange" d="M94 74 L127.0 41.0" style="stroke-width:6"/>
+        <circle class="d-metal" cx="127.0" cy="41.0" r="5"/><circle class="d-metal" cx="94" cy="74" r="5"/>
+        <text class="t-xs" x="68" y="118">driver</text><text class="t-xs" x="180" y="20">4-slot wheel</text>
+        <text class="t-xs" x="14" y="146">4 slots: 90° step per driver turn</text>
+      </svg><figcaption><b>Figure 39.</b> The driver's pin enters a slot, turns the wheel one step, and leaves; a locking arc holds the wheel still in between.</figcaption></figure>
+      <p><b>Use:</b> indexing tables, film-advance style steps, counters, kinetic models.</p>
+      <ul class="mc-spec"><li>n slots give a 360°/n step per driver turn</li><li>Center distance C = r / sin(180°/n), where r is the pin radius on the driver (C = 1.41 r for 4 slots)</li><li>Steel pin; slots 0.3–0.4 mm wider than the pin</li></ul>
+      <p class="mc-fit"><b>Choose</b> for intermittent motion from steady rotation. <b>Avoid</b> at high speed (impact at the slot entry).</p></article>
+
+    <article class="mc-card" id="worm"><h3>Worm drive</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A screw-shaped worm meshing with a toothed wheel at right angles">
+        <polygon class="d-plastic2" points="132.9,47.1 138.0,48.3 138.0,51.7 132.9,52.9 132.5,55.7 137.1,58.2 136.2,61.4 131.0,61.3 129.9,63.9 133.7,67.5 132.0,70.4 127.0,68.9 125.3,71.2 128.0,75.7 125.7,78.0 121.2,75.3 118.9,77.0 120.4,82.0 117.5,83.7 113.9,79.9 111.3,81.0 111.4,86.2 108.2,87.1 105.7,82.5 102.9,82.9 101.7,88.0 98.3,88.0 97.1,82.9 94.3,82.5 91.8,87.1 88.6,86.2 88.7,81.0 86.1,79.9 82.5,83.7 79.6,82.0 81.1,77.0 78.8,75.3 74.3,78.0 72.0,75.7 74.7,71.2 73.0,68.9 68.0,70.4 66.3,67.5 70.1,63.9 69.0,61.3 63.8,61.4 62.9,58.2 67.5,55.7 67.1,52.9 62.0,51.7 62.0,48.3 67.1,47.1 67.5,44.3 62.9,41.8 63.8,38.6 69.0,38.7 70.1,36.1 66.3,32.5 68.0,29.6 73.0,31.1 74.7,28.8 72.0,24.3 74.3,22.0 78.8,24.7 81.1,23.0 79.6,18.0 82.5,16.3 86.1,20.1 88.7,19.0 88.6,13.8 91.8,12.9 94.3,17.5 97.1,17.1 98.3,12.0 101.7,12.0 102.9,17.1 105.7,17.5 108.2,12.9 111.4,13.8 111.3,19.0 113.9,20.1 117.5,16.3 120.4,18.0 118.9,23.0 121.2,24.7 125.7,22.0 128.0,24.3 125.3,28.8 127.0,31.1 132.0,29.6 133.7,32.5 129.9,36.1 131.0,38.7 136.2,38.6 137.1,41.8 132.5,44.3"/>
+        <circle class="d-metal" cx="100" cy="50" r="6"/>
+        <rect class="d-plastic" x="24" y="90" width="160" height="32" rx="8"/>
+        <path class="d-thin" d="M34 92 L44 120"/><path class="d-thin" d="M46 92 L56 120"/><path class="d-thin" d="M58 92 L68 120"/><path class="d-thin" d="M70 92 L80 120"/><path class="d-thin" d="M82 92 L92 120"/><path class="d-thin" d="M94 92 L104 120"/><path class="d-thin" d="M106 92 L116 120"/><path class="d-thin" d="M118 92 L128 120"/><path class="d-thin" d="M130 92 L140 120"/><path class="d-thin" d="M142 92 L152 120"/><path class="d-thin" d="M154 92 L164 120"/><path class="d-thin" d="M166 92 L176 120"/>
+        <rect class="d-metal" x="8" y="102" width="200" height="8" rx="3"/>
+        <text class="t-xs" x="196" y="92">worm</text><text class="t-xs" x="146" y="56">wheel</text>
+        <text class="t-xs" x="146" y="20">ratio = teeth ÷ starts</text>
+        <text class="t-xs" x="14" y="146">single start: usually self-locking</text>
+      </svg><figcaption><b>Figure 40.</b> A worm turns a wheel at right angles with a large reduction in one stage. With a single start the wheel cannot drive the worm back.</figcaption></figure>
+      <p><b>Use:</b> winches, tilt and pan heads, valves, anything that must hold its position.</p>
+      <ul class="mc-spec"><li>Ratio = wheel teeth ÷ worm starts (30 teeth, one start = 30 : 1)</li><li>Self-locking when the lead angle is below the friction angle: single-start worms usually are</li><li>High sliding friction: PETG or nylon worm, grease, thrust washers at both ends</li></ul>
+      <p class="mc-fit"><b>Choose</b> for big reductions that hold. <b>Avoid</b> where efficiency matters.</p></article>
+
+    <article class="mc-card" id="cam-follower"><h3>Cam and follower</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="An eccentric disc on a shaft pushes a follower rod up and down in a guide">
+        <circle class="d-plastic" cx="100" cy="100" r="36"/>
+        <circle class="d-metal" cx="112" cy="104" r="6"/>
+        <rect class="d-plastic2" x="88" y="14" width="24" height="52" rx="3"/>
+        <rect class="d-surface2" x="70" y="26" width="10" height="34"/><rect class="d-surface2" x="120" y="26" width="10" height="34"/>
+        <text class="t-xs" x="140" y="40">lift = 2 × offset</text><text class="t-xs" x="140" y="56">pressure angle &lt; 30°</text><text class="t-xs" x="140" y="72">follower tip r ≥ 3</text>
+      </svg><figcaption><b>Figure 41.</b> The cam profile sets the follower's motion; an eccentric disc gives a smooth up-and-down.</figcaption></figure>
+      <p><b>Use:</b> valves, timed pushers, kinetic sculptures, clamps.</p>
+      <ul class="mc-spec"><li>Keep the pressure angle under 30° or the follower binds in its guide</li><li>Follower guide clearance 0.3 mm; a roller tip (small bearing) cuts wear</li></ul>
+      <p class="mc-fit"><b>Choose</b> for a set motion profile. More: <a href="design-patterns.html#cam">cam pattern</a>.</p></article>
+
+    <article class="mc-card" id="crank-slider"><h3>Crank and slider</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A rotating crank disc drives a connecting rod that pushes a slider back and forth in a guide">
+        <circle class="d-plastic2" cx="60" cy="80" r="34"/>
+        <circle class="d-metal" cx="60" cy="80" r="5"/><circle class="d-metal" cx="80" cy="58" r="5"/>
+        <path class="k-orange" d="M80 58 L170 80" style="stroke-width:7"/>
+        <rect class="d-surface2" x="150" y="56" width="100" height="6"/><rect class="d-surface2" x="150" y="98" width="100" height="6"/>
+        <rect class="d-plastic" x="166" y="64" width="44" height="32" rx="3"/>
+        <circle class="d-metal" cx="170" cy="80" r="5"/>
+        <text class="t-xs" x="104" y="130">stroke = 2 × crank radius</text>
+      </svg><figcaption><b>Figure 42.</b> A crank turns continuous rotation into a back-and-forth stroke, or the reverse.</figcaption></figure>
+      <p><b>Use:</b> pumps, shakers, walking toys, reciprocating cutters.</p>
+      <ul class="mc-spec"><li>Rod ≥ 3 × crank radius keeps the side load on the slider low</li><li>Steel pins at both rod ends; slider guide at least as long as it is wide (see the <a href="#binding">binding ratio</a>)</li></ul>
+      <p class="mc-fit"><b>Choose</b> for steady reciprocation. <b>Avoid</b> at high speed without balancing.</p></article>
+
+    <article class="mc-card" id="ball-joint"><h3>Ball-and-socket joint</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A ball on a stem held in a slotted socket that covers more than half of the ball">
+        <rect class="d-plastic2" x="70" y="76" width="120" height="58" rx="6"/>
+        <path class="d-plastic2" d="M86 76 A 44 44 0 0 1 174 76 Z"/>
+        <circle class="d-plastic" cx="130" cy="74" r="32"/>
+        <rect class="d-plastic" x="122" y="10" width="16" height="40"/>
+        <path class="d-surface" d="M126 76 H134 V134 H126 Z"/>
+        <text class="t-xs" x="170" y="40">socket covers</text><text class="t-xs" x="170" y="54">60–70 % of ball</text>
+        <text class="t-xs" x="14" y="146">3–4 slits let it snap on and grip</text>
+      </svg><figcaption><b>Figure 43.</b> A slotted socket springs over the ball and grips it; the interference sets the friction that holds the angle.</figcaption></figure>
+      <p><b>Use:</b> articulated arms, phone and camera holders, figures, adjustable lamps.</p>
+      <ul class="mc-spec"><li>Ball Ø 10–20 mm; socket bore 0.1–0.2 mm under the ball for friction, or +0.3 mm for free movement</li><li>A clamp ring or screw on the socket gives adjustable friction</li><li>Print-in-place version: 0.3–0.4 mm gap, socket printed around the ball</li></ul>
+      <p class="mc-fit"><b>Choose</b> for adjustment in every direction. <b>Avoid</b> for heavy loads far from the joint.</p></article>
+
+    <article class="mc-card" id="shaft-hub"><h3>Shaft-to-hub connections</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Three hub cross-sections: a D-shaped bore with a flat, a hexagonal bore, and a round bore with a slit and clamping screw">
+        <circle class="d-plastic" cx="48" cy="70" r="30"/><path class="d-metal" d="M38 60 A 14 14 0 1 1 38 80 Z" transform="rotate(90 48 70)"/>
+        <circle class="d-plastic" cx="130" cy="70" r="30"/><path class="d-metal" d="M118 70 L124 60 H136 L142 70 L136 80 H124 Z"/>
+        <circle class="d-plastic" cx="212" cy="70" r="30"/><circle class="d-metal" cx="212" cy="70" r="12"/><rect class="d-surface" x="210" y="82" width="4" height="18"/><rect class="d-metal2" x="190" y="90" width="44" height="5"/>
+        <text class="t-xs t-c" x="48" y="122">D-flat</text><text class="t-xs t-c" x="130" y="122">hex</text><text class="t-xs t-c" x="212" y="122">split clamp</text>
+      </svg><figcaption><b>Figure 44.</b> Three ways to make a printed hub turn with its shaft: a matching flat, a hex, or a clamp that squeezes a round shaft.</figcaption></figure>
+      <p><b>Use:</b> knobs, pulleys, gears and wheels on motor or steel shafts.</p>
+      <ul class="mc-spec"><li>D-flat: copy the shaft's flat, add 0.1–0.2 mm clearance and a set screw against the flat</li><li>Hex: printed across-flats + 0.2 mm; strong and easy to print</li><li>Split clamp: bore + 0.2 mm, 1–2 mm slit, M3 screw with a nut or insert</li><li>Hub wall ≥ 3 mm; never rely on a press fit alone for torque</li></ul>
+      <p class="mc-fit"><b>Choose</b> the clamp for round shafts, the flat or hex when the shaft has one.</p></article>
+  </div>
+
+  <h2 id="clamps">🔧 Clamps and adjusters</h2>
+  <p>Clamps hold something by squeezing; adjusters let the user set a position and lock it. They all convert a small, comfortable hand force into a large clamping force through a lever, a wedge, a cam or a thread, so their parts see high local stress. Put metal (pins, screws, inserts) where the force concentrates and keep the plastic in compression.</p>
+
+  <div class="mc-grid">
+    <article class="mc-card" id="cam-clamp"><h3>Cam-lever clamp</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="An eccentric cam on a lever pivots about an off-center pin and presses down on the workpiece">
+        <rect class="d-surface2" x="20" y="112" width="220" height="24" rx="3"/>
+        <rect class="d-plastic2" x="40" y="96" width="120" height="16" rx="2"/>
+        <circle class="d-plastic" cx="96" cy="62" r="34"/>
+        <circle class="d-metal" cx="96" cy="52" r="5"/>
+        <path class="k-orange" d="M96 62 L210 28" style="stroke-width:10"/>
+        <text class="t-xs" x="170" y="60">lever</text>
+        <text class="t-xs" x="14" y="24">travel = 2 × offset e</text>
+        <text class="t-xs" x="172" y="74">self-locks if</text><text class="t-xs" x="172" y="88">e &lt; μ · R</text>
+      </svg><figcaption><b>Figure 45.</b> The pin sits off the cam's center; rotating the lever raises the contact point by up to twice that offset, and friction holds it when e is small enough.</figcaption></figure>
+      <p><b>Use:</b> quick-release clamps, jig hold-downs, axle locks, bike-style quick releases.</p>
+      <ul class="mc-spec"><li>Offset e 2–4 mm on a 15–20 mm cam radius R; with plastic (μ ≈ 0.3) it self-locks while e &lt; 0.3 R</li><li>Steel pin Ø 4–6 mm; cam printed flat with ≥ 4 walls</li><li>Adjust the clamp height with a thread or shims; the cam only gives the last few mm</li></ul>
+      <p class="mc-fit"><b>Choose</b> for fast, repeatable clamping. <b>Avoid</b> on parts that vibrate a lot: friction alone holds it.</p></article>
+
+    <article class="mc-card" id="split-clamp"><h3>Split (pinch) clamp</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A printed block with a round bore around a rod, a slit from the bore to the edge and a screw across the slit">
+        <rect class="d-plastic" x="60" y="20" width="140" height="110" rx="10"/>
+        <circle class="d-metal" cx="130" cy="64" r="26"/>
+        <rect class="d-surface" x="127" y="90" width="6" height="40"/>
+        <rect class="d-metal2" x="86" y="106" width="88" height="8" rx="2"/>
+        <text class="t-xs" x="14" y="14">bore = rod + 0.2</text>
+        <text class="t-xs" x="204" y="104">M3 screw</text>
+        <text class="t-xs" x="14" y="146">slit 1–2 · nut or insert on one side</text>
+      </svg><figcaption><b>Figure 46.</b> Tightening the screw closes the slit and squeezes the bore around the rod.</figcaption></figure>
+      <p><b>Use:</b> collars, arm joints on tubes, knob hubs, sensor holders on rods.</p>
+      <ul class="mc-spec"><li>Bore = rod + 0.2 mm; slit 1–2 mm; screw as close to the bore as the wall allows</li><li>Thin the material opposite the slit (a relief cut) for even clamping</li><li>Print with the bore axis vertical; screw in a nut pocket or insert</li></ul>
+      <p class="mc-fit"><b>Choose</b> for adjustable grip on round stock. <b>Avoid</b> in PLA under heat: it creeps loose.</p></article>
+
+    <article class="mc-card" id="thumbscrew"><h3>Thumbscrew and knob</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A fluted printed knob with a hex pocket holding the head of a metal bolt">
+        <circle class="d-plastic" cx="90" cy="74" r="50"/>
+        <circle class="d-surface" cx="90" cy="24" r="7"/><circle class="d-surface" cx="140" cy="74" r="7"/><circle class="d-surface" cx="90" cy="124" r="7"/><circle class="d-surface" cx="40" cy="74" r="7"/><circle class="d-surface" cx="125" cy="39" r="7"/><circle class="d-surface" cx="125" cy="109" r="7"/><circle class="d-surface" cx="55" cy="109" r="7"/><circle class="d-surface" cx="55" cy="39" r="7"/>
+        <path class="d-metal" d="M75 74 L82 61 H98 L105 74 L98 87 H82 Z"/>
+        <text class="t-xs" x="160" y="50">hex pocket</text><text class="t-xs" x="160" y="64">= AF + 0.2–0.3</text>
+        <text class="t-xs" x="160" y="100">knob Ø 15–30</text><text class="t-xs" x="160" y="114">with flutes</text>
+      </svg><figcaption><b>Figure 47.</b> A bolt head or nut trapped in a hex pocket turns with the knob; flutes or knurling give the grip.</figcaption></figure>
+      <p><b>Use:</b> tool-free adjusters, lids, clamps, the screw of a <a href="#prong-mount">prong mount</a>.</p>
+      <ul class="mc-spec"><li>Hex pocket = across-flats + 0.2–0.3 mm; glue or press the head in</li><li>Knob Ø about 4–6 × the thread size (M5: 20–30 mm); flutes 2–3 mm</li><li>Print the knob flat, pocket facing up</li></ul>
+      <p class="mc-fit"><b>Choose</b> for anything adjusted by hand. Hardware sizes: <a href="joints-and-fasteners.html#bolted">bolted joints</a>.</p></article>
+
+    <article class="mc-card" id="wedge"><h3>Wedge and taper lock</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Two wedges with a shallow taper slide against each other; pushing one in spreads the parts apart and locks by friction">
+        <rect class="d-surface2" x="20" y="20" width="220" height="16"/><rect class="d-surface2" x="20" y="114" width="220" height="16"/>
+        <path class="d-plastic" d="M40 36 H220 V60 L40 80 Z"/>
+        <path class="d-plastic2" d="M40 84 L220 64 V114 H40 Z"/>
+        <path class="d-ink arrow" d="M14 96 H36"/>
+        <text class="t-xs" x="120" y="146">taper 3–8°: self-locking</text>
+      </svg><figcaption><b>Figure 48.</b> A shallow taper turns a small push into a large spreading force and stays put by friction.</figcaption></figure>
+      <p><b>Use:</b> leveling feet, drawer and door wedges, tool holders that grip by taper, shaft locks.</p>
+      <ul class="mc-spec"><li>Self-locking when the taper angle is below the friction angle (about 17° for μ ≈ 0.3); 3–8° is safe</li><li>Shallower tapers multiply force more but need more travel</li><li>Print the wedge faces as side walls, not as stair-stepped top surfaces</li></ul>
+      <p class="mc-fit"><b>Choose</b> for simple, strong, tool-free locking. <b>Avoid</b> where frequent release is needed: tapers stick.</p></article>
+
+    <article class="mc-card" id="spring-clamp"><h3>Spring clamp</h3>
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="Two jaws on a central pivot are pushed closed by a printed C-shaped spring between the handles">
+        <path class="d-plastic" d="M20 50 L130 70 L150 60 L240 34 V48 L150 74 L130 80 L20 64 Z"/>
+        <path class="d-plastic2" d="M20 104 L130 84 L150 94 L240 118 V104 L150 80 L130 76 L20 90 Z"/>
+        <circle class="d-metal" cx="140" cy="77" r="6"/>
+        <path class="k-orange" d="M200 44 C 232 60 232 94 200 110" style="stroke-width:5;fill:none"/>
+        <text class="t-xs" x="20" y="34">jaws</text><text class="t-xs" x="150" y="140">printed spring</text>
+      </svg><figcaption><b>Figure 49.</b> Squeezing the handles opens the jaws; a printed C-spring (or an O-ring) closes them.</figcaption></figure>
+      <p><b>Use:</b> glue-up clamps, bag clips, cable and hose holders, spool clips.</p>
+      <ul class="mc-spec"><li>Steel pin as the pivot; the spring printed flat, 1.2–2 mm thick, sized by its strain</li><li>PLA springs relax within hours under load (creep): use PETG, nylon or a rubber band</li><li>TPU pads on the jaws for grip</li></ul>
+      <p class="mc-fit"><b>Choose</b> for light, quick clamping. <b>Avoid</b> for sustained high force: use a screw.</p></article>
+  </div>
+
+  <h2 id="springs">🚀 Springs and flexures</h2>
+  <p>A printed spring is a beam that bends within its strain limit. It gives you return motion, preload and click feel without extra parts, but it creeps: a printed spring held deflected for days loses part of its force, PLA most and nylon or PETG less. Use printed springs for motions that return to rest, and metal springs for anything held loaded.</p>
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 800 210" role="img" aria-label="Four printed spring types: a cantilever leaf, a zig-zag spring, a flat spiral spring and a bistable snap-through beam with two stable positions">
+      <rect class="d-plastic2" x="20" y="40" width="20" height="110"/><rect class="d-plastic" x="40" y="88" width="140" height="10"/><path class="d-ink arrow" d="M176 60 V84"/>
+      <text class="t-sm t-c t-b" x="100" y="190">Leaf (cantilever)</text>
+      <rect class="d-plastic2" x="220" y="40" width="20" height="110"/>
+      <path class="k-orange" d="M240 95 H256 V55 H272 V135 H288 V55 H304 V135 H320 V55 H336 V95 H356" style="stroke-width:5;fill:none"/>
+      <rect class="d-plastic2" x="356" y="40" width="20" height="110"/>
+      <text class="t-sm t-c t-b" x="298" y="190">Zig-zag</text>
+      <path class="k-orange" d="M500 95 m -6 0 a 6 6 0 1 1 12 0 a 12 12 0 1 1 -24 0 a 18 18 0 1 1 36 0 a 24 24 0 1 1 -48 0 a 30 30 0 1 1 60 0 a 36 36 0 1 1 -72 0" style="stroke-width:4;fill:none"/>
+      <text class="t-sm t-c t-b" x="500" y="190">Spiral (rotary)</text>
+      <rect class="d-plastic2" x="610" y="80" width="14" height="40"/><rect class="d-plastic2" x="766" y="80" width="14" height="40"/>
+      <path class="k-orange" d="M624 100 Q 695 50 766 100" style="stroke-width:5;fill:none"/>
+      <path class="k-gray" d="M624 100 Q 695 150 766 100" style="stroke-width:3;fill:none;stroke-dasharray:6 4"/>
+      <text class="t-sm t-c t-b" x="695" y="190">Bistable (snap-through)</text>
+    </svg>
+    <figcaption><b>Figure 50.</b> Four spring shapes. All of them bend in the layer plane: print them lying flat so the layers run along the bending beams.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Spring</th><th>Motion</th><th>Typical use</th><th>Design rule</th></tr></thead>
+    <tbody>
+      <tr><td>Leaf (cantilever)</td><td>Short linear</td><td>Buttons, detent arms, latch preload</td><td>Stiffness k = 3 E I / L³ with I = b h³ / 12; strain ε = 1.5 h y / L² (as a snap-fit). See <a href="design-patterns.html#flexure">spring and flexure</a>.</td></tr>
+      <tr><td>Zig-zag</td><td>Long linear</td><td>Return springs, soft preload, compliant feet</td><td>Many short beams in series: travel adds up, strain per bend stays low. Round every corner (r ≥ 1 mm).</td></tr>
+      <tr><td>Spiral</td><td>Rotary</td><td>Self-closing lids, return knobs, wind-up toys</td><td>Long thin strip (0.8–1.2 mm) in 3–6 turns; check the strain at the inner end where the radius is smallest.</td></tr>
+      <tr><td>Bistable</td><td>Snap between two positions</td><td>Switches, clicky buttons, grippers that stay open or shut</td><td>A pre-curved or pre-compressed beam between rigid supports; the force peaks between the two stable states. Prototype it: small changes in thickness change the snap a lot.</td></tr>
+      <tr><td>Compliant mechanism</td><td>Guided motion without joints</td><td>Grippers, tweezers, amplifiers</td><td>Thin hinges (0.8–1.2 mm) between rigid links; see <a href="design-patterns.html#compliant">compliant mechanism</a>.</td></tr>
+    </tbody></table></div>
+
+  <div class="callout warn"><span class="callout-title">Creep</span><p>A printed spring that is held deflected loses force over hours and days, faster when warm. A PLA clip on a shelf may be loose a week later; the same clip in PETG or nylon holds much longer. If a spring must stay loaded, use a metal spring and print only its seats.</p></div>
+
+  <h2 id="testing">🚀 Testing a mechanism before you commit</h2>
+  <ol class="steps">
+    <li><strong>Print only the joint.</strong>Cut the hinge, latch or slide out of the model with a few millimeters of surrounding material. It takes minutes instead of hours and shows whether the fit is right.</li>
+    <li><strong>Print variants side by side.</strong>Three copies with the key clearance at −0.1, ±0 and +0.1 mm, or the snap undercut at three depths. Label them on the part.</li>
+    <li><strong>Cycle it.</strong>Open and close a hinge, snap a latch or slide a drawer 50–100 times. Wear, whitening at bend roots and loosening show up quickly.</li>
+    <li><strong>Load it the wrong way.</strong>Pull a lid sideways, push a slider off-center, drop the part. Mechanisms fail through the load you did not design for.</li>
+    <li><strong>Leave it loaded and warm.</strong>A day in a warm car or near a window shows creep in clips and springs before your users do.</li>
+    <li><strong>Record the winner.</strong>Write the working clearance or undercut into the CAD parameters, per material and nozzle (see <a href="parametric-cad-workflow.html">Parametric CAD workflow</a>).</li>
+  </ol>
+
+  <h2 id="mistakes">⚠️ Common mistakes</h2>
+  <ul>
+    <li><b>Hinge axis vertical.</b> Knuckles printed as stacked discs split along the layers the first time the lid is levered. Keep hinge axes parallel to the plate.</li>
+    <li><b>Flexing parts that bend across layers.</b> Snap arms, clips, springs and living hinges must bend within the layer plane.</li>
+    <li><b>Printed pins and shafts under load.</b> A 3 mm steel rod is many times stiffer and stronger than a printed pin of the same size, and costs almost nothing.</li>
+    <li><b>Loosening a fit to cure binding.</b> A slider that jams needs a longer guide, not more play.</li>
+    <li><b>No end stops.</b> Hinges, slides and levers without stops are overloaded at the end of travel.</li>
+    <li><b>PLA in warm or long-loaded mechanisms.</b> It creeps and softens near 55–60 °C; use PETG, ABS/ASA or nylon.</li>
+  </ul>
+
+  <h2 id="takeaways">Key takeaways</h2>
+  <ul>
+    <li>Pick the mechanism from the motion and the closing behavior you need, then size it with the shared rules: fit classes, print-in-place gaps and strain limits.</li>
+    <li>Orientation decides more than dimensions: hinge axes parallel to the plate, anything that flexes bends within the layers.</li>
+    <li>Let metal do what plastic does badly: pins, shafts, threads and long-loaded springs.</li>
+    <li>Sliders jam from geometry (d &lt; L / 2μ), not from tight fits.</li>
+    <li>Test the joint alone, in variants, and cycle it before printing the whole part.</li>
+  </ul>
+
+</main>
+</body>
+</html>

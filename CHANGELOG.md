@@ -5,6 +5,7 @@ All notable changes to the Compendium. Format: [Keep a Changelog](https://keepac
 ## [Unreleased]
 
 ### Fixed
+- Advanced techniques: "0.6 mm (2 layers)" over an embedded magnet is 3 layers at 0.2 mm.
 - Removed a stray UTF-8 byte-order mark at the start of the AMS 2 Pro page.
 - AMS 2 Pro drying chart: the 65 °C limit line was drawn at 60 °C, which made PETG look as if it could not be dried in the unit.
 - Cheat-sheet nozzle temperature chart: bars for PETG, ABS/ASA, nylon and PC sat 10–20 °C below the values in the table beside them; the axis now runs 180–300 °C.
@@ -21,6 +22,7 @@ All notable changes to the Compendium. Format: [Keep a Changelog](https://keepac
 - Drying calculator: TPU 95A may be dried at Bambu's 70 °C without a warning; PP drying time 4 h.
 
 ### Added
+- Mechanism catalog (Part 5 · Design): hinges, latches and catches, mounts, slides and guides, rotary and indexing mechanisms, clamps and adjusters, springs and flexures. Each entry has a diagram, starting dimensions, print orientation, material and when to choose it, plus a selector table and the binding ratio for sliders. Linked from Joints & fasteners, Design patterns and Start here.
 - `scripts/check_charts.py`, a review aid that flags charts whose bars or ticks do not match their own scale.
 - `docs/numeric-review.md`, the log of the review of numeric guidance: method, sources, every change and the items left open.
 
