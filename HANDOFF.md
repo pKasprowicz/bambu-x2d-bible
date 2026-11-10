@@ -13,14 +13,14 @@ A zero-build static site (plain HTML/CSS/JS, inline SVG, no external assets) for
 | 2 · Materials | 5 | Overview, PLA/PETG, engineering, flexibles, drying |
 | 3 · Software | 5 | Slicers, settings, CAD, meshes, G-code/firmware |
 | 4 · Techniques | 9 | First layer … troubleshooting gallery, maintenance |
-| 5 · Design (DfAM) | 6 | Principles, tolerances, joints, strength, patterns, parametric CAD |
+| 5 · Design (DfAM) | 7 | Principles, tolerances, joints, strength, patterns, mechanism catalog, parametric CAD |
 | 6 · Bambu X2D + AMS 2 Pro | 11 | Overview, hardware, AMS 2 Pro, setup, dual-nozzle, compatibility, settings, chamber, TPU, maintenance, recipes |
 | 7 · Exercises | 8 | Levels 1–4, X2D challenges (X-1…X-12), quizzes, models gallery |
 | `exercises/models/*.scad` | 14 | Parametric OpenSCAD test models |
 | 8 · Tools | 3 | Calculators, material picker, visual lab (animations) |
 | 9 · Reference | 6 | Glossary (219 terms), cheat sheets, FAQ (120 Q), applications, economics & ethics, resources |
 
-Totals at last check: **62 pages, ~276k words, 662 SVG figures**, `check_site.py` → 0 errors, 1 warning (start-here has fewer figures than the 4+ target; intentional).
+Totals at last check: **63 pages, ~283k words, 712 SVG figures**, `check_site.py` → 0 errors, 1 warning (start-here has fewer figures than the 4+ target; intentional).
 
 ## Architecture
 
@@ -49,7 +49,7 @@ Released editions: **v1.0.0** (first edition) and **v1.0.1** (muted colour palet
 - **OpenSCAD 2021.01** installed; all 14 `exercises/models/*.scad` (plus the `part` variants of `parametric_box`, `snap_fit_test`, `tolerance_gauge`) and the 3 OpenSCAD snippets in pages compile with no warnings; STLs are valid solids. Python snippets (CadQuery/build123d) parse.
 - **Calculators:** all 17 load; outputs for 10 of them hand-checked against the formulas (filament, cost, time, flow, spool, beam, motion, e-steps, Z, flush); bad/empty input shows a message, never NaN. Material picker rankings respond sensibly.
 - **Fixed:** quiz answers sat mostly in option 2 (now shuffled at load in `site.js`); visual-lab wall builder NaN at zero material; header overflowed and the search icon vanished on phones; picker chips and cheat-sheet/pattern grids overflowed narrow screens; dead Formnext link; two duplicated page-local CSS rules moved to `style.css`.
-- **Layout sweep:** all 62 pages have no horizontal overflow at 320, 375 and 414 px.
+- **Layout sweep:** all 62 pages (at the time) have no horizontal overflow at 320, 375 and 414 px.
 - **External links:** 43 checked; all return 200 or a bot-blocking 403.
 - **X2D specs** (build volumes, 300/120/65 degC, size/weight, speeds, power, cameras, screen) match the spec sheet at bambulab.com/en/x2d/specs. `wiki.bambulab.com` could not be fetched directly (HTTP 402).
 
@@ -63,6 +63,7 @@ Released editions: **v1.0.0** (first edition) and **v1.0.1** (muted colour palet
 ## Since v1.0.1 (unreleased)
 
 - Removed the UTF-8 BOM from `x2d/ams-2-pro.html` (no other HTML file has one).
+- New page `design/mechanisms.html`: a catalog of 50 mechanisms by job (hinges, latches, mounts, slides, rotary, clamps, springs), checked in Chromium (no errors, no overflow at 375 px, light and dark).
 - Numeric review (seven batches): wrong charts, drying figures, insert and snap-fit calculator data, fit classes and first aid fixed; see `CHANGELOG.md` and `docs/numeric-review.md`.
 
 ## Next steps

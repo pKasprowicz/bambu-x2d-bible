@@ -66,6 +66,7 @@ window.C3D_NAV = {
         { f: "design/joints-and-fasteners.html", t: "Joints & fasteners", d: "Snap fits, screws, heat-set inserts, threads, hinges", level: 2 },
         { f: "design/strength-and-orientation.html", t: "Strength & orientation", d: "Anisotropy, load paths, infill, stress concentrations", level: 2 },
         { f: "design/design-patterns.html", t: "Design patterns & recipes", d: "Print-in-place, enclosures, text, splitting, organizers", level: 2 },
+        { f: "design/mechanisms.html", t: "Mechanism catalog", d: "Hinges, latches, mounts, slides, rotary drives, clamps, springs", level: 2 },
         { f: "design/parametric-cad-workflow.html", t: "Parametric CAD workflow", d: "Sketch-to-part habits, OpenSCAD & CadQuery examples", level: 2 }
       ]
     },
