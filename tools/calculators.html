@@ -313,7 +313,7 @@ s = material shrinkage,  q = printer-quality factor,  e = squish allowance (mm)<
     <!-- ===================== INSERTS ===================== -->
     <div class="tab" data-title="Inserts" data-key="inserts">
       <h4>🔧 Heat-set insert pockets (M2–M8)</h4>
-      <p>Brass heat-set inserts give plastic parts reusable metal threads. You push the insert into a slightly undersized hole with a heated tip; the plastic around it melts, flows into the knurling and re-solidifies. The pocket has to be the right diameter, deep enough to hold the insert plus the displaced plastic, and surrounded by enough wall. The calculator derives all three from the insert's outer diameter and length.</p>
+      <p>Brass heat-set inserts give plastic parts reusable metal threads. You push the insert into a slightly undersized hole with a heated tip; the plastic around it melts, flows into the knurling and re-solidifies. The pocket has to be the right diameter, deep enough to hold the insert plus the displaced plastic, and surrounded by enough wall. The calculator derives all three from the insert's outer diameter and length; by default it uses the hole size recommended for standard brass inserts of each thread size.</p>
       <div class="tool"><h3>Heat-set insert pocket</h3><div class="tool-body">
         <div id="f-inserts"></div>
         <div class="calc-right"><div class="result" id="r-inserts" aria-live="polite"></div>
@@ -335,7 +335,7 @@ s = material shrinkage,  q = printer-quality factor,  e = squish allowance (mm)<
             <text class="t-xs" x="246" y="124">(knurled)</text>
           </svg><figcaption><b>Figure 10.</b> Cross-section: the hole is a little narrower than the insert's outer diameter, 0.5–1 mm deeper than its length, and surrounded by a minimum wall.</figcaption></figure></div>
       </div></div>
-      <div class="calc-formula">hole ⌀      = insert OD − interference         (0.2–0.4 mm typical)
+      <div class="calc-formula">hole ⌀      = insert OD − interference         (about 0.4–0.65 mm for standard brass inserts)
 hole depth  = insert length + 0.8 … 1.2 mm
 boss OD     ≥ hole ⌀ + 2 × wall,   wall ≥ max(1.6 mm, 0.4 × insert OD)</div>
       <p><b>Procedure.</b> Preheat the soldering iron with a tip that fits the insert (usually a dedicated insert tip). Set a temperature a little above the plastic's printing minimum, rest the insert on the hole, and let the tip's weight and warmth sink it; stop when the insert is flush with or 0.2 mm below the surface. Do not push hard, which creates bulging walls and tilted inserts. Let the part cool in place before loading the thread. If plastic oozes out of the hole, the hole is too small or the iron too hot.</p>
@@ -1028,23 +1028,24 @@ document.addEventListener("c3d:ready", function () {
 
   /* ---------- 9 · Heat-set inserts ---------- */
   var INS = [
-    { s: "M2", od: 3.2, l: 3.0 }, { s: "M2.5", od: 3.6, l: 4.0 }, { s: "M3", od: 4.6, l: 5.7 }, { s: "M4", od: 5.6, l: 8.1 },
-    { s: "M5", od: 6.4, l: 9.5 }, { s: "M6", od: 8.0, l: 12.7 }, { s: "M8", od: 9.6, l: 12.7 }
+    /* Standard brass inserts (CNC Kitchen-style): od = insert outer diameter, h = maker's recommended hole. */
+    { s: "M2", od: 3.6, l: 3.0, h: 3.2 }, { s: "M2.5", od: 4.6, l: 4.0, h: 4.0 }, { s: "M3", od: 4.6, l: 5.7, h: 4.0 }, { s: "M4", od: 6.3, l: 8.1, h: 5.7 },
+    { s: "M5", od: 7.1, l: 9.5, h: 6.5 }, { s: "M6", od: 8.7, l: 12.7, h: 8.1 }, { s: "M8", od: 10.2, l: 12.7, h: 9.7 }
   ];
   var FAM = [["PLA", "200–220 °C"], ["PETG", "220–240 °C"], ["ABS / ASA", "230–250 °C"], ["PC", "240–260 °C"], ["Nylon (PA)", "230–260 °C"]];
   mount("inserts", [
     { id: "s", t: "sel", l: "Thread size", o: INS.map(function (x, i) { return [i, x.s]; }), v: 2 },
     { id: "odo", t: "num", l: "Insert OD override (0 = typical)", u: "mm", v: 0, min: 0, step: 0.05 },
     { id: "lo", t: "num", l: "Insert length override (0 = typical)", u: "mm", v: 0, min: 0, step: 0.1 },
-    { id: "if", t: "num", l: "Interference", u: "mm", v: 0.3, min: 0, step: 0.05, h: "How much narrower the hole is than the insert OD." },
+    { id: "if", t: "num", l: "Interference override (0 = maker's typical)", u: "mm", v: 0, min: 0, step: 0.05, h: "How much narrower the hole is than the insert OD. Leave at 0 to use the typical value for this size (about 0.4–0.65 mm)." },
     { id: "ex", t: "num", l: "Extra depth for melted plastic", u: "mm", v: 1, min: 0, step: 0.1 },
     { id: "fam", t: "sel", l: "Plastic", o: FAM.map(function (x, i) { return [i, x[0]]; }), v: 0 }
   ], function (p) {
-    var I = INS[+p.s], od = p.odo > 0 ? p.odo : I.od, len = p.lo > 0 ? p.lo : I.l, hole = od - p.if, depth = len + p.ex, wall = Math.max(1.6, 0.4 * od), boss = hole + 2 * wall;
+    var I = INS[+p.s], od = p.odo > 0 ? p.odo : I.od, len = p.lo > 0 ? p.lo : I.l, itf = p.if > 0 ? p.if : I.od - I.h, hole = od - itf, depth = len + p.ex, wall = Math.max(1.6, 0.4 * od), boss = hole + 2 * wall;
     setT("hs-d", "⌀ " + fmt(hole, 2) + " mm"); setT("hs-dep", "depth"); setT("hs-dep2", fmt(depth, 1) + " mm"); setT("hs-w", "wall ≥ " + fmt(wall, 1) + " mm");
     var rows = [["Hole diameter", fmt(hole, 2) + " mm"], ["Hole depth", fmt(depth, 1) + " mm"], ["Min wall around hole", fmt(wall, 1) + " mm"], ["Min boss outer ⌀", fmt(boss, 1) + " mm"],
-      ["Soldering-tip temperature", FAM[+p.fam][1]], ["Insert length / OD", fmt(len, 1) + " / " + fmt(od, 1) + " mm"]];
-    return R("⌀ " + fmt(hole, 2) + " mm × " + fmt(depth, 1) + " mm", rows) + flag(p.if < 0.15 ? "warn" : "ok", p.if < 0.15 ? "Very little interference: the insert may spin out when torqued." : "Tip: press slowly and stop when the insert is flush; let it cool before loading.");
+      ["Soldering-tip temperature", FAM[+p.fam][1]], ["Insert length / OD", fmt(len, 1) + " / " + fmt(od, 1) + " mm"], ["Interference used", fmt(itf, 2) + " mm"]];
+    return R("⌀ " + fmt(hole, 2) + " mm × " + fmt(depth, 1) + " mm", rows) + flag(itf < 0.15 ? "warn" : "ok", itf < 0.15 ? "Very little interference: the insert may spin out when torqued." : "Tip: press slowly and stop when the insert is flush; let it cool before loading.");
   });
 
   /* ---------- 10 · Snap-fit ---------- */
@@ -1349,8 +1350,8 @@ document.addEventListener("c3d:ready", function () {
   put("tbl-beam", table(["Cross-section (mm)", "Relative stiffness (20 × 4 flat = 1)"], [[20, 4], [20, 6], [20, 8], [20, 12], [40, 4], [4, 20]].map(function (s) {
     return [s[0] + " wide × " + s[1] + " deep" + (s[1] > s[0] ? " (on edge)" : ""), fmt(s[0] * Math.pow(s[1], 3) / (20 * 64), 2)];
   })));
-  put("tbl-inserts", table(["Size", "Insert OD", "Length", "Hole ⌀ (OD − 0.3)", "Hole depth (L + 1)", "Min boss ⌀"], INS.map(function (x) {
-    var hole = x.od - 0.3; return [x.s, x.od + " mm", x.l + " mm", fmt(hole, 2) + " mm", fmt(x.l + 1, 1) + " mm", fmt(hole + 2 * Math.max(1.6, 0.4 * x.od), 1) + " mm"];
+  put("tbl-inserts", table(["Size", "Insert OD", "Length", "Hole ⌀ (maker typical)", "Hole depth (L + 1)", "Min boss ⌀"], INS.map(function (x) {
+    var hole = x.h; return [x.s, x.od + " mm", x.l + " mm", fmt(hole, 2) + " mm", fmt(x.l + 1, 1) + " mm", fmt(hole + 2 * Math.max(1.6, 0.4 * x.od), 1) + " mm"];
   })));
   put("tbl-screws", table(["Size", "Pitch", "Hole fine / medium / coarse", "Socket head ⌀ × height", "Nut AF × thickness", "Pilot (self-tap)"], SCR.map(function (x) {
     return [x.s, x.p, x.f + " / " + x.m + " / " + x.c, x.hd + " × " + x.hh, x.af + " × " + x.nt, x.pil];

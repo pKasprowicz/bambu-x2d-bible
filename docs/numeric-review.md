@@ -68,12 +68,38 @@ Canonical pages: `materials/drying-and-storage.html` for drying, `materials/over
 
 **Checked, no change:** the remaining flags are tables (flush matrix), timelines with deliberately even spacing, categorical axes (wall counts, infill steps, months), UI mock-ups and drawings of test models. CSS bar charts for print time, heat resistance, stiffness and price (log scale) are within a few percent of proportional.
 
+## Batch 3 — X2D settings and recipes (2026-11-10)
+
+**Scope:** every numeric table row and recipe setting on `x2d/settings-and-profiles.html`, `x2d/recipes.html` and `x2d/engineering-and-chamber.html`; the X2D headline figures (build volumes, temperature limits, speeds, accelerations) on every page that quotes them.
+
+**Sources:** `bambulab.com` and `wiki.bambulab.com` are not reachable from the review environment, so figures were checked through search results quoting Bambu's spec sheet, the AMS 2 Pro wiki and distributor spec tables.
+
+**Verified, no change:**
+
+- Build volume 256 × 256 × 260 mm (left/main nozzle only) and 235.5 × 256 × 256 mm (both nozzles): consistent on all 17 pages that quote them, and with distributor spec tables.
+- Limits 300 °C nozzle, 120 °C bed, 65 °C chamber: consistent everywhere.
+- Right (auxiliary) nozzle capped at 200 mm/s and about 1000 mm/s², main 1000 mm/s and 20 000 mm/s²: consistent; the auxiliary limits come from third-party sources, not Bambu's spec page.
+- AMS 2 Pro rotating drying turns the spool 30° every 5 minutes (Bambu wiki, via search).
+- Speed modes 50 / 100 / 124 / 166 %.
+- Recipe settings (layer heights, walls, infill, bed temperatures, hinge clearance, lithophane thickness) agree with the material tables from batch 1 and with common practice.
+
+**Not independently confirmed (left as marked "doc" on the page):** TPU on the X2D at 225 °C nozzle and 30–35 °C bed. Bambu's TPU for AMS datasheet gives 230 °C and 35 °C, so the page's values are in the same range. The X2D PC bed of 100–110 °C was also not found in public sources.
+
+**Fixed (found while checking recipe 14):** heat-set insert hole sizes.
+
+| Where | Was | Now | Why |
+|-------|-----|-----|-----|
+| `tools/calculators.html` insert calculator | Insert ODs for M2, M2.5, M4–M8 were the maker's recommended *hole* sizes; default interference 0.3 mm was then subtracted, so M4 came out 5.3 mm (0.3–0.4 mm too tight) and M3 4.3 mm (0.3 mm too loose) | Real ODs plus the maker's hole per size (M2 3.2, M2.5 4.0, M3 4.0, M4 5.7, M5 6.5, M6 8.1, M8 9.7 mm); interference is an optional override; result shows the interference used | CNC Kitchen insert table: M3 OD 4.6 / hole 4.0, M4 6.3 / 5.6–5.7, M5 7.1 / 6.4–6.5, M6 8.7 / 8.0–8.1, M8 10.2 / 9.7. Tested in Chromium for every size and both overrides. |
+| `techniques/post-processing.html` thread table | Insert holes M3 4.0–4.6, M4 5.6–6.0, M5 6.4–7.0, M6 8.0–8.4 mm; the upper ends equal the insert OD, so the insert would not grip | 4.0–4.2, 5.4–5.7, 6.3–6.5, 7.8–8.1 mm | Agree with the cheat sheet and the design page. |
+| `x2d/recipes.html` recipe 14 | Holes "about 0.2–0.4 mm under the insert's outer diameter" | "the insert maker's size (typically 0.4–0.65 mm under), for example 4.0 mm for a 4.6 mm M3 insert" | Same source. |
+
+**Open:** `design/joints-and-fasteners.html` and `reference/cheat-sheets.html` give slightly different insert ODs and holes for M2.5 and M8 (insert brands differ: some M2.5 inserts share the M3 body, M8 holes range 9.7–10.4 mm). Both already say to check the supplier's datasheet.
+
 ## Next batches
 
 Run `python scripts/check_charts.py` after editing any chart.
 
-1. **X2D settings and recipes** (`x2d/settings-and-profiles.html`, `x2d/recipes.html`, `x2d/engineering-and-chamber.html`): plate and bed temperatures, chamber setpoints, speeds.
-2. **Design numbers** (`design/tolerances-and-fits.html`, `design/joints-and-fasteners.html`, `design/design-patterns.html`): clearances, wall thicknesses, snap-fit strain, heat-set insert holes.
-3. **Slicer settings and speed/cooling** (`software/slicer-settings.html`, `techniques/speed-cooling-quality.html`): volumetric flow, retraction, cooling.
-4. **Safety** (`foundations/safety-and-workspace.html`): emission and temperature claims.
-5. **Calculators**: formulas were hand-checked in the 2026-11-02 QA; re-check default constants (densities, costs per unit) against the material tables.
+1. **Design numbers** (`design/tolerances-and-fits.html`, `design/joints-and-fasteners.html`, `design/design-patterns.html`): clearances, wall thicknesses, snap-fit strain. Heat-set insert holes were done in batch 3.
+2. **Slicer settings and speed/cooling** (`software/slicer-settings.html`, `techniques/speed-cooling-quality.html`): volumetric flow, retraction, cooling.
+3. **Safety** (`foundations/safety-and-workspace.html`): emission and temperature claims.
+4. **Calculators**: formulas were hand-checked in the 2026-11-02 QA; re-check default constants (densities, costs per unit) against the material tables.

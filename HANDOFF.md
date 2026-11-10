@@ -66,7 +66,7 @@ Released editions: **v1.0.0** (first edition) and **v1.0.1** (muted colour palet
 
 ## Next steps
 
-1. Expert review of numeric guidance: in progress, logged in `docs/numeric-review.md`. Batches 1 (material temperatures and drying) and 2 (chart scales, with `scripts/check_charts.py`) are done; the log lists open items and the next batches, starting with the X2D settings and recipes.
+1. Expert review of numeric guidance: in progress, logged in `docs/numeric-review.md`. Batches 1 (material temperatures and drying), 2 (chart scales, with `scripts/check_charts.py`) and 3 (X2D settings and recipes, plus heat-set insert holes) are done; the log lists open items and the next batches, starting with the design numbers.
 2. Optional: expand the shorter pages (cheat sheets ~3.7k words).
 
 ## Git identity

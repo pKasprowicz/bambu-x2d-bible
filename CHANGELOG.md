@@ -12,6 +12,8 @@ All notable changes to the Compendium. Format: [Keep a Changelog](https://keepac
 - Unfilled PC no longer listed as preferring a hardened nozzle.
 - Eight more charts were drawn off their own axes and now read correctly: the filament-compatibility drying chart (65 °C line again drawn at 60 °C), the overhang angle scale, the chamber-temperature and wood-fill colour charts, the moisture and shrinkage bar charts, the moisture-uptake curve and the maximum feed speed chart (y labels made the curves read too slow).
 - Bed-temperature bars: TPU no longer drawn longer than PLA. The smallest-feature bars are now labelled as not to scale.
+- Heat-set insert calculator: most insert outer diameters were actually hole sizes, so M4–M8 holes came out 0.3–0.4 mm too tight and M3 0.3 mm too loose. It now uses each size's real outer diameter and the maker's recommended hole, with interference as an optional override.
+- Heat-set insert holes on the post-processing page no longer run up to the insert's own diameter (M3 was 4.0–4.6 mm, now 4.0–4.2 mm), and the X2D enclosure recipe uses the same guidance.
 
 ### Added
 - `scripts/check_charts.py`, a review aid that flags charts whose bars or ticks do not match their own scale.
