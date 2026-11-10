@@ -4,7 +4,7 @@
 window.C3D_NAV = {
   title: "The 3D Printing Compendium",
   short: "3D Printing Compendium",
-  version: "1.0.1",
+  version: "1.1.0",
   repo: "https://github.com/pKasprowicz/bambu-x2d-bible",
   parts: [
     {
