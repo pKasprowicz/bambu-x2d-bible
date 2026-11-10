@@ -20,7 +20,7 @@ A zero-build static site (plain HTML/CSS/JS, inline SVG, no external assets) for
 | 8 · Tools | 3 | Calculators, material picker, visual lab (animations) |
 | 9 · Reference | 6 | Glossary (219 terms), cheat sheets, FAQ (120 Q), applications, economics & ethics, resources |
 
-Totals at last check: **63 pages, ~283k words, 712 SVG figures**, `check_site.py` → 0 errors, 1 warning (start-here has fewer figures than the 4+ target; intentional).
+Totals at last check (v1.1.0, 2026-11-10): **63 pages, ~288k words, 722 figures**, `check_site.py` → 0 errors, 1 warning (start-here has fewer figures than the 4+ target; intentional).
 
 ## Architecture
 
@@ -42,7 +42,7 @@ Totals at last check: **63 pages, ~283k words, 712 SVG figures**, `check_site.py
 
 GitHub Flow: short branches into `master` via pull request (CI runs the checker), `master` deploys. Numbered editions use `VERSION` + `nav.js` + `CHANGELOG.md` (kept consistent by `check_site.py`); pushing tag `vX.Y.Z` publishes a GitHub Release with an offline zip. Details: `docs/github-flow-and-versioning.md`.
 
-Released editions: **v1.0.0** (first edition) and **v1.0.1** (muted colour palette with `--*-ink` text variants and `--on-brand` button text; version shown in the header and home hero; SVG text fixes for dark mode). See `CHANGELOG.md`.
+Released editions: **v1.0.0** (first edition), **v1.0.1** (muted colour palette with `--*-ink` text variants and `--on-brand` button text; version shown in the header and home hero; SVG text fixes for dark mode) and **v1.1.0** (2026-11-10: mechanism catalog, expanded short pages, numeric review fixes). See `CHANGELOG.md`.
 
 ## QA log (2026-11-02)
 
@@ -60,16 +60,20 @@ Released editions: **v1.0.0** (first edition) and **v1.0.1** (muted colour palet
 3. Remaining page-local `<style>` blocks are namespaced per page (`ts-`, `cs-`, `faq-` ...) and not duplicated; leaving them is fine.
 4. Numeric values are caveated starting points. A systematic review (consistency, manufacturer data, standards, chart scales) was done on 2026-11-10 and is logged in `docs/numeric-review.md`, with the items left open; a printing specialist could still add value there.
 
-## Since v1.0.1 (unreleased)
+## In v1.1.0 (2026-11-10)
 
 - Removed the UTF-8 BOM from `x2d/ams-2-pro.html` (no other HTML file has one).
 - New page `design/mechanisms.html`: a catalog of 50 mechanisms by job (hinges, latches, mounts, slides, rotary, clamps, springs), checked in Chromium (no errors, no overflow at 375 px, light and dark).
+- Expanded pages: cheat sheets (new sheets 15 and 21), first print (preview routine; pause, runout, color change, power cuts), safety (printed parts in use; remote printing).
+- Expanded X2D pages: dual-nozzle (design for two nozzles, measuring the saving), maintenance (recalibration matrix and symptom index added as sections 9–10; later sections renumbered 11–13), filament compatibility (three gates for two-filament jobs), TPU (softer by design).
 - Numeric review (seven batches): wrong charts, drying figures, insert and snap-fit calculator data, fit classes and first aid fixed; see `CHANGELOG.md` and `docs/numeric-review.md`.
 
 ## Next steps
 
-1. Optional: have a printing specialist look at the open items in `docs/numeric-review.md`; spot-check Bambu figures against the Bambu wiki when it is reachable (it was not from the review environment).
-2. Optional: expand the shorter pages (cheat sheets ~3.7k words).
+1. Optional: have a printing specialist look at the open items in `docs/numeric-review.md`; spot-check Bambu figures against the Bambu wiki when it is reachable (it was not from the review environment, and in the 2026-11-10 session the proxy refused bambulab.com and wiki.bambulab.com).
+2. Optional: keep expanding the shorter content pages. Done in v1.1.0: cheat sheets, first print, safety, and the X2D maintenance, filament-compatibility, dual-nozzle and TPU pages. The X2D additions only combine facts already on those pages with general practice. Next candidates by length: `tools/visual-lab.html`, `x2d/setup-and-first-print.html`, `x2d/hardware-tour.html`, `foundations/buying-guide.html`. Navigation pages (home, start-here, tools and exercises index, models gallery) are short by design.
+3. To confirm in Bambu Studio (stated on the dual-nozzle page from general knowledge, not a Bambu source): the slice summary lists flushed and prime-tower amounts, and the preview can color paths by filament.
+4. Open small spreads from the numeric review (PETG/TPU/PET-CF/HIPS drying, PLA bed, PC nozzle top, PVA heat) could be aligned with the canonical drying and overview pages in a PATCH release.
 
 ## Git identity
 

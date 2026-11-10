@@ -402,6 +402,44 @@
     <figcaption><b>Figure 10.</b> A cautious routing guide. Always confirm the exact filament in Bambu’s current table, particularly for the auxiliary nozzle and the track switch.</figcaption>
   </figure>
 
+  <h2 id="pairs">🚀 Can these two filaments share one job?</h2>
+  <p>The matrices answer “can this filament run on this nozzle?”. A two-material job asks a harder question, because both filaments print in the same chamber, in the same part, often touching. Three gates decide it, and the worked examples below fail at different ones.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 300" role="img" aria-label="Three gates for a two-filament job: gate one, each filament is allowed on the nozzle it will use; gate two, both want the same chamber mode; gate three, the pair bonds well enough where they touch, or the design locks them mechanically. Failing any gate means two separate jobs.">
+      <rect class="d-surface" x="20" y="20" width="820" height="260" rx="10"/>
+      <rect class="f-blue" x="40" y="60" width="210" height="110" rx="10"/>
+      <rect class="f-purple" x="300" y="60" width="210" height="110" rx="10"/>
+      <rect class="f-teal" x="560" y="60" width="210" height="110" rx="10"/>
+      <text class="t t-sm t-b t-c" x="145" y="88">1 · Nozzle side</text>
+      <text class="t t-xs t-c" x="145" y="112">each filament allowed on</text><text class="t t-xs t-c" x="145" y="128">the nozzle it will use</text><text class="t t-xs t-c" x="145" y="150">(matrices above)</text>
+      <text class="t t-sm t-b t-c" x="405" y="88">2 · Chamber mode</text>
+      <text class="t t-xs t-c" x="405" y="112">both want cooling,</text><text class="t t-xs t-c" x="405" y="128">or both want heating</text><text class="t t-xs t-c" x="405" y="150">(chamber section)</text>
+      <text class="t t-sm t-b t-c" x="665" y="88">3 · Where they touch</text>
+      <text class="t t-xs t-c" x="665" y="112">the pair bonds, or the</text><text class="t t-xs t-c" x="665" y="128">design locks them</text><text class="t t-xs t-c" x="665" y="150">(or it is a support)</text>
+      <path class="d-ink arrow" d="M250 115 H300"/><path class="d-ink arrow" d="M510 115 H560"/>
+      <path class="d-ink arrow" d="M770 115 H810"/><text class="t t-xs t-b" x="782" y="104">one job</text>
+      <path class="d-dash" d="M145 170 V220 M405 170 V220 M665 170 V220"/>
+      <path class="d-ink" d="M145 220 H665"/>
+      <rect class="f-orange" x="300" y="226" width="210" height="36" rx="8"/>
+      <text class="t t-sm t-b t-c" x="405" y="249">fail → two jobs, assemble</text>
+    </svg>
+    <figcaption><b>Figure 11.</b> Three gates for a two-filament job. Gates 1 and 2 come from Bambu's tables and chamber guidance on this page; gate 3 is general multi-material practice.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Pair (left + right)</th><th>1 · Nozzle side</th><th>2 · Chamber</th><th>3 · Where they touch</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td>PLA + PLA (two colors)</td><td><span class="chip green">OK</span> basic PLA available on both</td><td><span class="chip green">OK</span> both cooling</td><td><span class="chip green">OK</span> same polymer</td><td>One job</td></tr>
+      <tr><td>ABS + Support for ABS</td><td><span class="chip green">OK</span> support available on aux</td><td><span class="chip green">OK</span> both heating</td><td><span class="chip green">OK</span> designed to release</td><td>One job</td></tr>
+      <tr><td>PLA + PETG as support interface</td><td><span class="chip yellow">Care</span> PETG not recommended on aux, so PETG goes left</td><td><span class="chip green">OK</span> both cooling (typical)</td><td><span class="chip green">OK</span> weak bond is the point</td><td>One job, with PETG on the left</td></tr>
+      <tr><td>TPU + PLA housing</td><td><span class="chip green">OK</span> TPU left, PLA right</td><td><span class="chip green">OK</span> both cooling</td><td><span class="chip yellow">Test</span> lock mechanically</td><td>One job, after a peel test</td></tr>
+      <tr><td>PETG-CF + TPU</td><td><span class="chip red">Fail</span> both need the left nozzle</td><td>—</td><td>—</td><td>Two jobs</td></tr>
+      <tr><td>PA6-GF + PLA</td><td><span class="chip green">OK</span> both available</td><td><span class="chip red">Fail</span> heating vs cooling</td><td>—</td><td>Two jobs</td></tr>
+    </tbody>
+  </table></div>
+  <p>Pair bonding tendencies are summarized in the <a href="../techniques/multi-color-and-multi-material.html#compat">multi-material bond matrix</a>. Where a pair bonds poorly and is not meant to separate, design a dovetail, pin or overlap; the <a href="tpu-and-flexibles.html">TPU page</a> shows how for soft-plus-rigid parts.</p>
+
   <h2 id="process">🚀 A repeatable checking routine</h2>
   <p>Because the tables change, a short routine beats memorizing them. Before any job that uses an unfamiliar filament, nozzle or accessory, run through this list:</p>
   <ol class="steps">
@@ -433,6 +471,7 @@
     <li>RFID presets save time; third-party spools need manual type, color and a tested profile.</li>
     <li>Keep separate presets for the aux nozzle because its flow dynamics are calibrated manually.</li>
     <li>When Bambu says “not recommended”, treat it as a real constraint, not a suggestion to override.</li>
+    <li>For a two-filament job, pass three gates: each filament allowed on its nozzle, one chamber mode for both, and a joint that bonds or locks; otherwise print two jobs.</li>
   </ul>
 
 </main>

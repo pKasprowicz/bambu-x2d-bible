@@ -350,6 +350,77 @@
   <h3>Pets and children</h3>
   <p>Treat the printer like a small workshop machine. Keep children and pets out of the room or well away from it when it runs. Hot parts, sharp tools, small pieces that can be swallowed and chemicals (IPA, resin) are the main risks. Keep resin, solvents and tools locked or out of reach, and supervise any child who helps.</p>
 
+  <h2 id="parts-in-use">🍽️ Printed parts in use: food, skin, toys and loads</h2>
+  <p>Most of this page is about the printer. The part that comes off the plate has its own risks, and they are easy to miss because a finished print looks like a molded product. It is not: it is built from layers, it has tiny gaps between them, and it carries traces of everything in the filament and the nozzle.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 300" role="img" aria-label="Magnified cross-section of a printed wall: layer lines form grooves where food residue and bacteria collect; a molded surface next to it is smooth; a food-safe coating fills the grooves.">
+      <rect class="d-surface" x="20" y="20" width="820" height="260" rx="10"/>
+      <text class="t t-b t-c" x="160" y="48">Molded surface</text>
+      <text class="t t-b t-c" x="430" y="48">Printed surface</text>
+      <text class="t t-b t-c" x="700" y="48">Printed + sealed</text>
+      <rect class="d-plastic" x="70" y="70" width="180" height="170" rx="4"/>
+      <g class="d-plastic">
+        <rect x="340" y="70" width="180" height="26" rx="13"/><rect x="340" y="98" width="180" height="26" rx="13"/><rect x="340" y="126" width="180" height="26" rx="13"/><rect x="340" y="154" width="180" height="26" rx="13"/><rect x="340" y="182" width="180" height="26" rx="13"/><rect x="340" y="210" width="180" height="26" rx="13"/>
+      </g>
+      <g class="s-red"><circle cx="344" cy="97" r="3"/><circle cx="345" cy="125" r="3"/><circle cx="343" cy="153" r="3"/><circle cx="346" cy="181" r="3"/><circle cx="344" cy="209" r="3"/></g>
+      <path class="d-ink arrow" d="M300 140 L338 126"/><text class="t t-xs t-r" x="296" y="138">grooves trap</text><text class="t t-xs t-r" x="296" y="152">residue</text>
+      <g class="d-plastic">
+        <rect x="610" y="70" width="180" height="26" rx="13"/><rect x="610" y="98" width="180" height="26" rx="13"/><rect x="610" y="126" width="180" height="26" rx="13"/><rect x="610" y="154" width="180" height="26" rx="13"/><rect x="610" y="182" width="180" height="26" rx="13"/><rect x="610" y="210" width="180" height="26" rx="13"/>
+      </g>
+      <rect class="f-teal" x="598" y="68" width="16" height="170" rx="6"/>
+      <text class="t t-xs" x="560" y="262">coating fills the grooves</text>
+      <text class="t t-xs t-c" x="160" y="262">nothing to hide in</text>
+      <text class="t t-xs t-c" x="430" y="262">hard to clean, cannot be sterilized by heat</text>
+    </svg>
+    <figcaption><b>Figure 8.</b> Why “food-safe filament” is not the same as a food-safe part. The material may be fine; the layered surface is the problem, and most printing plastics soften long before dishwasher or boiling temperatures.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Use</th><th>Main risks</th><th>Lower-risk approach</th></tr></thead>
+    <tbody>
+      <tr><td>Food and drink contact</td><td>Bacteria in layer grooves; additives and colorants of unknown safety; traces from brass nozzles (some brass alloys contain small amounts of lead); softening when washed hot</td><td>Single use or brief dry contact only (cookie cutters); filament with a food-contact declaration for your region; stainless-steel nozzle used only for it; seal with a coating rated for food contact; or use a printed mold to cast a food-grade material</td></tr>
+      <tr><td>Skin contact (wearables, grips, straps)</td><td>Rough edges, pinching, irritation from some additives; sweat and heat</td><td>Smooth or sand the edges; TPU or PETG for flexible contact; stop using if skin reacts</td></tr>
+      <tr><td>Toys and children's items</td><td>Small parts that can be swallowed; brittle parts that snap into sharp edges; paint and coatings</td><td>Large, chunky shapes; tough materials (PETG, ABS) and solid walls; no small detachable pieces for young children. Toys sold or given away commercially must meet toy-safety rules (for example EN 71 in Europe, ASTM F963 in the US)</td></tr>
+      <tr><td>Anything that carries a load</td><td>Layers split under tension; plastics creep (slowly bend) under constant load and lose strength when warm</td><td>Orient so load runs along the layers; large safety factor; never for anything whose failure could injure someone (climbing, lifting, helmets, vehicle parts). See <a href="../design/strength-and-orientation.html">strength &amp; orientation</a></td></tr>
+      <tr><td>Heat and electricity</td><td>PLA deforms in a hot car or near a lamp; most prints are not rated as electrical insulation or flame-retardant</td><td>PETG, ASA or PC for warm places; enclosures for mains electronics should use certified housings or flame-retardant materials designed for it</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout fact"><span class="callout-title">Why it works: creep</span>
+    <p>Plastics are viscoelastic: under a constant load they keep deforming slowly, and the effect speeds up as the temperature approaches the material's glass transition (around 55–60 °C for PLA). A PLA shelf bracket that holds on day one can sag over months, and fail in a single summer afternoon. Metal brackets do not do this at room temperature, which is why printed parts need a much larger margin.</p>
+  </div>
+
+  <h2 id="remote">📡 Remote printing, cameras and network safety</h2>
+  <p>Many printers can be started, watched and stopped from a phone. That is convenient and, used well, it is a safety feature: you can see a failure and cancel it from another room. Used carelessly it creates new risks, because nobody is there to notice a problem the camera cannot see.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 260" role="img" aria-label="Checklist before starting a print remotely: plate empty and clean, correct filament loaded, camera shows the whole plate, someone can reach the printer, smoke detector working; only then start.">
+      <rect class="d-surface" x="20" y="20" width="820" height="220" rx="10"/>
+      <text class="t t-b" x="40" y="48">Before you press “start” from somewhere else</text>
+      <g class="f-blue">
+        <rect x="40" y="66" width="150" height="90" rx="10"/><rect x="200" y="66" width="150" height="90" rx="10"/><rect x="360" y="66" width="150" height="90" rx="10"/><rect x="520" y="66" width="150" height="90" rx="10"/>
+      </g>
+      <rect class="f-green" x="690" y="66" width="130" height="90" rx="10"/>
+      <text class="t t-sm t-b t-c" x="115" y="98">Plate empty</text><text class="t t-xs t-c" x="115" y="118">no part left from</text><text class="t t-xs t-c" x="115" y="134">the last job</text>
+      <text class="t t-sm t-b t-c" x="275" y="98">Right filament</text><text class="t t-xs t-c" x="275" y="118">loaded, enough</text><text class="t t-xs t-c" x="275" y="134">left on the spool</text>
+      <text class="t t-sm t-b t-c" x="435" y="98">Camera works</text><text class="t t-xs t-c" x="435" y="118">and shows the</text><text class="t t-xs t-c" x="435" y="134">whole plate</text>
+      <text class="t t-sm t-b t-c" x="595" y="98">Someone near</text><text class="t t-xs t-c" x="595" y="118">can reach it;</text><text class="t t-xs t-c" x="595" y="134">detector works</text>
+      <text class="t t-sm t-b t-c" x="755" y="106">Start</text><text class="t t-xs t-c" x="755" y="126">and watch layer 1</text>
+      <path class="d-ink arrow" d="M190 111 H200"/><path class="d-ink arrow" d="M350 111 H360"/><path class="d-ink arrow" d="M510 111 H520"/><path class="d-ink arrow" d="M670 111 H690"/>
+      <text class="t t-xs" x="40" y="190">A part left on the plate is the classic remote-start failure: the nozzle crashes into it, the new print detaches and becomes spaghetti.</text>
+      <text class="t t-xs" x="40" y="210">If any box is not ticked, wait until you are back.</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> Four checks before a remote start. A camera image of the plate taken just before starting answers the first three.</figcaption>
+  </figure>
+
+  <div class="grid cols-2">
+    <div class="card accent-blue"><h3>Cameras and failure detection</h3><p>A camera lets you check the first layer from elsewhere; some printers add automatic detection of spaghetti or a nozzle covered in plastic and pause the job. Treat these as a second line of defense. They miss problems outside their view (a smoking power supply, a tangle behind the printer) and they work best in good, even light.</p></div>
+    <div class="card accent-purple"><h3>Accounts and networks</h3><p>Use a strong, unique password and two-factor login for the printer's cloud account. Keep firmware current; updates fix security issues as well as bugs. Never forward the printer's ports to the internet: for remote access to a self-hosted printer, use the maker's cloud service or a VPN to your home network (see <a href="../software/gcode-and-firmware.html">G-code &amp; firmware</a>).</p></div>
+    <div class="card accent-teal"><h3>LAN-only modes</h3><p>Several printers offer a local-network mode that works without the cloud. It keeps your files at home and still lets you print from the slicer, at the cost of remote access and some app features.</p></div>
+    <div class="card accent-orange"><h3>Scheduled and queued prints</h3><p>Print queues and timers are handy for overnight jobs, but the same rule applies: the printer must start from an empty, clean plate. Remove each part before the next job begins, and do not schedule prints for times when nobody is home.</p></div>
+  </div>
+
   <h2 id="legal">📜 Insurance and legal notes</h2>
   <p>These points are general reminders, not legal advice. Rules differ by country.</p>
   <ul>
@@ -381,7 +452,7 @@
       </g>
       <text class="t-xs" x="20" y="386">Safety add-ons worth having from day one: safety glasses, heat-resistant gloves, a cut-resistant glove, and a small fire extinguisher.</text>
     </svg>
-    <figcaption><b>Figure 8.</b> A suggested priority ranking, based on how often each tool is needed in the first months. Bars show relative usefulness, not price.</figcaption>
+    <figcaption><b>Figure 10.</b> A suggested priority ranking, based on how often each tool is needed in the first months. Bars show relative usefulness, not price.</figcaption>
   </figure>
 
   <h2 id="emergency">🚨 Emergency checklist</h2>
@@ -403,7 +474,7 @@
       <text class="t-xs" x="20" y="330">Never use water on an electrical fire or a burning solvent (IPA). Your safety comes first; property can be replaced.</text>
       <text class="t-xs" x="20" y="350">After any incident, inspect connectors, check the smoke detector and replace any damaged part before printing again.</text>
     </svg>
-    <figcaption><b>Figure 9.</b> Emergency decision flow. Rehearse it once so the steps are automatic.</figcaption>
+    <figcaption><b>Figure 11.</b> Emergency decision flow. Rehearse it once so the steps are automatic.</figcaption>
   </figure>
 
   <ul class="checklist">
@@ -424,6 +495,8 @@
       <li>Certification such as UL 2904 documents measured emissions; it is evidence, not a guarantee.</li>
       <li>A heavy, level bench, a nearby outlet, a smoke detector and an extinguisher near the exit cover most of the workspace basics.</li>
       <li>Do not run long unattended prints without detection; stay for the first layer.</li>
+      <li>A printed part is not a molded part: layer grooves trap residue and plastics creep under load. Be cautious with food, toys and anything load-bearing.</li>
+      <li>Remote control is a safety tool when you can see the plate; start remotely only with an empty plate, a working camera and someone nearby.</li>
       <li>Plan your response to an incident before you need it.</li>
     </ul>
   </div>

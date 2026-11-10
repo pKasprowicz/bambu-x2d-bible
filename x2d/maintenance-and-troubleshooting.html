@@ -308,7 +308,73 @@
   <div class="callout warn"><span class="callout-title">Fiber-filled filament and nozzle blobs</span>
     <p>Never cold pull with fiber-reinforced filament, and never use a metal tool on a hot nozzle sock near wiring. When in doubt, cool down, take a photo and ask support.</p></div>
 
-  <h2 id="support">9. When to contact support, and logs</h2>
+  <h2 id="after-work">9. After maintenance: what to recalibrate</h2>
+  <p>Most “it was fine before I cleaned it” problems come from a calibration that was not re-run. The procedures above each name their own follow-up; this matrix collects them in one place so you can check before the next print.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 330" role="img" aria-label="Matrix of maintenance tasks against calibrations: lubrication needs motor noise cancellation, vibration compensation and bed leveling; belt tensioning needs vibration compensation; moving the printer needs bed leveling and the full set after a long trip; heatbed work needs bed leveling; hotend reinstall or swap needs nozzle offset calibration.">
+      <rect class="d-surface" x="20" y="20" width="820" height="290" rx="10"/>
+      <text class="t t-xs t-b t-c" x="430" y="50">Motor noise</text><text class="t t-xs t-b t-c" x="430" y="64">cancellation</text>
+      <text class="t t-xs t-b t-c" x="545" y="50">Vibration</text><text class="t t-xs t-b t-c" x="545" y="64">compensation</text>
+      <text class="t t-xs t-b t-c" x="660" y="50">Auto bed</text><text class="t t-xs t-b t-c" x="660" y="64">leveling</text>
+      <text class="t t-xs t-b t-c" x="775" y="50">Nozzle offset</text><text class="t t-xs t-b t-c" x="775" y="64">calibration</text>
+      <path class="d-grid" d="M40 76 H830 M40 116 H830 M40 156 H830 M40 196 H830 M40 236 H830 M40 276 H830"/>
+      <text class="t t-sm" x="44" y="101">Rods / lead screws lubricated</text>
+      <text class="t t-sm" x="44" y="141">Belt tension adjusted</text>
+      <text class="t t-sm" x="44" y="181">Printer moved (long trip: full set)</text>
+      <text class="t t-sm" x="44" y="221">Anything touched the heatbed</text>
+      <text class="t t-sm" x="44" y="261">Hotend removed, reinstalled or swapped</text>
+      <g class="s-green">
+        <circle cx="430" cy="96" r="9"/><circle cx="545" cy="96" r="9"/><circle cx="660" cy="96" r="9"/>
+        <circle cx="545" cy="136" r="9"/>
+        <circle cx="660" cy="176" r="9"/>
+        <circle cx="660" cy="216" r="9"/>
+        <circle cx="775" cy="256" r="9"/>
+      </g>
+      <g class="f-green"><circle cx="430" cy="176" r="8"/><circle cx="545" cy="176" r="8"/></g>
+      <text class="t t-xs t-m" x="44" y="298">Filled dot: run it. Outlined dot: after a long trip.</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> Follow-up calibrations collected from the procedures on this page. Your printer's screen may offer them together as one calibration run; when in doubt, run the full set.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>After you…</th><th>Run</th><th>Then check</th></tr></thead>
+    <tbody>
+      <tr><td>Lubricate rods or lead screws</td><td>Motor noise cancellation, vibration compensation, auto bed leveling</td><td>Toolhead moves quietly across the full travel</td></tr>
+      <tr><td>Adjust belt tension</td><td>Vibration compensation</td><td>No “resonance frequency too low” message; circles print round</td></tr>
+      <tr><td>Move the printer</td><td>Auto bed leveling; the full set after a long trip</td><td>A first-layer test print</td></tr>
+      <tr><td>Work on or near the heatbed</td><td>Auto bed leveling</td><td>Bed height map looks even (see <a href="#recoveries">first layer too thin or uneven</a>)</td></tr>
+      <tr><td>Remove, reinstall or swap a hotend</td><td>Nozzle offset calibration</td><td>A small two-nozzle test: colors line up at the boundary</td></tr>
+      <tr><td>Replace the aux PTFE tube or tighten its nut</td><td>Nothing required by the guide</td><td>A short print on the right nozzle; if stringing remains, re-run its manual flow-dynamics calibration (see <a href="dual-nozzle-printing.html#flow-dynamics">dual-nozzle printing</a>)</td></tr>
+      <tr><td>Update firmware</td><td>Whatever the release notes ask for</td><td>Read the notes before the update, not after</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="symptoms">10. Symptom index</h2>
+  <p>Start from what you see or hear and jump to the section that covers it. The left column is deliberately phrased the way a problem first shows up, not by its technical name.</p>
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>What you notice</th><th>Most likely area</th><th>Go to</th></tr></thead>
+    <tbody>
+      <tr><td>A red light on an AMS slot</td><td>Feeder, hub or tube for that slot</td><td><a href="#errors">AMS LED states</a>, then <a href="#recoveries">AMS feed or unload failure</a></td></tr>
+      <tr><td>“Filament broken” or the AMS cannot unload</td><td>Brittle or wet filament; dull cutter blade</td><td><a href="#recoveries">Filament broken in path</a>; <a href="#consumables">cutter blade</a></td></tr>
+      <tr><td>No plastic, or thin and gappy lines</td><td>Clog in the hotend or extruder</td><td><a href="#recoveries">Clog diagnosis</a></td></tr>
+      <tr><td>Stringing or poor retraction on the right nozzle only</td><td>Worn aux PTFE end or loose nut</td><td><a href="#nozzles">Aux extruder PTFE and locking nut</a></td></tr>
+      <tr><td>A message that the toolhead could not change nozzles</td><td>Lever path, flow blocker, debris</td><td><a href="#recoveries">Nozzle switching problems</a></td></tr>
+      <tr><td>Colors misaligned between the two nozzles</td><td>Nozzle offset</td><td><a href="#after-work">Recalibrate after hotend work</a></td></tr>
+      <tr><td>Oval holes, layer shifts, resonance warning</td><td>Belt tension</td><td><a href="#mechanics">Belt tension</a></td></tr>
+      <tr><td>New squeaks or rough motion</td><td>Dry rods or lead screws</td><td><a href="#mechanics">Lubrication</a></td></tr>
+      <tr><td>First layer too thin, uneven or not sticking</td><td>Plate, leveling, nozzle blob</td><td><a href="#recoveries">First layer too thin or uneven</a>; <a href="#consumables">plate care</a></td></tr>
+      <tr><td>A blob of plastic on the hotend</td><td>Ooze or a failed print</td><td><a href="#nozzles">Cleaning a blob on the hotend</a></td></tr>
+      <tr><td>Stronger smell than usual with ABS or ASA</td><td>Saturated carbon filter, dusty fans</td><td><a href="#consumables">Filters</a>; <a href="#mechanics">chamber and fans</a></td></tr>
+      <tr><td>The camera image is blurry or detection misfires</td><td>Dirty lens</td><td><a href="#consumables">Live-view camera</a></td></tr>
+      <tr><td>The same error returns after the documented fix</td><td>Needs support</td><td><a href="#support">When to contact support</a></td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout tip"><span class="callout-title">One change, one test</span>
+    <p>When two fixes seem possible, do the cheaper one first and run a short test print before the next. If you do both at once you will not know which one worked, and your maintenance log loses its value.</p>
+  </div>
+
+  <h2 id="support">11. When to contact support, and logs</h2>
   <p>Contact Bambu support when: a part is physically broken, a safety feature trips repeatedly, an error returns after the documented fix, or a calibration cannot finish. Do <b>not</b> wait if you smell burning or see damage to a heater, wire or connector; power off and unplug first.</p>
   <figure class="fig">
     <svg class="diagram" viewBox="0 0 760 260" role="img" aria-label="Escalation ladder from self-help to wiki to community to support with the information to prepare">
@@ -321,7 +387,7 @@
       <rect class="f-red" x="562" y="40" width="178" height="80" rx="10"/><text class="t-sm t-c t-b" x="651" y="74">4 Support ticket</text><text class="t-xs t-c" x="651" y="92">with logs + photos</text>
       <text class="t-xs t-m" x="20" y="246">Prepare: serial number, firmware version, AMS firmware, the code, photos or short video, what you already tried.</text>
     </svg>
-    <figcaption><b>Figure 9.</b> Escalate step by step and bring evidence. Support can do far more with logs and photos than with a description.</figcaption>
+    <figcaption><b>Figure 10.</b> Escalate step by step and bring evidence. Support can do far more with logs and photos than with a description.</figcaption>
   </figure>
   <ul>
     <li><b>Export logs</b> from the printer's settings to external storage. This requires a USB drive; without one you cannot export logs.</li>
@@ -329,7 +395,7 @@
     <li><b>Take photos</b> of the problem area before cleaning it.</li>
   </ul>
 
-  <h2 id="relocation">10. Shipping, relocation and long-term storage</h2>
+  <h2 id="relocation">12. Shipping, relocation and long-term storage</h2>
   <div class="grid cols-2">
     <div class="card accent-blue"><h4>Moving the printer</h4><p>The X2D weighs 16.25 kg and measures 392 × 406 × 478 mm. Plan the destination: Bambu recommends a space of about 500 × 700 × 600 mm for operation, ambient temperature of 10–30 °C and humidity below 85 %. After any move, re-run auto bed leveling (and the full calibration set after a long trip).</p></div>
     <div class="card accent-orange"><h4>Shipping</h4><p>Remove spools and unload the AMS; keep the original packaging and protective parts if possible; secure the toolhead as in the unboxing instructions. Photograph the printer before shipping. These are typical practices, not a Bambu-published list.</p></div>
@@ -337,7 +403,7 @@
     <div class="card accent-green"><h4>Heatbed work</h4><p>If anything touched the heatbed, re-run leveling. If you ever see odd bed height maps, use the first-layer troubleshooting flow above.</p></div>
   </div>
 
-  <h2 id="spares">11. Spare parts worth keeping</h2>
+  <h2 id="spares">13. Spare parts worth keeping</h2>
   <ul class="tags">
     <li class="tag">Spare hotend and sock</li><li class="tag">2 PTFE tubes (aux and AMS)</li><li class="tag">Filament cutter blades</li><li class="tag">Silicone wiper</li><li class="tag">Carbon filter</li><li class="tag">AMS desiccant</li><li class="tag">Lube oil and grease</li><li class="tag">Allen keys H1.5 / H2.0</li><li class="tag">8 mm wrench</li><li class="tag">Unclogging pin</li><li class="tag">Spare textured PEI plate</li><li class="tag">USB drive for logs</li>
   </ul>
@@ -351,6 +417,7 @@
     <li>AMS red LED patterns point to feeder, hub or tube problems; dry spools and free filament mechanically.</li>
     <li>Export logs (needs USB), photograph problems, and escalate step by step.</li>
     <li>Recalibrate after moving the printer, long storage or any heatbed or hotend work.</li>
+    <li>Use the recalibration matrix after any maintenance, and the symptom index to go from what you see to the right section.</li>
   </ul>
   <div class="callout goal"><span class="callout-title">Practice</span>
     <p>Start a maintenance log in <a href="../exercises/x2d-challenges.html#X-12">X-12</a>. For the AMS side, see <a href="ams-2-pro.html">the AMS 2 Pro page</a>. For general print-failure thinking read <a href="../techniques/troubleshooting.html">Troubleshooting</a> and <a href="../techniques/maintenance.html">Maintenance</a>.</p></div>

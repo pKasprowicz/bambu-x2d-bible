@@ -4,6 +4,20 @@ All notable changes to the Compendium. Format: [Keep a Changelog](https://keepac
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-10
+
+### Added
+- Mechanism catalog (Part 5 · Design): hinges, latches and catches, mounts, slides and guides, rotary and indexing mechanisms, clamps and adjusters, springs and flexures. Each entry has a diagram, starting dimensions, print orientation, material and when to choose it, plus a selector table and the binding ratio for sliders. Linked from Joints & fasteners, Design patterns and Start here.
+- `scripts/check_charts.py`, a review aid that flags charts whose bars or ticks do not match their own scale.
+- `docs/numeric-review.md`, the log of the review of numeric guidance: method, sources, every change and the items left open.
+- Cheat sheets: the missing sheet 15 (build plates and adhesion, with a fix ladder for parts that will not stick or stick too hard) and a new sheet 21 (maintenance intervals).
+- First print: a two-minute routine for reading the slicer preview, and a section on pausing, cancelling, filament runout, planned color changes and power cuts.
+- Safety & workspace: printed parts in use (food contact, skin, toys, loads, creep, heat) and remote printing (checks before a remote start, cameras, accounts and network safety).
+- X2D dual-nozzle printing: designing a model for two nozzles (how the color layout sets the number of swaps) and how to measure the saving on your own model.
+- X2D maintenance: what to recalibrate after each kind of maintenance, and a symptom index that links each problem to its section.
+- X2D filament compatibility: three checks for whether two filaments can share one job (nozzle side, chamber mode, bond), with common pairs.
+- X2D TPU: making parts softer with walls, infill and shape before moving to a softer grade and larger hotends.
+
 ### Fixed
 - Advanced techniques: "0.6 mm (2 layers)" over an embedded magnet is 3 layers at 0.2 mm.
 - Removed a stray UTF-8 byte-order mark at the start of the AMS 2 Pro page.
@@ -20,11 +34,6 @@ All notable changes to the Compendium. Format: [Keep a Changelog](https://keepac
 - Burn first aid now says to cool with running water for at least 20 minutes (was 10), in line with current Red Cross guidance.
 - Feed-speed chart legend matched to the hotend flow table (a standard hotend with PLA is 15–25 mm³/s, not 12).
 - Drying calculator: TPU 95A may be dried at Bambu's 70 °C without a warning; PP drying time 4 h.
-
-### Added
-- Mechanism catalog (Part 5 · Design): hinges, latches and catches, mounts, slides and guides, rotary and indexing mechanisms, clamps and adjusters, springs and flexures. Each entry has a diagram, starting dimensions, print orientation, material and when to choose it, plus a selector table and the binding ratio for sliders. Linked from Joints & fasteners, Design patterns and Start here.
-- `scripts/check_charts.py`, a review aid that flags charts whose bars or ticks do not match their own scale.
-- `docs/numeric-review.md`, the log of the review of numeric guidance: method, sources, every change and the items left open.
 
 ## [1.0.1] - 2026-11-02
 
@@ -55,6 +64,7 @@ First numbered edition.
 ### Verified
 - All OpenSCAD models compile; X2D headline specifications match Bambu Lab's published spec sheet (2026-11-02).
 
-[Unreleased]: https://github.com/pKasprowicz/bambu-x2d-bible/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/pKasprowicz/bambu-x2d-bible/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/pKasprowicz/bambu-x2d-bible/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/pKasprowicz/bambu-x2d-bible/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/pKasprowicz/bambu-x2d-bible/releases/tag/v1.0.0

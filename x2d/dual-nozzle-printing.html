@@ -314,6 +314,66 @@
     <figcaption><b>Figure 9.</b> A sensible plate. The tower stays inside the area that both nozzles can reach, close to the parts.</figcaption>
   </figure>
 
+  <h2 id="design">🔧 Designing a model for two nozzles</h2>
+  <p>The slicer decides who prints what, but the model decides how often the printer has to swap. One rule explains most of it: <b>every layer that contains both filaments needs at least one nozzle swap</b>, and each swap brings its prime-tower stop and a short pause. A design that keeps the two filaments in separate height ranges swaps a handful of times; the same colors split side by side can swap on every layer.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 330" role="img" aria-label="Three ways to split a two-color part: stacked by height swaps once at the boundary; split side by side swaps on every layer; a thin inlay on the top surface swaps only on the top few layers.">
+      <rect class="d-surface" x="20" y="20" width="820" height="290" rx="10"/>
+      <text class="t t-sm t-b t-c" x="160" y="48">Stacked by height</text>
+      <text class="t t-sm t-b t-c" x="430" y="48">Side by side</text>
+      <text class="t t-sm t-b t-c" x="700" y="48">Top inlay</text>
+      <rect class="d-metal2" x="70" y="240" width="180" height="8" rx="3"/>
+      <rect class="f-blue" x="90" y="150" width="140" height="90"/>
+      <rect class="f-orange" x="90" y="70" width="140" height="80"/>
+      <path class="d-dash" d="M80 150 H240"/>
+      <text class="t t-xs t-c" x="160" y="270">1 swap at the boundary</text>
+      <text class="t t-xs t-c" x="160" y="288">(plus the start)</text>
+      <rect class="d-metal2" x="340" y="240" width="180" height="8" rx="3"/>
+      <rect class="f-blue" x="360" y="70" width="70" height="170"/>
+      <rect class="f-orange" x="430" y="70" width="70" height="170"/>
+      <path class="d-grid" d="M360 90 H500 M360 110 H500 M360 130 H500 M360 150 H500 M360 170 H500 M360 190 H500 M360 210 H500 M360 230 H500"/>
+      <text class="t t-xs t-c" x="430" y="270">a swap on every layer</text>
+      <text class="t t-xs t-c" x="430" y="288">(hundreds on a tall part)</text>
+      <rect class="d-metal2" x="610" y="240" width="180" height="8" rx="3"/>
+      <rect class="f-blue" x="630" y="80" width="140" height="160"/>
+      <rect class="f-orange" x="660" y="70" width="30" height="14"/><rect class="f-orange" x="710" y="70" width="40" height="14"/>
+      <path class="d-ink arrow" d="M740 60 L728 70"/><text class="t t-xs" x="744" y="62">2–3 layers</text>
+      <text class="t t-xs t-c" x="700" y="270">swaps only in the</text>
+      <text class="t t-xs t-c" x="700" y="288">top few layers</text>
+    </svg>
+    <figcaption><b>Figure 10.</b> The same two colors, three layouts. Gray lines mark layers that contain both filaments; each one costs at least one swap and a visit to the prime tower.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Design choice</th><th>Effect on a dual-nozzle job</th><th>Tip</th></tr></thead>
+    <tbody>
+      <tr><td>Color or material changes with height (a base and a lid, a stripe)</td><td>Few swaps; fastest and least waste</td><td>Put the boundary on a flat horizontal face where possible</td></tr>
+      <tr><td>Two regions side by side through the whole height</td><td>A swap on every shared layer</td><td>Ask whether one color could be a top or front inlay instead</td></tr>
+      <tr><td>Text or logo on top</td><td>Swaps only for the last 2–3 layers</td><td>Recess the text 0.4–0.6 mm so it sits flush; easy on either nozzle</td></tr>
+      <tr><td>Text or logo on a vertical face</td><td>Swaps on every layer the text spans</td><td>Print the face lying down if the part allows it</td></tr>
+      <tr><td>Fine detail in the second filament</td><td>The right nozzle has weaker fine detail</td><td>Keep the detailed filament on the left nozzle</td></tr>
+      <tr><td>Two different plastics touching</td><td>The joint is only as good as the pair bonds</td><td>Check the pair in the <a href="../techniques/multi-color-and-multi-material.html#compat">bond matrix</a>; design a dovetail, pin or overlap where it is “poor”</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout trick"><span class="callout-title">Flip the problem: a support interface wants a poor bond</span>
+    <p>For a support interface in a second material you want the opposite of a good joint: enough grip to print on, little enough to peel off. That is why pairs that bond poorly, such as PETG under PLA, make good interfaces. The interface layers are short and slow, which also suits the right nozzle (see <a href="#strategies">strategy 2</a>).</p>
+  </div>
+
+  <h2 id="measure">🔧 Measuring the saving on your own model</h2>
+  <p>This page avoids promising a percentage because the saving depends entirely on the model. You can measure it in a few minutes instead, using the slice summary in Bambu Studio, which lists print time and filament weight with flushed material and the prime tower included.</p>
+  <ol class="steps">
+    <li><strong>Slice the dual-nozzle version.</strong>Assign the filaments the way you plan to print them (for example with Filament-Saving grouping) and note the total time, total filament and the flushed or tower amount.</li>
+    <li><strong>Slice a single-nozzle version.</strong>Save a copy of the project, set grouping to Custom and put every filament on the left nozzle. Slice again and note the same three values.</li>
+    <li><strong>Compare.</strong>The difference in flushed material and time is the real saving for this model. A part stacked by height may show almost none; a part with colors side by side on many layers usually shows the most.</li>
+    <li><strong>Try a layout change.</strong>If the saving is small, ask whether the design could be changed (Figure 10) rather than the settings.</li>
+  </ol>
+
+  <div class="callout info"><span class="callout-title">Read the preview by nozzle, too</span>
+    <p>The preview can color the paths by filament. Scrub through the layers once with that view: it shows where the swaps happen, whether supports and interfaces landed on the nozzle you intended, and whether the tower is inside the common area.</p>
+  </div>
+
   <h2 id="ideas">🚀 Ideas for using two nozzles smartly</h2>
   <ul>
     <li><b>Hardware tolerance split.</b> Keep a 0.4 mm nozzle on both sides for general use. Dual-nozzle jobs need the same diameter, so plan a swap of <i>both</i> when you move to 0.6 mm.</li>
@@ -340,7 +400,7 @@
         <rect class="f-purple" x="20" y="286" width="780" height="34" rx="6"/><text class="t-sm t-b" x="34" y="308">Purge-chute pile-up warning</text><text class="t-xs" x="400" y="308">Clear the chute; check cutter and purge settings</text>
       </g>
     </svg>
-    <figcaption><b>Figure 10.</b> A first-aid table. These fixes are general practice; for model-specific problems see <a href="maintenance-and-troubleshooting.html">maintenance and troubleshooting</a>.</figcaption>
+    <figcaption><b>Figure 11.</b> A first-aid table. These fixes are general practice; for model-specific problems see <a href="maintenance-and-troubleshooting.html">maintenance and troubleshooting</a>.</figcaption>
   </figure>
 
   <div class="callout warn"><span class="callout-title">Don’t mix up “aux” and “weak”</span>
@@ -373,6 +433,7 @@
     <li>The prime tower stays; the same nozzle diameter is required on both sides.</li>
     <li>Use Filament-Saving, Convenience or Custom grouping; use Custom when a material must be on a specific side.</li>
     <li>Fine detail on the left, supports and bulk on the right, and always verify in the preview.</li>
+    <li>Every layer that holds both filaments costs a swap: split colors by height or use top inlays when the design allows, and measure the saving by slicing both ways.</li>
     <li>Check the <a href="filament-compatibility.html">compatibility page</a> and the Bambu wiki before assigning an unusual filament to the aux nozzle.</li>
   </ul>
 
