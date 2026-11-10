@@ -115,10 +115,49 @@ Canonical pages: `materials/drying-and-storage.html` for drying, `materials/over
 - Fastener tables match ISO dimensions: socket heads (ISO 4762), nuts (DIN 934 on the design page, ISO 4032 in the calculator; M5 height 4.0 vs 4.7 mm, both valid), tap drills, clearance holes (ISO 273 fine/medium/coarse).
 - Magnet pockets (+0.2 mm glue, +0.1 mm press) and nut pockets (+0.2–0.3 mm) agree with the fit classes.
 
-## Next batches
+## Batch 5 — slicer settings, speed and cooling (2026-11-10)
 
-Run `python scripts/check_charts.py` after editing any chart.
+**Scope:** `software/slicer-settings.html` and `techniques/speed-cooling-quality.html` (per-feature speeds and accelerations, volumetric flow by hotend and material, max-speed table, material profiles, fan and retraction); layer-height and line-width rules on every page.
 
-1. **Slicer settings and speed/cooling** (`software/slicer-settings.html`, `techniques/speed-cooling-quality.html`): volumetric flow, retraction, cooling.
-2. **Safety** (`foundations/safety-and-workspace.html`): emission and temperature claims.
-3. **Calculators**: formulas were hand-checked in the 2026-11-02 QA; re-check default constants (densities, costs per unit) against the material tables.
+**Fixed:**
+
+| Where | Was | Now | Why |
+|-------|-----|-----|-----|
+| `software/slicer-settings.html` max feed speed chart legend | 12 mm³/s labelled "PLA, standard hotend" and 18 mm³/s "high-flow hotend" | 8 = basic hotend PETG/ABS, 12 = basic hotend PLA or standard PETG, 18 = standard hotend PLA | The flow table on the speed page gives a standard hotend 15–25 mm³/s with PLA and high-flow 25–40; the curves themselves were right. |
+
+**Checked, no change:** the max-speed table (speed = flow ÷ (0.42 × layer height)) is exact for all ten values. Retraction (PLA 0.8 mm direct drive), fan by material, per-feature speeds and the two acceleration tables are consistent (one is a general strategy, the other a starting point for an enclosed CoreXY printer and sits inside the first). Layer height 25–75 % and line width 100–125 % of the nozzle agree on every page; the "≤ 60 %" on the troubleshooting page is a deliberate strength recommendation.
+
+## Batch 6 — safety (2026-11-10)
+
+**Scope:** `foundations/safety-and-workspace.html` and every other page with temperatures, first aid, fire or chemical guidance.
+
+**Fixed:**
+
+| Where | Was | Now | Why |
+|-------|-----|-----|-----|
+| `foundations/safety-and-workspace.html` burns | "cool running water for at least 10 minutes" | "straight away, for at least 20 minutes (British and Australian Red Cross guidance)" | Current Red Cross (UK and Australia) and NHS first-aid guidance. |
+
+**Checked, no change:** emissions are described qualitatively (no exposure figures to verify). Resin curing wavelengths (365–405 nm) are correct. Acetone vapor-smoothing times are framed as minutes with a flammability warning.
+
+## Batch 7 — calculator constants (2026-11-10)
+
+**Scope:** the shared `MATS` table in `tools/calculators.html` (density, shrinkage, drying temperature, time and maximum, modulus, strength, flow factor), the hotend flow bases and the screw table.
+
+**Fixed:**
+
+| Where | Was | Now | Why |
+|-------|-----|-----|-----|
+| Drying calculator, TPU 95A | Maximum safe dryer temperature 60 °C, so it warned against Bambu's own 70 °C | 70 °C | Bambu: TPU 70 °C, 8 h in an oven (quoted on the AMS 2 Pro page). Tested in Chromium. |
+| Drying calculator, PP | 6 h | 4 h | Drying page and engineering page: 3–4 h. |
+
+Earlier batches also changed this table: snap-fit strain limits (batch 4) and the insert data (batch 3).
+
+**Checked, no change:** densities (PLA 1.24, PETG 1.27, ABS 1.04, ASA 1.07, PC 1.20, PA6 1.14, PA12 1.02, TPU 1.21, PP 0.90 g/cm³ and the filled grades) match published values; drying temperatures and times match the batch 1 figures; hotend flow bases (generic 11, standard 21, high-flow 30 mm³/s for PLA) sit inside the flow table's ranges, and the material flow factors match its ratios; moduli and strengths are reasonable printed-part values.
+
+**Open:** shrinkage in the calculator (PLA 0.3, PA12 1.0 %) sits at the upper end of typical ranges and the shrinkage chart on the engineering page (PLA ≈ 0.2, PA12 ≈ 0.6 %) at the lower end. Both are inside published ranges and both pages call them approximate.
+
+## Status
+
+All planned batches are done. The review was a cross-check by consistency, manufacturer data and published standards, not a review by a printing specialist; a domain expert could still add value, especially on the values logged as open and on the materials not covered by a manufacturer figure.
+
+Run `python scripts/check_charts.py` after editing any chart, and keep drying figures in step with `materials/drying-and-storage.html`.

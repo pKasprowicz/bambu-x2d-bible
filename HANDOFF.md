@@ -58,15 +58,16 @@ Released editions: **v1.0.0** (first edition) and **v1.0.1** (muted colour palet
 1. Visual-lab animations, dark-mode toggle and search were not exercised by hand beyond load/console checks.
 2. Facts not on Bambu's public spec pages (unboxing/transport-lock steps, per-material AMS 2 Pro drying tables) defer to the manual. Re-verify when firmware/hardware changes. No prices by design.
 3. Remaining page-local `<style>` blocks are namespaced per page (`ts-`, `cs-`, `faq-` ...) and not duplicated; leaving them is fine.
-4. Numeric values are caveated starting points; a domain-expert review would still be valuable.
+4. Numeric values are caveated starting points. A systematic review (consistency, manufacturer data, standards, chart scales) was done on 2026-11-10 and is logged in `docs/numeric-review.md`, with the items left open; a printing specialist could still add value there.
 
 ## Since v1.0.1 (unreleased)
 
 - Removed the UTF-8 BOM from `x2d/ams-2-pro.html` (no other HTML file has one).
+- Numeric review (seven batches): wrong charts, drying figures, insert and snap-fit calculator data, fit classes and first aid fixed; see `CHANGELOG.md` and `docs/numeric-review.md`.
 
 ## Next steps
 
-1. Expert review of numeric guidance: in progress, logged in `docs/numeric-review.md`. Batches 1 (material temperatures and drying), 2 (chart scales, with `scripts/check_charts.py`) 3 (X2D settings and recipes, plus heat-set insert holes) and 4 (design numbers) are done; the log lists open items and the next batches, starting with slicer settings.
+1. Optional: have a printing specialist look at the open items in `docs/numeric-review.md`; spot-check Bambu figures against the Bambu wiki when it is reachable (it was not from the review environment).
 2. Optional: expand the shorter pages (cheat sheets ~3.7k words).
 
 ## Git identity

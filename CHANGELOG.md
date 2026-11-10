@@ -16,9 +16,13 @@ All notable changes to the Compendium. Format: [Keep a Changelog](https://keepac
 - Heat-set insert holes on the post-processing page no longer run up to the insert's own diameter (M3 was 4.0–4.6 mm, now 4.0–4.2 mm), and the X2D enclosure recipe uses the same guidance.
 - Tolerance cheat sheet: fit gaps were per side and about one class looser than the fit classes on the Tolerances & fits page. It now uses the same classes and shows both the diametral clearance and the per-side gap.
 - Snap-fit calculator: allowed strains were above the design page's limits (PLA 1.5 % instead of 0.8–1.0 %, PETG 3 % instead of 2 %), so it passed snap arms that would crack. It now uses the page's values.
+- Burn first aid now says to cool with running water for at least 20 minutes (was 10), in line with current Red Cross guidance.
+- Feed-speed chart legend matched to the hotend flow table (a standard hotend with PLA is 15–25 mm³/s, not 12).
+- Drying calculator: TPU 95A may be dried at Bambu's 70 °C without a warning; PP drying time 4 h.
 
 ### Added
 - `scripts/check_charts.py`, a review aid that flags charts whose bars or ticks do not match their own scale.
+- `docs/numeric-review.md`, the log of the review of numeric guidance: method, sources, every change and the items left open.
 
 ## [1.0.1] - 2026-11-02
 
