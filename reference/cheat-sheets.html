@@ -175,15 +175,16 @@
 
   <section class="cs-sheet cs-break" id="s-tolerances" aria-labelledby="s-tolerances-h">
     <h2 id="s-tolerances-h">5 · Tolerance cheat sheet for design</h2>
-    <p>Gaps are per side unless noted. Values assume a calibrated 0.4 mm nozzle printer; measure a test coupon on your machine and adjust.</p>
+    <p>Clearance is the hole diameter minus the shaft diameter in CAD (diametral); the per-side gap is half of that. The classes match <a href="../design/tolerances-and-fits.html">Tolerances &amp; fits</a>. Values assume a calibrated 0.4 mm nozzle printer; measure a test coupon on your machine and adjust.</p>
     <div class="table-wrap"><table class="data compact">
-      <thead><tr><th>Fit</th><th>Gap (per side)</th><th>Use</th></tr></thead>
+      <thead><tr><th>Fit</th><th>Clearance (diametral)</th><th>Gap per side</th><th>Use</th></tr></thead>
       <tbody>
-        <tr><td>Press / interference</td><td>−0.05 to +0.05 mm</td><td>Pins into holes, bearings in housings (check by test print)</td></tr>
-        <tr><td>Snug / transition</td><td>0.10–0.15 mm</td><td>Snap fits, lids that should stay put</td></tr>
-        <tr><td>Sliding</td><td>0.15–0.30 mm</td><td>Drawers, hinges, parts that move by hand</td></tr>
-        <tr><td>Loose</td><td>0.30–0.50 mm</td><td>Print-in-place joints, easy assembly</td></tr>
-        <tr><td>Print-in-place clearance (vertical gaps)</td><td>0.30–0.50 mm; down to 0.2–0.25 on tuned printers</td><td>Chains, hinges, captive balls</td></tr>
+        <tr><td>Press</td><td>0.00 to +0.10 mm</td><td>0–0.05 mm</td><td>Dowel pins, bushings, magnets, bearings in a tight seat (check by test print)</td></tr>
+        <tr><td>Snug / transition</td><td>+0.10 to +0.20 mm</td><td>0.05–0.10 mm</td><td>Lid plugs, alignment pins; holds without glue</td></tr>
+        <tr><td>Slip</td><td>+0.20 to +0.30 mm</td><td>0.10–0.15 mm</td><td>Slide-on caps, stacked parts, general assembly</td></tr>
+        <tr><td>Sliding / running</td><td>+0.30 to +0.40 mm</td><td>0.15–0.20 mm</td><td>Hinge pins, drawers, rotating knobs</td></tr>
+        <tr><td>Loose</td><td>+0.40 to +0.60 mm</td><td>0.20–0.30 mm</td><td>Large parts, hot-chamber materials, lids that must always close</td></tr>
+        <tr><td>Print-in-place (separate parts printed together)</td><td>0.60–1.00 mm</td><td>0.30–0.50 mm; down to 0.2–0.25 on tuned printers</td><td>Chains, hinges, captive balls</td></tr>
       </tbody></table></div>
     <div class="cs-two">
       <ul>

@@ -95,11 +95,30 @@ Canonical pages: `materials/drying-and-storage.html` for drying, `materials/over
 
 **Open:** `design/joints-and-fasteners.html` and `reference/cheat-sheets.html` give slightly different insert ODs and holes for M2.5 and M8 (insert brands differ: some M2.5 inserts share the M3 body, M8 holes range 9.7–10.4 mm). Both already say to check the supplier's datasheet.
 
+## Batch 4 — design numbers (2026-11-10)
+
+**Scope:** fit classes and clearances, snap-fit strain limits, minimum walls and features, overhang and bridge rules, fastener tables (clearance holes, heads, nuts, tap drills), magnet pockets, on the design pages, the cheat sheets, the techniques pages and the calculators' data.
+
+**Fixed:**
+
+| Where | Was | Now | Why |
+|-------|-----|-----|-----|
+| `reference/cheat-sheets.html` tolerance table | Per-side gaps about one class looser than the fit classes on `design/tolerances-and-fits.html` (e.g. "sliding 0.15–0.30 mm per side" = 0.30–0.60 mm diametral, against 0.30–0.40 mm) and no slip class | Same five classes as the design page, with diametral clearance and per-side gap in separate columns | A reader copying "0.3" between pages could be off by a factor of two. |
+| `tools/calculators.html` snap-fit calculator | Allowed strain above the design page's conservative one-off limits: PLA 1.5 % (page 0.8–1.0), PETG 3.0 % (2.0), PC 3.0 % (2.5), PP 6 % (4), TPU 95A 15 % (5–8), CF grades 1.2 % (0.5–1.0) | One-off limits from the page (PLA 0.9, PETG 2.0, ABS/ASA 1.8, PC 2.5, nylon 3.5, PP 4.0, CF grades 0.8–1.0, TPU 95A 8 %); the "repeated" option still halves them, matching the page's repeated column | The calculator passed snap arms the page says will crack (a 1.2 % PLA arm). Materials not on the page set by judgement: PLA+ 1.5, silk PLA 0.7, TPU 85A 10, HIPS 1.5, PVA 1.0. Tested in Chromium. |
+
+**Checked, no change:**
+
+- Fit classes on `design/tolerances-and-fits.html` and the calculator agree. The calculator's clearances are the gap wanted in the printed part and its hole compensation (0.1–0.2 mm) is added separately; its output shows both.
+- Snap-fit examples: annular snap ε = y / r = 0.2 / 10 = 2 % ("PETG ok, PLA cracks") and the design-patterns figures (PETG 1 %, PLA 0.4 % for repeated flexing) match the strain table.
+- Minimum wall (two lines, 0.8–1.2 mm for a 0.4 mm nozzle), minimum feature, overhang (45°, 60° with good cooling) agree across pages.
+- Bridging: pages frame it consistently: design rule ≤ 10–15 mm when function matters, ≤ 30 mm for appearance; PLA with good cooling reaches 30–50 mm; beyond 50 mm needs support.
+- Fastener tables match ISO dimensions: socket heads (ISO 4762), nuts (DIN 934 on the design page, ISO 4032 in the calculator; M5 height 4.0 vs 4.7 mm, both valid), tap drills, clearance holes (ISO 273 fine/medium/coarse).
+- Magnet pockets (+0.2 mm glue, +0.1 mm press) and nut pockets (+0.2–0.3 mm) agree with the fit classes.
+
 ## Next batches
 
 Run `python scripts/check_charts.py` after editing any chart.
 
-1. **Design numbers** (`design/tolerances-and-fits.html`, `design/joints-and-fasteners.html`, `design/design-patterns.html`): clearances, wall thicknesses, snap-fit strain. Heat-set insert holes were done in batch 3.
-2. **Slicer settings and speed/cooling** (`software/slicer-settings.html`, `techniques/speed-cooling-quality.html`): volumetric flow, retraction, cooling.
-3. **Safety** (`foundations/safety-and-workspace.html`): emission and temperature claims.
-4. **Calculators**: formulas were hand-checked in the 2026-11-02 QA; re-check default constants (densities, costs per unit) against the material tables.
+1. **Slicer settings and speed/cooling** (`software/slicer-settings.html`, `techniques/speed-cooling-quality.html`): volumetric flow, retraction, cooling.
+2. **Safety** (`foundations/safety-and-workspace.html`): emission and temperature claims.
+3. **Calculators**: formulas were hand-checked in the 2026-11-02 QA; re-check default constants (densities, costs per unit) against the material tables.
