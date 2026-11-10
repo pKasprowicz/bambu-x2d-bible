@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Cheat sheets · 3D Printing Compendium</title>
-  <meta name="description" content="Printable 3D printing cheat sheets: material temperatures, drying, layer height and nozzle rules, strength settings, tolerances, hole and thread sizes, G-code, troubleshooting, calibration order, first layer, formulas and an X2D quick-card.">
+  <meta name="description" content="Printable 3D printing cheat sheets: material temperatures, drying, layer height and nozzle rules, strength settings, tolerances, hole and thread sizes, G-code, troubleshooting, calibration order, first layer, formulas, an X2D quick-card, build plates and maintenance intervals.">
   <link rel="stylesheet" href="../assets/css/style.css">
   <script src="../assets/js/nav.js" defer></script>
   <script src="../assets/js/site.js" defer></script>
@@ -34,7 +34,7 @@
   <header class="hero">
     <div class="kicker">Part 8 · Reference</div>
     <h1>Cheat sheets</h1>
-    <p class="lead">Twenty compact, printable sheets for the printer bench: temperatures, drying, layer and nozzle rules, strength settings, tolerances, hole and thread sizes, G-code, a troubleshooting one-pager, calibration order, first-layer checks, formulas and an X2D quick-card. All values are typical starting points; your printer, filament and slicer have the last word.</p>
+    <p class="lead">Twenty-one compact, printable sheets for the printer bench: temperatures, drying, layer and nozzle rules, strength settings, tolerances, hole and thread sizes, G-code, a troubleshooting one-pager, calibration order, first-layer checks, formulas, an X2D quick-card, build plates and a maintenance schedule. All values are typical starting points; your printer, filament and slicer have the last word.</p>
     <div class="meta"><span class="badge beginner">All levels</span><span class="badge time">⏱ 25 min read</span></div>
   </header>
 
@@ -47,7 +47,7 @@
     <li><a href="#s-materials">1 Materials</a></li><li><a href="#s-drying">2 Drying</a></li><li><a href="#s-layers">3 Layers &amp; nozzles</a></li><li><a href="#s-strength">4 Strength</a></li>
     <li><a href="#s-tolerances">5 Tolerances</a></li><li><a href="#s-holes">6 Holes &amp; threads</a></li><li><a href="#s-pockets">7 Pockets</a></li><li><a href="#s-gcode">8 G-code</a></li>
     <li><a href="#s-trouble">9 Troubleshooting</a></li><li><a href="#s-calibration">10 Calibration</a></li><li><a href="#s-firstlayer">11 First layer</a></li><li><a href="#s-formulas">12 Formulas</a></li>
-    <li><a href="#s-x2d">13 X2D</a></li><li><a href="#s-keys">14 Shortcuts</a></li><li><a href="#s-starting">16 Starting values</a></li><li><a href="#s-post">17 Post-processing</a></li><li><a href="#s-safety">18 Safety</a></li><li><a href="#s-preflight">19 Pre-flight</a></li><li><a href="#s-terms">20 Terms</a></li>
+    <li><a href="#s-x2d">13 X2D</a></li><li><a href="#s-keys">14 Shortcuts</a></li><li><a href="#s-plates">15 Plates</a></li><li><a href="#s-starting">16 Starting values</a></li><li><a href="#s-post">17 Post-processing</a></li><li><a href="#s-safety">18 Safety</a></li><li><a href="#s-preflight">19 Pre-flight</a></li><li><a href="#s-terms">20 Terms</a></li><li><a href="#s-maintenance">21 Maintenance</a></li>
   </ul>
 
   <div class="callout info"><span class="callout-title">How to use these sheets</span>
@@ -580,6 +580,56 @@
       <p>Scrub the layer slider before you start: look for floating islands, missing supports, odd seam positions and gaps in thin walls. Thirty seconds here saves hours.</p></div>
   </section>
 
+  <section class="cs-sheet" id="s-plates" aria-labelledby="s-plates-h">
+    <h2 id="s-plates-h">15 · Build plates &amp; adhesion picks</h2>
+    <p>Match the plate to the material first; only then reach for glue, brims or bed temperature. Bed temperatures are on sheet 1.</p>
+    <div class="cs-two">
+      <div class="table-wrap"><table class="data compact">
+        <thead><tr><th>Plate</th><th>Best for</th><th>Watch out</th></tr></thead>
+        <tbody>
+          <tr><td>Textured PEI</td><td>PLA, PETG, ABS/ASA; nylon with glue; most everyday prints</td><td>Matte bottom; hides small first-layer flaws</td></tr>
+          <tr><td>Smooth PEI</td><td>Glossy bottoms in PLA, PETG, ABS/ASA</td><td>PETG can tear the coating: use glue stick as a release layer</td></tr>
+          <tr><td>Cool Plate (low-adhesion)</td><td>PLA, delicate or low-temperature prints</td><td>Not for high-temperature materials</td></tr>
+          <tr><td>Engineering / high-temp plate</td><td>PA, PC, PET-CF, hot-bed ABS, with glue</td><td>Needs the right glue for each material</td></tr>
+          <tr><td>Glass (borosilicate)</td><td>Very flat parts in PLA or PETG</td><td>Needs glue or hairspray for most plastics</td></tr>
+        </tbody></table></div>
+      <div class="table-wrap"><table class="data compact">
+        <thead><tr><th>Material</th><th>Start on</th><th>Aid</th></tr></thead>
+        <tbody>
+          <tr><td>PLA</td><td>Textured or Cool Plate</td><td>Usually none; a clean plate matters most</td></tr>
+          <tr><td>PETG</td><td>Textured PEI</td><td>Glue stick as release on smooth PEI</td></tr>
+          <tr><td>ABS / ASA</td><td>Textured or engineering plate</td><td>Glue; brim; closed, warm chamber</td></tr>
+          <tr><td>Nylon (PA, CF/GF)</td><td>Engineering plate</td><td>Nylon glue; filament must be dry</td></tr>
+          <tr><td>PC</td><td>Engineering plate</td><td>Strong glue; brim; hot chamber</td></tr>
+          <tr><td>TPU</td><td>Smooth or textured PEI</td><td>Glue as release (it sticks very well)</td></tr>
+        </tbody></table></div>
+    </div>
+    <ul>
+      <li><b>Clean:</b> warm water and dish soap removes skin oil; an IPA wipe between prints keeps it clean. Do not touch the print area.</li>
+      <li><b>Release:</b> let the plate cool, then flex it. A part that will not come off a cold flexible plate needs glue as a separator next time, not more force.</li>
+      <li><b>Order of fixes:</b> clean plate → right plate → Z-offset → bed temperature → brim → glue. Change one at a time.</li>
+    </ul>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 780 230" role="img" aria-label="Two fix ladders: when a part will not stick, and when it sticks too hard">
+        <rect class="d-surface" x="20" y="20" width="740" height="190" rx="10"/>
+        <text class="t t-b t-c" x="205" y="46">Will not stick</text>
+        <text class="t t-b t-c" x="575" y="46">Sticks too hard</text>
+        <g class="f-blue"><rect x="60" y="60" width="290" height="26" rx="6"/><rect x="60" y="94" width="290" height="26" rx="6"/><rect x="60" y="128" width="290" height="26" rx="6"/><rect x="60" y="162" width="290" height="26" rx="6"/></g>
+        <text class="t t-sm" x="72" y="78">1 · Wash the plate (soap, then IPA)</text>
+        <text class="t t-sm" x="72" y="112">2 · Lower Z-offset in 0.02 mm steps</text>
+        <text class="t t-sm" x="72" y="146">3 · Raise bed temperature 5 °C</text>
+        <text class="t t-sm" x="72" y="180">4 · Brim, then glue as adhesive</text>
+        <g class="f-orange"><rect x="430" y="60" width="290" height="26" rx="6"/><rect x="430" y="94" width="290" height="26" rx="6"/><rect x="430" y="128" width="290" height="26" rx="6"/><rect x="430" y="162" width="290" height="26" rx="6"/></g>
+        <text class="t t-sm" x="442" y="78">1 · Let the plate cool fully, then flex</text>
+        <text class="t t-sm" x="442" y="112">2 · Glue stick as a release layer</text>
+        <text class="t t-sm" x="442" y="146">3 · Raise Z-offset slightly (less squish)</text>
+        <text class="t t-sm" x="442" y="180">4 · Switch to a textured plate</text>
+        <path class="d-dash" d="M390 60 V188"/>
+      </svg>
+      <figcaption><b>Figure 12.</b> Two ladders: work down one rung at a time. PETG on smooth PEI is the classic case for the right-hand one. More in <a href="../techniques/first-layer-and-adhesion.html">first layer &amp; adhesion</a>.</figcaption>
+    </figure>
+  </section>
+
   <section class="cs-sheet" id="s-starting" aria-labelledby="s-starting-h">
     <h2 id="s-starting-h">16 · Starting values: retraction, supports, bridges, cooling</h2>
     <p>Treat these as starting points for a first test, not final answers. Always change one value at a time and print a small test.</p>
@@ -618,7 +668,7 @@
         <text class="t t-xs" x="540" y="130">interface 2–3 layers</text><text class="t t-xs" x="540" y="148">sparse body below</text>
         <text class="t t-xs t-c" x="360" y="40">model</text>
       </svg>
-      <figcaption><b>Figure 12.</b> Support anatomy: sparse body, denser interface, small gap that lets it break away cleanly.</figcaption>
+      <figcaption><b>Figure 13.</b> Support anatomy: sparse body, denser interface, small gap that lets it break away cleanly.</figcaption>
     </figure>
   </section>
 
@@ -712,6 +762,50 @@
         <tr><td>Modifier</td><td>A region with its own settings</td><td>One area needs extra walls or density</td></tr>
       </tbody></table></div>
     <p>More terms in the <a href="glossary.html">glossary</a> and <a href="../software/slicer-settings.html">slicer settings</a>.</p>
+  </section>
+
+  <section class="cs-sheet" id="s-maintenance" aria-labelledby="s-maintenance-h">
+    <h2 id="s-maintenance-h">21 · Maintenance intervals</h2>
+    <p>A condensed version of the <a href="../techniques/maintenance.html">maintenance schedule</a>. Print hours matter more than calendar time: a printer running every day reaches “monthly” sooner. Follow your printer maker’s schedule where it differs.</p>
+    <div class="table-wrap"><table class="data compact">
+      <thead><tr><th>Interval</th><th>Tasks</th><th>Time</th></tr></thead>
+      <tbody>
+        <tr><td>Every print</td><td>Plate clean and seated; nozzle free of old plastic; right filament loaded and dry; purge area clear</td><td>1 min</td></tr>
+        <tr><td>Weekly</td><td>Wash the plate (soap, then IPA); vacuum debris from chamber and rails; wipe rods; check desiccant; look over fans and the toolhead cable</td><td>10 min</td></tr>
+        <tr><td>Monthly</td><td>Thin film of lubricant on rails and rods; belt tension and teeth; clean extruder gears; tighten screws; blow dust from fans; check PTFE tube ends</td><td>40 min</td></tr>
+        <tr><td>Quarterly</td><td>Grease lead screws; inspect or replace the nozzle (sooner with abrasives); check filters; inspect heater and sensor wiring; refresh desiccant</td><td>1 h</td></tr>
+        <tr><td>Yearly</td><td>Replace worn PTFE tubes, silicone sock, wiper and cutter; deep clean; check fans and bearings; update firmware and back up profiles; replace a worn plate</td><td>2 h</td></tr>
+      </tbody></table></div>
+    <div class="cs-two">
+      <div class="table-wrap"><table class="data compact">
+        <thead><tr><th>Nozzle</th><th>Rough lifetime</th></tr></thead>
+        <tbody>
+          <tr><td>Brass, normal filaments</td><td>3–6 months of regular use</td></tr>
+          <tr><td>Brass, abrasive filaments</td><td>Days to a couple of spools (avoid)</td></tr>
+          <tr><td>Hardened steel</td><td>Many months to years</td></tr>
+        </tbody></table></div>
+      <div>
+        <ul>
+          <li><b>Signs it is due now:</b> new noises, layer shifts, ringing, under-extrusion that calibration does not fix, a first layer that suddenly varies.</li>
+          <li><b>Keep a log:</b> date, print hours, task, result. It turns “it got worse” into “it got worse after the nozzle change”.</li>
+          <li><b>Power off</b> and let the hotend cool before working on it.</li>
+        </ul>
+      </div>
+    </div>
+    <figure class="fig">
+      <svg class="diagram" viewBox="0 0 780 170" role="img" aria-label="Maintenance intervals on a line from every print to yearly, with the main task at each step">
+        <rect class="d-surface" x="20" y="20" width="740" height="130" rx="10"/>
+        <path class="d-ink" d="M80 70 H700"/>
+        <g class="s-orange"><circle cx="80" cy="70" r="9"/><circle cx="235" cy="70" r="9"/><circle cx="390" cy="70" r="9"/><circle cx="545" cy="70" r="9"/><circle cx="700" cy="70" r="9"/></g>
+        <text class="t t-sm t-b t-c" x="80" y="48">Every print</text><text class="t t-sm t-b t-c" x="235" y="48">Weekly</text><text class="t t-sm t-b t-c" x="390" y="48">Monthly</text><text class="t t-sm t-b t-c" x="545" y="48">Quarterly</text><text class="t t-sm t-b t-c" x="700" y="48">Yearly</text>
+        <text class="t t-xs t-c" x="80" y="100">plate + nozzle</text><text class="t t-xs t-c" x="80" y="116">check</text>
+        <text class="t t-xs t-c" x="235" y="100">wash plate,</text><text class="t t-xs t-c" x="235" y="116">clean chamber</text>
+        <text class="t t-xs t-c" x="390" y="100">lubricate, belts,</text><text class="t t-xs t-c" x="390" y="116">extruder gears</text>
+        <text class="t t-xs t-c" x="545" y="100">nozzle, filters,</text><text class="t t-xs t-c" x="545" y="116">wiring</text>
+        <text class="t t-xs t-c" x="700" y="100">consumables,</text><text class="t t-xs t-c" x="700" y="116">firmware</text>
+      </svg>
+      <figcaption><b>Figure 14.</b> Each step includes the ones to its left. Printer-specific tasks for the X2D are in <a href="../x2d/maintenance-and-troubleshooting.html">X2D maintenance</a>.</figcaption>
+    </figure>
   </section>
 
   <div class="callout goal no-print"><span class="callout-title">Key takeaways</span>

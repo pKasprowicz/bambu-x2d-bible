@@ -25,6 +25,9 @@ All notable changes to the Compendium. Format: [Keep a Changelog](https://keepac
 - Mechanism catalog (Part 5 · Design): hinges, latches and catches, mounts, slides and guides, rotary and indexing mechanisms, clamps and adjusters, springs and flexures. Each entry has a diagram, starting dimensions, print orientation, material and when to choose it, plus a selector table and the binding ratio for sliders. Linked from Joints & fasteners, Design patterns and Start here.
 - `scripts/check_charts.py`, a review aid that flags charts whose bars or ticks do not match their own scale.
 - `docs/numeric-review.md`, the log of the review of numeric guidance: method, sources, every change and the items left open.
+- Cheat sheets: the missing sheet 15 (build plates and adhesion, with a fix ladder for parts that will not stick or stick too hard) and a new sheet 21 (maintenance intervals).
+- First print: a two-minute routine for reading the slicer preview, and a section on pausing, cancelling, filament runout, planned color changes and power cuts.
+- Safety & workspace: printed parts in use (food contact, skin, toys, loads, creep, heat) and remote printing (checks before a remote start, cameras, accounts and network safety).
 
 ## [1.0.1] - 2026-11-02
 

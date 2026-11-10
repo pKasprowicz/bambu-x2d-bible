@@ -300,6 +300,58 @@
     <p>Before you send a job, scrub through the layer preview. Check that the first layer covers the plate where you expect, that no part floats in mid-air, and that the time estimate makes sense. Two minutes in the preview saves two hours of wasted print.</p>
   </div>
 
+  <h3>Reading the preview: a two-minute routine</h3>
+  <p>After you press <em>Slice</em>, the slicer switches to a preview of the toolpaths it generated. This is the plan the printer will follow line by line, so it is the last chance to catch a problem for free. Most slicers color the paths by <b>feature type</b> (outer wall, inner wall, infill, top surface, support, travel) and give you a vertical <b>layer slider</b> to scrub up and down, plus a horizontal slider that plays back the moves within one layer.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 840 330" role="img" aria-label="Mock-up of a slicer preview: a part shown with outer walls, inner walls, infill and support in different colors, a vertical layer slider on the right, and a legend of feature types.">
+      <rect class="d-surface" x="20" y="20" width="800" height="290" rx="10"/>
+      <rect class="d-surface2" x="40" y="40" width="560" height="250" rx="8"/>
+      <path class="d-grid" d="M60 270 H580 M60 230 H580 M60 190 H580"/>
+      <rect class="d-metal2" x="80" y="262" width="480" height="10" rx="3"/>
+      <g class="f-teal"><rect x="150" y="150" width="70" height="112"/></g>
+      <path class="k-teal" d="M162 160 V256 M174 160 V256 M186 160 V256 M198 160 V256 M210 160 V256" stroke-width="2"/>
+      <rect class="s-orange" x="140" y="90" width="300" height="60" rx="4"/>
+      <rect class="f-yellow" x="150" y="100" width="280" height="40"/>
+      <path class="k-green" d="M160 104 L180 136 L200 104 L220 136 L240 104 L260 136 L280 104 L300 136 L320 104 L340 136 L360 104 L380 136 L400 104 L420 136" stroke-width="2"/>
+      <rect class="s-orange" x="380" y="150" width="60" height="112" rx="4"/>
+      <rect class="f-yellow" x="390" y="160" width="40" height="102"/>
+      <path class="k-blue" d="M450 80 C 500 60, 540 70, 560 110" stroke-dasharray="4 4" stroke-width="2"/>
+      <text class="t t-xs" x="470" y="62">travel move</text>
+      <path class="d-ink arrow" d="M120 170 L148 200"/><text class="t t-xs t-r" x="118" y="166">support</text>
+      <path class="d-ink arrow" d="M520 136 L442 120"/><text class="t t-xs" x="470" y="146">outer wall</text>
+      <text class="t t-xs t-c" x="290" y="84">infill inside, walls around it</text>
+      <rect class="d-surface" x="612" y="40" width="22" height="250" rx="6"/>
+      <rect class="s-orange" x="612" y="120" width="22" height="16" rx="4"/>
+      <text class="t t-xs" x="640" y="132">layer 38 / 120</text>
+      <text class="t t-xs" x="640" y="60">layer slider</text>
+      <g>
+        <rect class="s-orange" x="660" y="170" width="14" height="10"/><text class="t t-xs" x="682" y="179">Outer wall</text>
+        <rect class="f-yellow" x="660" y="190" width="14" height="10"/><text class="t t-xs" x="682" y="199">Inner wall</text>
+        <rect class="s-green" x="660" y="210" width="14" height="10"/><text class="t t-xs" x="682" y="219">Sparse infill</text>
+        <rect class="s-teal" x="660" y="230" width="14" height="10"/><text class="t t-xs" x="682" y="239">Support</text>
+        <rect class="s-blue" x="660" y="250" width="14" height="10"/><text class="t t-xs" x="682" y="259">Travel</text>
+      </g>
+    </svg>
+    <figcaption><b>Figure 8.</b> A simplified preview colored by feature type. Colors differ between slicers; the legend is always on screen. Drag the layer slider from the bottom up and watch each stage build.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Look at</th><th>Good sign</th><th>Warning sign → fix</th></tr></thead>
+    <tbody>
+      <tr><td>Layer 1</td><td>A solid footprint where the part touches the plate; brim attached if you added one</td><td>Only a few dots or thin lines touch the plate → reorient so a flat face is down, or add a brim</td></tr>
+      <tr><td>Scrub upward</td><td>Every layer sits on the one below or on support</td><td>Lines appear in mid-air (“floating islands”) → enable supports or reorient</td></tr>
+      <tr><td>Thin features</td><td>Thin walls and text show as continuous lines</td><td>Gaps or missing pieces → the feature is thinner than one line width; thicken it or use a smaller nozzle</td></tr>
+      <tr><td>Overhangs and bridges</td><td>Short bridges, overhangs under about 45–50°</td><td>Long flat ceilings with nothing under them → supports, or rotate the part</td></tr>
+      <tr><td>Top layers</td><td>Several solid layers close the top</td><td>Infill visible through the last layer → add top layers</td></tr>
+      <tr><td>Time and weight</td><td>Close to what you expected</td><td>Far more than expected → check scale (mm vs inch) and infill</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout warn"><span class="callout-title">The wrong-scale trap</span>
+    <p>A model exported in inches but read as millimeters arrives 25.4 times too small; the reverse makes it 25.4 times too big and the slicer may refuse it. If a model looks like a grain of rice or fills the whole plate, check the dimensions in the object panel before anything else.</p>
+  </div>
+
   <h2 id="start">▶️ Step 7: start the print</h2>
   <ol class="steps">
     <li><strong>Check the plate.</strong>Clean and dry; no old prints, no fingerprints on the printing area.</li>
@@ -352,7 +404,7 @@
         <text class="t-xs" x="20" y="332">(nozzle farther) in small steps.</text>
       </g>
     </svg>
-    <figcaption><b>Figure 8.</b> Reading the first layer. The top row is a cross-section through the nozzle and bed; the lower block is the view from above.</figcaption>
+    <figcaption><b>Figure 9.</b> Reading the first layer. The top row is a cross-section through the nozzle and bed; the lower block is the view from above.</figcaption>
   </figure>
 
   <div class="callout tip"><span class="callout-title">The adjust-while-printing trick</span>
@@ -384,7 +436,7 @@
         <text class="t-xs" x="20" y="222">Do not pry with metal tools on the coating.</text>
       </g>
     </svg>
-    <figcaption><b>Figure 9.</b> Safe removal for a flexible plate. For glass or fixed plates, wait for the bed to cool completely and use a plastic scraper at a shallow angle.</figcaption>
+    <figcaption><b>Figure 10.</b> Safe removal for a flexible plate. For glass or fixed plates, wait for the bed to cool completely and use a plastic scraper at a shallow angle.</figcaption>
   </figure>
 
   <ul class="checklist">
@@ -421,7 +473,7 @@
       </g>
       <text class="t-xs" x="20" y="24">Each rung adds one new skill: accuracy, details, spans, angles, function, materials, tuning, fit, supports, design.</text>
     </svg>
-    <figcaption><b>Figure 10.</b> A staircase of ten practice prints. Each step is small and measurable; do not skip ahead until the previous one works.</figcaption>
+    <figcaption><b>Figure 11.</b> A staircase of ten practice prints. Each step is small and measurable; do not skip ahead until the previous one works.</figcaption>
   </figure>
 
   <div class="table-wrap"><table class="data compact">
@@ -497,6 +549,58 @@
     </tbody>
   </table></div>
   <p>These figures depend on speed and machine; fast CoreXY printers finish in roughly a third of the time of slow bedslingers. Prices assume common PLA at about €15–25 per kilogram.</p>
+
+
+  <h2 id="interrupt">⏸️ Pausing, stopping and running out of filament</h2>
+  <p>Sooner or later a print needs an intervention. Knowing the three controls, and what each one leaves behind, keeps a small problem from becoming a ruined plate or a burned finger.</p>
+
+  <div class="grid cols-3">
+    <div class="card accent-blue"><h3>Pause</h3><p>The printer finishes the current move, lifts the nozzle and parks the head, usually keeping the bed warm so the part stays stuck. Use it to fix a tangle, swap a spool or remove a stray strand. Resume continues from the same point.</p></div>
+    <div class="card accent-orange"><h3>Stop / cancel</h3><p>Ends the job. The heaters switch off and the head parks. The part is finished as far as it got; there is normally no way to continue it. Use it when the print is failing.</p></div>
+    <div class="card accent-red"><h3>Power off</h3><p>For emergencies only: smoke, a burning smell, a crash you cannot stop from the screen. Cutting power stops the hotend fan too, so on a hot machine use the screen first when it is safe to do so.</p></div>
+  </div>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 840 300" role="img" aria-label="Decision chart: if there is smoke or a burning smell, power off; if the first layers failed, cancel and fix; if it is a tangle, runout or color change, pause; if it is cosmetic, let it finish and note it.">
+      <rect class="d-surface" x="20" y="20" width="800" height="260" rx="10"/>
+      <rect class="f-gray" x="40" y="120" width="170" height="56" rx="10"/>
+      <text class="t t-b t-c" x="125" y="144">Something</text><text class="t t-b t-c" x="125" y="162">looks wrong</text>
+      <path class="d-ink arrow" d="M210 148 C 250 148, 250 60, 300 60"/>
+      <path class="d-ink arrow" d="M210 148 C 250 148, 250 122, 300 122"/>
+      <path class="d-ink arrow" d="M210 148 C 250 148, 250 184, 300 184"/>
+      <path class="d-ink arrow" d="M210 148 C 250 148, 250 246, 300 246"/>
+      <rect class="f-red" x="300" y="38" width="300" height="44" rx="8"/><text class="t t-sm" x="314" y="65">Smoke, burning smell, crash</text>
+      <rect class="f-orange" x="300" y="100" width="300" height="44" rx="8"/><text class="t t-sm" x="314" y="127">Part loose, spaghetti, early layers bad</text>
+      <rect class="f-blue" x="300" y="162" width="300" height="44" rx="8"/><text class="t t-sm" x="314" y="189">Tangle, runout, planned color change</text>
+      <rect class="f-green" x="300" y="224" width="300" height="44" rx="8"/><text class="t t-sm" x="314" y="251">Small cosmetic flaw, rest is fine</text>
+      <path class="d-ink arrow" d="M600 60 H640"/><path class="d-ink arrow" d="M600 122 H640"/><path class="d-ink arrow" d="M600 184 H640"/><path class="d-ink arrow" d="M600 246 H640"/>
+      <text class="t t-sm t-b" x="648" y="65" style="fill:var(--red-ink)">Power off</text>
+      <text class="t t-sm t-b" x="648" y="127">Cancel, fix, restart</text>
+      <text class="t t-sm t-b" x="648" y="189">Pause, fix, resume</text>
+      <text class="t t-sm t-b" x="648" y="251">Let it finish, note it</text>
+    </svg>
+    <figcaption><b>Figure 12.</b> Pick the gentlest control that solves the problem. Most flaws in the first few layers only get worse, so cancel early rather than hope.</figcaption>
+  </figure>
+
+  <h3>When the spool runs out</h3>
+  <p>Most current printers have a <b>filament runout sensor</b> in the path (you met it in Figure 5). When the end of the filament passes it, the printer pauses by itself and shows a message. On printers with an automatic material system, it may switch to another spool of the same type and color without stopping. Otherwise:</p>
+  <ol class="steps">
+    <li><strong>Leave the part on the plate.</strong>Do not touch the print or the bed; the bed stays warm so the part keeps its grip.</li>
+    <li><strong>Unload the remaining piece.</strong>Follow the screen's unload routine. If a short end is stuck between the sensor and the extruder, the unload pulls it out.</li>
+    <li><strong>Load the new spool.</strong>Cut a clean angled tip, feed it, and let the printer purge until the new filament flows cleanly and in the right color.</li>
+    <li><strong>Clear the purge and resume.</strong>Remove any blob from the nozzle so it is not dropped onto the part, then press resume.</li>
+  </ol>
+  <p>A runout resume usually leaves a faint line on the outer wall at that height. On functional parts it does not matter; for show pieces, check that the spool has enough filament before you start (the slicer shows the weight; spools rarely say how much is left, so weigh them and subtract the empty-spool weight).</p>
+
+  <h3>A planned color change</h3>
+  <p>A single-nozzle printer without a material system can still make two-color prints by swapping filament at a chosen height: lettering on a sign, a contrasting top on a box. In the preview, move the layer slider to the first layer of the new color and add a <b>color change</b> or <b>pause</b> at that layer. The printer stops there; you swap the spool as above and resume. Full multi-color printing is covered in <a href="../techniques/multi-color-and-multi-material.html">multi-color &amp; multi-material</a>.</p>
+
+  <h3>Power cuts</h3>
+  <p>Some printers save their position regularly and offer to resume after a power cut. It can work if the cut was short and the part stayed stuck, but the part will have cooled, so expect a visible line and a weaker layer at that height. Do not rely on it for parts that carry a load; reprint them. If cuts are common where you live, see the UPS notes in <a href="safety-and-workspace.html">safety &amp; workspace</a>.</p>
+
+  <div class="callout danger"><span class="callout-title">Hot parts during a pause</span>
+    <p>A paused printer is still hot: the nozzle may stay near printing temperature and the bed stays warm. Reach in only where you need to, keep fingers away from the nozzle, and never pull filament out of a hot nozzle by force.</p>
+  </div>
 
   <h2 id="mistakes">⚠️ Common beginner mistakes</h2>
   <div class="grid cols-2">
