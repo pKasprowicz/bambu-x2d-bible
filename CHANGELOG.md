@@ -6,6 +6,23 @@ All notable changes to the Compendium. Format: [Keep a Changelog](https://keepac
 
 ### Fixed
 - Removed a stray UTF-8 byte-order mark at the start of the AMS 2 Pro page.
+- AMS 2 Pro drying chart: the 65 °C limit line was drawn at 60 °C, which made PETG look as if it could not be dried in the unit.
+- Cheat-sheet nozzle temperature chart: bars for PETG, ABS/ASA, nylon and PC sat 10–20 °C below the values in the table beside them; the axis now runs 180–300 °C.
+- Drying figures now agree across pages and with Bambu Lab's published values: PC 80 °C for 8 h, nylon 80–90 °C, PPS-CF 100–140 °C for 8–12 h (was as low as 80 °C).
+- Unfilled PC no longer listed as preferring a hardened nozzle.
+- Eight more charts were drawn off their own axes and now read correctly: the filament-compatibility drying chart (65 °C line again drawn at 60 °C), the overhang angle scale, the chamber-temperature and wood-fill colour charts, the moisture and shrinkage bar charts, the moisture-uptake curve and the maximum feed speed chart (y labels made the curves read too slow).
+- Bed-temperature bars: TPU no longer drawn longer than PLA. The smallest-feature bars are now labelled as not to scale.
+- Heat-set insert calculator: most insert outer diameters were actually hole sizes, so M4–M8 holes came out 0.3–0.4 mm too tight and M3 0.3 mm too loose. It now uses each size's real outer diameter and the maker's recommended hole, with interference as an optional override.
+- Heat-set insert holes on the post-processing page no longer run up to the insert's own diameter (M3 was 4.0–4.6 mm, now 4.0–4.2 mm), and the X2D enclosure recipe uses the same guidance.
+- Tolerance cheat sheet: fit gaps were per side and about one class looser than the fit classes on the Tolerances & fits page. It now uses the same classes and shows both the diametral clearance and the per-side gap.
+- Snap-fit calculator: allowed strains were above the design page's limits (PLA 1.5 % instead of 0.8–1.0 %, PETG 3 % instead of 2 %), so it passed snap arms that would crack. It now uses the page's values.
+- Burn first aid now says to cool with running water for at least 20 minutes (was 10), in line with current Red Cross guidance.
+- Feed-speed chart legend matched to the hotend flow table (a standard hotend with PLA is 15–25 mm³/s, not 12).
+- Drying calculator: TPU 95A may be dried at Bambu's 70 °C without a warning; PP drying time 4 h.
+
+### Added
+- `scripts/check_charts.py`, a review aid that flags charts whose bars or ticks do not match their own scale.
+- `docs/numeric-review.md`, the log of the review of numeric guidance: method, sources, every change and the items left open.
 
 ## [1.0.1] - 2026-11-02
 

@@ -29,6 +29,7 @@ Totals at last check: **62 pages, ~276k words, 662 SVG figures**, `check_site.py
 - `assets/css/style.css` — design system (themes, components, SVG utility classes).
 - `CONTRIBUTING.md` — page skeleton and component reference (follow it when adding pages).
 - `scripts/check_site.py` — validates links, anchors, SVG XML, structure, `data-page`.
+- `scripts/check_charts.py` — review aid that flags charts drawn off their own scale (heuristic, not in CI).
 - `scripts/build_search_index.py` — generates `assets/search-index.json` (committed; also rebuilt in CI).
 - `.github/workflows/pages.yml` — builds index, validates, deploys via GitHub Actions on push to `master`/`main`.
 
@@ -57,15 +58,16 @@ Released editions: **v1.0.0** (first edition) and **v1.0.1** (muted colour palet
 1. Visual-lab animations, dark-mode toggle and search were not exercised by hand beyond load/console checks.
 2. Facts not on Bambu's public spec pages (unboxing/transport-lock steps, per-material AMS 2 Pro drying tables) defer to the manual. Re-verify when firmware/hardware changes. No prices by design.
 3. Remaining page-local `<style>` blocks are namespaced per page (`ts-`, `cs-`, `faq-` ...) and not duplicated; leaving them is fine.
-4. Numeric values are caveated starting points; a domain-expert review would still be valuable.
+4. Numeric values are caveated starting points. A systematic review (consistency, manufacturer data, standards, chart scales) was done on 2026-11-10 and is logged in `docs/numeric-review.md`, with the items left open; a printing specialist could still add value there.
 
 ## Since v1.0.1 (unreleased)
 
 - Removed the UTF-8 BOM from `x2d/ams-2-pro.html` (no other HTML file has one).
+- Numeric review (seven batches): wrong charts, drying figures, insert and snap-fit calculator data, fit classes and first aid fixed; see `CHANGELOG.md` and `docs/numeric-review.md`.
 
 ## Next steps
 
-1. Optional: expert review of numeric guidance; spot-check against the Bambu wiki when it is reachable.
+1. Optional: have a printing specialist look at the open items in `docs/numeric-review.md`; spot-check Bambu figures against the Bambu wiki when it is reachable (it was not from the review environment).
 2. Optional: expand the shorter pages (cheat sheets ~3.7k words).
 
 ## Git identity
