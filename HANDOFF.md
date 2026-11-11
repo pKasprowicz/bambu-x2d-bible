@@ -30,6 +30,7 @@ Totals at last check (v1.1.0, 2026-11-10): **63 pages, ~288k words, 722 figures*
 - `CONTRIBUTING.md` — page skeleton and component reference (follow it when adding pages).
 - `scripts/check_site.py` — validates links, anchors, SVG XML, structure, `data-page`.
 - `scripts/check_charts.py` — review aid that flags charts drawn off their own scale (heuristic, not in CI).
+- `scripts/check_freshness.py` — lists Part 6 pages by their `data-verified` date (last check of Bambu facts) and marks those older than six months; CI prints it. Pages show the date as a hero badge.
 - `scripts/build_search_index.py` — generates `assets/search-index.json` (committed; also rebuilt in CI).
 - `.github/workflows/pages.yml` — builds index, validates, deploys via GitHub Actions on push to `master`/`main`.
 
@@ -84,7 +85,6 @@ Released editions: **v1.0.0** (first edition), **v1.0.1** (muted colour palette 
 1. Optional: have a printing specialist look at `docs/numeric-review.md`; spot-check Bambu figures (including PET-CF drying) against the Bambu wiki. Bambu's sites were refused by the automation proxy on 2026-11-10/11, and the owner declined to allow them for that environment, so this needs a human or a differently configured session.
 2. Optional: keep expanding the shorter content pages. Next candidates by length: `tools/visual-lab.html`, `x2d/setup-and-first-print.html`, `x2d/hardware-tour.html`, `foundations/buying-guide.html`. Navigation pages (home, start-here, tools and exercises index, models gallery) are short by design.
 3. To confirm in Bambu Studio (stated on the dual-nozzle page from general knowledge, not a Bambu source): the slice summary lists flushed and prime-tower amounts, and the preview can color paths by filament.
-4. Optional: freshness tracking for Part 6 (`data-verified` dates plus a script listing stale pages), as proposed in `docs/github-flow-and-versioning.md`.
 
 ## Git identity
 

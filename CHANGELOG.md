@@ -4,6 +4,9 @@ All notable changes to the Compendium. Format: [Keep a Changelog](https://keepac
 
 ## [Unreleased]
 
+### Added
+- Bambu X2D pages show when their Bambu facts were last checked against Bambu Lab's documentation, with a warning once that is more than six months ago. `scripts/check_freshness.py` lists the pages due for re-checking.
+
 ## [1.1.1] - 2026-11-11
 
 ### Fixed

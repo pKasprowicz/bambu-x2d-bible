@@ -22,3 +22,5 @@ jobs:
         run: git diff --exit-code assets/search-index.json
       - name: Check site (links, anchors, SVG, structure, version)
         run: python scripts/check_site.py
+      - name: Part 6 freshness report (informational)
+        run: python scripts/check_freshness.py

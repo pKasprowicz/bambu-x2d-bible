@@ -94,6 +94,13 @@
     "The 3D Printing Compendium · built for GitHub Pages · Settings shown are starting points — always validate on your own printer & filament.<br>Product facts for the Bambu Lab X2D and AMS 2 Pro come from Bambu Lab's public documentation and may change with firmware updates." +
     (NAV.version ? '<br><small>Version ' + NAV.version + (NAV.repo ? ' · <a href="' + NAV.repo + '/blob/master/CHANGELOG.md" rel="noopener">changelog</a> · <a href="' + NAV.repo + '/releases" rel="noopener">releases</a>' : '') + '</small>' : ''));
   body.appendChild(footer);
+  /* Part 6 pages carry data-verified="YYYY-MM-DD": the last check of their Bambu facts against Bambu's documentation. */
+  var verified = body.getAttribute("data-verified"), heroMeta = $(".hero .meta");
+  if (verified && heroMeta && /^\d{4}-\d{2}-\d{2}$/.test(verified)) {
+    var vd = new Date(verified + "T00:00:00Z"), months = (Date.now() - vd.getTime()) / (30.44 * 864e5);
+    var vtxt = vd.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" });
+    heroMeta.appendChild(el("span", { class: "badge verified" + (months > 6 ? " stale" : ""), title: "Bambu facts on this page were last checked against Bambu Lab's documentation on " + vtxt + (months > 6 ? ". That is more than six months ago; check the Bambu wiki for changes." : ".") }, (months > 6 ? "⚠ " : "✓ ") + "Bambu facts checked " + vtxt));
+  }
   var kicker = $(".home-hero .kicker");
   if (kicker && NAV.version) kicker.appendChild(el("a", { class: "ver-chip", href: (NAV.repo || "") + "/blob/master/CHANGELOG.md", rel: "noopener", title: "What changed" }, "v" + NAV.version + " · changelog"));
   var toTop = el("button", { class: "icon-btn to-top", "aria-label": "Back to top" }, "↑");

@@ -81,9 +81,13 @@ Pushing the tag runs `.github/workflows/release.yml`. Where pushing a tag is not
 
 The first release, **v1.0.0**, needs no bump: merge the PR that introduced this workflow, then tag `master`.
 
-### Freshness of vendor facts (optional follow-up)
+### Freshness of vendor facts
 
-Bambu X2D chapters age faster than the rest. Idea: a `data-verified="2026-11-02"` attribute on each Part 6 page plus a small script that lists pages not re-verified in six months. A re-verification pass is a PATCH release.
+Bambu X2D chapters age faster than the rest. Every `x2d/*.html` page carries `<body ... data-verified="YYYY-MM-DD">`, the last day its Bambu facts were checked against Bambu Lab's documentation (`check_site.py` fails a Part 6 page without a valid date).
+
+* The page shows it as a badge in the hero ("✓ Bambu facts checked …"), which turns into a yellow warning after six months.
+* `python scripts/check_freshness.py` lists the pages oldest first and marks those due (`--months N` to change the limit, `--today` to test, `--strict` to exit 1 when any page is due). CI prints the report on every pull request without failing.
+* After re-checking a page against the Bambu wiki, update its date. A re-verification pass is a PATCH release.
 
 ### Reading older editions
 
