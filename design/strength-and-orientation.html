@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Strength &amp; orientation · 3D Printing Compendium</title>
-  <meta name="description" content="Why FDM parts are weaker between layers and how to design around it: orientation, load paths, walls vs infill, stress concentrations, beam stiffness I = bh³/12, creep and heat, home testing, safety factors, annealing, fibre reinforcement and failure analysis.">
+  <meta name="description" content="Why FDM parts are weaker between layers and how to design around it: orientation, load paths, walls vs infill, stress concentrations, beam stiffness I = bh³/12, creep and heat, home testing, safety factors, annealing, fiber reinforcement and failure analysis.">
   <link rel="stylesheet" href="../assets/css/style.css">
   <script src="../assets/js/nav.js" defer></script>
   <script src="../assets/js/site.js" defer></script>
@@ -28,7 +28,7 @@
     <p>What anisotropy means for FDM, how to choose a build orientation from the load path, why walls matter more than infill, how stiffness depends on <span class="so-eq">I = b·h³/12</span>, how creep, heat and fatigue limit printed parts, how to test a design at home, which safety factors to use and how to read a broken part. Numbers marked <em>indicative</em> are typical ranges, not test data: always test your own material and printer.</p></div>
 
   <h2 id="anisotropy">🔰 Anisotropy: the Z direction is weak</h2>
-  <p>An FDM part is made of <b>lines</b> (extruded beads) laid side by side in <b>layers</b>. Inside one line the plastic is continuous and strong. Between two neighbouring lines in the same layer, and between two layers, the plastic is only <em>welded</em> while still warm. The weld is good but not perfect: it has the strength of the polymer minus whatever the cooling, speed and temperature took away. This gives a part <b>direction-dependent strength</b>, called <b>anisotropy</b>. The tensile strength <b>across layers (Z)</b> is typically only <b>40–80 %</b> of the strength <b>along the lines (XY)</b>, and impact and fatigue strength across layers are worse than that.</p>
+  <p>An FDM part is made of <b>lines</b> (extruded beads) laid side by side in <b>layers</b>. Inside one line the plastic is continuous and strong. Between two neighboring lines in the same layer, and between two layers, the plastic is only <em>welded</em> while still warm. The weld is good but not perfect: it has the strength of the polymer minus whatever the cooling, speed and temperature took away. This gives a part <b>direction-dependent strength</b>, called <b>anisotropy</b>. The tensile strength <b>across layers (Z)</b> is typically only <b>40–80 %</b> of the strength <b>along the lines (XY)</b>, and impact and fatigue strength across layers are worse than that.</p>
 
   <figure class="fig">
     <svg class="diagram" viewBox="0 0 720 280" role="img" aria-label="A layered block pulled along layers (strong) and across layers (weak), with indicative Z strength ranges by material">
@@ -49,7 +49,7 @@
       <text class="t-xs" x="330" y="216">CF-filled</text><rect class="f-red" x="456" y="202" width="84" height="20" rx="3"/>
       <text class="t-xs t-m" x="380" y="246">Ranges shown are typical, vary with temperature, speed and cooling.</text>
     </svg>
-    <figcaption><b>Figure 1.</b> Pull along the layers and the part is as strong as the plastic; pull across them and it is only as strong as the weld. Filled filaments lose the most because fibres align in the line direction and do not bridge layers.</figcaption>
+    <figcaption><b>Figure 1.</b> Pull along the layers and the part is as strong as the plastic; pull across them and it is only as strong as the weld. Filled filaments lose the most because fibers align in the line direction and do not bridge layers.</figcaption>
   </figure>
 
   <p>Two practical points follow. First, <b>layer adhesion is improvable</b>: a hotter nozzle, a slower print, less part cooling and a warm chamber (up to 65 °C in the X2D) all increase the weld. Second, <b>the weakness is a design question</b>: you do not fix it by turning knobs, you avoid loading the part across the layers. The next sections show how.</p>
@@ -67,7 +67,7 @@
       <polygon class="d-plastic" points="74,180 74,110 140,180"/>
       <path class="d-ink arrow" d="M280 120 V176" style="stroke:var(--red);stroke-width:3"/><text class="t-sm t-b" x="248" y="112" style="fill:var(--red-ink)">Load F</text>
       <path class="d-dash" d="M280 176 H150 Q74 176 66 130 V70" style="stroke:var(--orange);stroke-width:2"/>
-      <text class="t-xs" x="100" y="224">tension in the top fibre, compression in the bottom</text>
+      <text class="t-xs" x="100" y="224">tension in the top fiber, compression in the bottom</text>
       <text class="t-xs" x="320" y="176">arm: bending</text>
       <text class="t-xs" x="84" y="56">plate: tension + peel</text>
       <rect class="f-blue" x="400" y="20" width="310" height="220" rx="10"/>
@@ -236,7 +236,7 @@
   </figure>
 
   <div class="callout warn"><span class="callout-title">Printed notches</span>
-    <p>Layer lines are tiny notches that print into every surface. A 0.2 mm layer line already imposes some stress concentration at the surface, so printed parts are <b>more notch-sensitive</b> than the same plastic injection moulded. That is why generous fillets matter more in print than in the datasheet.</p></div>
+    <p>Layer lines are tiny notches that print into every surface. A 0.2 mm layer line already imposes some stress concentration at the surface, so printed parts are <b>more notch-sensitive</b> than the same plastic injection molded. That is why generous fillets matter more in print than in the datasheet.</p></div>
 
   <h2 id="beam-math">🔧 Beam stiffness: why height matters</h2>
   <p>When a beam bends, stiffness depends on its cross-section through the <b>second moment of area I</b>. For a rectangle of width <b>b</b> and height <b>h</b> (measured in the direction of the bending load) <span class="so-eq">I = b·h³/12</span>. The cube on h is the key: doubling the height makes the beam <b>8 times stiffer</b>, while doubling the width only doubles it. The tip deflection of a cantilever of length L under force F is <span class="so-eq">δ = F·L³ / (3·E·I)</span> and the peak surface stress is <span class="so-eq">σ = 6·F·L / (b·h²)</span>.</p>
@@ -344,7 +344,7 @@
   <p>You can test a printed part without a lab. All you need is a bucket of water (or a hanging weight), a luggage scale and a repeatable procedure. The goal is not an exact number but a <b>comparison</b>: is revision B stronger than revision A, and how much margin does the design have against the load it needs to carry?</p>
 
   <figure class="fig">
-    <svg class="diagram" viewBox="0 0 720 260" role="img" aria-label="A bending test rig with a printed beam on two supports and a bucket hanging from the centre, and a list of test methods">
+    <svg class="diagram" viewBox="0 0 720 260" role="img" aria-label="A bending test rig with a printed beam on two supports and a bucket hanging from the center, and a list of test methods">
       <rect class="d-plastic" x="60" y="150" width="280" height="18"/>
       <polygon class="d-surface2" points="90,168 78,200 102,200"/><polygon class="d-surface2" points="310,168 298,200 322,200"/>
       <path class="d-ink" d="M200 168 V196" style="stroke-width:2"/>
@@ -383,7 +383,7 @@
   </table></div>
 
   <h2 id="annealing">🔧 Annealing</h2>
-  <p><b>Annealing</b> is controlled heating of a printed part to let the polymer chains relax and, for semi-crystalline polymers, crystallise. The result is a <b>higher heat-deflection temperature</b> and often stronger layer bonds. The price is <b>dimensional change</b> (0.5–3 % shrinkage, sometimes warp), so do it only on parts you can afford to scale in CAD, and keep tolerances in mind. Use a kitchen oven checked with a separate thermometer. Do it in a filament maker's instructions window when they specify one.</p>
+  <p><b>Annealing</b> is controlled heating of a printed part to let the polymer chains relax and, for semi-crystalline polymers, crystallize. The result is a <b>higher heat-deflection temperature</b> and often stronger layer bonds. The price is <b>dimensional change</b> (0.5–3 % shrinkage, sometimes warp), so do it only on parts you can afford to scale in CAD, and keep tolerances in mind. Use a kitchen oven checked with a separate thermometer. Do it in a filament maker's instructions window when they specify one.</p>
 
   <figure class="fig">
     <svg class="diagram" viewBox="0 0 720 240" role="img" aria-label="Annealing profile: ramp up, hold at about 80 to 100 degrees Celsius for 30 to 60 minutes, then slow cooling inside the oven">
@@ -406,43 +406,43 @@
     <figcaption><b>Figure 13.</b> An annealing profile. Heating slowly and cooling slowly matter as much as the hold temperature: fast changes warp the part.</figcaption>
   </figure>
 
-  <h2 id="fibre">🔧 Fibre-reinforced designs and continuous fibre</h2>
-  <p><b>Chopped-fibre filaments</b> (carbon or glass, typically 5–25 % by weight) are stiffer and creep less than their base polymer, but they are less tough, strongly anisotropic (fibres align with the line) and abrasive: they need a hardened or abrasion-resistant nozzle. Check <a href="../x2d/filament-compatibility.html">X2D filament compatibility</a> before using them. Their effect on design: make arms and ribs longer, bigger fillets, and never use them for snap-fits or living hinges.</p>
+  <h2 id="fiber">🔧 Fiber-reinforced designs and continuous fiber</h2>
+  <p><b>Chopped-fiber filaments</b> (carbon or glass, typically 5–25 % by weight) are stiffer and creep less than their base polymer, but they are less tough, strongly anisotropic (fibers align with the line) and abrasive: they need a hardened or abrasion-resistant nozzle. Check <a href="../x2d/filament-compatibility.html">X2D filament compatibility</a> before using them. Their effect on design: make arms and ribs longer, bigger fillets, and never use them for snap-fits or living hinges.</p>
 
   <figure class="fig">
-    <svg class="diagram" viewBox="0 0 720 230" role="img" aria-label="Chopped fibres aligned in a printed bead, continuous fibre strand through a layer, and an embedded carbon rod in a pocket">
+    <svg class="diagram" viewBox="0 0 720 230" role="img" aria-label="Chopped fibers aligned in a printed bead, continuous fiber strand through a layer, and an embedded carbon rod in a pocket">
       <rect class="d-plastic" x="30" y="50" width="200" height="34" rx="17"/>
       <path class="d-thin" d="M50 62 h14 M80 70 h12 M110 60 h14 M140 72 h12 M170 62 h14 M196 70 h12 M60 76 h12 M130 78 h12 M180 78 h12"/>
-      <text class="t-sm t-b" x="30" y="34">Chopped fibre</text><text class="t-xs" x="30" y="106">short fibres align with the bead</text><text class="t-xs" x="30" y="122">stiffer, brittler, 2–4× in XY</text>
+      <text class="t-sm t-b" x="30" y="34">Chopped fiber</text><text class="t-xs" x="30" y="106">short fibers align with the bead</text><text class="t-xs" x="30" y="122">stiffer, brittler, 2–4× in XY</text>
       <rect class="d-plastic" x="270" y="50" width="200" height="34" rx="17"/>
       <path class="d-ink" d="M280 67 H460" style="stroke:var(--orange);stroke-width:3"/>
-      <text class="t-sm t-b" x="270" y="34">Continuous fibre</text><text class="t-xs" x="270" y="106">a full-length strand carries the load</text><text class="t-xs" x="270" y="122">in-plane strength near aluminium</text>
+      <text class="t-sm t-b" x="270" y="34">Continuous fiber</text><text class="t-xs" x="270" y="106">a full-length strand carries the load</text><text class="t-xs" x="270" y="122">in-plane strength near aluminum</text>
       <rect class="d-plastic" x="510" y="40" width="190" height="60"/><rect class="d-metal" x="516" y="62" width="178" height="16" rx="8"/>
       <text class="t-sm t-b" x="510" y="34">Embedded rod</text><text class="t-xs" x="510" y="116">pocket for carbon or steel rod,</text><text class="t-xs" x="510" y="132">glued in; cheap and effective</text>
       <rect class="d-surface" x="30" y="160" width="670" height="52" rx="8"/>
-      <text class="t-xs" x="46" y="182">Put fibre (or rods) where the tension is, along the load direction, near the outer surface of a beam. Continuous-fibre printers are specialised</text><text class="t-xs" x="46" y="198">machines; on a standard printer an embedded rod gives much of the benefit.</text>
+      <text class="t-xs" x="46" y="182">Put fiber (or rods) where the tension is, along the load direction, near the outer surface of a beam. Continuous-fiber printers are specialized</text><text class="t-xs" x="46" y="198">machines; on a standard printer an embedded rod gives much of the benefit.</text>
     </svg>
-    <figcaption><b>Figure 14.</b> Three ways to add fibre: chopped in the filament, continuous in the layer, or an embedded rod in a pocket. The rod is the home-workshop route.</figcaption>
+    <figcaption><b>Figure 14.</b> Three ways to add fiber: chopped in the filament, continuous in the layer, or an embedded rod in a pocket. The rod is the home-workshop route.</figcaption>
   </figure>
 
-  <h2 id="topology">🚀 Topology optimisation and lattices</h2>
-  <p><b>Topology optimisation</b> software starts from a block of material, applies your loads and supports and removes everything that carries little stress. The result looks organic: struts and arches along the load paths. It saves 30–60 % of the mass at the same stiffness. It suits 3D printing well because complex shapes cost nothing extra, but remember the usual rules (overhang ≤ 45°, minimum feature 0.8–1.2 mm, orientation along the load). <b>Lattices</b> (gyroid, octet, honeycomb) can replace infill or lighten a part intentionally, and <b>graded lattices</b> put denser cells where stress is high.</p>
+  <h2 id="topology">🚀 Topology optimization and lattices</h2>
+  <p><b>Topology optimization</b> software starts from a block of material, applies your loads and supports and removes everything that carries little stress. The result looks organic: struts and arches along the load paths. It saves 30–60 % of the mass at the same stiffness. It suits 3D printing well because complex shapes cost nothing extra, but remember the usual rules (overhang ≤ 45°, minimum feature 0.8–1.2 mm, orientation along the load). <b>Lattices</b> (gyroid, octet, honeycomb) can replace infill or lighten a part intentionally, and <b>graded lattices</b> put denser cells where stress is high.</p>
 
   <figure class="fig">
-    <svg class="diagram" viewBox="0 0 720 230" role="img" aria-label="A solid cantilever bracket, a topology-optimised truss version and a graded lattice">
+    <svg class="diagram" viewBox="0 0 720 230" role="img" aria-label="A solid cantilever bracket, a topology-optimized truss version and a graded lattice">
       <rect class="d-plastic" x="30" y="60" width="140" height="110"/><path class="d-ink arrow" d="M170 60 V34" style="stroke:var(--red)"/>
       <text class="t-sm t-b" x="30" y="40">Solid</text><text class="t-xs" x="30" y="190">mass 100 %</text>
       <rect class="d-dash" x="250" y="60" width="140" height="110" style="fill:none"/>
       <path class="d-ink" d="M250 60 L390 110 M250 170 L390 110 M250 60 V170 M250 115 L390 110" style="stroke-width:6;stroke-linecap:round"/>
       <path class="d-ink arrow" d="M390 110 V84" style="stroke:var(--red)"/>
-      <text class="t-sm t-b" x="250" y="40">Optimised</text><text class="t-xs" x="250" y="190">mass ≈ 40–60 %</text>
+      <text class="t-sm t-b" x="250" y="40">Optimized</text><text class="t-xs" x="250" y="190">mass ≈ 40–60 %</text>
       <rect class="d-surface" x="480" y="60" width="140" height="110"/>
       <path class="d-ink" d="M500 60 V170" style="stroke-width:5"/><path class="d-ink" d="M530 60 V170" style="stroke-width:4"/><path class="d-ink" d="M560 60 V170" style="stroke-width:3"/><path class="d-ink" d="M590 60 V170" style="stroke-width:2"/>
       <path class="d-ink" d="M480 90 H620" style="stroke-width:2"/><path class="d-ink" d="M480 120 H620" style="stroke-width:2"/><path class="d-ink" d="M480 150 H620" style="stroke-width:2"/>
       <text class="t-sm t-b" x="480" y="40">Graded lattice</text><text class="t-xs" x="480" y="190">denser where stress is high</text>
-      <text class="t-xs t-m" x="30" y="220">Optimised shapes still need ≥ 0.8 mm struts and 45° overhang slopes for a 0.4 mm nozzle.</text>
+      <text class="t-xs t-m" x="30" y="220">Optimized shapes still need ≥ 0.8 mm struts and 45° overhang slopes for a 0.4 mm nozzle.</text>
     </svg>
-    <figcaption><b>Figure 15.</b> Solid, optimised and graded-lattice versions of a cantilever bracket. All have the same load direction (arrow).</figcaption>
+    <figcaption><b>Figure 15.</b> Solid, optimized and graded-lattice versions of a cantilever bracket. All have the same load direction (arrow).</figcaption>
   </figure>
 
   <h2 id="bosses-threads">🔧 Designing printed threads and bosses</h2>
@@ -494,27 +494,27 @@
     <figcaption><b>Figure 17.</b> Six common failure patterns. The shape of the crack and its position relative to layers tell you what to change.</figcaption>
   </figure>
 
-  <h2 id="vs-molded">🔧 Printed vs injection-moulded parts</h2>
-  <p>A printed part is never a drop-in copy of a moulded one. Injection moulding gives isotropic properties, a smooth surface and tight tolerance, but needs a mould that costs thousands. Printing gives complete freedom of shape for no tooling. The break-even point depends on size and complexity, usually a few hundred to a few thousand parts.</p>
+  <h2 id="vs-molded">🔧 Printed vs injection-molded parts</h2>
+  <p>A printed part is never a drop-in copy of a molded one. Injection molding gives isotropic properties, a smooth surface and tight tolerance, but needs a mold that costs thousands. Printing gives complete freedom of shape for no tooling. The break-even point depends on size and complexity, usually a few hundred to a few thousand parts.</p>
 
   <figure class="fig">
-    <svg class="diagram" viewBox="0 0 720 260" role="img" aria-label="Total cost versus quantity for printing and injection moulding, with the break-even point">
+    <svg class="diagram" viewBox="0 0 720 260" role="img" aria-label="Total cost versus quantity for printing and injection molding, with the break-even point">
       <path class="d-ink arrow" d="M60 230 H410"/><path class="d-ink arrow" d="M60 230 V24"/>
       <text class="t-xs" x="170" y="252">quantity (parts) →</text><text class="t-xs" x="66" y="22">total cost ↑</text>
       <path class="d-ink" d="M60 230 L400 60" style="stroke:var(--blue);stroke-width:3;fill:none"/><text class="t-xs c-blue t-b" x="260" y="170">printing: no tooling, constant per-part cost</text>
-      <path class="d-ink" d="M60 100 L400 82" style="stroke:var(--orange);stroke-width:3;fill:none"/><text class="t-xs t-b" x="170" y="72" style="fill:var(--orange-ink)">injection moulding: tooling, low per-part</text>
+      <path class="d-ink" d="M60 100 L400 82" style="stroke:var(--orange);stroke-width:3;fill:none"/><text class="t-xs t-b" x="170" y="72" style="fill:var(--orange-ink)">injection molding: tooling, low per-part</text>
       <circle class="f-green" cx="349" cy="88" r="7"/><text class="t-xs" x="308" y="116">break-even</text>
       <rect class="d-surface" x="440" y="30" width="270" height="200" rx="10"/>
       <text class="t-sm t-b" x="456" y="56">Printing wins when…</text>
       <text class="t-xs" x="456" y="78">• quantity is under a few hundred</text><text class="t-xs" x="456" y="94">• the design is still changing</text><text class="t-xs" x="456" y="110">• the shape has internal channels</text><text class="t-xs" x="456" y="126">• every part is different</text>
-      <text class="t-sm t-b" x="456" y="156">Moulding wins when…</text>
+      <text class="t-sm t-b" x="456" y="156">Molding wins when…</text>
       <text class="t-xs" x="456" y="178">• quantity is in the thousands</text><text class="t-xs" x="456" y="194">• tolerance and finish are strict</text><text class="t-xs" x="456" y="210">• strength must be isotropic</text>
     </svg>
     <figcaption><b>Figure 18.</b> Schematic cost versus quantity. The numbers are illustrative only; use real quotes for a decision.</figcaption>
   </figure>
 
   <div class="table-wrap"><table class="data compact so-table">
-    <thead><tr><th>Property</th><th>FDM printed</th><th>Injection moulded</th></tr></thead>
+    <thead><tr><th>Property</th><th>FDM printed</th><th>Injection molded</th></tr></thead>
     <tbody>
       <tr><td>Strength</td><td>Anisotropic; Z is 40–80 % of XY</td><td>Isotropic (some orientation near the gate)</td></tr>
       <tr><td>Tolerance</td><td>±0.1–0.3 mm (IT13–IT15)</td><td>±0.05–0.1 mm</td></tr>

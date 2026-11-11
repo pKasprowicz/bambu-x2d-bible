@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Design patterns · 3D Printing Compendium</title>
-  <meta name="description" content="A catalogue of 30 reusable 3D-printing design patterns with diagrams, parameters in mm and use cases: enclosures, clips, holders, modular bins, hinges, springs, gears, bearings, brackets, jigs, adapters and workflow patterns.">
+  <meta name="description" content="A catalog of 30 reusable 3D-printing design patterns with diagrams, parameters in mm and use cases: enclosures, clips, holders, modular bins, hinges, springs, gears, bearings, brackets, jigs, adapters and workflow patterns.">
   <link rel="stylesheet" href="../assets/css/style.css">
   <script src="../assets/js/nav.js" defer></script>
   <script src="../assets/js/site.js" defer></script>
@@ -31,9 +31,9 @@
   </header>
 
   <div class="callout goal"><span class="callout-title">What you will learn</span>
-    <p>How to recognise a recurring design problem (a lid, a clip, a hinge, a gear) and apply a tested pattern with starting dimensions. Every number is a <em>starting value</em>: adjust it with your own <a href="tolerances-and-fits.html">tolerance coupon</a> and keep the patterns in a parametric model (see <a href="parametric-cad-workflow.html">Parametric CAD workflow</a>).</p></div>
+    <p>How to recognize a recurring design problem (a lid, a clip, a hinge, a gear) and apply a tested pattern with starting dimensions. Every number is a <em>starting value</em>: adjust it with your own <a href="tolerances-and-fits.html">tolerance coupon</a> and keep the patterns in a parametric model (see <a href="parametric-cad-workflow.html">Parametric CAD workflow</a>).</p></div>
 
-  <h2 id="how-to-use">🔰 How to use this catalogue</h2>
+  <h2 id="how-to-use">🔰 How to use this catalog</h2>
   <p>A <b>design pattern</b> is a solution that works repeatedly: a way to hold a lid, mount a bearing or split a big part. Experienced designers keep a library of them. A pattern is never copied blindly; you take the topology (the idea) and then set the parameters for your material, printer and load. The cards below are grouped by problem: housings, holders and mounts, mechanisms, structure and connections, and workflows. For the alternatives to each mechanism (seven kinds of hinge, nine latches, ten mounts and more), see the <a href="mechanisms.html">Mechanism catalog</a>.</p>
   <p>All dimensions assume a 0.4 mm nozzle, 0.2 mm layers and an accurate printer such as the X2D. The shared defaults are listed once here, so the cards stay short.</p>
 
@@ -110,7 +110,7 @@
 
   </div>
 
-  <h2 id="holders">🔰 Holders, mounts and organisers</h2>
+  <h2 id="holders">🔰 Holders, mounts and organizers</h2>
   <div class="dp-grid">
 
     <article class="dp-card" id="cable-clip"><h3>6 · Cable clip</h3>
@@ -129,7 +129,7 @@
         <path class="d-ink" d="M72 60 V20 M107 60 V30 M137 60 V36" style="stroke-width:6;stroke-linecap:round;stroke:var(--orange)"/>
         <text class="t-xs" x="40" y="112">hole = tool Ø + 1 mm, depth ≥ 25 mm</text><text class="t-xs" x="40" y="128">wall 2 mm between holes</text>
       </svg><figcaption><b>Figure 7.</b> A plate with drilled pockets sized to the tools.</figcaption></figure>
-      <p><b>Use:</b> workshop walls, desk organisers.</p>
+      <p><b>Use:</b> workshop walls, desk organizers.</p>
       <ul class="dp-par"><li>Pocket = measured tool Ø + 1 mm; chamfer the mouth 1 mm</li><li>Load: tool weight is shear, so print flat with 4 walls</li><li>Pre-measure with callipers; list the Ø in a parameter table</li></ul></article>
 
     <article class="dp-card" id="phone-stand"><h3>8 · Phone stand</h3>
@@ -167,7 +167,7 @@
         <path class="d-plastic" d="M50 40 H150 V98 H50 Z"/><polygon class="d-plastic" points="62,98 138,98 130,106 70,106"/>
         <path class="d-thin arrow arrow-start" d="M56 130 H120"/><text class="t-xs" x="66" y="144">pitch (e.g. 42 mm)</text><text class="t-xs" x="156" y="64">stacking lip + foot</text>
       </svg><figcaption><b>Figure 11.</b> A repeating pitch lets bins of different sizes share a baseplate.</figcaption></figure>
-      <p><b>Use:</b> workshop drawers, electronics parts, desk organisers. The idea (a baseplate on a fixed pitch with chamfered, stackable feet) is public and used by several open systems; design your own dimensions or follow the specification of a system you want compatibility with.</p>
+      <p><b>Use:</b> workshop drawers, electronics parts, desk organizers. The idea (a baseplate on a fixed pitch with chamfered, stackable feet) is public and used by several open systems; design your own dimensions or follow the specification of a system you want compatibility with.</p>
       <ul class="dp-par"><li>Choose one pitch and make every size a multiple of it, minus 0.5 mm total clearance</li><li>Foot chamfer 45° (printable), height 4–5 mm</li><li>Print floors on the bed face with 3–4 walls; add a finger scoop radius ≥ 8 mm</li></ul></article>
 
     <article class="dp-card" id="drawer-rail"><h3>12 · Drawer rails</h3>
@@ -181,18 +181,18 @@
       <ul class="dp-par"><li>Flanks 45° so nothing needs support; width 8–12 mm, height 5 mm</li><li>Clearance 0.3 mm per side; add a 0.4 mm detent to stop the drawer</li><li>Run the slide axis along a printed line direction and wax or dry-lube the rail</li><li>Rules: <a href="joints-and-fasteners.html#shape-joints">dovetails and slides</a></li></ul></article>
 
     <article class="dp-card" id="label-inlay"><h3>13 · Labels and inlays</h3>
-      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A label recess 0.6 mm deep with a separate colour insert and a magnet or paper window">
+      <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="A label recess 0.6 mm deep with a separate color insert and a magnet or paper window">
         <rect class="d-plastic" x="40" y="60" width="180" height="40"/><rect class="d-surface2" x="70" y="60" width="120" height="8"/>
         <path class="d-thin arrow" d="M130 30 V56"/><text class="t-xs t-c" x="130" y="24">insert / paper / paint</text>
         <text class="t-xs" x="40" y="124">recess 0.6–1.2 mm deep; text 1 mm tall; stroke ≥ 0.8</text>
-      </svg><figcaption><b>Figure 13.</b> A recess with a thin lip holds a label, tile or colour inlay.</figcaption></figure>
+      </svg><figcaption><b>Figure 13.</b> A recess with a thin lip holds a label, tile or color inlay.</figcaption></figure>
       <p><b>Use:</b> bins, drawers, control panels.</p>
-      <ul class="dp-par"><li>Embossed text: height 0.6–1 mm, stroke ≥ 0.8 mm, font size ≥ 6 mm</li><li>Colour inlay: change filament at the layer where the recess starts (see <a href="../techniques/multi-color-and-multi-material.html">multi-colour</a>)</li><li>A slide-in label gap = label thickness + 0.3 mm</li></ul></article>
+      <ul class="dp-par"><li>Embossed text: height 0.6–1 mm, stroke ≥ 0.8 mm, font size ≥ 6 mm</li><li>Color inlay: change filament at the layer where the recess starts (see <a href="../techniques/multi-color-and-multi-material.html">multi-color</a>)</li><li>A slide-in label gap = label thickness + 0.3 mm</li></ul></article>
 
   </div>
 
   <h2 id="mechanisms">🚀 Mechanisms</h2>
-  <p>Moving parts multiply every tolerance error, so mechanisms use the biggest clearances in the catalogue. Test each one on a small coupon before printing the full assembly.</p>
+  <p>Moving parts multiply every tolerance error, so mechanisms use the biggest clearances in the catalog. Test each one on a small coupon before printing the full assembly.</p>
   <div class="dp-grid">
 
     <article class="dp-card" id="flexure"><h3>14 · Spring and flexure</h3>
@@ -219,9 +219,9 @@
         <circle cx="100" cy="76" r="40" style="fill:none;stroke:var(--blue);stroke-width:9;stroke-dasharray:6 4"/><circle class="d-plastic" cx="100" cy="76" r="36"/><circle class="d-surface2" cx="100" cy="76" r="8"/>
         <circle cx="170" cy="76" r="28" style="fill:none;stroke:var(--orange);stroke-width:9;stroke-dasharray:6 4"/><circle class="d-plastic" cx="170" cy="76" r="24"/><circle class="d-surface2" cx="170" cy="76" r="6"/>
         <text class="t-xs t-c" x="100" y="136">30 teeth</text><text class="t-xs t-c" x="170" y="136">20 teeth → 1.5 : 1</text>
-      </svg><figcaption><b>Figure 16.</b> Gears of module 2 mesh at (z₁ + z₂) × 1 mm centre distance.</figcaption></figure>
+      </svg><figcaption><b>Figure 16.</b> Gears of module 2 mesh at (z₁ + z₂) × 1 mm center distance.</figcaption></figure>
       <p><b>Use:</b> toys, gearboxes, clocks, adjustable feeders.</p>
-      <ul class="dp-par"><li>Module 1.5–2 (tooth ≥ 3 mm), 20° pressure angle, ≥ 12 teeth</li><li>Backlash 0.2–0.3 mm; centre distance +0.2 mm</li><li>Print flat; PETG or nylon for wear; face width 6–10 mm</li><li>Rules: <a href="joints-and-fasteners.html#gears">gears</a></li></ul></article>
+      <ul class="dp-par"><li>Module 1.5–2 (tooth ≥ 3 mm), 20° pressure angle, ≥ 12 teeth</li><li>Backlash 0.2–0.3 mm; center distance +0.2 mm</li><li>Print flat; PETG or nylon for wear; face width 6–10 mm</li><li>Rules: <a href="joints-and-fasteners.html#gears">gears</a></li></ul></article>
 
     <article class="dp-card" id="cam"><h3>17 · Cam and follower</h3>
       <figure class="fig"><svg class="diagram" viewBox="0 0 260 150" role="img" aria-label="An eccentric cam turning against a follower rod which moves up and down">
@@ -342,7 +342,7 @@
         <circle class="d-metal" cx="130" cy="50" r="4"/><circle class="d-metal" cx="130" cy="90" r="4"/>
         <text class="t-xs" x="140" y="48">pin Ø 4</text><text class="t-xs" x="140" y="108">seam on a hard edge</text><text class="t-xs" x="40" y="142">piece ≤ bed − 10 mm</text>
       </svg><figcaption><b>Figure 28.</b> Cut along natural edges; join with pins and overlap.</figcaption></figure>
-      <p><b>Use:</b> helmets, armour, props larger than the bed.</p>
+      <p><b>Use:</b> helmets, armor, props larger than the bed.</p>
       <ul class="dp-par"><li>Cut on existing creases and panel lines; hide seams under straps</li><li>Overlap tabs 8 mm wide, 1.6 mm thick, with pins Ø 4 mm every 40 mm</li><li>Orient each piece so curves are not stair-stepped; plan sanding allowance of 0.4 mm</li><li>Rules: <a href="joints-and-fasteners.html#splitting">splitting large parts</a></li></ul></article>
 
     <article class="dp-card" id="miniature"><h3>29 · Miniatures</h3>
@@ -363,7 +363,7 @@
         <text class="t-xs" x="40" y="140">drain 3 mm hole, drip edge 3 mm overhang</text>
       </svg><figcaption><b>Figure 30.</b> Water runs off, UV is shaded, trapped water has an exit.</figcaption></figure>
       <p><b>Use:</b> garden sensors, camera housings, hooks, drainage fittings.</p>
-      <ul class="dp-par"><li>Material: ASA (best), PETG, PC; not PLA (softens at 55–60 °C in a parked car)</li><li>Slope surfaces ≥ 10° so water does not pool; drip edge ≥ 3 mm; drain holes 3 mm at the lowest point</li><li>Walls 2.4 mm (6 lines) to survive freeze–thaw; dark colours get hotter</li><li>Use stainless hardware with a heat-set insert, never a bare thread</li></ul></article>
+      <ul class="dp-par"><li>Material: ASA (best), PETG, PC; not PLA (softens at 55–60 °C in a parked car)</li><li>Slope surfaces ≥ 10° so water does not pool; drip edge ≥ 3 mm; drain holes 3 mm at the lowest point</li><li>Walls 2.4 mm (6 lines) to survive freeze–thaw; dark colors get hotter</li><li>Use stainless hardware with a heat-set insert, never a bare thread</li></ul></article>
 
   </div>
 
@@ -387,7 +387,7 @@
   </table></div>
 
   <h2 id="parameter-sets">🔧 Parameters worth exposing</h2>
-  <p>Before modelling a pattern, list the parameters that change between uses. Everything else should be a derived value (calculated from them) so that one change never breaks another. A short list keeps the model simple:</p>
+  <p>Before modeling a pattern, list the parameters that change between uses. Everything else should be a derived value (calculated from them) so that one change never breaks another. A short list keeps the model simple:</p>
   <ul>
     <li><b>Interface parameters</b> (set by the outside world): screw size, magnet diameter, board dimensions, tool diameters, cable diameter, bed size.</li>
     <li><b>Printer parameters</b>: line width (0.42 mm), layer height (0.2 mm), clearance per fit class (0.1, 0.2, 0.3, 0.4 mm), minimum wall.</li>
@@ -403,7 +403,7 @@
   <p>Every pattern in this page has one critical interface. Instead of printing the whole object, print only that interface as a <b>test slice</b> and measure it. A snap lid is checked with a 20 mm length of wall; a thread with a 12 mm tall ring; a hinge with two knuckles; a gear mesh with two gears of 10 mm face width. The slices cost minutes, the full part may cost hours.</p>
   <ol class="steps">
     <li>Choose the one feature that decides success (the clearance, the strain, the thread engagement).</li>
-    <li>Print three variants at once, for example clearances 0.2, 0.3 and 0.4 mm, labelled with embossed numbers.</li>
+    <li>Print three variants at once, for example clearances 0.2, 0.3 and 0.4 mm, labeled with embossed numbers.</li>
     <li>Fit-check by hand: does it assemble, move without play and hold the load you expect?</li>
     <li>Pick the winner, write the value in the parameter table together with filament, printer and nozzle.</li>
     <li>Print the full part and record any difference so the next version starts from facts.</li>
@@ -472,7 +472,7 @@
     <li>Structure: layers along the load, gussets ≥ 50 % of wall thickness, fillets ≥ 3 mm.</li>
     <li>Workflows beat geometry: measure, model parametrically, print a test slice, then the final part.</li>
   </ul>
-  <p>Next: <a href="parametric-cad-workflow.html">Parametric CAD workflow</a> turns these patterns into reusable, adjustable models. For the maths behind each joint see <a href="joints-and-fasteners.html">Joints &amp; fasteners</a>, and practise with the <a href="../exercises/level-2-intermediate.html">Level 2 exercises</a>.</p>
+  <p>Next: <a href="parametric-cad-workflow.html">Parametric CAD workflow</a> turns these patterns into reusable, adjustable models. For the maths behind each joint see <a href="joints-and-fasteners.html">Joints &amp; fasteners</a>, and practice with the <a href="../exercises/level-2-intermediate.html">Level 2 exercises</a>.</p>
 
 
 </main>

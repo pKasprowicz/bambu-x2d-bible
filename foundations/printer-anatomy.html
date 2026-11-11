@@ -31,7 +31,7 @@
   </div>
 
   <h2 id="overview">🔰 The nine subsystems</h2>
-  <p>Strip away the branding and every FDM printer has the same nine subsystems. Learning to see them lets you diagnose problems ("is this a motion problem or a melt problem?") and compare machines without being distracted by marketing. The labelled drawing below shows a typical enclosed machine with a moving bed on the Z axis.</p>
+  <p>Strip away the branding and every FDM printer has the same nine subsystems. Learning to see them lets you diagnose problems ("is this a motion problem or a melt problem?") and compare machines without being distracted by marketing. The labeled drawing below shows a typical enclosed machine with a moving bed on the Z axis.</p>
 
   <figure class="fig">
     <svg class="diagram" viewBox="0 0 900 500" role="img" aria-label="Annotated front view of an enclosed FDM printer showing spool, gantry, toolhead, nozzle, part-cooling fan, heated bed, Z lift, motors, chamber sensor, frame, enclosure panels and electronics bay.">
@@ -96,7 +96,7 @@
   <div class="table-wrap"><table class="data compact">
     <thead><tr><th>Subsystem</th><th>Main parts</th><th>Its job</th><th>Typical failure signs</th></tr></thead>
     <tbody>
-      <tr><td><strong>Frame</strong></td><td>Aluminium extrusion, steel or cast panels, feet</td><td>Hold everything square and rigid</td><td>Ringing, layer shifts, wobble on a shaky table</td></tr>
+      <tr><td><strong>Frame</strong></td><td>Aluminum extrusion, steel or cast panels, feet</td><td>Hold everything square and rigid</td><td>Ringing, layer shifts, wobble on a shaky table</td></tr>
       <tr><td><strong>Motion</strong></td><td>Steppers, belts, rails/rods, leadscrews, pulleys</td><td>Place the nozzle at exact X/Y/Z positions</td><td>Dimensional errors, banding, grinding noise</td></tr>
       <tr><td><strong>Hotend</strong></td><td>Heat sink, heat break, heater, thermistor, nozzle</td><td>Melt filament and shape the bead</td><td>Clogs, heat creep, under-extrusion, oozing</td></tr>
       <tr><td><strong>Extruder</strong></td><td>Motor, gears, idler/pressure arm</td><td>Push filament at a precise rate</td><td>Skipped steps, clicking, ground filament</td></tr>
@@ -113,28 +113,28 @@
   </div>
 
   <h2 id="frame">🔰 Frame, motion and the rigidity budget</h2>
-  <p>The frame is boring and critical. A printer is a machine that places a hot nozzle with a precision of tenths of a millimetre while accelerating it at several metres per second squared. Every bit of flex in the frame becomes a visible ripple in the wall. That is why premium machines use thick castings or steel sheet, why cheap ones wobble when you tap the top, and why <em>where you put the printer</em> matters almost as much as which one you buy (see <a href="safety-and-workspace.html">Safety &amp; workspace</a>).</p>
+  <p>The frame is boring and critical. A printer is a machine that places a hot nozzle with a precision of tenths of a millimeter while accelerating it at several meters per second squared. Every bit of flex in the frame becomes a visible ripple in the wall. That is why premium machines use thick castings or steel sheet, why cheap ones wobble when you tap the top, and why <em>where you put the printer</em> matters almost as much as which one you buy (see <a href="safety-and-workspace.html">Safety &amp; workspace</a>).</p>
 
   <div class="grid cols-3">
-    <div class="card accent-blue"><span class="ico">🧱</span><h3>Aluminium extrusion</h3><p>T-slot profiles bolted together. Cheap, adjustable and easy to repair; stiffness depends on corner joints and bracing.</p></div>
+    <div class="card accent-blue"><span class="ico">🧱</span><h3>Aluminum extrusion</h3><p>T-slot profiles bolted together. Cheap, adjustable and easy to repair; stiffness depends on corner joints and bracing.</p></div>
     <div class="card accent-gray"><span class="ico">🔩</span><h3>Sheet steel and castings</h3><p>Stamped panels or die-cast parts. Heavier, stiffer and quieter; used in many enclosed machines.</p></div>
     <div class="card accent-orange"><span class="ico">🔧</span><h3>Open or kit frames</h3><p>Fewer parts and more flex. Great for learning and repair, less good at high acceleration.</p></div>
   </div>
 
   <h3>Stepper motors, drivers and microstepping</h3>
-  <p>Almost every axis is moved by a <strong>stepper motor</strong>: a motor that turns in discrete steps (typically 200 per revolution, 1.8° each). A <strong>driver</strong> chip on the mainboard energises the coils in sequence and can split each full step into 16, 32 or more <em>microsteps</em> for smoother motion. Modern silent drivers (the TMC family is the best known) also sense the motor current and can detect a stalled motor, which is how some printers do <em>sensorless homing</em>.</p>
+  <p>Almost every axis is moved by a <strong>stepper motor</strong>: a motor that turns in discrete steps (typically 200 per revolution, 1.8° each). A <strong>driver</strong> chip on the mainboard energizes the coils in sequence and can split each full step into 16, 32 or more <em>microsteps</em> for smoother motion. Modern silent drivers (the TMC family is the best known) also sense the motor current and can detect a stalled motor, which is how some printers do <em>sensorless homing</em>.</p>
   <p>Resolution is not accuracy. A belt axis with a 20-tooth pulley and a 2 mm belt pitch moves 40 mm per revolution, so one full step is 0.2 mm and one microstep (at 16×) is about 12.5 µm in theory. What you actually get depends on belt stretch, pulley fit and frame flex.</p>
 
   <h3>Belts, leadscrews, rods and linear rails</h3>
   <div class="grid cols-2">
-    <div class="card accent-green"><h3>Belts (X and Y)</h3><p>Toothed GT2 belts are light and fast but stretch slightly under load. Keep them tensioned, never over-tight, and replace them when teeth wear or fibre shows.</p></div>
+    <div class="card accent-green"><h3>Belts (X and Y)</h3><p>Toothed GT2 belts are light and fast but stretch slightly under load. Keep them tensioned, never over-tight, and replace them when teeth wear or fiber shows.</p></div>
     <div class="card accent-teal"><h3>Leadscrews (usually Z)</h3><p>A threaded rod turns the rotation into slow, strong vertical lift with fine resolution. Most Z axes use leadscrews so the bed cannot drift down when power is off.</p></div>
     <div class="card accent-purple"><h3>Smooth rods + bushings</h3><p>Hardened steel rods with linear bearings or bushings. Inexpensive and quiet when well aligned; more friction and sag than rails.</p></div>
     <div class="card accent-red"><h3>Linear rails (guide rails)</h3><p>Profiled rails with recirculating ball carriages. Stiffer, more precise and long-lasting, at higher cost and with more demanding alignment.</p></div>
   </div>
 
   <div class="callout info"><span class="callout-title">Why Z is different</span>
-    <p>X and Y need speed, so they use belts. Z needs strength and fine steps (layer heights are 0.08–0.32 mm), so it uses screws. Some machines drive Z with a belt and counterweights or with multiple synchronised screws to keep a heavy bed level.</p>
+    <p>X and Y need speed, so they use belts. Z needs strength and fine steps (layer heights are 0.08–0.32 mm), so it uses screws. Some machines drive Z with a belt and counterweights or with multiple synchronized screws to keep a heavy bed level.</p>
   </div>
 
   <h2 id="kinematics">⚙️ Kinematics: who moves where</h2>
@@ -187,7 +187,7 @@
       <text class="t-xs" x="340" y="242">strength: fast, consistent at any part size</text>
       <text class="t-xs" x="580" y="244">strength: fast on tall parts, round beds</text>
     </svg>
-    <figcaption><b>Figure 2.</b> The three families you will meet most often. The colour-neutral drawings show what moves in each axis; the notes underneath summarise the trade-off.</figcaption>
+    <figcaption><b>Figure 2.</b> The three families you will meet most often. The color-neutral drawings show what moves in each axis; the notes underneath summarize the trade-off.</figcaption>
   </figure>
 
   <h3>Cartesian "bedslinger"</h3>
@@ -239,7 +239,7 @@
       <text class="t-xs" x="650" y="324">Belts run at two heights so</text>
       <text class="t-xs" x="650" y="338">they pass without touching.</text>
     </svg>
-    <figcaption><b>Figure 3.</b> A simplified CoreXY belt path seen from above. Each belt is an open loop with both ends clamped to the carriage. Which direction counts as X or Y depends on how the motors are labelled; the principle (sum and difference) is what matters.</figcaption>
+    <figcaption><b>Figure 3.</b> A simplified CoreXY belt path seen from above. Each belt is an open loop with both ends clamped to the carriage. Which direction counts as X or Y depends on how the motors are labeled; the principle (sum and difference) is what matters.</figcaption>
   </figure>
 
   <div class="callout trick"><span class="callout-title">Belt balance is not optional</span>
@@ -270,7 +270,7 @@
   </table></div>
 
   <h2 id="hotend">🔥 The hotend, cut in half</h2>
-  <p>The hotend is where plastic changes from a solid rod to a flowing bead. It is a deceptively delicate piece of thermal engineering: the top must stay cold enough that filament stays rigid and can be pushed, while the bottom runs at 200–300 °C, only a few centimetres away. The part that makes this possible is a narrow neck called the <strong>heat break</strong>.</p>
+  <p>The hotend is where plastic changes from a solid rod to a flowing bead. It is a deceptively delicate piece of thermal engineering: the top must stay cold enough that filament stays rigid and can be pushed, while the bottom runs at 200–300 °C, only a few centimeters away. The part that makes this possible is a narrow neck called the <strong>heat break</strong>.</p>
 
   <figure class="fig">
     <svg class="diagram" viewBox="0 0 760 360" role="img" aria-label="Cross-section of a hotend showing the filament channel, heat sink with fins and fan, heat break, heater block with cartridge and thermistor, nozzle and the cold, transition and melt zones.">
@@ -316,20 +316,20 @@
       <text class="t-xs" x="490" y="276">filament melts into a pool and</text>
       <text class="t-xs" x="490" y="290">is forced through the orifice.</text>
     </svg>
-    <figcaption><b>Figure 4.</b> Simplified hotend cross-section. The coloured bar shows the temperature zones; the grey strand is solid filament and the orange part is molten plastic.</figcaption>
+    <figcaption><b>Figure 4.</b> Simplified hotend cross-section. The colored bar shows the temperature zones; the gray strand is solid filament and the orange part is molten plastic.</figcaption>
   </figure>
 
   <h3>The parts, one by one</h3>
   <ul>
-    <li><strong>Heat sink and fan:</strong> a finned aluminium block that removes heat from the cold zone. If the fan stops, heat creeps upward, softens filament inside the cold zone, and the extruder jams ("heat creep").</li>
+    <li><strong>Heat sink and fan:</strong> a finned aluminum block that removes heat from the cold zone. If the fan stops, heat creeps upward, softens filament inside the cold zone, and the extruder jams ("heat creep").</li>
     <li><strong>Heat break:</strong> a thin-walled stainless steel or titanium tube. Poor conductor, long path: it separates the two thermal zones. All-metal designs tolerate high temperatures; PTFE-lined designs are cheap but degrade above about 240–250 °C and should not be pushed past that.</li>
-    <li><strong>Heater block:</strong> aluminium or copper block with a cartridge heater or ceramic heater and a temperature sensor. High-flow designs use a longer melt zone so more plastic can be melted per second.</li>
+    <li><strong>Heater block:</strong> aluminum or copper block with a cartridge heater or ceramic heater and a temperature sensor. High-flow designs use a longer melt zone so more plastic can be melted per second.</li>
     <li><strong>Temperature sensor:</strong> a thermistor (cheap, accurate to a few degrees up to about 300 °C) or a PT1000 RTD (more accurate, used for high-temperature work). Firmware reads it hundreds of times per second.</li>
     <li><strong>Nozzle:</strong> threaded into the block, sealed hot, with a precisely drilled orifice. Wear and clogs live here.</li>
   </ul>
 
   <div class="callout info"><span class="callout-title">Why PID and thermal runaway protection exist</span>
-    <p>Firmware holds temperature with a PID loop that adjusts heater power in small steps. It also watches for impossible behaviour: a heater that is on but the temperature does not rise, or a reading that suddenly drops. Either triggers an immediate shutdown ("thermal runaway protection"). Never disable this protection; see <a href="safety-and-workspace.html">Safety &amp; workspace</a>.</p>
+    <p>Firmware holds temperature with a PID loop that adjusts heater power in small steps. It also watches for impossible behavior: a heater that is on but the temperature does not rise, or a reading that suddenly drops. Either triggers an immediate shutdown ("thermal runaway protection"). Never disable this protection; see <a href="safety-and-workspace.html">Safety &amp; workspace</a>.</p>
   </div>
 
   <h2 id="extruder">🔧 Extruders: how filament is pushed</h2>
@@ -397,7 +397,7 @@
     <thead><tr><th>Material</th><th>Heat conduction</th><th>Wear resistance</th><th>Best for</th><th>Notes</th></tr></thead>
     <tbody>
       <tr><td><strong>Brass</strong></td><td><span class="chip green">Excellent</span></td><td><span class="chip red">Low</span></td><td>PLA, PETG, ABS, TPU</td><td>Cheap and standard, but abrasives wear the hole out quickly.</td></tr>
-      <tr><td><strong>Hardened steel</strong></td><td><span class="chip yellow">Fair</span></td><td><span class="chip green">High</span></td><td>Carbon-fibre and glass-filled filaments</td><td>Needs a few degrees more temperature; heats a bit slower.</td></tr>
+      <tr><td><strong>Hardened steel</strong></td><td><span class="chip yellow">Fair</span></td><td><span class="chip green">High</span></td><td>Carbon-fiber and glass-filled filaments</td><td>Needs a few degrees more temperature; heats a bit slower.</td></tr>
       <tr><td><strong>Stainless steel</strong></td><td><span class="chip orange">Poor</span></td><td><span class="chip yellow">Medium</span></td><td>Food-contact preference, mildly abrasive</td><td>Corrosion-resistant but still not suited for heavily abrasive fillers.</td></tr>
       <tr><td><strong>Ruby/sapphire tip</strong></td><td><span class="chip green">Good (metal body)</span></td><td><span class="chip green">Very high</span></td><td>Abrasive filaments for long runs</td><td>Expensive, tip can chip if the nozzle crashes into the bed.</td></tr>
       <tr><td><strong>Copper alloys (plated)</strong></td><td><span class="chip green">Excellent</span></td><td><span class="chip yellow">Coating-dependent</span></td><td>High-flow, fast printing</td><td>Thermal performance is the draw; coatings wear off with abrasives.</td></tr>
@@ -406,12 +406,12 @@
   </table></div>
 
   <div class="callout warn"><span class="callout-title">Abrasive filaments eat brass</span>
-    <p>Carbon-fibre, glass-fibre, glow-in-the-dark and some metal-fill filaments contain hard particles. A brass nozzle can widen noticeably within a few hundred grams. Use hardened steel or a ruby-tip nozzle for those materials, and expect slightly worse thermal response and a small temperature increase.</p>
+    <p>Carbon-fiber, glass-fiber, glow-in-the-dark and some metal-fill filaments contain hard particles. A brass nozzle can widen noticeably within a few hundred grams. Use hardened steel or a ruby-tip nozzle for those materials, and expect slightly worse thermal response and a small temperature increase.</p>
   </div>
 
   <h3>Nozzle size and what it implies</h3>
   <figure class="fig">
-    <svg class="diagram" viewBox="0 0 840 270" role="img" aria-label="Four nozzle cross-sections with orifice widths of 0.2, 0.4, 0.6 and 0.8 millimetres, with the bead each lays down and typical layer height ranges and uses.">
+    <svg class="diagram" viewBox="0 0 840 270" role="img" aria-label="Four nozzle cross-sections with orifice widths of 0.2, 0.4, 0.6 and 0.8 millimeters, with the bead each lays down and typical layer height ranges and uses.">
       <g transform="translate(20,0)">
         <path class="d-metal2" d="M30 40 H130 L98 112 H62 Z"/><path d="M60 40 H100 L84 112 H76 Z" style="fill:var(--orange)"/>
         <rect class="d-plastic" x="68" y="120" width="24" height="6" rx="3"/>
@@ -485,7 +485,7 @@
       <tr><td><strong>Textured PEI</strong></td><td>Matte, grainy</td><td>Very strong</td><td>Easy once cool</td><td>Hides the first layer; excellent for PETG and ABS.</td></tr>
       <tr><td><strong>Cool plate (engineering)</strong></td><td>Smooth, matte</td><td>Moderate</td><td>Very easy</td><td>Low-temperature materials like PLA; not for high-temp plastics.</td></tr>
       <tr><td><strong>Glass</strong></td><td>Very smooth, shiny</td><td>Good with adhesive</td><td>Cools, then releases</td><td>Flat and cheap but heavy; needs glue stick for many materials.</td></tr>
-      <tr><td><strong>G10 / garolite</strong></td><td>Textured</td><td>Excellent for nylon</td><td>Moderate</td><td>Favoured for nylon and composites.</td></tr>
+      <tr><td><strong>G10 / garolite</strong></td><td>Textured</td><td>Excellent for nylon</td><td>Moderate</td><td>Favored for nylon and composites.</td></tr>
       <tr><td><strong>Magnetic spring steel</strong></td><td>Depends on coating</td><td>—</td><td>Flex-and-release</td><td>The platform that carries PEI and other coatings.</td></tr>
     </tbody>
   </table></div>
@@ -495,7 +495,7 @@
   </div>
 
   <h2 id="leveling">📏 Bed leveling and probing</h2>
-  <p>The nozzle must start the first layer a consistent fraction of a millimetre above the plate: close enough to squish the plastic flat and bond it, far enough to avoid scraping. Because no bed is perfectly flat, printers either have the user level it manually or measure it with a sensor and compensate in software.</p>
+  <p>The nozzle must start the first layer a consistent fraction of a millimeter above the plate: close enough to squish the plastic flat and bond it, far enough to avoid scraping. Because no bed is perfectly flat, printers either have the user level it manually or measure it with a sensor and compensate in software.</p>
 
   <figure class="fig">
     <svg class="diagram" viewBox="0 0 840 270" role="img" aria-label="Five mini schematics of bed leveling methods: manual with paper, inductive probe, load cell or strain sensing, eddy-current sensing and a contact deploy pin probe.">
@@ -571,7 +571,7 @@
   </div>
 
   <h3>Open versus closed firmware</h3>
-  <p>Open firmware lets you inspect and change behaviour, install community tweaks and keep an older machine alive for years. Closed firmware is usually polished and automatic but limits modifications and depends on the manufacturer for updates. Neither is "better"; choose according to how much you want to tinker. This also matters for the <a href="buying-guide.html">buying decision</a>.</p>
+  <p>Open firmware lets you inspect and change behavior, install community tweaks and keep an older machine alive for years. Closed firmware is usually polished and automatic but limits modifications and depends on the manufacturer for updates. Neither is "better"; choose according to how much you want to tinker. This also matters for the <a href="buying-guide.html">buying decision</a>.</p>
 
   <h2 id="cooling">❄️ Cooling and the enclosure</h2>
   <p>Three separate airflows exist in a printer, and confusing them is a common cause of problems:</p>
@@ -590,7 +590,7 @@
 
   <div class="grid cols-2">
     <div class="card accent-purple"><h3>Passive enclosure</h3><p>Panels trap bed heat. Simple, no extra power. Chamber settles around 35–45 °C with a hot bed.</p></div>
-    <div class="card accent-red"><h3>Active chamber heating</h3><p>A dedicated heater and circulation fan lift and stabilise the air temperature. Needed for PC, nylon CF and PEEK-class materials.</p></div>
+    <div class="card accent-red"><h3>Active chamber heating</h3><p>A dedicated heater and circulation fan lift and stabilize the air temperature. Needed for PC, nylon CF and PEEK-class materials.</p></div>
   </div>
 
   <h2 id="sensors">📡 Sensors and safety hardware</h2>
@@ -639,11 +639,11 @@
     <p>It cannot repair a loose belt, a wobbly table or a heavy bed swinging on a bedslinger. It also cannot beat the hotend's flow limit. It removes <em>vibration artefacts</em>; surface roughness from poor cooling or extrusion needs other fixes. Related features: pressure advance (extrusion lag) and junction deviation (corner speed planning).</p>
   </div>
 
-  <h2 id="multimaterial">🎨 Multi-material and multi-colour systems</h2>
-  <p>A single nozzle can only print one filament at a time. Multi-material systems add a mechanism that feeds, retracts and swaps filaments automatically so one print can contain several colours or materials (for example a rigid PLA body with TPU grips, or soluble supports).</p>
+  <h2 id="multimaterial">🎨 Multi-material and multi-color systems</h2>
+  <p>A single nozzle can only print one filament at a time. Multi-material systems add a mechanism that feeds, retracts and swaps filaments automatically so one print can contain several colors or materials (for example a rigid PLA body with TPU grips, or soluble supports).</p>
 
   <figure class="fig">
-    <svg class="diagram" viewBox="0 0 840 300" role="img" aria-label="Schematic of an automatic multi-material system: four spools feed tubes into a selector hub, a single tube runs to the toolhead, which prints on the bed with a purge area for colour changes.">
+    <svg class="diagram" viewBox="0 0 840 300" role="img" aria-label="Schematic of an automatic multi-material system: four spools feed tubes into a selector hub, a single tube runs to the toolhead, which prints on the bed with a purge area for color changes.">
       <rect class="d-dash" x="20" y="40" width="300" height="200" rx="10" style="fill:none"/>
       <text class="t-b" x="30" y="30">Spool station (often dried)</text>
       <circle class="d-plastic" cx="80" cy="100" r="30" style="fill:var(--red);fill-opacity:.7"/>
@@ -666,7 +666,7 @@
       <text class="t-xs" x="470" y="244">printed part</text>
       <text class="t-xs" x="650" y="244">purge / waste area</text>
       <text class="t-sm" x="630" y="104">Toolhead with</text><text class="t-sm" x="630" y="120">single nozzle</text>
-      <text class="t-xs" x="20" y="272">Colour change = retract old, pick new, load, purge old colour out of the nozzle.</text>
+      <text class="t-xs" x="20" y="272">Color change = retract old, pick new, load, purge old color out of the nozzle.</text>
     </svg>
     <figcaption><b>Figure 10.</b> The common single-nozzle architecture: several spools, a selector, one hotend. Every swap wastes some filament in a purge area or tower.</figcaption>
   </figure>
@@ -674,7 +674,7 @@
   <div class="table-wrap"><table class="data compact">
     <thead><tr><th>Architecture</th><th>How it swaps</th><th>Waste</th><th>Pros</th><th>Cons</th></tr></thead>
     <tbody>
-      <tr><td><strong>Single nozzle + selector</strong></td><td>Retract, switch, push new filament to nozzle</td><td><span class="chip red">High</span></td><td>Cheap, compact, many colours</td><td>Purge waste, risk of jams on long tubes</td></tr>
+      <tr><td><strong>Single nozzle + selector</strong></td><td>Retract, switch, push new filament to nozzle</td><td><span class="chip red">High</span></td><td>Cheap, compact, many colors</td><td>Purge waste, risk of jams on long tubes</td></tr>
       <tr><td><strong>Dual nozzle</strong></td><td>Two nozzles on one head; the idle one is parked</td><td><span class="chip yellow">Medium</span></td><td>Fast swaps for two materials, less purging</td><td>Needs nozzle alignment and lifting</td></tr>
       <tr><td><strong>IDEX</strong></td><td>Two independent toolheads</td><td><span class="chip green">Low</span></td><td>Mirror/duplicate, clean dual prints</td><td>Large and complex</td></tr>
       <tr><td><strong>Tool changer</strong></td><td>Dock and pick up complete toolheads</td><td><span class="chip green">Low</span></td><td>Many materials, no purge</td><td>Mechanical precision, cost</td></tr>
@@ -682,7 +682,7 @@
     </tbody>
   </table></div>
 
-  <p>Beyond swapping, the feeder system often <strong>dries</strong> spools or keeps them sealed, reads RFID tags to identify material, and buffers filament so the extruder does not fight spool inertia. Soluble supports (PVA, BVOH, or breakaway interfaces) are a frequent reason to use two materials, as are flexible/rigid combinations and colour accents.</p>
+  <p>Beyond swapping, the feeder system often <strong>dries</strong> spools or keeps them sealed, reads RFID tags to identify material, and buffers filament so the extruder does not fight spool inertia. Soluble supports (PVA, BVOH, or breakaway interfaces) are a frequent reason to use two materials, as are flexible/rigid combinations and color accents.</p>
 
   <div class="callout x2d"><span class="callout-title">A dual-nozzle example</span>
     <p>Bambu Lab's X2D combines two nozzles on one head with an AMS-style feeder; the details are covered in the <a href="../x2d/overview.html">X2D overview</a>. This page keeps brand specifics out so the concepts stay general.</p>
@@ -706,13 +706,13 @@
   <div class="callout fact"><span class="callout-title">Remember these</span>
     <ul>
       <li>Every FDM printer has nine subsystems: frame, motion, hotend, extruder, bed, electronics, sensors, cooling and enclosure.</li>
-      <li>Kinematics sets the speed ceiling: bedslingers are cheap and simple, CoreXY is fast and consistent, delta and IDEX serve specialised jobs.</li>
+      <li>Kinematics sets the speed ceiling: bedslingers are cheap and simple, CoreXY is fast and consistent, delta and IDEX serve specialized jobs.</li>
       <li>The heat break keeps the cold zone cold; heat creep is the usual cause of mid-print jams.</li>
       <li>Direct drive is easier with soft materials; Bowden is lighter; most modern machines use direct drive.</li>
       <li>Choose nozzle material for filament abrasion and size for the detail/speed balance. The default 0.4 mm is a safe start.</li>
       <li>A clean build plate and a well-tuned first-layer height solve most adhesion problems.</li>
       <li>Input shaping and pressure advance are why modern printers can run fast and still look good.</li>
-      <li>Multi-material systems trade complexity and waste for colours and materials; pick the architecture that matches the work.</li>
+      <li>Multi-material systems trade complexity and waste for colors and materials; pick the architecture that matches the work.</li>
     </ul>
   </div>
 

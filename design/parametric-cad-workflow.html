@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Parametric CAD workflow · 3D Printing Compendium</title>
-  <meta name="description" content="Parametric thinking for 3D printing: design intent, constraints, sketch-first workflow, variables and tolerance parameter sets, scripted CAD with a complete OpenSCAD box-and-snap-lid, iteration and test-print strategy, Git, publishing and AI-assisted modelling cautions.">
+  <meta name="description" content="Parametric thinking for 3D printing: design intent, constraints, sketch-first workflow, variables and tolerance parameter sets, scripted CAD with a complete OpenSCAD box-and-snap-lid, iteration and test-print strategy, Git, publishing and AI-assisted modeling cautions.">
   <link rel="stylesheet" href="../assets/css/style.css">
   <script src="../assets/js/nav.js" defer></script>
   <script src="../assets/js/site.js" defer></script>
@@ -25,7 +25,7 @@
   </header>
 
   <div class="callout goal"><span class="callout-title">What you will learn</span>
-    <p>How to think in parameters and constraints, build models sketch-first with a clean feature tree, name and version files, keep one table of tolerances per printer and material, write a parametric box with lid in OpenSCAD (full code below), run short test-print cycles, use Git for design history, publish with a licence and print settings, and use AI assistance without trusting it blindly. The software itself is covered in <a href="../software/cad-modeling.html">CAD modelling</a>; the numbers come from <a href="tolerances-and-fits.html">Tolerances &amp; fits</a>.</p></div>
+    <p>How to think in parameters and constraints, build models sketch-first with a clean feature tree, name and version files, keep one table of tolerances per printer and material, write a parametric box with lid in OpenSCAD (full code below), run short test-print cycles, use Git for design history, publish with a license and print settings, and use AI assistance without trusting it blindly. The software itself is covered in <a href="../software/cad-modeling.html">CAD modeling</a>; the numbers come from <a href="tolerances-and-fits.html">Tolerances &amp; fits</a>.</p></div>
 
   <h2 id="thinking">🔰 Parametric thinking</h2>
   <p>A <b>direct</b> (mesh or sculpt) model remembers only its final shape. A <b>parametric</b> model remembers <em>how</em> it was made: the sketches, the dimensions, the order of operations. Edit a dimension and the software replays the recipe. For 3D printing this is the single most useful habit, because you will almost always need to print a part <b>more than once</b>: the first print is a measurement, not a result. Every fit that is slightly off (0.2 mm is enough) becomes a one-line change instead of an hour of rework.</p>
@@ -45,7 +45,7 @@
     <figcaption><b>Figure 1.</b> Parameters in, parts out. The model is the same; only the numbers change.</figcaption>
   </figure>
 
-  <p>Parametric modelling is not only for engineers. A phone stand for your phone and your friend's bulkier model is a one-parameter change. A box for a new electronics board is a two-parameter change. The rule of thumb: <b>if you can imagine printing it twice, make it parametric</b>.</p>
+  <p>Parametric modeling is not only for engineers. A phone stand for your phone and your friend's bulkier model is a one-parameter change. A box for a new electronics board is a two-parameter change. The rule of thumb: <b>if you can imagine printing it twice, make it parametric</b>.</p>
 
   <h2 id="design-intent">🔰 Design intent</h2>
   <p><b>Design intent</b> is the reason behind each dimension. "The lid lip is 0.25 mm smaller than the box opening, always" is intent. "The lip is 59.5 mm long" is only a number. When intent is encoded as a relationship (<span class="pc-eq">lip = inner − 2 × clearance</span>), the model survives changes. When intent is hidden in typed numbers, the model breaks as soon as one dimension is edited.</p>
@@ -93,7 +93,7 @@
         <path class="d-thin arrow arrow-start" d="M30 136 H170" style="stroke:var(--red)"/><path class="d-thin arrow arrow-start" d="M30 38 H170" style="stroke:var(--red)"/>
         <text class="t-sm t-b" x="0" y="14">Over-constrained</text><text class="t-xs" x="0" y="170">two dimensions fight each other</text><text class="t-xs" x="0" y="186">fix: delete the redundant one</text></g>
     </svg>
-    <figcaption><b>Figure 3.</b> Sketch states. Aim for fully constrained sketches (the colour code differs by program), never over-constrained ones.</figcaption>
+    <figcaption><b>Figure 3.</b> Sketch states. Aim for fully constrained sketches (the color code differs by program), never over-constrained ones.</figcaption>
   </figure>
 
   <div class="callout tip"><span class="callout-title">Tip</span>
@@ -172,7 +172,7 @@
     <p>Put the printer name and filament in the first comment line: <span class="pc-eq">// tuned: X2D, PETG, 0.4 nozzle, 0.2 layer</span>. Six months later you will know which set of clearances you were using.</p></div>
 
   <h2 id="libraries">🔧 Modular libraries</h2>
-  <p>Do not rebuild the same screw boss, hinge or snap hook every time. Keep a small <b>library</b>: one file per reusable feature, each with documented parameters and a test render. In OpenSCAD this is <span class="pc-eq">include</span> or <span class="pc-eq">use</span>; in Fusion it is a component library or a derived design; in FreeCAD it is a part you link with <em>App::Link</em>; in CadQuery or build123d it is a plain Python module. Good libraries are small, single-purpose and parameterised by <em>interface</em> (screw size, board size) rather than by raw dimensions.</p>
+  <p>Do not rebuild the same screw boss, hinge or snap hook every time. Keep a small <b>library</b>: one file per reusable feature, each with documented parameters and a test render. In OpenSCAD this is <span class="pc-eq">include</span> or <span class="pc-eq">use</span>; in Fusion it is a component library or a derived design; in FreeCAD it is a part you link with <em>App::Link</em>; in CadQuery or build123d it is a plain Python module. Good libraries are small, single-purpose and parameterized by <em>interface</em> (screw size, board size) rather than by raw dimensions.</p>
 
   <figure class="fig">
     <svg class="diagram" viewBox="0 0 720 250" role="img" aria-label="Library structure: a common settings file, library modules for bosses, snaps and hinges, and project files that use them">
@@ -200,10 +200,10 @@
   </table></div>
 
   <h3>Complete example: parametric box with snap-fit lid (OpenSCAD)</h3>
-  <p>The code below is a complete, working model. It makes a box with rounded corners and a lid whose inner lip carries two snap bumps; the box has matching grooves. Paste it into OpenSCAD, press F5 to preview and F6 to render. Choose <span class="pc-eq">view</span> in the Customizer: <em>print</em> lays both parts on the bed, <em>assembled</em> shows the closed box with a section. Every dimension is in millimetres.</p>
+  <p>The code below is a complete, working model. It makes a box with rounded corners and a lid whose inner lip carries two snap bumps; the box has matching grooves. Paste it into OpenSCAD, press F5 to preview and F6 to render. Choose <span class="pc-eq">view</span> in the Customizer: <em>print</em> lays both parts on the bed, <em>assembled</em> shows the closed box with a section. Every dimension is in millimeters.</p>
 
   <figure class="fig">
-    <svg class="diagram" viewBox="0 0 720 270" role="img" aria-label="Section of the parametric box and lid with labelled parameters: inner size, wall, floor, lip height, lip thickness, clearance and snap bump">
+    <svg class="diagram" viewBox="0 0 720 270" role="img" aria-label="Section of the parametric box and lid with labeled parameters: inner size, wall, floor, lip height, lip thickness, clearance and snap bump">
       <rect class="d-plastic" x="140" y="110" width="12" height="130"/><rect class="d-plastic" x="448" y="110" width="12" height="130"/><rect class="d-plastic" x="140" y="228" width="320" height="12"/>
       <rect class="d-plastic" x="130" y="90" width="340" height="14"/><rect class="d-plastic" x="156" y="104" width="8" height="26"/><rect class="d-plastic" x="436" y="104" width="8" height="26"/>
       <polygon class="d-surface2" points="152,112 156,116 152,122"/><polygon class="d-surface2" points="448,112 444,116 448,122"/>
@@ -354,14 +354,14 @@ export_step(box.part, "box.step")</code></pre>
     <tbody>
       <tr><td>Native (f3d, FCStd, .scad, .py)</td><td>Parameters, history</td><td>Editing</td><td>Back up and version it</td></tr>
       <tr><td>STEP</td><td>Exact B-rep shapes</td><td>Exchange between CAD programs, remixes</td><td>Best for editing in another CAD tool</td></tr>
-      <tr><td>3MF</td><td>Mesh, units, colours, settings</td><td>Slicer hand-off</td><td>Preferred over STL; keeps scale and plates</td></tr>
+      <tr><td>3MF</td><td>Mesh, units, colors, settings</td><td>Slicer hand-off</td><td>Preferred over STL; keeps scale and plates</td></tr>
       <tr><td>STL</td><td>Triangle mesh only</td><td>Universal print file</td><td>Export at a tolerance of 0.01 mm; units are mm</td></tr>
-      <tr><td>OBJ</td><td>Mesh with colours</td><td>Multi-colour and textures</td><td>Large files</td></tr>
+      <tr><td>OBJ</td><td>Mesh with colors</td><td>Multi-color and textures</td><td>Large files</td></tr>
     </tbody>
   </table></div>
 
   <ul class="checklist">
-    <li>Export in <b>millimetres</b> and check that the part is the right size in the slicer (a 100 × bigger or smaller part is the classic unit error).</li>
+    <li>Export in <b>millimeters</b> and check that the part is the right size in the slicer (a 100 × bigger or smaller part is the classic unit error).</li>
     <li>Use fine mesh resolution: chord tolerance ≤ 0.01 mm, angle ≤ 5° (curves look faceted otherwise).</li>
     <li>Check the mesh: closed (manifold), no flipped normals, no zero-thickness walls. See <a href="../software/files-and-meshes.html">Files &amp; meshes</a>.</li>
     <li>Name exports with the version and the variant: <span class="pc-eq">sensor_box_v07_PETG_M.3mf</span>.</li>
@@ -458,7 +458,7 @@ git tag v03-printed-petg</code></pre>
   <div class="callout tip"><span class="callout-title">Tip</span>
     <p>Add exported <span class="pc-eq">.3mf</span> or <span class="pc-eq">.stl</span> files to the repository only for <em>released</em> versions. Add a <span class="pc-eq">.gitignore</span> for temporary exports and slicer cache folders.</p></div>
 
-  <h2 id="assembly-modeling">🔧 Assembly modelling</h2>
+  <h2 id="assembly-modeling">🔧 Assembly modeling</h2>
   <p>When a product has several parts (box, lid, PCB, screws, magnets), model them in one <b>assembly</b> so you can check collisions and clearances before printing. Place each part with <b>joints or mates</b> instead of absolute positions: a lid mated to the top face of the box moves when the box grows. Use an interference check (the software can list overlaps) and an <b>exploded view</b> for the instructions. Include the purchased hardware as simple reference models (a cylinder for a screw, a prism for a nut) with correct dimensions.</p>
 
   <figure class="fig">
@@ -485,27 +485,27 @@ git tag v03-printed-petg</code></pre>
     <li>Changelog with the version you printed and the result.</li>
   </ul>
 
-  <h2 id="publishing">🔧 Publishing, licences and remixing</h2>
+  <h2 id="publishing">🔧 Publishing, licenses and remixing</h2>
   <p>If you share a model, a short, clear page helps others print it right. Show good photos (including one in daylight with a ruler), the print settings, the orientation picture and the tolerance values used. Consider providing the <b>source files</b> (STEP or the script) so people can remix them, not only the STL.</p>
 
   <figure class="fig">
-    <svg class="diagram" viewBox="0 0 720 250" role="img" aria-label="Layout of a good model page: photos, parameters and print settings, files, licence and remix links">
+    <svg class="diagram" viewBox="0 0 720 250" role="img" aria-label="Layout of a good model page: photos, parameters and print settings, files, license and remix links">
       <rect class="d-surface" x="20" y="20" width="400" height="210" rx="10"/>
       <rect class="f-blue" x="36" y="36" width="190" height="110" rx="6"/><text class="t-xs t-c" x="131" y="94">hero photo + ruler</text>
       <rect class="f-green" x="238" y="36" width="168" height="50" rx="6"/><text class="t-xs t-c" x="322" y="66">print settings table</text>
       <rect class="f-orange" x="238" y="96" width="168" height="50" rx="6"/><text class="t-xs t-c" x="322" y="126">orientation image</text>
       <rect class="f-purple" x="36" y="158" width="120" height="56" rx="6"/><text class="t-xs t-c" x="96" y="190">parameters</text>
       <rect class="f-teal" x="166" y="158" width="110" height="56" rx="6"/><text class="t-xs t-c" x="221" y="190">files + source</text>
-      <rect class="f-yellow" x="286" y="158" width="120" height="56" rx="6"/><text class="t-xs t-c" x="346" y="190">licence + remix</text>
+      <rect class="f-yellow" x="286" y="158" width="120" height="56" rx="6"/><text class="t-xs t-c" x="346" y="190">license + remix</text>
       <rect class="d-surface" x="450" y="20" width="250" height="210" rx="10"/>
-      <text class="t-sm t-b" x="466" y="46">Common licences</text>
+      <text class="t-sm t-b" x="466" y="46">Common licenses</text>
       <text class="t-xs" x="466" y="70">CC BY: share, remix, credit me</text><text class="t-xs" x="466" y="88">CC BY-SA: remixes share alike</text><text class="t-xs" x="466" y="106">CC BY-NC: no commercial use</text><text class="t-xs" x="466" y="124">CC0: public domain</text><text class="t-xs" x="466" y="142">MIT / GPL: for code and scripts</text>
-      <text class="t-xs t-m" x="466" y="176">Check the licence of every model you</text><text class="t-xs t-m" x="466" y="192">remix, and of every font and library.</text>
+      <text class="t-xs t-m" x="466" y="176">Check the license of every model you</text><text class="t-xs t-m" x="466" y="192">remix, and of every font and library.</text>
     </svg>
-    <figcaption><b>Figure 13.</b> A good model page and the licences you will meet. Choose a licence on purpose; "no licence" usually means "all rights reserved".</figcaption>
+    <figcaption><b>Figure 13.</b> A good model page and the licenses you will meet. Choose a license on purpose; "no license" usually means "all rights reserved".</figcaption>
   </figure>
 
-  <p><b>Remix and Customizer.</b> A <em>remix</em> is a derived model. Respect the original licence: credit the author, link the source, mention what you changed and use the same or a compatible licence if required. OpenSCAD's <b>Customizer</b> turns the top-of-file variables into a form with sliders, drop-downs and checkboxes (the comments such as <span class="pc-eq">// [print, assembled, box, lid]</span> and <span class="pc-eq">/* [Box size] */</span> in the example above create them). Platforms that run the Customizer let users generate a custom size without installing anything. To make a script Customizer-friendly: keep parameters at the top, give each a one-line comment, group them with section comments and hide derived values under <span class="pc-eq">/* [Hidden] */</span>.</p>
+  <p><b>Remix and Customizer.</b> A <em>remix</em> is a derived model. Respect the original license: credit the author, link the source, mention what you changed and use the same or a compatible license if required. OpenSCAD's <b>Customizer</b> turns the top-of-file variables into a form with sliders, drop-downs and checkboxes (the comments such as <span class="pc-eq">// [print, assembled, box, lid]</span> and <span class="pc-eq">/* [Box size] */</span> in the example above create them). Platforms that run the Customizer let users generate a custom size without installing anything. To make a script Customizer-friendly: keep parameters at the top, give each a one-line comment, group them with section comments and hide derived values under <span class="pc-eq">/* [Hidden] */</span>.</p>
 
   <h2 id="review-loop">🚀 Design review loop</h2>
   <p>Before the final print, run a short review. It is a loop, not a one-off: each pass checks printability, function and documentation. Use the <a href="principles.html">design review checklist</a> from Principles and your parameter table.</p>
@@ -536,7 +536,7 @@ git tag v03-printed-petg</code></pre>
     </tbody>
   </table></div>
 
-  <h2 id="ai-cautions">⚠️ AI-assisted modelling: cautions</h2>
+  <h2 id="ai-cautions">⚠️ AI-assisted modeling: cautions</h2>
   <p>Language models and generative tools can write OpenSCAD or Python CAD code, suggest parameter names and explain an unfamiliar API. They are useful for <b>first drafts</b> and <b>boilerplate</b>, especially for repetitive shapes. They are not a replacement for checking, and they fail in specific ways:</p>
   <ul>
     <li><b>Plausible but wrong geometry.</b> Code may run without errors and still make a lid that does not fit, a wall that is 0.1 mm, or an overhang at 90°. Always render and look at a section.</li>
@@ -566,10 +566,10 @@ git tag v03-printed-petg</code></pre>
     <li>Keep tolerances in one block per printer, nozzle and material; geometry never contains a bare clearance number.</li>
     <li>Script repetitive parts (OpenSCAD, CadQuery, build123d); the complete box-and-lid above is a starting library.</li>
     <li>Print small test slices (5–10 minutes) to settle a fit before the full part, and change one value at a time.</li>
-    <li>Use Git or a changelog; export 3MF/STEP from a native source; document and licence what you publish.</li>
+    <li>Use Git or a changelog; export 3MF/STEP from a native source; document and license what you publish.</li>
     <li>Treat AI-generated models as unreviewed drafts: render, section, replace the numbers and test.</li>
   </ul>
-  <p>Next: practise with the <a href="../exercises/level-2-intermediate.html">Level 2 exercises</a> and browse <a href="design-patterns.html">Design patterns</a> for modules to build into your library. For the rules behind the numbers, see <a href="principles.html">Principles</a>, <a href="tolerances-and-fits.html">Tolerances &amp; fits</a> and <a href="joints-and-fasteners.html">Joints &amp; fasteners</a>.</p>
+  <p>Next: practice with the <a href="../exercises/level-2-intermediate.html">Level 2 exercises</a> and browse <a href="design-patterns.html">Design patterns</a> for modules to build into your library. For the rules behind the numbers, see <a href="principles.html">Principles</a>, <a href="tolerances-and-fits.html">Tolerances &amp; fits</a> and <a href="joints-and-fasteners.html">Joints &amp; fasteners</a>.</p>
 
 
 </main>
