@@ -4,6 +4,12 @@ All notable changes to the Compendium. Format: [Keep a Changelog](https://keepac
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-11-11
+
+### Fixed
+- Material values now agree across pages: PETG, TPU/TPE, PET-CF and HIPS drying match the drying page; PLA bed temperature is 35–65 °C everywhere (cool plate to textured PEI); PC nozzle tops out at 300 °C; PVA heat limit given as its glass transition (≈ 75 °C).
+- American spelling throughout, as the authoring guide asks: over 200 British forms (colour, fibre, mould, licence, centre, aluminium, draught, millimetre, -ise verbs and others) in 26 pages. Code samples were left untouched.
+
 ## [1.1.0] - 2026-11-10
 
 ### Added
@@ -64,7 +70,8 @@ First numbered edition.
 ### Verified
 - All OpenSCAD models compile; X2D headline specifications match Bambu Lab's published spec sheet (2026-11-02).
 
-[Unreleased]: https://github.com/pKasprowicz/bambu-x2d-bible/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/pKasprowicz/bambu-x2d-bible/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/pKasprowicz/bambu-x2d-bible/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/pKasprowicz/bambu-x2d-bible/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/pKasprowicz/bambu-x2d-bible/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/pKasprowicz/bambu-x2d-bible/releases/tag/v1.0.0

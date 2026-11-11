@@ -156,8 +156,32 @@ Earlier batches also changed this table: snap-fit strain limits (batch 4) and th
 
 **Open:** shrinkage in the calculator (PLA 0.3, PA12 1.0 %) sits at the upper end of typical ranges and the shrinkage chart on the engineering page (PLA ≈ 0.2, PA12 ≈ 0.6 %) at the lower end. Both are inside published ranges and both pages call them approximate.
 
+## Batch 8 — closing the open spreads (2026-11-11)
+
+**Scope:** every item logged as open in batches 1, 3 and 7. Rule applied: the canonical pages win (`materials/drying-and-storage.html` for drying, the X2D limits for nozzle temperature), and a range that only differed in its edges was widened or narrowed to one shared range rather than adding a new value.
+
+**Fixed:**
+
+| Where | Was | Now | Why |
+|-------|-----|-----|-----|
+| `materials/overview.html` PETG drying | 60–65 °C · 6–8 h | 60–65 °C · 4–8 h | Drying page and cheat sheet. PETG-CF keeps 6–8 h (filled grade, not in the drying table). |
+| `materials/overview.html` TPU 95A, TPU 85A, TPE drying | 55–60 °C · 6–8 h / 8 h | 50–65 °C · 6–10 h | Drying page row “TPU / TPE”. Bambu's 70 °C for its own TPU stays on the X2D pages and is covered by “some vendors up to 70” on the drying page. |
+| `reference/cheat-sheets.html` TPU drying time | 6–8 h | 6–10 h | Drying page. |
+| `materials/overview.html` PET-CF drying | 70–80 °C · 8–12 h | 65–80 °C · 6–10 h | Drying and engineering pages. Bambu's own PET-CF figure is still not checked (Bambu sites not reachable from the review environment). |
+| `materials/overview.html` HIPS drying | 60–70 °C | 60–65 °C | Drying page. |
+| PLA bed (overview 25–60, cheat sheet 35–60, first-layer table 45–65) | three ranges | 35–65 °C on all three | Matches the first-layer page's bar chart, which already said 35–65 °C; low end is a cool plate (Bambu's X2D guidance 35–45 °C), high end textured PEI. The first-layer table now says so. |
+| PC nozzle (overview, engineering prose, safety emissions table) | 260–310 °C | 260–300 °C | Every other page, and the X2D tops out at 300 °C. PPS-CF's 310 °C in the material picker is correct and unchanged. |
+| `materials/overview.html` PVA heat column | “~60 °C (then sticky)” | “≈ 75 °C (Tg); sticky when damp” | Drying page gives Tg ≈ 75 °C; stickiness is a moisture effect. |
+
+**Reviewed, no change:**
+
+- Dryer prices on the drying page: the “no prices” rule in the handoff is about Bambu products. Generic cost examples (filament per kg, dryers, the economics page) are deliberate and stay.
+- M2.5 and M8 insert sizes (joints page vs cheat sheet): brands genuinely differ and both pages already say to check the supplier's datasheet.
+- Shrinkage in the calculator (PLA 0.3 %, PA12 1.0 %) vs the engineering chart (≈ 0.2 %, ≈ 0.6 %): both inside published ranges and both labelled approximate.
+- The mock spool label in the level 1 exercise (bed 45–65 °C) is an example of a real label, not site guidance.
+
 ## Status
 
-All planned batches are done. The review was a cross-check by consistency, manufacturer data and published standards, not a review by a printing specialist; a domain expert could still add value, especially on the values logged as open and on the materials not covered by a manufacturer figure.
+All planned batches are done, and batch 8 closed the open spreads. The review was a cross-check by consistency, manufacturer data and published standards, not a review by a printing specialist; a domain expert could still add value, especially on the values logged as open and on the materials not covered by a manufacturer figure.
 
 Run `python scripts/check_charts.py` after editing any chart, and keep drying figures in step with `materials/drying-and-storage.html`.

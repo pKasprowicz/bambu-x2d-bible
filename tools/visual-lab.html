@@ -115,7 +115,7 @@
     <p>Infill is a lattice of single lines inside the part. For one set of parallel lines the plastic fraction is <b>ρ = w / s</b> (line width over spacing); a grid has two sets, triangles three. A honeycomb with edge <i>a</i> has ρ = 2w / (√3 · a). The gyroid is a true slice of the standard sine-sum gyroid function, traced with marching squares; its wave pattern morphs smoothly from layer to layer, which is why gyroid walls behave alike in every direction. The estimate counts the length of every drawn line times the line width and ignores the small overlaps at crossings.</p>
     <div class="vl-grid">
       <div class="vl-side"><div class="vl-ctl" id="c-ctl"></div><div class="vl-read" id="c-read" aria-live="polite"></div></div>
-      <figure class="fig no-zoom"><svg id="c-svg" class="diagram" viewBox="0 0 640 340" role="img" aria-labelledby="c-t"><title id="c-t">Top view of an infill pattern in a 100 millimetre square</title><g id="c-dyn"></g></svg>
+      <figure class="fig no-zoom"><svg id="c-svg" class="diagram" viewBox="0 0 640 340" role="img" aria-labelledby="c-t"><title id="c-t">Top view of an infill pattern in a 100 millimeter square</title><g id="c-dyn"></g></svg>
         <figcaption><b>Fig. 3</b> A 100 × 100 mm slice. Lines are drawn at least 1.6 px wide so they stay visible; the material estimate always uses the real line width.</figcaption></figure>
     </div>
     <div class="callout tip vl-note"><span class="callout-title">What to notice</span>
@@ -141,11 +141,11 @@
     <p>Molten plastic is under pressure in the hot end. When the nozzle travels without printing, that pressure keeps pushing plastic out as a string. Retraction pulls the filament back and relieves the pressure; the required distance is small on a direct-drive extruder (about 0.5–1 mm) and large on a Bowden tube (4–6 mm). Hotter plastic is runnier, so strings grow with temperature. The model uses <b>effectiveness = 1 − e<sup>−d / d₀</sup></b> and a string strength that grows with travel time and temperature.</p>
     <div class="vl-grid">
       <div class="vl-side"><div class="vl-ctl" id="e-ctl"></div><div class="vl-read" id="e-read" aria-live="polite"></div></div>
-      <figure class="fig no-zoom"><svg id="e-svg" class="diagram" viewBox="0 0 640 320" role="img" aria-labelledby="e-t"><title id="e-t">Nozzle travelling between two posts, with strings forming when retraction is too small</title><g id="e-dyn"></g></svg>
+      <figure class="fig no-zoom"><svg id="e-svg" class="diagram" viewBox="0 0 640 320" role="img" aria-labelledby="e-t"><title id="e-t">Nozzle traveling between two posts, with strings forming when retraction is too small</title><g id="e-dyn"></g></svg>
         <figcaption><b>Fig. 5</b> The nozzle prints one post, retracts, travels and primes the next. The bar at the right is the pressure left in the melt zone.</figcaption></figure>
     </div>
     <div class="callout tip vl-note"><span class="callout-title">What to notice</span>
-      <p>Retraction helps with sharply diminishing returns: the first millimetre removes most of the pressure and extra distance mainly risks heat creep and clogs. Cooling the melt (lower temperature) or shortening the travel are often better cures than a larger retraction. Tune with a stringing tower, see <a href="../techniques/calibration.html">calibration</a>.</p></div>
+      <p>Retraction helps with sharply diminishing returns: the first millimeter removes most of the pressure and extra distance mainly risks heat creep and clogs. Cooling the melt (lower temperature) or shortening the travel are often better cures than a larger retraction. Tune with a stringing tower, see <a href="../techniques/calibration.html">calibration</a>.</p></div>
   </section>
 
   <section class="vl-viz" id="v-f" aria-labelledby="f-h">
@@ -153,7 +153,7 @@
     <p>A freshly laid line starts near nozzle temperature and cools toward the air temperature: <b>T(t) = T<sub>air</sub> + (T<sub>nozzle</sub> − T<sub>air</sub>) · e<sup>−t/τ</sup></b>. The time constant τ is shorter with part-cooling fan airflow. If the layer time is shorter than the cooling time, the next layer lands on plastic that is still soft; if it is much longer, the interface has cooled and bonds weakly. The colors show the temperature of each layer as the stack grows.</p>
     <div class="vl-grid">
       <div class="vl-side"><div class="vl-ctl" id="f-ctl"></div><div class="vl-read" id="f-read" aria-live="polite"></div></div>
-      <figure class="fig no-zoom"><svg id="f-svg" class="diagram" viewBox="0 0 640 320" role="img" aria-labelledby="f-t"><title id="f-t">Stack of layers coloured by temperature next to a cooling curve</title><g id="f-dyn"></g></svg>
+      <figure class="fig no-zoom"><svg id="f-svg" class="diagram" viewBox="0 0 640 320" role="img" aria-labelledby="f-t"><title id="f-t">Stack of layers colored by temperature next to a cooling curve</title><g id="f-dyn"></g></svg>
         <figcaption><b>Fig. 6</b> Left: layer stack colored by temperature. Right: cooling curve of the newest layer with the glass-transition line and the moment the next layer arrives.</figcaption></figure>
     </div>
     <div class="callout tip vl-note"><span class="callout-title">What to notice</span>

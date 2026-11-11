@@ -69,7 +69,7 @@
       <tr><td><a href="#L4-8">L4-8</a></td><td>Jig or fixture for manufacturing</td><td>Fixture, go/no-go gauge and time saving</td><td>10 h</td></tr>
       <tr><td><a href="#L4-9">L4-9</a></td><td>Material characterization test plan</td><td>Test plan, specimens and datasheet</td><td>15 h</td></tr>
       <tr><td><a href="#L4-10">L4-10</a></td><td>Large-part segmentation</td><td>Split, joined part larger than the build plate</td><td>12 h</td></tr>
-      <tr><td><a href="#L4-11">L4-11</a></td><td>Mould or casting workflow</td><td>Printed master, mould and cast parts</td><td>15 h</td></tr>
+      <tr><td><a href="#L4-11">L4-11</a></td><td>Mold or casting workflow</td><td>Printed master, mold and cast parts</td><td>15 h</td></tr>
       <tr><td><a href="#L4-12">L4-12</a></td><td>Open-source release of a design</td><td>Repository with docs, license and photos</td><td>8 h</td></tr>
     </tbody>
   </table></div>
@@ -512,7 +512,7 @@
       </ul>
       <details class="hint"><summary>Hint</summary><p>Print fixtures in PETG or nylon-based material for wear and impact resistance, with 4–6 walls and 30–40 % infill, since the loads are mostly local. Put the locating surfaces on the bottom of the print so they are flat and accurate (use <a href="../design/design-patterns.html">design patterns</a> for clamps and stops).</p></details>
       <details class="solution"><summary>Worked example</summary>
-        <p>Drilling two 4 mm holes 40 mm apart in aluminium strips. Baseline by hand with a marked line: 70 s per part, position error up to ±0.8 mm. With a printed jig with a hardened-steel drill bushing: 25 s per part, error ±0.15 mm. A go/no-go gauge with 4.0 / 4.3 mm pins checked hole positions on a 40.0 mm centre. The jig paid for itself after about 40 parts. All numbers illustrative.</p>
+        <p>Drilling two 4 mm holes 40 mm apart in aluminum strips. Baseline by hand with a marked line: 70 s per part, position error up to ±0.8 mm. With a printed jig with a hardened-steel drill bushing: 25 s per part, error ±0.15 mm. A go/no-go gauge with 4.0 / 4.3 mm pins checked hole positions on a 40.0 mm center. The jig paid for itself after about 40 parts. All numbers illustrative.</p>
       </details>
     </div>
     <footer></footer>
@@ -637,48 +637,48 @@
   </section>
 
   <section class="exercise" id="L4-11">
-    <header><span class="badge expert">Level 4 · Capstone</span><h3>Project 11 — Mould or casting workflow</h3><span class="badge time">⏱ ~15 h</span></header>
+    <header><span class="badge expert">Level 4 · Capstone</span><h3>Project 11 — Mold or casting workflow</h3><span class="badge time">⏱ ~15 h</span></header>
     <div class="ex-body">
       <span class="ex-label">Brief</span>
-      <p>Use 3D printing to make a master or a mould and cast a small series in silicone, polyurethane resin, plaster or wax. Printing gives you the geometry; casting gives you the material and the surface. Typical projects: soft silicone feet, resin knobs, plaster tiles.</p>
+      <p>Use 3D printing to make a master or a mold and cast a small series in silicone, polyurethane resin, plaster or wax. Printing gives you the geometry; casting gives you the material and the surface. Typical projects: soft silicone feet, resin knobs, plaster tiles.</p>
       <span class="ex-label">Deliverables</span>
       <ul>
         <li>A design drawing with parting line, pour gate and vents</li>
-        <li>The printed master or mould, in a material that is compatible with the casting material</li>
+        <li>The printed master or mold, in a material that is compatible with the casting material</li>
         <li>At least three cast parts, with a note on defects and fixes</li>
       </ul>
       <figure class="fig">
-        <svg class="diagram" viewBox="0 0 760 260" role="img" aria-label="A two-part mould shown in section with the cavity, pour gate, vent, and parting line; and the workflow: print master, seal and polish, make silicone mould, pour, demold">
+        <svg class="diagram" viewBox="0 0 760 260" role="img" aria-label="A two-part mold shown in section with the cavity, pour gate, vent, and parting line; and the workflow: print master, seal and polish, make silicone mold, pour, demold">
           <rect class="d-plastic" x="40" y="30" width="200" height="60" rx="4"/>
           <rect class="d-plastic2" x="40" y="130" width="200" height="60" rx="4"/>
           <path class="f-orange" d="M100 90 Q100 110 120 110 H160 Q180 110 180 90 V130 H100 z"/>
           <rect class="f-orange" x="132" y="30" width="16" height="60"/><text class="t-xs t-c" x="140" y="22">gate</text>
           <rect class="d-surface" x="205" y="60" width="10" height="30"/><text class="t-xs t-c" x="212" y="22">vent</text>
           <path class="d-dash" d="M30 110 H250"/><text class="t-sm" x="258" y="114">parting line</text>
-          <text class="t-sm t-c" x="140" y="220">Two-part mould, section</text>
+          <text class="t-sm t-c" x="140" y="220">Two-part mold, section</text>
           <g class="t-sm t-c t-b">
             <rect class="f-blue" x="420" y="30" width="150" height="40" rx="8"/><text x="495" y="55">Print master</text>
             <rect class="f-teal" x="420" y="82" width="150" height="40" rx="8"/><text x="495" y="107">Seal and sand</text>
-            <rect class="f-green" x="420" y="134" width="150" height="40" rx="8"/><text x="495" y="159">Cast silicone mould</text>
+            <rect class="f-green" x="420" y="134" width="150" height="40" rx="8"/><text x="495" y="159">Cast silicone mold</text>
             <rect class="f-orange" x="420" y="186" width="150" height="40" rx="8"/><text x="495" y="211">Pour, cure, demold</text>
           </g>
           <path class="d-ink arrow" d="M495 70 V80 M495 122 V132 M495 174 V184"/>
           <text class="t-sm t-m" x="590" y="55">0.1 mm layers,</text><text class="t-sm t-m" x="590" y="72">no supports on</text><text class="t-sm t-m" x="590" y="89">visible faces</text>
           <text class="t-sm t-m" x="590" y="159">degas or pour</text><text class="t-sm t-m" x="590" y="176">slowly from low</text>
         </svg>
-        <figcaption><b>Figure 12.</b> Mould section (left) and the master-to-cast workflow (right). The cast part inherits every layer line from the master, so surface preparation decides the result.</figcaption>
+        <figcaption><b>Figure 12.</b> Mold section (left) and the master-to-cast workflow (right). The cast part inherits every layer line from the master, so surface preparation decides the result.</figcaption>
       </figure>
       <span class="ex-label">Suggested path</span>
       <ol class="steps">
-        <li><strong>Choose the process</strong>: print the master and cast a silicone mould (best surface) or print the mould directly (fastest, for plaster, wax or two-part resin with release agent).</li>
-        <li><strong>Design for demolding</strong>: draft of 2–3° on vertical faces, no undercuts unless the mould is flexible, a parting line on an edge, a generous pour gate and a vent at each high point.</li>
+        <li><strong>Choose the process</strong>: print the master and cast a silicone mold (best surface) or print the mold directly (fastest, for plaster, wax or two-part resin with release agent).</li>
+        <li><strong>Design for demolding</strong>: draft of 2–3° on vertical faces, no undercuts unless the mold is flexible, a parting line on an edge, a generous pour gate and a vent at each high point.</li>
         <li><strong>Prepare the master</strong>: print fine (0.08–0.12 mm layers), sand, apply filler primer and sand again; seal against silicone inhibition (check your silicone's manufacturer for compatibility, since sulfur and some resins inhibit cure).</li>
-        <li><strong>Make the mould</strong>: build a box, fix the master with a release agent, mix silicone by weight, degas if possible or pour in a thin stream, and let it cure fully.</li>
+        <li><strong>Make the mold</strong>: build a box, fix the master with a release agent, mix silicone by weight, degas if possible or pour in a thin stream, and let it cure fully.</li>
         <li><strong>Cast</strong> the final material following its datasheet, with gloves, ventilation and eye protection. Respect the pot life.</li>
         <li><strong>Inspect and improve</strong> bubbles, flash and shrinkage; adjust gates and vents.</li>
       </ol>
       <div class="callout warn"><span class="callout-title">Safety</span>
-        <p>Resins, isocyanates in some polyurethanes and cleaning solvents are hazardous. Read the safety data sheet, ventilate, use nitrile gloves and eye protection, and never use a cast mould or resin for food contact unless it is rated for it. Review the <a href="../foundations/safety-and-workspace.html">safety page</a>.</p></div>
+        <p>Resins, isocyanates in some polyurethanes and cleaning solvents are hazardous. Read the safety data sheet, ventilate, use nitrile gloves and eye protection, and never use a cast mold or resin for food contact unless it is rated for it. Review the <a href="../foundations/safety-and-workspace.html">safety page</a>.</p></div>
       <span class="ex-label">Acceptance criteria</span>
       <ul class="checklist">
         <li>Three cast parts without major defects, matching the master within 1 %</li>
@@ -687,7 +687,7 @@
       </ul>
       <details class="hint"><summary>Hint</summary><p>Do a small test before the big pour: cast a coin-sized piece of the same silicone against a printed scrap with your sealing method. If the silicone remains sticky, the print is inhibiting cure; try another sealer or print material.</p></details>
       <details class="solution"><summary>Worked example</summary>
-        <p>A 40 mm knob master printed in PLA at 0.1 mm, filler primer and wet sanded to 800 grit. Silicone (Shore A 20) mould in two halves with registration keys. Casting in two-part polyurethane resin, 3 parts per mould. Result: surface good, two bubbles on the top face in the first cast; adding a vent at the highest point and tilting the mould during pouring solved this. Mass of the cast part was 14.2 g vs 11 g of printed PLA, so the cast part also felt more solid.</p>
+        <p>A 40 mm knob master printed in PLA at 0.1 mm, filler primer and wet sanded to 800 grit. Silicone (Shore A 20) mold in two halves with registration keys. Casting in two-part polyurethane resin, 3 parts per mold. Result: surface good, two bubbles on the top face in the first cast; adding a vent at the highest point and tilting the mold during pouring solved this. Mass of the cast part was 14.2 g vs 11 g of printed PLA, so the cast part also felt more solid.</p>
       </details>
     </div>
     <footer></footer>

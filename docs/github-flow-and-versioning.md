@@ -71,7 +71,7 @@ git switch master && git pull
 git tag -a v1.1.0 -m "v1.1.0" && git push origin v1.1.0
 ```
 
-Pushing the tag runs `.github/workflows/release.yml`, which:
+Pushing the tag runs `.github/workflows/release.yml`. Where pushing a tag is not possible (for example from a restricted automation session), run the same workflow manually on `master` instead (**Actions → Release → Run workflow**, or the API): it tags `v<VERSION>` at the current `master` commit itself and refuses to run if that tag already exists. Either way the workflow:
 
 1. checks the tag equals `VERSION`,
 2. rebuilds the index and validates the site,
