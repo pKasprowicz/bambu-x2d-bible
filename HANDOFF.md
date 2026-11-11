@@ -40,9 +40,9 @@ Totals at last check (v1.1.0, 2026-11-10): **63 pages, ~288k words, 722 figures*
 
 ## Workflow and versions
 
-GitHub Flow: short branches into `master` via pull request (CI runs the checker), `master` deploys. Numbered editions use `VERSION` + `nav.js` + `CHANGELOG.md` (kept consistent by `check_site.py`); pushing tag `vX.Y.Z` publishes a GitHub Release with an offline zip. Details: `docs/github-flow-and-versioning.md`.
+GitHub Flow: short branches into `master` via pull request (CI runs the checker), `master` deploys. Numbered editions use `VERSION` + `nav.js` + `CHANGELOG.md` (kept consistent by `check_site.py`); pushing tag `vX.Y.Z`, or running the Release workflow manually on `master` (it tags `v<VERSION>` itself), publishes a GitHub Release with an offline zip. Details: `docs/github-flow-and-versioning.md`.
 
-Released editions: **v1.0.0** (first edition), **v1.0.1** (muted colour palette with `--*-ink` text variants and `--on-brand` button text; version shown in the header and home hero; SVG text fixes for dark mode) and **v1.1.0** (2026-11-10: mechanism catalog, expanded short pages, numeric review fixes). See `CHANGELOG.md`.
+Released editions: **v1.0.0** (first edition), **v1.0.1** (muted colour palette with `--*-ink` text variants and `--on-brand` button text; version shown in the header and home hero; SVG text fixes for dark mode) **v1.1.0** (2026-11-10: mechanism catalog, expanded short pages, numeric review fixes) and **v1.1.1** (2026-11-11: open numeric spreads closed, American spelling throughout). See `CHANGELOG.md`.
 
 ## QA log (2026-11-02)
 
@@ -53,12 +53,23 @@ Released editions: **v1.0.0** (first edition), **v1.0.1** (muted colour palette 
 - **External links:** 43 checked; all return 200 or a bot-blocking 403.
 - **X2D specs** (build volumes, 300/120/65 degC, size/weight, speeds, power, cameras, screen) match the spec sheet at bambulab.com/en/x2d/specs. `wiki.bambulab.com` could not be fetched directly (HTTP 402).
 
+## QA log (2026-11-11)
+
+- **Visual lab:** all 13 labs driven through every control at min, max and mid values (and every select option and checkbox), light and dark: no exceptions, no NaN/undefined in readouts or SVG geometry, per-lab Reset and Reset all work. Animations run; "Pause all" stops them and unticking resumes them; per-lab Play/Pause works; reduced motion starts paused with the right note; no overflow at 375 px.
+- **Dark-mode toggle:** switches theme and body colors, persists across pages and reloads, and follows the OS setting when nothing is saved.
+- **Search:** "/" opens it with focus (ignored inside form inputs); results for 11 queries are relevant; arrow keys select, Enter navigates, Escape and a backdrop click close; no-match message; HTML in the query is not rendered; usable at 375 px.
+
 ## Known gaps / risks
 
-1. Visual-lab animations, dark-mode toggle and search were not exercised by hand beyond load/console checks.
-2. Facts not on Bambu's public spec pages (unboxing/transport-lock steps, per-material AMS 2 Pro drying tables) defer to the manual. Re-verify when firmware/hardware changes. No prices by design.
-3. Remaining page-local `<style>` blocks are namespaced per page (`ts-`, `cs-`, `faq-` ...) and not duplicated; leaving them is fine.
-4. Numeric values are caveated starting points. A systematic review (consistency, manufacturer data, standards, chart scales) was done on 2026-11-10 and is logged in `docs/numeric-review.md`, with the items left open; a printing specialist could still add value there.
+1. Facts not on Bambu's public spec pages (unboxing/transport-lock steps, per-material AMS 2 Pro drying tables) defer to the manual. Re-verify when firmware/hardware changes. No prices by design.
+2. Remaining page-local `<style>` blocks are namespaced per page (`ts-`, `cs-`, `faq-` ...) and not duplicated; leaving them is fine.
+3. Numeric values are caveated starting points. A systematic review (consistency, manufacturer data, standards, chart scales) was done on 2026-11-10, and batch 8 (2026-11-11) closed the spreads it had left open; see `docs/numeric-review.md`. A printing specialist could still add value, and Bambu's own PET-CF drying figure is unchecked.
+
+## In v1.1.1 (2026-11-11)
+
+- Numeric review batch 8: drying (PETG, TPU/TPE, PET-CF, HIPS), PLA bed 35–65 °C, PC nozzle 260–300 °C and PVA heat now agree across pages.
+- American spelling throughout, as `CONTRIBUTING.md` asks (26 pages; code samples untouched; `#fibre` anchor renamed `#fiber`, it had no links).
+- Release workflow can also be run manually on `master` (tags `v<VERSION>` itself); used for this release because the automation session could not push tags.
 
 ## In v1.1.0 (2026-11-10)
 
@@ -70,10 +81,10 @@ Released editions: **v1.0.0** (first edition), **v1.0.1** (muted colour palette 
 
 ## Next steps
 
-1. Optional: have a printing specialist look at the open items in `docs/numeric-review.md`; spot-check Bambu figures against the Bambu wiki when it is reachable (it was not from the review environment, and in the 2026-11-10 session the proxy refused bambulab.com and wiki.bambulab.com).
-2. Optional: keep expanding the shorter content pages. Done in v1.1.0: cheat sheets, first print, safety, and the X2D maintenance, filament-compatibility, dual-nozzle and TPU pages. The X2D additions only combine facts already on those pages with general practice. Next candidates by length: `tools/visual-lab.html`, `x2d/setup-and-first-print.html`, `x2d/hardware-tour.html`, `foundations/buying-guide.html`. Navigation pages (home, start-here, tools and exercises index, models gallery) are short by design.
+1. Optional: have a printing specialist look at `docs/numeric-review.md`; spot-check Bambu figures (including PET-CF drying) against the Bambu wiki. Bambu's sites were refused by the automation proxy on 2026-11-10/11, and the owner declined to allow them for that environment, so this needs a human or a differently configured session.
+2. Optional: keep expanding the shorter content pages. Next candidates by length: `tools/visual-lab.html`, `x2d/setup-and-first-print.html`, `x2d/hardware-tour.html`, `foundations/buying-guide.html`. Navigation pages (home, start-here, tools and exercises index, models gallery) are short by design.
 3. To confirm in Bambu Studio (stated on the dual-nozzle page from general knowledge, not a Bambu source): the slice summary lists flushed and prime-tower amounts, and the preview can color paths by filament.
-4. Open small spreads from the numeric review (PETG/TPU/PET-CF/HIPS drying, PLA bed, PC nozzle top, PVA heat) could be aligned with the canonical drying and overview pages in a PATCH release.
+4. Optional: freshness tracking for Part 6 (`data-verified` dates plus a script listing stale pages), as proposed in `docs/github-flow-and-versioning.md`.
 
 ## Git identity
 

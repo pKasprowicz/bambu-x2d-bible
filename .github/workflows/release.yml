@@ -1,9 +1,13 @@
 name: Release
 
-# Push a tag such as v1.1.0 on master to publish a GitHub Release with an offline zip.
+# Two ways to publish a GitHub Release with an offline zip:
+#  - push a tag such as v1.1.0 on master, or
+#  - run this workflow from the Actions tab (or the API) on master: it tags
+#    v<VERSION> at the current master commit itself. Useful where tags cannot be pushed.
 on:
   push:
     tags: ["v*.*.*"]
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -16,22 +20,31 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.x"
-      - name: Tag must match VERSION
+      - name: Work out the tag
         run: |
-          test "${GITHUB_REF_NAME}" = "v$(cat VERSION | tr -d '[:space:]')" \
-            || { echo "Tag ${GITHUB_REF_NAME} does not match VERSION $(cat VERSION)"; exit 1; }
+          v="v$(cat VERSION | tr -d '[:space:]')"
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
+            test "${GITHUB_REF_NAME}" = "master" || { echo "Run the release from master, not ${GITHUB_REF_NAME}"; exit 1; }
+            if git ls-remote --exit-code --tags origin "refs/tags/$v" >/dev/null; then
+              echo "Tag $v already exists; bump VERSION first"; exit 1
+            fi
+            echo "TAG=$v" >> "$GITHUB_ENV"
+          else
+            test "${GITHUB_REF_NAME}" = "$v" || { echo "Tag ${GITHUB_REF_NAME} does not match VERSION $v"; exit 1; }
+            echo "TAG=${GITHUB_REF_NAME}" >> "$GITHUB_ENV"
+          fi
       - name: Build search index and validate
         run: |
           python scripts/build_search_index.py
           python scripts/check_site.py
       - name: Extract release notes from CHANGELOG
         run: |
-          v="${GITHUB_REF_NAME#v}"
+          v="${TAG#v}"
           awk -v h="## [$v]" 'index($0, h) == 1 {f=1; next} /^## \[/ {f=0} f' CHANGELOG.md > notes.md
           test -s notes.md || { echo "No CHANGELOG section for $v"; exit 1; }
       - name: Zip the site for offline reading
         run: |
-          name="compendium-${GITHUB_REF_NAME}"
+          name="compendium-${TAG}"
           mkdir -p "dist/$name"
           rsync -a --exclude .git --exclude .github --exclude dist --exclude notes.md ./ "dist/$name/"
           (cd dist && zip -qr "../$name.zip" "$name")
@@ -39,5 +52,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" "compendium-${GITHUB_REF_NAME}.zip" \
-            --title "The 3D Printing Compendium ${GITHUB_REF_NAME}" --notes-file notes.md
+          # For a manual run, --target creates the tag at the commit that was validated above.
+          gh release create "$TAG" "compendium-${TAG}.zip" --target "$GITHUB_SHA" \
+            --title "The 3D Printing Compendium ${TAG}" --notes-file notes.md
