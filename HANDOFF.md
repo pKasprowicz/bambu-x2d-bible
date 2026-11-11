@@ -84,7 +84,7 @@ Released editions: **v1.0.0** (first edition), **v1.0.1** (muted colour palette 
 
 1. Optional: have a printing specialist look at `docs/numeric-review.md`; spot-check Bambu figures (including PET-CF drying) against the Bambu wiki. Bambu's sites were refused by the automation proxy on 2026-11-10/11, and the owner declined to allow them for that environment, so this needs a human or a differently configured session.
 2. Optional: keep expanding the shorter content pages. Next candidates by length: `tools/visual-lab.html`, `x2d/setup-and-first-print.html`, `x2d/hardware-tour.html`, `foundations/buying-guide.html`. Navigation pages (home, start-here, tools and exercises index, models gallery) are short by design.
-3. To confirm in Bambu Studio (stated on the dual-nozzle page from general knowledge, not a Bambu source): the slice summary lists flushed and prime-tower amounts, and the preview can color paths by filament.
+3. Optional: confirm in Bambu Studio itself the two UI statements on the dual-nozzle page. Both are corroborated by Bambu wiki search snippets and forum answers (2026-11-11), not by the wiki page itself: the slicer's totals include flushed filament and the prime tower, and the preview legend's color scheme can be set to Filament.
 
 ## Git identity
 
