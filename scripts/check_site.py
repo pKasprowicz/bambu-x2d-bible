@@ -197,6 +197,10 @@ def main():
         pg.close()
         for ln, msg in pg.errors:
             errors.append((rel, ln, msg))
+        if rel.startswith("x2d/"):
+            mv = re.search(r'<body\b[^>]*\bdata-verified="(\d{4}-\d{2}-\d{2})"', html)
+            if not mv:
+                errors.append((rel, 0, 'Part 6 page needs <body data-verified="YYYY-MM-DD"> (see scripts/check_freshness.py)'))
         for tag, ln in pg.stack:
             errors.append((rel, ln, f"<{tag}> never closed"))
         seen = set()

@@ -38,6 +38,7 @@ Replace `DEPTH` with `../` for pages in a sub-folder (all pages except `index.ht
 ```
 
 * `data-page` **must** equal the file's path as listed in `assets/js/nav.js` (the `f:` field).
+* Part 6 pages (`x2d/`) also carry `data-verified="YYYY-MM-DD"` on `<body>`: the day their Bambu facts were last checked against Bambu Lab's documentation. Update it only after such a check; see `scripts/check_freshness.py`.
 * Use `<h2>` for sections and `<h3>` for sub-sections (they feed the table of contents). Do not use a second `<h1>`.
 * Page-specific JavaScript: put it in a `<script>` at the bottom of `<main>` and wrap in
   `document.addEventListener("c3d:ready", function () { … })`. Helpers: `C3D.$`, `C3D.$$`, `C3D.store`.

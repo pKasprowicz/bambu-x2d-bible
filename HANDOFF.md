@@ -20,7 +20,7 @@ A zero-build static site (plain HTML/CSS/JS, inline SVG, no external assets) for
 | 8 · Tools | 3 | Calculators, material picker, visual lab (animations) |
 | 9 · Reference | 6 | Glossary (219 terms), cheat sheets, FAQ (120 Q), applications, economics & ethics, resources |
 
-Totals at last check (v1.1.0, 2026-11-10): **63 pages, ~288k words, 722 figures**, `check_site.py` → 0 errors, 1 warning (start-here has fewer figures than the 4+ target; intentional).
+Totals at last check (v1.2.0, 2026-11-11): **63 pages, ~290k words, 726 figures**, `check_site.py` → 0 errors, 1 warning (start-here has fewer figures than the 4+ target; intentional).
 
 ## Architecture
 
@@ -30,6 +30,7 @@ Totals at last check (v1.1.0, 2026-11-10): **63 pages, ~288k words, 722 figures*
 - `CONTRIBUTING.md` — page skeleton and component reference (follow it when adding pages).
 - `scripts/check_site.py` — validates links, anchors, SVG XML, structure, `data-page`.
 - `scripts/check_charts.py` — review aid that flags charts drawn off their own scale (heuristic, not in CI).
+- `scripts/check_freshness.py` — lists Part 6 pages by their `data-verified` date (last check of Bambu facts) and marks those older than six months; CI prints it. Pages show the date as a hero badge.
 - `scripts/build_search_index.py` — generates `assets/search-index.json` (committed; also rebuilt in CI).
 - `.github/workflows/pages.yml` — builds index, validates, deploys via GitHub Actions on push to `master`/`main`.
 
@@ -42,7 +43,7 @@ Totals at last check (v1.1.0, 2026-11-10): **63 pages, ~288k words, 722 figures*
 
 GitHub Flow: short branches into `master` via pull request (CI runs the checker), `master` deploys. Numbered editions use `VERSION` + `nav.js` + `CHANGELOG.md` (kept consistent by `check_site.py`); pushing tag `vX.Y.Z`, or running the Release workflow manually on `master` (it tags `v<VERSION>` itself), publishes a GitHub Release with an offline zip. Details: `docs/github-flow-and-versioning.md`.
 
-Released editions: **v1.0.0** (first edition), **v1.0.1** (muted colour palette with `--*-ink` text variants and `--on-brand` button text; version shown in the header and home hero; SVG text fixes for dark mode) **v1.1.0** (2026-11-10: mechanism catalog, expanded short pages, numeric review fixes) and **v1.1.1** (2026-11-11: open numeric spreads closed, American spelling throughout). See `CHANGELOG.md`.
+Released editions: **v1.0.0** (first edition), **v1.0.1** (muted color palette with `--*-ink` text variants and `--on-brand` button text; version shown in the header and home hero; SVG text fixes for dark mode), **v1.1.0** (2026-11-10: mechanism catalog, expanded short pages, numeric review fixes), **v1.1.1** (2026-11-11: open numeric spreads closed, American spelling throughout) and **v1.2.0** (2026-11-11: freshness badges for Part 6, four more expanded pages). See `CHANGELOG.md`.
 
 ## QA log (2026-11-02)
 
@@ -65,6 +66,13 @@ Released editions: **v1.0.0** (first edition), **v1.0.1** (muted colour palette 
 2. Remaining page-local `<style>` blocks are namespaced per page (`ts-`, `cs-`, `faq-` ...) and not duplicated; leaving them is fine.
 3. Numeric values are caveated starting points. A systematic review (consistency, manufacturer data, standards, chart scales) was done on 2026-11-10, and batch 8 (2026-11-11) closed the spreads it had left open; see `docs/numeric-review.md`. A printing specialist could still add value, and Bambu's own PET-CF drying figure is unchecked.
 
+## In v1.2.0 (2026-11-11)
+
+- Freshness tracking for Part 6: `data-verified` on every `x2d/` page, hero badge, `scripts/check_freshness.py`, checker rule and CI report.
+- Expanded pages: buying guide (acceptance tests in the return window), visual lab (five guided tours), X2D set-up (first-week plan linking challenges X-1, X-2, X-7, X-12), X2D hardware tour (one two-color print followed through the hardware). X2D additions reuse facts already on the Part 6 pages.
+- Dual-nozzle page names the preview's Filament color scheme; both Studio UI statements corroborated by search results.
+- Checked in Chromium: all changed pages at 375 and 1100 px, light and dark, no errors or overflow; badge fresh and stale states.
+
 ## In v1.1.1 (2026-11-11)
 
 - Numeric review batch 8: drying (PETG, TPU/TPE, PET-CF, HIPS), PLA bed 35–65 °C, PC nozzle 260–300 °C and PVA heat now agree across pages.
@@ -82,9 +90,8 @@ Released editions: **v1.0.0** (first edition), **v1.0.1** (muted colour palette 
 ## Next steps
 
 1. Optional: have a printing specialist look at `docs/numeric-review.md`; spot-check Bambu figures (including PET-CF drying) against the Bambu wiki. Bambu's sites were refused by the automation proxy on 2026-11-10/11, and the owner declined to allow them for that environment, so this needs a human or a differently configured session.
-2. Optional: keep expanding the shorter content pages. Next candidates by length: `tools/visual-lab.html`, `x2d/setup-and-first-print.html`, `x2d/hardware-tour.html`, `foundations/buying-guide.html`. Navigation pages (home, start-here, tools and exercises index, models gallery) are short by design.
-3. To confirm in Bambu Studio (stated on the dual-nozzle page from general knowledge, not a Bambu source): the slice summary lists flushed and prime-tower amounts, and the preview can color paths by filament.
-4. Optional: freshness tracking for Part 6 (`data-verified` dates plus a script listing stale pages), as proposed in `docs/github-flow-and-versioning.md`.
+2. Optional: keep expanding the shorter content pages. Done through v1.2.0 for the ten shortest content pages. Run the word count in `check_site.py`'s output per page to pick the next ones; navigation pages (home, start-here, tools and exercises index, models gallery) are short by design.
+3. Optional: confirm in Bambu Studio itself the two UI statements on the dual-nozzle page. Both are corroborated by Bambu wiki search snippets and forum answers (2026-11-11), not by the wiki page itself: the slicer's totals include flushed filament and the prime tower, and the preview legend's color scheme can be set to Filament.
 
 ## Git identity
 

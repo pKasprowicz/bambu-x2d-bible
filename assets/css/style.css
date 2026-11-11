@@ -187,6 +187,8 @@ abbr[title] { text-decoration: underline dotted var(--muted); cursor: help; }
 .badge.expert, .badge.l4 { background: var(--purple-s); color: var(--purple-ink); border-color: transparent; }
 .badge.x2d { background: var(--red-s); color: var(--red-ink); border-color: transparent; }
 .badge.time { background: var(--blue-s); color: var(--blue-ink); border-color: transparent; }
+.badge.verified { background: var(--teal-s); color: var(--teal-ink); border-color: transparent; }
+.badge.verified.stale { background: var(--yellow-s); color: var(--yellow-ink); }
 
 /* ---------- Callouts ---------- */
 .callout { margin: 1.4em auto; padding: 14px 18px 14px 18px; border-radius: var(--radius); border: 1px solid var(--line); border-left-width: 5px; background: var(--surface); box-shadow: var(--shadow); }
