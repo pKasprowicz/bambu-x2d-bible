@@ -4,6 +4,9 @@ All notable changes to the Compendium. Format: [Keep a Changelog](https://keepac
 
 ## [Unreleased]
 
+### Fixed
+- Material values now agree across pages: PETG, TPU/TPE, PET-CF and HIPS drying match the drying page; PLA bed temperature is 35–65 °C everywhere (cool plate to textured PEI); PC nozzle tops out at 300 °C; PVA heat limit given as its glass transition (≈ 75 °C).
+
 ## [1.1.0] - 2026-11-10
 
 ### Added
