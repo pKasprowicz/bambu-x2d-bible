@@ -317,6 +317,47 @@
     <li>Spare hotend, cutters and tools located in the toolbox.</li>
   </ul>
 
+  <h2 id="first-week">🗓️ Your first week: one part of the printer per day</h2>
+  <p>Day one proves that the printer prints. The rest of the first week is the right time to make every subsystem do its job once, while you still remember how it was set up and while a fault is still easy to report. Each day takes an evening or less; the long waits (drying, a heated chamber) run while you do something else.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 260" role="img" aria-label="Seven-day plan: day 1 left nozzle and built-in model; day 2 both nozzles; day 3 nozzle assignment; day 4 AMS drying; day 5 heated chamber; day 6 maintenance walk-through; day 7 review and your own slice.">
+      <rect class="d-surface" x="20" y="20" width="820" height="220" rx="10"/>
+      <g class="f-green"><rect x="36" y="44" width="106" height="150" rx="10"/></g>
+      <g class="f-blue"><rect x="152" y="44" width="106" height="150" rx="10"/><rect x="268" y="44" width="106" height="150" rx="10"/></g>
+      <g class="f-teal"><rect x="384" y="44" width="106" height="150" rx="10"/></g>
+      <g class="f-orange"><rect x="500" y="44" width="106" height="150" rx="10"/></g>
+      <g class="f-purple"><rect x="616" y="44" width="106" height="150" rx="10"/></g>
+      <g class="f-gray"><rect x="732" y="44" width="94" height="150" rx="10"/></g>
+      <text class="t t-sm t-b t-c" x="89" y="70">Day 1</text><text class="t t-xs t-c" x="89" y="96">Left nozzle</text><text class="t t-xs t-c" x="89" y="112">built-in model</text><text class="t t-xs t-c" x="89" y="128">Day-1 checklist</text>
+      <text class="t t-sm t-b t-c" x="205" y="70">Day 2</text><text class="t t-xs t-c" x="205" y="96">Both nozzles</text><text class="t t-xs t-c" x="205" y="112">two PLA colors</text><text class="t t-xs t-c" x="205" y="128">challenge X-1</text>
+      <text class="t t-sm t-b t-c" x="321" y="70">Day 3</text><text class="t t-xs t-c" x="321" y="96">Who prints</text><text class="t t-xs t-c" x="321" y="112">what: grouping</text><text class="t t-xs t-c" x="321" y="128">challenge X-2</text>
+      <text class="t t-sm t-b t-c" x="437" y="70">Day 4</text><text class="t t-xs t-c" x="437" y="96">AMS drying</text><text class="t t-xs t-c" x="437" y="112">with a weigh-in</text><text class="t t-xs t-c" x="437" y="128">challenge X-7</text>
+      <text class="t t-sm t-b t-c" x="553" y="70">Day 5</text><text class="t t-xs t-c" x="553" y="96">Heated chamber</text><text class="t t-xs t-c" x="553" y="112">small ABS/ASA</text><text class="t t-xs t-c" x="553" y="128">part</text>
+      <text class="t t-sm t-b t-c" x="669" y="70">Day 6</text><text class="t t-xs t-c" x="669" y="96">Maintenance</text><text class="t t-xs t-c" x="669" y="112">walk-through</text><text class="t t-xs t-c" x="669" y="128">start a log</text>
+      <text class="t t-sm t-b t-c" x="779" y="70">Day 7</text><text class="t t-xs t-c" x="779" y="96">Review,</text><text class="t t-xs t-c" x="779" y="112">your own</text><text class="t t-xs t-c" x="779" y="128">slice</text>
+      <text class="t t-xs t-m" x="36" y="222">Order matters less than coverage: by the end of the week every nozzle, the AMS, both air modes and the maintenance points have been used once.</text>
+    </svg>
+    <figcaption><b>Figure 9.</b> A first-week plan. The challenges named are on the <a href="../exercises/x2d-challenges.html">X2D challenges</a> page.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Day</th><th>Do</th><th>What it proves</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Finish the <a href="#checklist">day-1 checklist</a> and the built-in model on the left nozzle.</td><td>Power, network, plate, AMS feed to the main nozzle.</td></tr>
+      <tr><td>2</td><td><a href="../exercises/x2d-challenges.html#X-1">X-1 setup validation print</a>: two PLA colors, one per nozzle.</td><td>The auxiliary extruder, both hotends, the nozzle switch and the nozzle offset.</td></tr>
+      <tr><td>3</td><td><a href="../exercises/x2d-challenges.html#X-2">X-2 nozzle assignment drill</a>, with <a href="dual-nozzle-printing.html#assignment">how filaments get assigned</a> open beside it.</td><td>You can make Studio put each filament on the side you intend, and check it in the preview.</td></tr>
+      <tr><td>4</td><td><a href="../exercises/x2d-challenges.html#X-7">X-7 drying experiment</a> on a PLA or PETG spool (the AMS 2 Pro dries up to 65 °C).</td><td>The drying modules, humidity reading and the weight drop of a real spool.</td></tr>
+      <tr><td>5</td><td>A small ABS or ASA part in heating mode. Preheat as described on <a href="filament-compatibility.html#chamber">filament compatibility</a>, keep the door closed.</td><td>Chamber heating, the filter path and the second air mode.</td></tr>
+      <tr><td>6</td><td>With the printer off: find both cutters, do the click test on the auxiliary PTFE nut, wipe the camera lens, look at the wiper and filters. Start a log (<a href="../exercises/x2d-challenges.html#X-12">X-12</a>).</td><td>You know where the maintenance points are before you need them (see <a href="maintenance-and-troubleshooting.html#after-work">what to recalibrate</a>).</td></tr>
+      <tr><td>7</td><td>Read the HMS history and the firmware release notes; slice one model of your own from scratch in Studio.</td><td>Nothing is quietly wrong, and you can go from a file to a print without the built-in models.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout x2d"><span class="callout-title">Still within the return window?</span>
+    <p>If any day fails twice for the same reason after the fix the screen or the wiki suggests, photograph it, note the firmware version and contact support or the seller now. The <a href="../foundations/buying-guide.html#acceptance">buying guide</a> lists general acceptance checks for any new printer.</p>
+  </div>
+
   <h2 id="mistakes">🚫 Most common beginner mistakes</h2>
   <div class="grid cols-2">
     <div class="card accent-red"><h3>Forgetting the packaging</h3><p>Powering on with a piece of foam or transport protection still fitted. Always check against the guide.</p></div>
@@ -341,6 +382,7 @@
     <li>Install the AMS 2 Pro with the new 6-pin cable and the PTFE to the buffer’s upper inlet, then run AMS Setup.</li>
     <li>The easiest first print is a built-in, pre-sliced model for the left nozzle.</li>
     <li>Watch the first layer; let the plate cool; flex it to release the part.</li>
+    <li>Use the first week to run every subsystem once: both nozzles, nozzle assignment, AMS drying, the heated chamber and a maintenance walk-through.</li>
   </ul>
 
 </main>

@@ -379,6 +379,43 @@
     <div class="card accent-red"><span class="ico">🧰</span><h3>Spool holders</h3><p>An external spool holder base is preinstalled on the left. Use it for filaments that must not go through the AMS, such as TPU.</p></div>
   </div>
 
+  <h2 id="one-print">🎬 One two-color print, part by part</h2>
+  <p>The sections above describe each part on its own. This one follows a single job, a two-color PLA part with one color on each nozzle and a color change inside one nozzle near the top, and names the hardware that acts at each stage. The order is typical; exactly which checks and calibrations run before a print depends on the options you tick when you send the job.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 330" role="img" aria-label="Timeline of one print in five stages, with the hardware used in each: before printing (plate and camera checks, heatbed, air mode), calibration (bed leveling, nozzle offset coil, wiper), printing on the left nozzle (AMS, buffer, servo extruder), a nozzle swap (lever, push block, flow blocker, prime tower) and a filament change within one nozzle (cutter and stopper, retract to the AMS, purge wiper and chute).">
+      <rect class="d-surface" x="20" y="20" width="820" height="290" rx="10"/>
+      <path class="d-ink arrow" d="M40 70 H820"/>
+      <g class="s-orange"><circle cx="110" cy="70" r="9"/><circle cx="270" cy="70" r="9"/><circle cx="430" cy="70" r="9"/><circle cx="590" cy="70" r="9"/><circle cx="750" cy="70" r="9"/></g>
+      <text class="t t-sm t-b t-c" x="110" y="50">1 · Before</text><text class="t t-sm t-b t-c" x="270" y="50">2 · Calibrate</text><text class="t t-sm t-b t-c" x="430" y="50">3 · Print left</text><text class="t t-sm t-b t-c" x="590" y="50">4 · Swap nozzle</text><text class="t t-sm t-b t-c" x="750" y="50">5 · Change color</text>
+      <g class="f-gray"><rect x="40" y="96" width="140" height="190" rx="8"/><rect x="200" y="96" width="140" height="190" rx="8"/></g>
+      <g class="f-blue"><rect x="360" y="96" width="140" height="190" rx="8"/></g>
+      <g class="f-purple"><rect x="520" y="96" width="140" height="190" rx="8"/></g>
+      <g class="f-orange"><rect x="680" y="96" width="145" height="190" rx="8"/></g>
+      <text class="t t-xs t-c" x="110" y="122">plate detection</text><text class="t t-xs t-c" x="110" y="142">camera dirt check</text><text class="t t-xs t-c" x="110" y="162">heatbed to temp</text><text class="t t-xs t-c" x="110" y="182">cooling air mode</text><text class="t t-xs t-c" x="110" y="202">(PLA)</text>
+      <text class="t t-xs t-c" x="270" y="122">bed leveling</text><text class="t t-xs t-c" x="270" y="142">nozzle offset:</text><text class="t t-xs t-c" x="270" y="162">eddy sensor + coil</text><text class="t t-xs t-c" x="270" y="182">wiper steel sheet</text>
+      <text class="t t-xs t-c" x="430" y="122">AMS feeder + hub</text><text class="t t-xs t-c" x="430" y="142">buffer slider</text><text class="t t-xs t-c" x="430" y="162">upper inlet</text><text class="t t-xs t-c" x="430" y="182">servo extruder</text><text class="t t-xs t-c" x="430" y="202">senses tangles</text><text class="t t-xs t-c" x="430" y="222">camera + AI watch</text>
+      <text class="t t-xs t-c" x="590" y="122">lever meets</text><text class="t t-xs t-c" x="590" y="142">push block</text><text class="t t-xs t-c" x="590" y="162">flow blocker swings</text><text class="t t-xs t-c" x="590" y="182">aux hotend lowers</text><text class="t t-xs t-c" x="590" y="202">prime tower</text><text class="t t-xs t-c" x="590" y="222">no flush needed</text>
+      <text class="t t-xs t-c" x="752" y="122">toolhead to center</text><text class="t t-xs t-c" x="752" y="142">stopper + cutter</text><text class="t t-xs t-c" x="752" y="162">retract to AMS</text><text class="t t-xs t-c" x="752" y="182">load new color</text><text class="t t-xs t-c" x="752" y="202">purge → wiper</text><text class="t t-xs t-c" x="752" y="222">→ purge chute</text>
+    </svg>
+    <figcaption><b>Figure 10.</b> One job, five stages. Stage 4 is what makes the X2D different: a color that lives on the other nozzle costs a swap, not a flush. Stage 5 is the classic color change that any single-nozzle printer with a multi-spool feeder does.</figcaption>
+  </figure>
+
+  <div class="table-wrap"><table class="data compact">
+    <thead><tr><th>Stage</th><th>Hardware involved</th><th>What you notice</th><th>If it goes wrong</th></tr></thead>
+    <tbody>
+      <tr><td>1 · Before printing</td><td>Plate detection, toolhead camera, heatbed, fans in cooling mode for PLA</td><td>A pause while the bed heats; the camera check runs at the start of every print</td><td>Wrong or first-generation plate flagged; a dirty lens warning (see <a href="maintenance-and-troubleshooting.html#consumables">camera care</a>)</td></tr>
+      <tr><td>2 · Calibration</td><td>Z motor and lead screws for leveling; eddy-current sensor and the coil behind the bed for nozzle offset; wiper steel sheet</td><td>The nozzle taps across the plate and wipes on the sheet</td><td>Leveling or offset fails to finish: clean the nozzle tip and plate, then <a href="maintenance-and-troubleshooting.html#after-work">recalibrate</a></td></tr>
+      <tr><td>3 · Printing on the left</td><td>AMS feeder and hub assist motor, buffer slider and Hall sensor, upper buffer inlet, servo extruder, part-cooling fans</td><td>Normal printing; the buffer quietly keeps the AMS in step with the extruder</td><td>A tangle shows up as extruder resistance and pauses the job (see <a href="maintenance-and-troubleshooting.html#recoveries">recoveries</a>)</td></tr>
+      <tr><td>4 · Nozzle swap</td><td>Lever on the toolhead, push block on the lining, gear train and flow blocker; the auxiliary stepper extruder and its 525 mm tube feed the right hotend</td><td>A short move to the push block, then a visit to the prime tower</td><td>The toolhead cannot change nozzles: clear strings or a blob from the lever path (see <a href="maintenance-and-troubleshooting.html#recoveries">nozzle switching problems</a>)</td></tr>
+      <tr><td>5 · Color change in one nozzle</td><td>Cutter stopper and the cutter on that side, AMS retract, purge wiper and purge chute, nozzle wiper</td><td>The toolhead parks mid-chamber, a click from the cutter, purged plastic leaves through the chute</td><td>Unload failures often mean a dull cutter blade; a blocked chute is detected by the AI (keep it clear)</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout info"><span class="callout-title">Why this order helps when something fails</span>
+    <p>Note the stage a job stopped in before you look for the cause. A stop before the first layer points at stages 1–2 (plate, camera, calibration), a stop at a color boundary at stages 4–5 (switch, cutter, AMS), and a stop in the middle of a single color at stage 3 (feed path, tangle, clog). The <a href="maintenance-and-troubleshooting.html#symptoms">symptom index</a> takes it from there.</p>
+  </div>
+
   <h2 id="vision-encoder">🎯 Vision Encoder (optional)</h2>
   <p>The <b>Vision Encoder</b>, sold separately, is the accessory that enables the <b>motion accuracy calibration</b>. It works together with the toolhead camera to measure how well the toolhead really follows commanded positions. Bambu groups it with the calibration tools in the same menu as the nozzle offset and the high-precision nozzle offset. For everyday printing it is not necessary; it is for people who chase dimensional accuracy.</p>
 
@@ -396,7 +433,7 @@
       <path class="d-ink arrow" d="M140 105 H146"/><path class="d-ink arrow" d="M268 105 H274"/><path class="d-ink arrow" d="M396 105 H402"/><path class="d-ink arrow" d="M524 105 H530"/><path class="d-ink arrow" d="M652 105 H658"/>
       <text class="t-xs t-m" x="20" y="190">Order of steps is conceptual; follow the wiki. Hot nozzles burn: wear gloves and never use bare fingers.</text>
     </svg>
-    <figcaption><b>Figure 10.</b> A generic swap sequence for hotends, derived from how Bambu describes the quick-release design. Always recalibrate the nozzle offset afterwards.</figcaption>
+    <figcaption><b>Figure 11.</b> A generic swap sequence for hotends, derived from how Bambu describes the quick-release design. Always recalibrate the nozzle offset afterwards.</figcaption>
   </figure>
   <div class="callout danger"><span class="callout-title">Heat and gloves</span>
     <p>Nozzles reach 300 °C. If you must remove plastic from a hot nozzle, use the printer’s <b>Heating Base Maintenance Mode</b> and protect your hands. Do not touch the hot tip, and do not put a cold tool into molten plastic and then pull it by hand.</p>
@@ -433,6 +470,7 @@
     <li>Air handling has two modes: cooling for PLA and TPU, heating for ABS, ASA, PC and PA, with a three-stage filter.</li>
     <li>Calibration hardware (coil, sticker, wiper sheet, cameras) is part of the bed area; run the relevant calibrations after maintenance.</li>
     <li>Keep spare nozzles, cutters, PTFE and a second plate, and follow the lubrication schedule.</li>
+    <li>In a two-color job, a color on the other nozzle costs a swap (lever, push block, flow blocker, prime tower); a color change inside one nozzle costs a cut, a retract and a purge.</li>
   </ul>
 
 </main>

@@ -83,6 +83,96 @@
     <li><a href="#v-l">(l) Flush &amp; prime tower</a></li>
     <li><a href="#v-m">(m) Input shaping</a></li>
   </ul>
+  <p>Not sure where to start? Follow one of the <a href="#tours">guided tours</a> below.</p>
+
+  <h2 id="tours">Guided tours: one problem, several labs</h2>
+  <p>Each lab isolates one idea, but real print problems usually involve two or three. These tours chain the labs in the order a troubleshooter would think about them. Do the steps in order, change only the control named, and read the readout after each change. Every tour ends with the page that turns what you saw into settings.</p>
+
+  <figure class="fig">
+    <svg class="diagram" viewBox="0 0 860 300" role="img" aria-label="Five guided tours drawn as paths through the lab letters: rough walls a to d to j; strings and sagging e to f to g; warping and bad fits h to k; faster but uglier i to m to j; too much purge l only, then the dual-nozzle page.">
+      <rect class="d-surface" x="20" y="20" width="820" height="260" rx="10"/>
+      <g>
+        <text class="t t-sm t-b" x="40" y="62">1 · Rough walls</text>
+        <circle class="f-blue" cx="300" cy="56" r="16"/><text class="t t-sm t-b t-c" x="300" y="61">a</text>
+        <circle class="f-blue" cx="400" cy="56" r="16"/><text class="t t-sm t-b t-c" x="400" y="61">d</text>
+        <circle class="f-blue" cx="500" cy="56" r="16"/><text class="t t-sm t-b t-c" x="500" y="61">j</text>
+        <path class="d-ink arrow" d="M318 56 H380"/><path class="d-ink arrow" d="M418 56 H480"/>
+      </g>
+      <g>
+        <text class="t t-sm t-b" x="40" y="112">2 · Strings and sagging</text>
+        <circle class="f-orange" cx="300" cy="106" r="16"/><text class="t t-sm t-b t-c" x="300" y="111">e</text>
+        <circle class="f-orange" cx="400" cy="106" r="16"/><text class="t t-sm t-b t-c" x="400" y="111">f</text>
+        <circle class="f-orange" cx="500" cy="106" r="16"/><text class="t t-sm t-b t-c" x="500" y="111">g</text>
+        <path class="d-ink arrow" d="M318 106 H380"/><path class="d-ink arrow" d="M418 106 H480"/>
+      </g>
+      <g>
+        <text class="t t-sm t-b" x="40" y="162">3 · Warping and fits</text>
+        <circle class="f-red" cx="300" cy="156" r="16"/><text class="t t-sm t-b t-c" x="300" y="161">h</text>
+        <circle class="f-red" cx="400" cy="156" r="16"/><text class="t t-sm t-b t-c" x="400" y="161">k</text>
+        <path class="d-ink arrow" d="M318 156 H380"/>
+      </g>
+      <g>
+        <text class="t t-sm t-b" x="40" y="212">4 · Faster but uglier</text>
+        <circle class="f-purple" cx="300" cy="206" r="16"/><text class="t t-sm t-b t-c" x="300" y="211">i</text>
+        <circle class="f-purple" cx="400" cy="206" r="16"/><text class="t t-sm t-b t-c" x="400" y="211">m</text>
+        <circle class="f-purple" cx="500" cy="206" r="16"/><text class="t t-sm t-b t-c" x="500" y="211">j</text>
+        <path class="d-ink arrow" d="M318 206 H380"/><path class="d-ink arrow" d="M418 206 H480"/>
+      </g>
+      <g>
+        <text class="t t-sm t-b" x="40" y="262">5 · Too much purge</text>
+        <circle class="f-teal" cx="300" cy="256" r="16"/><text class="t t-sm t-b t-c" x="300" y="261">l</text>
+        <path class="d-ink arrow" d="M318 256 H380"/><text class="t t-xs" x="388" y="260">dual-nozzle design</text>
+      </g>
+      <text class="t t-xs t-m" x="600" y="62">→ troubleshooting gallery</text>
+      <text class="t t-xs t-m" x="600" y="112">→ speed, cooling &amp; quality</text>
+      <text class="t t-xs t-m" x="600" y="162">→ tolerances &amp; fits</text>
+      <text class="t t-xs t-m" x="600" y="212">→ calibration playbook</text>
+      <text class="t t-xs t-m" x="600" y="262">→ multi-color page</text>
+    </svg>
+    <figcaption><b>Guided tours.</b> Five routes through the thirteen labs. Letters are the labs below; the right-hand column is where each tour continues.</figcaption>
+  </figure>
+
+  <details class="accordion"><summary>Tour 1 · “My walls look rough or uneven”</summary>
+    <ol class="steps">
+      <li><strong>Lab <a href="#v-a">(a)</a>: is it the staircase?</strong>Raise the layer height and lower the surface angle: the steps on a shallow curve grow fastest. Tick adaptive layer height to see how thin layers on shallow areas hide them.</li>
+      <li><strong>Lab <a href="#v-d">(d)</a>: is it the walls?</strong>Set wall loops to 1, then 3. With one wall, infill and gaps sit right behind the surface and show through; extra loops give the outer wall a solid backing.</li>
+      <li><strong>Lab <a href="#v-j">(j)</a>: is it the corners?</strong>Leave pressure advance K at 0 and watch the bulge at each corner. Then raise K until it equals the pressure lag τ: the bulge disappears. Too high a K starves the corner instead.</li>
+    </ol>
+    <p>Continue in the <a href="../techniques/troubleshooting.html">troubleshooting gallery</a> and the <a href="../techniques/calibration.html">calibration playbook</a>.</p>
+  </details>
+
+  <details class="accordion"><summary>Tour 2 · “It strings, droops or sags”</summary>
+    <ol class="steps">
+      <li><strong>Lab <a href="#v-e">(e)</a>: ooze during travel.</strong>Raise the nozzle temperature and the travel distance, lower the travel speed: strings get worse. Then add retraction and compare the two extruder types; a Bowden setup needs a longer retraction for the same effect.</li>
+      <li><strong>Lab <a href="#v-f">(f)</a>: is the layer below still soft?</strong>Shorten the layer time and turn the fan down: the layer below arrives warmer than its glass transition. That is the condition for drooping details and soft tops.</li>
+      <li><strong>Lab <a href="#v-g">(g)</a>: bridges.</strong>Lengthen the span, then try more fan and a lower temperature. Sag grows quickly with span; cooling buys only so much.</li>
+    </ol>
+    <p>Continue in <a href="../techniques/speed-cooling-quality.html">speed, cooling &amp; quality</a> and <a href="../techniques/supports-bridges-overhangs.html">supports, bridges &amp; overhangs</a>.</p>
+  </details>
+
+  <details class="accordion"><summary>Tour 3 · “It warped, or the parts do not fit”</summary>
+    <ol class="steps">
+      <li><strong>Lab <a href="#v-h">(h)</a>: warp.</strong>Pick a high-shrink material, make the part long, keep the chamber cool, then untick “bed adhesion holds the ends down”. Raise the chamber temperature and lower the cooling mismatch to see which one helps more.</li>
+      <li><strong>Lab <a href="#v-k">(k)</a>: fit.</strong>Model hole and peg at the same diameter, then add the typical “hole comes out smaller” and “peg comes out larger” amounts. The clearance you designed is gone; enlarge the hole until the fit returns.</li>
+    </ol>
+    <p>Continue in <a href="../design/tolerances-and-fits.html">tolerances &amp; fits</a> and <a href="../materials/engineering-plastics.html">engineering plastics</a>.</p>
+  </details>
+
+  <details class="accordion"><summary>Tour 4 · “Faster settings made it look worse”</summary>
+    <ol class="steps">
+      <li><strong>Lab <a href="#v-i">(i)</a>: who moves for which line.</strong>Switch between move patterns and speeds to see that both CoreXY motors work on every move; diagonal and straight moves load them differently.</li>
+      <li><strong>Lab <a href="#v-m">(m)</a>: ringing.</strong>Set the input shaper to None and raise the speed: ripples follow every corner. Turn on ZV or ZVD, then detune it by 20–30 % to see why the shaper must match the printer's measured frequency.</li>
+      <li><strong>Lab <a href="#v-j">(j)</a>: pressure at speed.</strong>Raise the cruise speed and the acceleration with K at 0: corner bulges grow with speed, which is why pressure advance matters more on fast machines.</li>
+    </ol>
+    <p>Continue in the <a href="../techniques/calibration.html">calibration playbook</a> and <a href="../techniques/speed-cooling-quality.html">speed, cooling &amp; quality</a>.</p>
+  </details>
+
+  <details class="accordion"><summary>Tour 5 · “Multi-color wastes too much filament”</summary>
+    <ol class="steps">
+      <li><strong>Lab <a href="#v-l">(l)</a>: where the waste comes from.</strong>Raise the share of layers that change color, then the flush volume: waste scales with both. Finally move changes to the nozzle swap slider, which is how a dual-nozzle printer avoids most flushing.</li>
+    </ol>
+    <p>Continue in <a href="../techniques/multi-color-and-multi-material.html">multi-color &amp; multi-material</a> and, for the X2D, <a href="../x2d/dual-nozzle-printing.html#design">designing a model for two nozzles</a>.</p>
+  </details>
 
   <h2>Shape and structure</h2>
 

@@ -4,8 +4,14 @@ All notable changes to the Compendium. Format: [Keep a Changelog](https://keepac
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-11
+
 ### Added
 - Bambu X2D pages show when their Bambu facts were last checked against Bambu Lab's documentation, with a warning once that is more than six months ago. `scripts/check_freshness.py` lists the pages due for re-checking.
+- Buying guide: what to test while you can still return a new printer, with a five-square first-layer test.
+- Visual lab: five guided tours that chain the labs around a real problem (rough walls, strings and sagging, warping and fits, faster but uglier, too much purge).
+- X2D set-up: a first-week plan that runs every subsystem once (both nozzles, assignment, AMS drying, heated chamber, maintenance walk-through).
+- X2D hardware tour: one two-color print followed part by part through the machine, and what a stop in each stage points to.
 
 ## [1.1.1] - 2026-11-11
 
@@ -73,7 +79,8 @@ First numbered edition.
 ### Verified
 - All OpenSCAD models compile; X2D headline specifications match Bambu Lab's published spec sheet (2026-11-02).
 
-[Unreleased]: https://github.com/pKasprowicz/bambu-x2d-bible/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/pKasprowicz/bambu-x2d-bible/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/pKasprowicz/bambu-x2d-bible/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/pKasprowicz/bambu-x2d-bible/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/pKasprowicz/bambu-x2d-bible/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/pKasprowicz/bambu-x2d-bible/compare/v1.0.0...v1.0.1
